@@ -1,0 +1,92 @@
+--- bzlib.c
++++ bzlib.c
+@@ -1390,7 +1390,7 @@
+    char   unused[BZ_MAX_UNUSED];
+    int    blockSize100k = 9;
+    int    writing       = 0;
+-   char   mode2[10]     = "";
++   const char *mode2;
+    FILE   *fp           = NULL;
+    BZFILE *bzfp         = NULL;
+    int    verbosity     = 0;
+@@ -1414,23 +1414,8 @@
+       }
+       mode++;
+    }
+-   strcat(mode2, writing ? "w" : "r" );
+-   strcat(mode2,"b");   /* binary mode */
+-
+-   if (open_mode==0) {
+-      if (path==NULL || strcmp(path,"")==0) {
+-        fp = (writing ? stdout : stdin);
+-        SET_BINARY_MODE(fp);
+-      } else {
+-        fp = fopen(path,mode2);
+-      }
+-   } else {
+-#ifdef BZ_STRICT_ANSI
+-      fp = NULL;
+-#else
+-      fp = fdopen(fd,mode2);
+-#endif
+-   }
++   mode2 = writing ? "wb" : "rb";
++   fp = fdopen(fd, mode2);
+    if (fp == NULL) return NULL;
+ 
+    if (writing) {
+@@ -1444,7 +1429,7 @@
+                             unused,nUnused);
+    }
+    if (bzfp == NULL) {
+-      if (fp != stdin && fp != stdout) fclose(fp);
++      fclose(fp);
+       return NULL;
+    }
+    return bzfp;
+@@ -1452,20 +1437,6 @@
+ 
+ 
+ /*---------------------------------------------------*/
+-/*--
+-   open file for read or write.
+-      ex) bzopen("file","w9")
+-      case path="" or NULL => use stdin or stdout.
+---*/
+-BZFILE * BZ_API(BZ2_bzopen)
+-               ( const char *path,
+-                 const char *mode )
+-{
+-   return bzopen_or_bzdopen(path,-1,mode,/*bzopen*/0);
+-}
+-
+-
+-/*---------------------------------------------------*/
+ BZFILE * BZ_API(BZ2_bzdopen)
+                ( int fd,
+                  const char *mode )
+@@ -1526,9 +1497,7 @@
+    }else{
+       BZ2_bzReadClose(&bzerr,b);
+    }
+-   if(fp!=stdin && fp!=stdout){
+-      fclose(fp);
+-   }
++   fclose(fp);
+ }
+ 
+ 
+--- bzlib.h
++++ bzlib.h
+@@ -235,11 +235,6 @@
+    );
+ 
+ #ifndef BZ_NO_STDIO
+-BZ_EXTERN BZFILE * BZ_API(BZ2_bzopen) (
+-      const char *path,
+-      const char *mode
+-   );
+-
+ BZ_EXTERN BZFILE * BZ_API(BZ2_bzdopen) (
+       int        fd,
+       const char *mode

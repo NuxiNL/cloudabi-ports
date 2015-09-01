@@ -1,0 +1,79 @@
+--- gzlib.c
++++ gzlib.c
+@@ -238,11 +238,7 @@
+            O_APPEND)));
+ 
+     /* open the file with the appropriate flags (or just use fd) */
+-    state->fd = fd > -1 ? fd : (
+-#ifdef _WIN32
+-        fd == -2 ? _wopen(path, oflag, 0666) :
+-#endif
+-        open((const char *)path, oflag, 0666));
++    state->fd = fd;
+     if (state->fd == -1) {
+         free(state->path);
+         free(state);
+@@ -265,22 +261,6 @@
+ }
+ 
+ /* -- see zlib.h -- */
+-gzFile ZEXPORT gzopen(path, mode)
+-    const char *path;
+-    const char *mode;
+-{
+-    return gz_open(path, -1, mode);
+-}
+-
+-/* -- see zlib.h -- */
+-gzFile ZEXPORT gzopen64(path, mode)
+-    const char *path;
+-    const char *mode;
+-{
+-    return gz_open(path, -1, mode);
+-}
+-
+-/* -- see zlib.h -- */
+ gzFile ZEXPORT gzdopen(fd, mode)
+     int fd;
+     const char *mode;
+--- zlib.h
++++ zlib.h
+@@ -1689,7 +1689,6 @@
+  * without large file support, _LFS64_LARGEFILE must also be true
+  */
+ #ifdef Z_LARGE64
+-   ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
+    ZEXTERN z_off64_t ZEXPORT gzseek64 OF((gzFile, z_off64_t, int));
+    ZEXTERN z_off64_t ZEXPORT gztell64 OF((gzFile));
+    ZEXTERN z_off64_t ZEXPORT gzoffset64 OF((gzFile));
+@@ -1699,14 +1698,12 @@
+ 
+ #if !defined(ZLIB_INTERNAL) && defined(Z_WANT64)
+ #  ifdef Z_PREFIX_SET
+-#    define z_gzopen z_gzopen64
+ #    define z_gzseek z_gzseek64
+ #    define z_gztell z_gztell64
+ #    define z_gzoffset z_gzoffset64
+ #    define z_adler32_combine z_adler32_combine64
+ #    define z_crc32_combine z_crc32_combine64
+ #  else
+-#    define gzopen gzopen64
+ #    define gzseek gzseek64
+ #    define gztell gztell64
+ #    define gzoffset gzoffset64
+@@ -1714,7 +1711,6 @@
+ #    define crc32_combine crc32_combine64
+ #  endif
+ #  ifndef Z_LARGE64
+-     ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
+      ZEXTERN z_off_t ZEXPORT gzseek64 OF((gzFile, z_off_t, int));
+      ZEXTERN z_off_t ZEXPORT gztell64 OF((gzFile));
+      ZEXTERN z_off_t ZEXPORT gzoffset64 OF((gzFile));
+@@ -1722,7 +1718,6 @@
+      ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off_t));
+ #  endif
+ #else
+-   ZEXTERN gzFile ZEXPORT gzopen OF((const char *, const char *));
+    ZEXTERN z_off_t ZEXPORT gzseek OF((gzFile, z_off_t, int));
+    ZEXTERN z_off_t ZEXPORT gztell OF((gzFile));
+    ZEXTERN z_off_t ZEXPORT gzoffset OF((gzFile));
