@@ -106,10 +106,11 @@ def copy_file_or_tree(source, target, preserve_metadata):
   if os.path.isdir(source):
     for root, dirs, files in os.walk(source):
       for f in files:
-        source_filename = os.path.join(root, f)
-        target_filename = os.path.normpath(
-            os.path.join(target, os.path.relpath(source_filename, source)))
-        copy_file(source_filename, target_filename, preserve_metadata)
+        if not f.endswith('.orig'):
+          source_filename = os.path.join(root, f)
+          target_filename = os.path.normpath(
+              os.path.join(target, os.path.relpath(source_filename, source)))
+          copy_file(source_filename, target_filename, preserve_metadata)
   else:
     copy_file(source, target, preserve_metadata)
 
@@ -188,6 +189,13 @@ class PackageBuilder:
     self.run_command('.',
                      [self._env_ar, '-rcs', self._full_path(output)] + objs)
     return output
+
+  def remove(self, path):
+    path = self._full_path(path)
+    if os.path.isdir(path):
+      shutil.rmtree(self._full_path(path))
+    else:
+      os.remove(path)
 
   def run_command(self, cwd, command):
     os.chdir(os.path.join(self._full_path(cwd)))
