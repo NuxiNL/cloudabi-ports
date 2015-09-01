@@ -1,0 +1,30 @@
+--- include/vorbis/vorbisfile.h
++++ include/vorbis/vorbisfile.h
+@@ -147,7 +147,6 @@
+ 
+ 
+ extern int ov_clear(OggVorbis_File *vf);
+-extern int ov_fopen(const char *path,OggVorbis_File *vf);
+ extern int ov_open(FILE *f,OggVorbis_File *vf,const char *initial,long ibytes);
+ extern int ov_open_callbacks(void *datasource, OggVorbis_File *vf,
+                 const char *initial, long ibytes, ov_callbacks callbacks);
+--- lib/vorbisfile.c
++++ lib/vorbisfile.c
+@@ -1007,17 +1007,6 @@
+   return ov_open_callbacks((void *)f, vf, initial, ibytes, callbacks);
+ }
+ 
+-int ov_fopen(const char *path,OggVorbis_File *vf){
+-  int ret;
+-  FILE *f = fopen(path,"rb");
+-  if(!f) return -1;
+-
+-  ret = ov_open(f,vf,NULL,0);
+-  if(ret) fclose(f);
+-  return ret;
+-}
+-
+-
+ /* cheap hack for game usage where downsampling is desirable; there's
+    no need for SRC as we can just do it cheaply in libvorbis. */
+ 

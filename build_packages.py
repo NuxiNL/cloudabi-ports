@@ -8,11 +8,12 @@ import stat
 import subprocess
 import sys
 
-DIR_BUILD = os.path.join(os.getcwd(), '_obj/build')
-DIR_DISTFILES = os.path.join(os.getcwd(), '_obj/distfiles')
-DIR_INSTALL = os.path.join(os.getcwd(), '_obj/install')
-DIR_REPOSITORY = os.path.join(os.getcwd(), 'packages')
-DIR_SOURCES = os.path.join(os.getcwd(), '_obj/srcs')
+DIR_ROOT = os.getcwd()
+DIR_BUILD = os.path.join(DIR_ROOT, '_obj/build')
+DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
+DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
+DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
+DIR_SOURCES = os.path.join(DIR_ROOT, '_obj/srcs')
 
 PACKAGES = {}
 PACKAGES_BUILT = set()
@@ -40,6 +41,12 @@ def distfile(**kwargs):
   if name in DISTFILES:
     raise Exception('%s listed multiple times' % name)
   DISTFILES[name] = kwargs
+
+def autoconf_automake_build(ctx):
+  ctx.insert_sources(0, '.')
+  ctx.run_autoconf()
+  ctx.run_make()
+  ctx.run_make_install()
 
 # Parse all of the BUILD rules.
 for root, dirs, files in os.walk(DIR_REPOSITORY):
@@ -112,41 +119,51 @@ def copy_file_or_tree(source, target, preserve_metadata):
   else:
     copy_file(source, target, preserve_metadata)
 
-def get_recursive_includes(pkg, suffix):
-  includes = set()
+def _get_recursive_subdirs(pkg, prefix, suffix):
+  subdirs = set()
   for dep in pkg['lib_depends']:
-    includes.add('-I' + os.path.join(DIR_INSTALL, dep, suffix))
-    includes |= get_recursive_includes(PACKAGES[dep], suffix)
-  return includes
+    subdirs.add(prefix + os.path.join(DIR_INSTALL, dep, suffix))
+    subdirs |= _get_recursive_subdirs(PACKAGES[dep], prefix, suffix)
+  return subdirs
+
+def get_recursive_subdirs(pkg, prefix, suffix):
+  return sorted(_get_recursive_subdirs(pkg, prefix, suffix))
 
 class PackageBuilder:
   def __init__(self, pkg, build_directory, install_directory):
     self._pkg = pkg
     self._build_directory = build_directory
     self._install_directory = install_directory
-    self._library_number = 0
+    self._sequence_number = 0
 
     self._env_ar = '/usr/local/bin/x86_64-unknown-cloudabi-ar'
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
     self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
-    self._env_cflags = (['-nostdinc', '-O2', '-g', '-fstack-protector-strong'] +
-                        sorted(get_recursive_includes(self._pkg, 'include')))
+    self._env_cflags = (
+        ['-nostdlibinc', '-O2', '-g', '-fstack-protector-strong',
+         '-Qunused-arguments'] +
+        get_recursive_subdirs(self._pkg, '-I', 'include'))
     self._env_cxxflags = (
         self._env_cflags + ['-nostdlibinc', '-nostdinc++'] +
-        sorted(get_recursive_includes(self._pkg, 'include/c++/v1')))
+        get_recursive_subdirs(self._pkg, '-I', 'include/c++/v1'))
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
         'CXX=' + self._env_cxx,
         'CFLAGS=' + ' '.join(self._env_cflags),
         'CXXFLAGS=' + ' '.join(self._env_cxxflags),
-        'LDFLAGS=-nostdlib',
+        'LDFLAGS=-nostdlib ' +
+        ' '.join(get_recursive_subdirs(self._pkg, '-L', 'lib')),
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
     ]
 
   def _full_path(self, path):
     return os.path.join(self._build_directory, path)
 
+  def _some_file(self, fmt):
+    filename = fmt % self._sequence_number
+    self._sequence_number += 1
+    return filename
 
   def compile(self, source_file, cflags=[]):
     ext = os.path.splitext(source_file)[1]
@@ -183,9 +200,8 @@ class PackageBuilder:
 
   def link_library(self, object_files):
     objs = [self._full_path(f) for f in sorted(object_files)]
-    output = 'lib%d.a' % self._library_number
+    output = self._some_file('lib%d.a')
     print('AR', output)
-    self._library_number = self._library_number + 1
     self.run_command('.',
                      [self._env_ar, '-rcs', self._full_path(output)] + objs)
     return output
@@ -197,9 +213,27 @@ class PackageBuilder:
     else:
       os.remove(path)
 
+  def run_autoconf(self):
+    # Replace config.sub files by an up-to-datecopy.
+    for root, dirs, files in os.walk(self._build_directory):
+      if 'config.sub' in files:
+        shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
+                     os.path.join(root, 'config.sub'))
+    self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
+                           '--prefix='])
+
   def run_command(self, cwd, command):
     os.chdir(os.path.join(self._full_path(cwd)))
     subprocess.check_call(['env', '-i'] + self._env_vars + command)
+
+  def run_make(self):
+    self.run_command('.', ['make'])
+
+  def run_make_install(self):
+    stagedir = self._some_file('stage%d')
+    self.run_command('.', ['make', 'install',
+                           'DESTDIR=' + self._full_path(stagedir)])
+    self.install(stagedir, '.')
 
 def build_package(pkg):
   if pkg['name'] in PACKAGES_BUILT:
