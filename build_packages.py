@@ -130,6 +130,12 @@ def get_recursive_subdirs(pkg, prefix, suffix):
   return sorted(_get_recursive_subdirs(pkg, prefix, suffix))
 
 class PackageBuilder:
+
+  # Fake root directory prefix that is passed to build systems such as
+  # Autoconf and Automake, so that they cannot hardcode paths to actual
+  # files on the system.
+  _FAKE_ROOTDIR = '/nonexistent'
+
   def __init__(self, pkg, build_directory, install_directory):
     self._pkg = pkg
     self._build_directory = build_directory
@@ -140,7 +146,7 @@ class PackageBuilder:
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
     self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
     self._env_cflags = (
-        ['-nostdlibinc', '-O2', '-g', '-fstack-protector-strong',
+        ['-nostdlibinc', '-O2', '-fstack-protector-strong',
          '-Qunused-arguments'] +
         get_recursive_subdirs(self._pkg, '-I', 'include'))
     self._env_cxxflags = (
@@ -173,13 +179,13 @@ class PackageBuilder:
       self.run_command(
           '.',
           [self._env_cc] + self._env_cflags + cflags +
-          ['-c', '-o', self._full_path(output), self._full_path(source_file)])
+          ['-c', '-o', output, source_file])
     elif ext == '.cpp':
       print('CXX', source_file)
       self.run_command(
           '.',
           [self._env_cxx] + self._env_cxxflags + cflags +
-          ['-c', '-o', self._full_path(output), self._full_path(source_file)])
+          ['-c', '-o', output, source_file])
     else:
       raise Exception('Unknown file extension: %s' % ext)
     return output
@@ -220,7 +226,7 @@ class PackageBuilder:
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
                      os.path.join(root, 'config.sub'))
     self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
-                           '--prefix='])
+                           '--prefix=' + self._FAKE_ROOTDIR])
 
   def run_command(self, cwd, command):
     os.chdir(os.path.join(self._full_path(cwd)))
@@ -233,7 +239,7 @@ class PackageBuilder:
     stagedir = self._some_file('stage%d')
     self.run_command('.', ['make', 'install',
                            'DESTDIR=' + self._full_path(stagedir)])
-    self.install(stagedir, '.')
+    self.install(os.path.join(stagedir, self._FAKE_ROOTDIR[1:]), '.')
 
 def build_package(pkg):
   if pkg['name'] in PACKAGES_BUILT:
