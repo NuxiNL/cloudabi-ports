@@ -118,7 +118,7 @@ def get_recursive_includes(pkg, suffix):
   includes = set()
   for dep in pkg['lib_depends']:
     includes.add('-I' + os.path.join(DIR_INSTALL, dep, suffix))
-    includes = includes.union(get_recursive_includes(PACKAGES[dep], suffix))
+    includes |= get_recursive_includes(PACKAGES[dep], suffix)
   return includes
 
 class PackageBuilder:
@@ -153,7 +153,7 @@ class PackageBuilder:
   def compile(self, source_file, cflags=[]):
     ext = os.path.splitext(source_file)[1]
     output = source_file + '.o'
-    if ext == '.c':
+    if ext in ['.c', '.S']:
       print('CC', source_file)
       self.run_command(
           '.',
