@@ -129,12 +129,16 @@ class PackageBuilder:
 
     self._env_ar = '/usr/local/bin/x86_64-unknown-cloudabi-ar'
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
+    self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
     self._env_cflags = (['-nostdinc', '-O2', '-g', '-fstack-protector-strong'] +
                         sorted(get_recursive_includes(self._pkg)))
+    self._env_cxxflags = self._env_cflags + ['-nostdlibinc', '-nostdinc++']
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
+        'CXX=' + self._env_cxx,
         'CFLAGS=' + ' '.join(self._env_cflags),
+        'CXXFLAGS=' + ' '.join(self._env_cxxflags),
         'LDFLAGS=-nostdlib',
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
     ]
@@ -143,13 +147,23 @@ class PackageBuilder:
     return os.path.join(self._build_directory, path)
 
 
-  def compile(self, source_file):
-    print('CC', source_file)
+  def compile(self, source_file, cflags=[]):
+    ext = os.path.splitext(source_file)[1]
     output = source_file + '.o'
-    self.run_command(
-        '.',
-        [self._env_cc] + self._env_cflags +
-        ['-c', '-o', self._full_path(output), self._full_path(source_file)])
+    if ext == '.c':
+      print('CC', source_file)
+      self.run_command(
+          '.',
+          [self._env_cc] + self._env_cflags + cflags +
+          ['-c', '-o', self._full_path(output), self._full_path(source_file)])
+    elif ext == '.cpp':
+      print('CXX', source_file)
+      self.run_command(
+          '.',
+          [self._env_cxx] + self._env_cxxflags + cflags +
+          ['-c', '-o', self._full_path(output), self._full_path(source_file)])
+    else:
+      raise Exception('Unknown file extension: %s' % ext)
     return output
 
   def insert_sources(self, index, location):
