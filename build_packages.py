@@ -114,11 +114,11 @@ def copy_file_or_tree(source, target, preserve_metadata):
   else:
     copy_file(source, target, preserve_metadata)
 
-def get_recursive_includes(pkg):
+def get_recursive_includes(pkg, suffix):
   includes = set()
   for dep in pkg['lib_depends']:
-    includes.add('-I' + os.path.join(DIR_INSTALL, dep, 'include'))
-    includes = includes.union(get_recursive_includes(PACKAGES[dep]))
+    includes.add('-I' + os.path.join(DIR_INSTALL, dep, suffix))
+    includes = includes.union(get_recursive_includes(PACKAGES[dep], suffix))
   return includes
 
 class PackageBuilder:
@@ -132,8 +132,10 @@ class PackageBuilder:
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
     self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
     self._env_cflags = (['-nostdinc', '-O2', '-g', '-fstack-protector-strong'] +
-                        sorted(get_recursive_includes(self._pkg)))
-    self._env_cxxflags = self._env_cflags + ['-nostdlibinc', '-nostdinc++']
+                        sorted(get_recursive_includes(self._pkg, 'include')))
+    self._env_cxxflags = (
+        self._env_cflags + ['-nostdlibinc', '-nostdinc++'] +
+        sorted(get_recursive_includes(self._pkg, 'include/c++/v1')))
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
