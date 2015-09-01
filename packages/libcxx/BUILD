@@ -16,6 +16,7 @@ def libcxx_build(ctx):
           ['-Iinclude', '-Ilibcxxabi/include', '-std=c++11',
            '-D_LIBCPP_BUILD_STATIC', '-DLIBCXX_BUILDING_LIBCXXABI'])
       for f in sources)
+
   ctx.install(libcxx, 'lib/libc++.a')
   ctx.remove('include/CMakeLists.txt')
   ctx.remove('include/support')

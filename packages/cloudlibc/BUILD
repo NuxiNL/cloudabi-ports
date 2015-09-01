@@ -1,6 +1,7 @@
 def cloudlibc_build(ctx):
   ctx.insert_sources(0, '.')
   ctx.run_command('.', ['./build'])
+
   ctx.run_command('.', ['DESTDIR=stage', 'PREFIX=/', './install'])
   ctx.install('stage', '.')
 

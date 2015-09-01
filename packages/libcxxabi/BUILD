@@ -15,7 +15,10 @@ def libcxxabi_build(ctx):
           os.path.join('src', f),
           ['-Iinclude', '-Ilibunwind/include', '-std=c++11'])
       for f in sources)
+
   ctx.install(libcxxabi, 'lib/libc++abi.a')
+  for f in {'cxxabi.h', '__cxxabi_config.h'}:
+    ctx.install(os.path.join('include', f), os.path.join('include/c++/v1', f))
 
 package(
     name = 'libcxxabi',

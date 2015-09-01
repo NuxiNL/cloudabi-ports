@@ -10,6 +10,7 @@ def libunwind_build(ctx):
        for f in c_sources} |
       {ctx.compile(os.path.join('src', f), ['-Iinclude', '-std=c++11'])
        for f in cxx_sources})
+
   ctx.install(libunwind, 'lib/libunwind.a')
 
 package(

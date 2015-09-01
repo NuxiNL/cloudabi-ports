@@ -8,8 +8,6 @@ import stat
 import subprocess
 import sys
 
-ARCHITECTURES = ['x86_64']
-
 DIR_BUILD = os.path.join(os.getcwd(), '_obj/build')
 DIR_DISTFILES = os.path.join(os.getcwd(), '_obj/distfiles')
 DIR_INSTALL = os.path.join(os.getcwd(), '_obj/install')
@@ -153,7 +151,7 @@ class PackageBuilder:
   def compile(self, source_file, cflags=[]):
     ext = os.path.splitext(source_file)[1]
     output = source_file + '.o'
-    if ext in ['.c', '.S']:
+    if ext in {'.c', '.S'}:
       print('CC', source_file)
       self.run_command(
           '.',
