@@ -146,7 +146,9 @@ def copy_file_or_tree(source, target, preserve_metadata):
 def _get_recursive_subdirs(pkg, prefix, suffix):
   subdirs = set()
   for dep in pkg['lib_depends']:
-    subdirs.add(prefix + os.path.join(DIR_INSTALL, dep, suffix))
+    subdir = os.path.join(DIR_INSTALL, dep, suffix)
+    if os.path.isdir(subdir):
+      subdirs.add(prefix + subdir)
     subdirs |= _get_recursive_subdirs(PACKAGES[dep], prefix, suffix)
   return subdirs
 
@@ -274,12 +276,12 @@ class PackageBuilder:
     os.chdir(os.path.join(self._full_path(cwd)))
     subprocess.check_call(['env', '-i'] + self._env_vars + command)
 
-  def run_make(self):
-    self.run_command('.', ['make'])
+  def run_make(self, target='all'):
+    self.run_command('.', ['make', target])
 
-  def run_make_install(self):
+  def run_make_install(self, target='install'):
     stagedir = self._some_file('stage%d')
-    self.run_command('.', ['make', 'install',
+    self.run_command('.', ['make', target,
                            'DESTDIR=' + self._full_path(stagedir)])
     self.install(os.path.join(stagedir, self._FAKE_ROOTDIR[1:]), '.')
 
