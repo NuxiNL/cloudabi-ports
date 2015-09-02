@@ -279,7 +279,7 @@ class PackageBuilder:
   def run_make(self, args=['all']):
     self.run_command('.', ['make'] + args)
 
-  def run_make_install(self, args='install'):
+  def run_make_install(self, args=['install']):
     stagedir = self._some_file('stage%d')
     self.run_command('.',
                      ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
