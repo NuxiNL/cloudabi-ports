@@ -1,0 +1,58 @@
+--- png.h
++++ png.h
+@@ -3084,8 +3084,6 @@
+  * the png_controlp field 'opaque' to NULL (or, safer, memset the whole thing.)
+  */
+ #ifdef PNG_STDIO_SUPPORTED
+-PNG_EXPORT(234, int, png_image_begin_read_from_file, (png_imagep image,
+-   const char *file_name));
+    /* The named file is opened for read and the image header is filled in
+     * from the PNG header in the file.
+     */
+@@ -3158,10 +3156,6 @@
+  *    values do not correspond to the colors in sRGB.
+  * colormap_entries: set to the number of entries in the color-map (0 to 256)
+  */
+-PNG_EXPORT(239, int, png_image_write_to_file, (png_imagep image,
+-   const char *file, int convert_to_8bit, const void *buffer,
+-   png_int_32 row_stride, const void *colormap));
+-   /* Write the image to the named file. */
+ 
+ PNG_EXPORT(240, int, png_image_write_to_stdio, (png_imagep image, FILE *file,
+    int convert_to_8_bit, const void *buffer, png_int_32 row_stride,
+--- pngread.c
++++ pngread.c
+@@ -1470,6 +1470,7 @@
+    return 0;
+ }
+ 
++#if 0
+ int PNGAPI
+ png_image_begin_read_from_file(png_imagep image, const char *file_name)
+ {
+@@ -1507,6 +1508,7 @@
+ 
+    return 0;
+ }
++#endif
+ #endif /* STDIO */
+ 
+ static void PNGCBAPI
+--- pngwrite.c
++++ pngwrite.c
+@@ -2159,6 +2159,7 @@
+       return 0;
+ }
+ 
++#if 0
+ int PNGAPI
+ png_image_write_to_file(png_imagep image, const char *file_name,
+    int convert_to_8bit, const void *buffer, png_int_32 row_stride,
+@@ -2225,6 +2226,7 @@
+    else
+       return 0;
+ }
++#endif
+ # endif /* STDIO */
+ #endif /* SIMPLIFIED_WRITE */
+ #endif /* WRITE */
