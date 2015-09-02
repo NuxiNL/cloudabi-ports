@@ -76,11 +76,24 @@ def walk_files(path):
   else:
     yield os.path.split(path)
 
+def walk_files_concurrently(source, target):
+  for dirname, filename in walk_files(source):
+    source_filename = os.path.join(dirname, filename)
+    target_filename = os.path.normpath(
+        os.path.join(target, os.path.relpath(source_filename, source)))
+    yield source_filename, target_filename
+
 # Parse all of the BUILD rules.
 for dirname, filename in walk_files(DIR_REPOSITORY):
   if filename == 'BUILD':
     with open(os.path.join(dirname, 'BUILD'), 'r') as f:
       exec(f.read())
+
+def make_parents(path):
+  try:
+    os.makedirs(os.path.dirname(path))
+  except:
+    pass
 
 def get_distfile(distname):
   # Fetch distfile.
@@ -128,44 +141,14 @@ def get_patched(distname):
     open(dot_patched, 'w').close()
   return source_directory
 
-def copy_file_or_tree(source, target, preserve_metadata):
-  for dirname, filename in walk_files(source):
-    # Determine source and target pathnames.
-    source_filename = os.path.join(dirname, filename)
-    target_filename = os.path.normpath(
-        os.path.join(target, os.path.relpath(source_filename, source)))
-
+def copy_file_or_tree(source, target):
+  for source_file, target_file in walk_files_concurrently(source, target):
     # Never overwrite any files.
-    if os.path.exists(target_filename):
+    if os.path.exists(target_file):
       raise Exception('About to overwrite %s with %s' %
-                      (target_filename, source_filename))
-    try:
-      os.makedirs(os.path.dirname(target_filename))
-    except:
-      pass
-    shutil.copy(source_filename, target_filename)
-    if preserve_metadata:
-      shutil.copystat(source_filename, target_filename)
-
-def remove_timestamp_from_libraries(path):
-  for dirname, filename in walk_files(path):
-    if filename.endswith('.a'):
-      path = os.path.join(dirname, filename)
-      os.chmod(path, 0o644)
-      with open(path, 'r+') as f:
-        f.seek(24)
-        f.write("0           ")
-
-def substitute_path_in_libraries(path, textfrom, textto):
-  for dirname, filename in walk_files(path):
-    ext = os.path.splitext(filename)[1]
-    if ext in {'.la', '.pc'}:
-      path = os.path.join(dirname, filename)
-      with open(path, 'r') as f:
-        contents = f.read()
-      contents = contents.replace(textfrom, textto)
-      with open(path, 'w') as f:
-        f.write(contents)
+                      (target_file, source_file))
+    make_parents(target_file)
+    shutil.copy2(source_file, target_file)
 
 class PackageBuilder:
 
@@ -237,16 +220,34 @@ class PackageBuilder:
       distname = distname + '.gz'
     elif distname + '.xz' in DISTFILES:
       distname = distname + '.xz'
-    copy_file_or_tree(get_patched(distname), self._full_path(location), True)
+    copy_file_or_tree(get_patched(distname), self._full_path(location))
 
   def install(self, source, target):
     print('INSTALL', source, '->', target)
     target = os.path.join(self._install_directory, target)
-    copy_file_or_tree(self._full_path(source), target, False)
-    # Sanitize the files that have been installed.
-    remove_timestamp_from_libraries(target)
-    substitute_path_in_libraries(target, '/nonexistent', '%%PREFIX%%')
-    substitute_path_in_libraries(target, DIR_DEPS, '%%PREFIX%%')
+    source = self._full_path(source)
+    for source_file, target_file in walk_files_concurrently(source, target):
+      make_parents(target_file)
+      ext = os.path.splitext(source_file)[1]
+      if ext == '.a':
+        # Remove timestamps from .a header, for determinism.
+        shutil.copyfile(source_file, target_file)
+        with open(target_file, 'r+') as f:
+          f.seek(24)
+          f.write("0           ")
+      elif ext in {'.la', '.pc'}:
+        # Remove references to /nonexistent and DIR_DEPS from libtool
+        # archives and pkg-config files.
+        with open(source_file, 'r') as f:
+          contents = f.read()
+        contents = (contents
+            .replace('/nonexistent', '%%PREFIX%%')
+            .replace(DIR_DEPS, '%%PREFIX%%'))
+        with open(target_file + '.template', 'w') as f:
+          f.write(contents)
+      else:
+        # Copy other files literally.
+        shutil.copy(source_file, target_file)
 
   def link_library(self, object_files):
     objs = [self._full_path(f) for f in sorted(object_files)]
@@ -290,7 +291,21 @@ def _copy_dependencies(pkg, done):
     if dep not in done:
       source = os.path.join(DIR_INSTALL, dep)
       if os.path.exists(source):
-        copy_file_or_tree(source, DIR_DEPS, False)
+        # Install files from package into dependency directory.
+        for source_file, target_file in walk_files_concurrently(source,
+                                                                DIR_DEPS):
+          make_parents(target_file)
+          if target_file.endswith('.template'):
+            # File is a template. Expand %%PREFIX%% tags.
+            with open(source_file, 'r') as f:
+              contents = f.read()
+            contents = contents.replace('%%PREFIX%%', DIR_DEPS)
+            with open(target_file[:-9], 'w') as f:
+              f.write(contents)
+          else:
+            # Regular file. Copy it over literally.
+            shutil.copy(source_file, target_file)
+
       done.add(dep)
       _copy_dependencies(PACKAGES[dep], done)
 
@@ -321,7 +336,6 @@ def build_package(pkg):
     # Install dependencies into a temporary directory.
     print('PKG', pkg['name'])
     copy_dependencies(pkg)
-    substitute_path_in_libraries(DIR_DEPS, '%%PREFIX%%', DIR_DEPS)
     pkg['build_cmd'](PackageBuilder(pkg, install_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
