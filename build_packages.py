@@ -197,6 +197,8 @@ class PackageBuilder:
         'CXXFLAGS=' + ' '.join(self._env_cxxflags),
         'LDFLAGS=-nostdlib -L%s/lib' % DIR_DEPS,
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
+        'PKG_CONFIG=/usr/local/bin/pkg-config',
+        'PKG_CONFIG_LIBDIR=' + os.path.join(DIR_DEPS, 'lib/pkgconfig'),
     ]
 
   def _full_path(self, path):
