@@ -347,9 +347,5 @@ if len(sys.argv) > 1:
     build_package(PACKAGES[pkg])
 else:
   # Build all packages.
-  try:
-    shutil.rmtree(DIR_INSTALL)
-  except:
-    pass
   for pkg in PACKAGES:
     build_package(PACKAGES[pkg])
