@@ -66,7 +66,6 @@ def sourceforge_sites(suffix):
       'http://switch.dl.sourceforge.net/project/',
       'http://tenet.dl.sourceforge.net/project/',
       'http://ufpr.dl.sourceforge.net/project/',
-      'http://waix.dl.sourceforge.net/project/',
   }}
 
 
