@@ -184,6 +184,7 @@ class PackageBuilder:
     self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
     self._env_cflags = [
         '-nostdlibinc', '-O2', '-fstack-protector-strong',
+        '-Werror=implicit-function-declaration',
         '-Qunused-arguments', '-I%s/include' % DIR_DEPS]
     self._env_cxxflags = self._env_cflags + [
         '-nostdlibinc', '-nostdinc++', '-I%s/include/c++/v1' % DIR_DEPS]
@@ -192,7 +193,8 @@ class PackageBuilder:
         'CC=' + self._env_cc,
         'CXX=' + self._env_cxx,
         'CFLAGS=' + ' '.join(self._env_cflags),
-        'CXXFLAGS=' + ' '.join(self._env_cxxflags),
+        'CPPFLAGS=-I%s/include' % DIR_DEPS,
+        'CXXFLAGS=-nostdlibinc ' + ' '.join(self._env_cxxflags),
         'LDFLAGS=-nostdlib -L%s/lib' % DIR_DEPS,
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
         'PKG_CONFIG=/usr/local/bin/pkg-config',
