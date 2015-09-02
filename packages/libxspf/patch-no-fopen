@@ -1,0 +1,105 @@
+--- bindings/c/xspf_c.cpp
++++ bindings/c/xspf_c.cpp
+@@ -181,6 +181,7 @@
+  * Public C interface
+  */
+ 
++#if 0
+ extern "C" struct xspf_list *
+ xspf_parse(char const *filename, char const *baseuri)
+ {
+@@ -201,6 +202,7 @@
+ 		return (NULL);
+ 	}
+ }
++#endif
+ 
+ extern "C" struct xspf_list *
+ xspf_parse_memory(char const *memory, int len_bytes, char const *baseuri)
+@@ -316,6 +318,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ xspf_write(struct xspf_list *list, char const *filename, char const *baseuri)
+ {
+@@ -360,3 +363,4 @@
+ 	delete writer;
+ 	return res;
+ }
++#endif
+--- bindings/c/xspf_c.h
++++ bindings/c/xspf_c.h
+@@ -160,7 +160,6 @@
+ /**
+  * @brief Parse an XSPF file by filename.
+  */
+-struct xspf_list *xspf_parse(char const *filename, char const *baseuri);
+ /**
+  * @brief Parse an XSPF file from memory.
+  * @since 1.2.0
+@@ -198,6 +197,5 @@
+ /**
+  * @brief Write the Xspf playlist to a file.
+  */
+-int xspf_write(struct xspf_list *list, char const *filename, char const *baseuri);
+ 
+ #endif /* !XSPF_C_H */
+--- include/xspf/XspfReader.h
++++ include/xspf/XspfReader.h
+@@ -251,8 +251,6 @@
+ 	 * @return          Error/warning code that aborted parsing or \c XSPF_READER_SUCCESS.
+ 	 * @since 1.0.0rc1
+ 	 */
+-	int parseFile(XML_Char const * filename, XspfReaderCallback * callback,
+-			XML_Char const * baseUri);
+ 
+ 	/**
+ 	 * Reads an XSPF playlist from a block of memory.
+--- include/xspf/XspfWriter.h
++++ include/xspf/XspfWriter.h
+@@ -207,7 +207,6 @@
+ 	 * @param filename	Filename of the file to write to
+ 	 * @return			Error code
+ 	 */
+-	int writeFile(XML_Char const * filename);
+ 
+ 	/**
+ 	 * Finalizes the playlist and writes it to a block of memory.
+--- src/XspfReader.cpp
++++ src/XspfReader.cpp
+@@ -565,6 +565,7 @@
+ }
+ 
+ 
++#if 0
+ int XspfReader::parseFile(XML_Char const * filename,
+ 		XspfReaderCallback * callback, XML_Char const * baseUri) {
+ 	// Init
+@@ -631,6 +632,7 @@
+ 
+ 	return this->d->errorCode;
+ }
++#endif
+ 
+ 
+ int XspfReader::parseMemory(char const * memory, int numBytes,
+--- src/XspfWriter.cpp
++++ src/XspfWriter.cpp
+@@ -280,6 +280,7 @@
+ }
+ 
+ 
++#if 0
+ int
+ XspfWriter::writeFile(XML_Char const * filename) {
+ 	// Open file
+@@ -311,6 +312,7 @@
+ 
+ 	return XSPF_WRITER_SUCCESS;
+ }
++#endif
+ 
+ 
+ int
