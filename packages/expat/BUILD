@@ -1,0 +1,21 @@
+def expat_build(ctx):
+  ctx.insert_sources(0, '.')
+  ctx.run_autoconf()
+  ctx.run_make('buildlib')
+  ctx.run_make_install('installlib')
+
+package(
+    name = 'expat',
+    version = '2.1.0',
+    homepage = 'http://expat.sourceforge.net/',
+    maintainer = 'info@nuxi.nl',
+    lib_depends = {'c-runtime'},
+    build_cmd = expat_build,
+)
+
+distfile(
+    name = 'expat-2.1.0.tar.gz',
+    checksum = '823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86',
+    master_sites = sourceforge_sites('expat', '2.1.0'),
+    patches = {'expat/patch-arc4random'},
+)
