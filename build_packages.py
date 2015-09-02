@@ -179,9 +179,12 @@ class PackageBuilder:
         'CPPFLAGS=-I%s/include' % DIR_DEPS,
         'CXXFLAGS=-nostdlibinc ' + ' '.join(self._env_cxxflags),
         'LDFLAGS=-nostdlib -L%s/lib' % DIR_DEPS,
+        'NM=/usr/local/bin/x86_64-unknown-cloudabi-nm',
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
         'PKG_CONFIG=/usr/local/bin/pkg-config',
         'PKG_CONFIG_LIBDIR=' + os.path.join(DIR_DEPS, 'lib/pkgconfig'),
+        'RANLIB=/usr/local/bin/x86_64-unknown-cloudabi-ranlib',
+        'STRIP=/usr/local/bin/x86_64-unknown-cloudabi-strip',
     ]
 
   def _full_path(self, path):
