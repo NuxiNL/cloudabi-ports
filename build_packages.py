@@ -48,27 +48,25 @@ def autoconf_automake_build(ctx):
   ctx.run_make()
   ctx.run_make_install()
 
-def sourceforge_sites(name, version):
-  return {fmt % {'name': name, 'version': version} for fmt in {
-      'http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://freefr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://garr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://heanet.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://hivelocity.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://ignum.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://internode.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://iweb.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://jaist.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://kent.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/'
-      'http://master.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://nchc.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://ncu.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://netcologne.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://superb-dca3.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://switch.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://tenet.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://ufpr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
-      'http://waix.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+def sourceforge_sites(suffix):
+  return {fmt + suffix + '/' for fmt in {
+      'http://downloads.sourceforge.net/project/',
+      'http://freefr.dl.sourceforge.net/project/',
+      'http://heanet.dl.sourceforge.net/project/',
+      'http://hivelocity.dl.sourceforge.net/project/',
+      'http://internode.dl.sourceforge.net/project/',
+      'http://iweb.dl.sourceforge.net/project/',
+      'http://jaist.dl.sourceforge.net/project/',
+      'http://kent.dl.sourceforge.net/project/',
+      'http://master.dl.sourceforge.net/project/',
+      'http://nchc.dl.sourceforge.net/project/',
+      'http://ncu.dl.sourceforge.net/project/',
+      'http://netcologne.dl.sourceforge.net/project/',
+      'http://superb-dca3.dl.sourceforge.net/project/',
+      'http://switch.dl.sourceforge.net/project/',
+      'http://tenet.dl.sourceforge.net/project/',
+      'http://ufpr.dl.sourceforge.net/project/',
+      'http://waix.dl.sourceforge.net/project/',
   }}
 
 
@@ -235,7 +233,9 @@ class PackageBuilder:
   def insert_sources(self, index, location):
     # Add compression extension.
     distname = self._pkg['distfiles'][index]
-    if distname + '.gz' in DISTFILES:
+    if distname + '.bz2' in DISTFILES:
+      distname = distname + '.bz2'
+    elif distname + '.gz' in DISTFILES:
       distname = distname + '.gz'
     elif distname + '.xz' in DISTFILES:
       distname = distname + '.xz'
@@ -263,26 +263,26 @@ class PackageBuilder:
     else:
       os.remove(path)
 
-  def run_autoconf(self):
+  def run_autoconf(self, args=[]):
     # Replace config.sub files by an up-to-datecopy.
     for root, dirs, files in os.walk(self._build_directory):
       if 'config.sub' in files:
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
                      os.path.join(root, 'config.sub'))
     self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
-                           '--prefix=' + self._FAKE_ROOTDIR])
+                           '--prefix=' + self._FAKE_ROOTDIR] + args)
 
   def run_command(self, cwd, command):
     os.chdir(os.path.join(self._full_path(cwd)))
     subprocess.check_call(['env', '-i'] + self._env_vars + command)
 
-  def run_make(self, target='all'):
-    self.run_command('.', ['make', target])
+  def run_make(self, args=['all']):
+    self.run_command('.', ['make'] + args)
 
-  def run_make_install(self, target='install'):
+  def run_make_install(self, args='install'):
     stagedir = self._some_file('stage%d')
-    self.run_command('.', ['make', target,
-                           'DESTDIR=' + self._full_path(stagedir)])
+    self.run_command('.',
+                     ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
     self.install(os.path.join(stagedir, self._FAKE_ROOTDIR[1:]), '.')
 
 def build_package(pkg):

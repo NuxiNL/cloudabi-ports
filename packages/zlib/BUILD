@@ -1,7 +1,7 @@
 def zlib_build(ctx):
   ctx.insert_sources(0, '.')
   ctx.run_command('.', ['./configure'])
-  ctx.run_make('libz.a')
+  ctx.run_make(['libz.a'])
 
   ctx.install('libz.a', 'lib/libz.a')
   ctx.install('zconf.h', 'include/zconf.h')
