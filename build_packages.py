@@ -48,6 +48,30 @@ def autoconf_automake_build(ctx):
   ctx.run_make()
   ctx.run_make_install()
 
+def sourceforge_sites(name, version):
+  return {fmt % {'name': name, 'version': version} for fmt in {
+      'http://downloads.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://freefr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://garr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://heanet.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://hivelocity.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://ignum.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://internode.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://iweb.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://jaist.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://kent.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/'
+      'http://master.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://nchc.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://ncu.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://netcologne.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://superb-dca3.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://switch.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://tenet.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://ufpr.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+      'http://waix.dl.sourceforge.net/project/%(name)s/%(name)s/%(version)s/',
+  }}
+
+
 # Parse all of the BUILD rules.
 for root, dirs, files in os.walk(DIR_REPOSITORY):
   if 'BUILD' in files:
