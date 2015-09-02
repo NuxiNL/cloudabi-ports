@@ -22,17 +22,16 @@ def libcxxabi_build(ctx):
 
 package(
     name = 'libcxxabi',
-    version = '3.7.0-rc3',
+    version = '3.7.0',
     homepage = 'http://libcxxabi.llvm.org/',
     maintainer = 'info@nuxi.nl',
     lib_depends = {'c-runtime', 'libcxx'},
-    distfiles = ['libcxxabi-3.7.0rc3.src.tar.xz',
-                 'libunwind-3.7.0rc3.src.tar.xz'],
+    distfiles = ['libcxxabi-3.7.0.src.tar.xz', 'libunwind-3.7.0.src.tar.xz'],
     build_cmd = libcxxabi_build,
 )
 
 distfile(
-    name = 'libcxxabi-3.7.0rc3.src.tar.xz',
-    checksum = 'd56e11a0d6799f54568d29b8e4c92595afc63c067404e97429ede23a0a7df661',
-    master_sites = {'http://llvm.org/pre-releases/3.7.0/rc3/'},
+    name = 'libcxxabi-3.7.0.src.tar.xz',
+    checksum = '48b074fd334958b2d8bab893c897a0c8258328782cdec2d229c7bce432b49beb',
+    master_sites = {'http://llvm.org/releases/3.7.0/'},
 )

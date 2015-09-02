@@ -24,17 +24,17 @@ def libcxx_build(ctx):
 
 package(
     name = 'libcxx',
-    version = '3.7.0-rc3',
+    version = '3.7.0',
     homepage = 'http://libcxx.llvm.org/',
     maintainer = 'info@nuxi.nl',
     lib_depends = {'c-runtime'},
-    distfiles = ['libcxx-3.7.0rc3.src.tar.xz', 'libcxxabi-3.7.0rc3.src.tar.xz'],
+    distfiles = ['libcxx-3.7.0.src.tar.xz', 'libcxxabi-3.7.0.src.tar.xz'],
     build_cmd = libcxx_build,
 )
 
 distfile(
-    name = 'libcxx-3.7.0rc3.src.tar.xz',
-    checksum = 'da937bdffc153e04b8d17332d7544293c085448d9380eae5531ba42d939cd7b2',
-    master_sites = {'http://llvm.org/pre-releases/3.7.0/rc3/'},
+    name = 'libcxx-3.7.0.src.tar.xz',
+    checksum = 'c18f3c8333cd7e678c1424a57fe5e25efe740ca7caf62ac67152b4723f3ad08e',
+    master_sites = {'http://llvm.org/releases/3.7.0/'},
     patches = {'libcxx/patch-no-std-funcs'},
 )

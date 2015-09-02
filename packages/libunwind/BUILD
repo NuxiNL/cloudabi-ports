@@ -15,16 +15,16 @@ def libunwind_build(ctx):
 
 package(
     name = 'libunwind',
-    version = '3.7.0-rc3',
+    version = '3.7.0',
     homepage = 'http://libcxx.llvm.org/',
     maintainer = 'info@nuxi.nl',
     lib_depends = {'c-runtime', 'libcxx'},
-    distfiles = ['libunwind-3.7.0rc3.src.tar.xz'],
+    distfiles = ['libunwind-3.7.0.src.tar.xz'],
     build_cmd = libunwind_build,
 )
 
 distfile(
-    name = 'libunwind-3.7.0rc3.src.tar.xz',
-    checksum = '7a6defa868eca6d6db2a67b9eb1aec24236be60e2da64a22022306e931f4738b',
-    master_sites = {'http://llvm.org/pre-releases/3.7.0/rc3/'},
+    name = 'libunwind-3.7.0.src.tar.xz',
+    checksum = '6a600f30b9f3a54a1faf8c2dfd12522a0c90eb65f1aad63fec540aa27bcaca5b',
+    master_sites = {'http://llvm.org/releases/3.7.0/'},
 )

@@ -43,16 +43,16 @@ def compiler_rt_build(ctx):
 
 package(
     name = 'compiler-rt',
-    version = '3.7.0-rc3',
+    version = '3.7.0',
     homepage = 'http://compiler-rt.llvm.org/',
     maintainer = 'info@nuxi.nl',
     lib_depends = {'cloudlibc'},
-    distfiles = ['compiler-rt-3.7.0rc3.src.tar.xz'],
+    distfiles = ['compiler-rt-3.7.0.src.tar.xz'],
     build_cmd = compiler_rt_build,
 )
 
 distfile(
-    name = 'compiler-rt-3.7.0rc3.src.tar.xz',
-    checksum = '0e822f587363c19e4d527a3f7c43eaf80ab14c1e057e9baa28337b69dc5a1a6b',
-    master_sites = {'http://llvm.org/pre-releases/3.7.0/rc3/'},
+    name = 'compiler-rt-3.7.0.src.tar.xz',
+    checksum = '227fa998520bc94974a428dc8e7654d9bdf277e5bc70d4064ebc05691bd62b0b',
+    master_sites = {'http://llvm.org/releases/3.7.0/'},
 )
