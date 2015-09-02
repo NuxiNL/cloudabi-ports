@@ -15,7 +15,7 @@ DIR_DEPS = os.path.join(DIR_ROOT, '_obj/deps')
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
-DIR_SOURCES = os.path.join(DIR_ROOT, '_obj/srcs')
+DIR_SOURCES = os.path.join(DIR_ROOT, '_obj/sources')
 
 PACKAGES = {}
 PACKAGES_BUILT = set()
