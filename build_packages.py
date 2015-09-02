@@ -129,6 +129,22 @@ def _get_recursive_subdirs(pkg, prefix, suffix):
 def get_recursive_subdirs(pkg, prefix, suffix):
   return sorted(_get_recursive_subdirs(pkg, prefix, suffix))
 
+def _make_deterministic(path):
+  if path.endswith('.a'):
+    # Remove timestamp from static library header.
+    os.chmod(path, 0o644)
+    with open(path, 'r+') as f:
+      f.seek(24)
+      f.write("0           ")
+
+def make_deterministic(path):
+  if os.path.isdir(path):
+    for root, dirs, files in os.walk(path):
+      for f in files:
+        _make_deterministic(os.path.join(root, f))
+  else:
+    _make_deterministic(path)
+
 class PackageBuilder:
 
   # Fake root directory prefix that is passed to build systems such as
@@ -201,7 +217,9 @@ class PackageBuilder:
 
   def install(self, source, target):
     print('INSTALL', source, '->', target)
-    copy_file_or_tree(self._full_path(source),
+    source = self._full_path(source)
+    make_deterministic(source)
+    copy_file_or_tree(source,
                       os.path.join(self._install_directory, target), False)
 
   def link_library(self, object_files):
