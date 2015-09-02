@@ -28,8 +28,6 @@ def package(**kwargs):
   name = kwargs['name']
   if name in PACKAGES:
     raise Exception('%s listed multiple times' % name)
-  if 'build_cmd' not in kwargs:
-    kwargs['build_cmd'] = build_nothing
   if 'distfiles' not in kwargs:
     kwargs['distfiles'] = ['%s-%s.tar' % (kwargs['name'], kwargs['version'])]
   if 'lib_depends' not in kwargs:
@@ -317,7 +315,7 @@ def build_package(pkg):
     pass
 
   install_directory = os.path.join(DIR_INSTALL, pkg['name'])
-  if not os.path.isdir(install_directory):
+  if 'build_cmd' in pkg and not os.path.isdir(install_directory):
     # Install dependencies into a temporary directory.
     print('PKG', pkg['name'])
     copy_dependencies(pkg)
