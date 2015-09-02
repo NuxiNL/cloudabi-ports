@@ -11,6 +11,7 @@ import sys
 
 DIR_ROOT = os.getcwd()
 DIR_BUILD = os.path.join(DIR_ROOT, '_obj/build')
+DIR_DEPS = os.path.join(DIR_ROOT, '_obj/deps')
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
@@ -148,18 +149,6 @@ def copy_file_or_tree(source, target, preserve_metadata):
     if preserve_metadata:
       shutil.copystat(source_filename, target_filename)
 
-def _get_recursive_subdirs(pkg, prefix, suffix):
-  subdirs = set()
-  for dep in pkg['lib_depends']:
-    subdir = os.path.join(DIR_INSTALL, dep, suffix)
-    if os.path.isdir(subdir):
-      subdirs.add(prefix + subdir)
-    subdirs |= _get_recursive_subdirs(PACKAGES[dep], prefix, suffix)
-  return subdirs
-
-def get_recursive_subdirs(pkg, prefix, suffix):
-  return sorted(_get_recursive_subdirs(pkg, prefix, suffix))
-
 def remove_timestamp_from_libraries(path):
   for dirname, filename in walk_files(path):
     if filename.endswith('.a'):
@@ -187,35 +176,31 @@ class PackageBuilder:
   # files on the system.
   _FAKE_ROOTDIR = '/nonexistent'
 
-  def __init__(self, pkg, build_directory, install_directory):
+  def __init__(self, pkg, install_directory):
     self._pkg = pkg
-    self._build_directory = build_directory
     self._install_directory = install_directory
     self._sequence_number = 0
 
     self._env_ar = '/usr/local/bin/x86_64-unknown-cloudabi-ar'
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
     self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
-    self._env_cflags = (
-        ['-nostdlibinc', '-O2', '-fstack-protector-strong',
-         '-Qunused-arguments'] +
-        get_recursive_subdirs(self._pkg, '-I', 'include'))
-    self._env_cxxflags = (
-        self._env_cflags + ['-nostdlibinc', '-nostdinc++'] +
-        get_recursive_subdirs(self._pkg, '-I', 'include/c++/v1'))
+    self._env_cflags = [
+        '-nostdlibinc', '-O2', '-fstack-protector-strong',
+        '-Qunused-arguments', '-I%s/include' % DIR_DEPS]
+    self._env_cxxflags = self._env_cflags + [
+        '-nostdlibinc', '-nostdinc++', '-I%s/include/c++/v1' % DIR_DEPS]
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
         'CXX=' + self._env_cxx,
         'CFLAGS=' + ' '.join(self._env_cflags),
         'CXXFLAGS=' + ' '.join(self._env_cxxflags),
-        'LDFLAGS=-nostdlib ' +
-        ' '.join(get_recursive_subdirs(self._pkg, '-L', 'lib')),
+        'LDFLAGS=-nostdlib -L%s/lib' % DIR_DEPS,
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
     ]
 
   def _full_path(self, path):
-    return os.path.join(self._build_directory, path)
+    return os.path.join(DIR_BUILD, path)
 
   def _some_file(self, fmt):
     filename = fmt % self._sequence_number
@@ -254,11 +239,12 @@ class PackageBuilder:
 
   def install(self, source, target):
     print('INSTALL', source, '->', target)
-    source = self._full_path(source)
-    remove_timestamp_from_libraries(source)
-    substitute_path_in_libraries(source, '/nonexistent', '%%PREFIX%%')
-    copy_file_or_tree(source,
-                      os.path.join(self._install_directory, target), False)
+    target = os.path.join(self._install_directory, target)
+    copy_file_or_tree(self._full_path(source), target, False)
+    # Sanitize the files that have been installed.
+    remove_timestamp_from_libraries(target)
+    substitute_path_in_libraries(target, '/nonexistent', '%%PREFIX%%')
+    substitute_path_in_libraries(target, DIR_DEPS, '%%PREFIX%%')
 
   def link_library(self, object_files):
     objs = [self._full_path(f) for f in sorted(object_files)]
@@ -277,7 +263,7 @@ class PackageBuilder:
 
   def run_autoconf(self, args=[]):
     # Replace config.sub files by an up-to-datecopy.
-    for dirname, filename in walk_files(self._build_directory):
+    for dirname, filename in walk_files(DIR_BUILD):
       if filename == 'config.sub':
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
                      os.path.join(dirname, 'config.sub'))
@@ -297,6 +283,18 @@ class PackageBuilder:
                      ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
     self.install(os.path.join(stagedir, self._FAKE_ROOTDIR[1:]), '.')
 
+def _copy_dependencies(pkg, done):
+  for dep in pkg['lib_depends']:
+    if dep not in done:
+      source = os.path.join(DIR_INSTALL, dep)
+      if os.path.exists(source):
+        copy_file_or_tree(source, DIR_DEPS, False)
+      done.add(dep)
+      _copy_dependencies(PACKAGES[dep], done)
+
+def copy_dependencies(pkg):
+  _copy_dependencies(pkg, set())
+
 def build_package(pkg):
   if pkg['name'] in PACKAGES_BUILT:
     return
@@ -306,24 +304,28 @@ def build_package(pkg):
   for dep in pkg['lib_depends']:
     build_package(PACKAGES[dep])
 
-  build_directory = os.path.join(DIR_BUILD, pkg['name'])
-  install_directory = os.path.join(DIR_INSTALL, pkg['name'])
-  if not os.path.isdir(install_directory):
-    print('PKG', pkg['name'])
-    pkg['build_cmd'](PackageBuilder(pkg, build_directory, install_directory))
+  # Clean up.
   try:
-    shutil.rmtree(build_directory)
+    shutil.rmtree(DIR_BUILD)
   except:
     pass
+  try:
+    shutil.rmtree(DIR_DEPS)
+  except:
+    pass
+
+  install_directory = os.path.join(DIR_INSTALL, pkg['name'])
+  if not os.path.isdir(install_directory):
+    # Install dependencies into a temporary directory.
+    print('PKG', pkg['name'])
+    copy_dependencies(pkg)
+    substitute_path_in_libraries(DIR_DEPS, '%%PREFIX%%', DIR_DEPS)
+    pkg['build_cmd'](PackageBuilder(pkg, install_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
   PACKAGES_BUILT.add(pkg['name'])
 
 # Clean up.
-try:
-  shutil.rmtree(DIR_BUILD)
-except:
-  pass
 try:
   shutil.rmtree(DIR_SOURCES)
 except:
