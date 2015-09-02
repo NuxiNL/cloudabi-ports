@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import fileinput
 import hashlib
 import os
 import random
@@ -68,11 +69,18 @@ def sourceforge_sites(suffix):
       'http://ufpr.dl.sourceforge.net/project/',
   }}
 
+def walk_files(path):
+  if os.path.isdir(path):
+    for root, dirs, files in os.walk(path):
+      for f in files:
+        yield (root, f)
+  else:
+    yield os.path.split(path)
 
 # Parse all of the BUILD rules.
-for root, dirs, files in os.walk(DIR_REPOSITORY):
-  if 'BUILD' in files:
-    with open(os.path.join(root, 'BUILD'), 'r') as f:
+for dirname, filename in walk_files(DIR_REPOSITORY):
+  if filename == 'BUILD':
+    with open(os.path.join(dirname, 'BUILD'), 'r') as f:
       exec(f.read())
 
 def get_distfile(distname):
@@ -114,31 +122,31 @@ def get_patched(distname):
       with open(os.path.join(DIR_REPOSITORY, patch)) as f:
         subprocess.check_call(['patch', '-d', source_directory, '-sp0'],
                               stdin=f)
+    # Delete .orig files that are left behind.
+    for dirname, filename in walk_files(source_directory):
+      if filename.endswith('.orig'):
+        os.unlink(os.path.join(dirname, filename))
     open(dot_patched, 'w').close()
   return source_directory
 
-def copy_file(source, target, preserve_metadata):
-  if os.path.exists(target):
-    raise Exception('About to overwrite %s with %s' % (target, source))
-  try:
-    os.makedirs(os.path.dirname(target))
-  except:
-    pass
-  shutil.copy(source, target)
-  if preserve_metadata:
-    shutil.copystat(source, target)
-
 def copy_file_or_tree(source, target, preserve_metadata):
-  if os.path.isdir(source):
-    for root, dirs, files in os.walk(source):
-      for f in files:
-        if not f.endswith('.orig'):
-          source_filename = os.path.join(root, f)
-          target_filename = os.path.normpath(
-              os.path.join(target, os.path.relpath(source_filename, source)))
-          copy_file(source_filename, target_filename, preserve_metadata)
-  else:
-    copy_file(source, target, preserve_metadata)
+  for dirname, filename in walk_files(source):
+    # Determine source and target pathnames.
+    source_filename = os.path.join(dirname, filename)
+    target_filename = os.path.normpath(
+        os.path.join(target, os.path.relpath(source_filename, source)))
+
+    # Never overwrite any files.
+    if os.path.exists(target_filename):
+      raise Exception('About to overwrite %s with %s' %
+                      (target_filename, source_filename))
+    try:
+      os.makedirs(os.path.dirname(target_filename))
+    except:
+      pass
+    shutil.copy(source_filename, target_filename)
+    if preserve_metadata:
+      shutil.copystat(source_filename, target_filename)
 
 def _get_recursive_subdirs(pkg, prefix, suffix):
   subdirs = set()
@@ -152,21 +160,25 @@ def _get_recursive_subdirs(pkg, prefix, suffix):
 def get_recursive_subdirs(pkg, prefix, suffix):
   return sorted(_get_recursive_subdirs(pkg, prefix, suffix))
 
-def _make_deterministic(path):
-  if path.endswith('.a'):
-    # Remove timestamp from static library header.
-    os.chmod(path, 0o644)
-    with open(path, 'r+') as f:
-      f.seek(24)
-      f.write("0           ")
+def remove_timestamp_from_libraries(path):
+  for dirname, filename in walk_files(path):
+    if filename.endswith('.a'):
+      path = os.path.join(dirname, filename)
+      os.chmod(path, 0o644)
+      with open(path, 'r+') as f:
+        f.seek(24)
+        f.write("0           ")
 
-def make_deterministic(path):
-  if os.path.isdir(path):
-    for root, dirs, files in os.walk(path):
-      for f in files:
-        _make_deterministic(os.path.join(root, f))
-  else:
-    _make_deterministic(path)
+def substitute_path_in_libraries(path, textfrom, textto):
+  for dirname, filename in walk_files(path):
+    ext = os.path.splitext(filename)[1]
+    if ext in {'.la', '.pc'}:
+      path = os.path.join(dirname, filename)
+      with open(path, 'r') as f:
+        contents = f.read()
+      contents = contents.replace(textfrom, textto)
+      with open(path, 'w') as f:
+        f.write(contents)
 
 class PackageBuilder:
 
@@ -243,7 +255,8 @@ class PackageBuilder:
   def install(self, source, target):
     print('INSTALL', source, '->', target)
     source = self._full_path(source)
-    make_deterministic(source)
+    remove_timestamp_from_libraries(source)
+    substitute_path_in_libraries(source, '/nonexistent', '%%PREFIX%%')
     copy_file_or_tree(source,
                       os.path.join(self._install_directory, target), False)
 
@@ -264,10 +277,10 @@ class PackageBuilder:
 
   def run_autoconf(self, args=[]):
     # Replace config.sub files by an up-to-datecopy.
-    for root, dirs, files in os.walk(self._build_directory):
-      if 'config.sub' in files:
+    for dirname, filename in walk_files(self._build_directory):
+      if filename == 'config.sub':
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
-                     os.path.join(root, 'config.sub'))
+                     os.path.join(dirname, 'config.sub'))
     self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
                            '--prefix=' + self._FAKE_ROOTDIR] + args)
 
