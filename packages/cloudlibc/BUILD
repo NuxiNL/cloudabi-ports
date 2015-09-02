@@ -17,5 +17,5 @@ distfile(
     name = 'cloudlibc-0.4.tar.xz',
     checksum = 'ec9892519a2c1711005f7ab7cc4d7f98278ab4f3fcce0466fe57bd4e902b06b1',
     master_sites = {'https://nuxi.nl/distfiles/cloudlibc/'},
-    patches = {'cloudlibc/patch-atoi'},
+    patches = {'cloudlibc/patch-atoi', 'cloudlibc/patch-ungetc'},
 )
