@@ -279,33 +279,19 @@ class PackageBuilder(Builder):
     self._pkg = pkg
     self._install_directory = install_directory
     self._arch = arch
-    self._prefix = os.path.join(DIR_BUILD, self._arch)
 
-    self._env_ar = self._arch + '-ar'
-    self._env_cc = self._arch + '-cc'
-    self._env_cxx = self._arch + '-c++'
-    self._env_cflags = ['-O2', '-fstack-protector-strong',
-                        '-Werror=implicit-function-declaration']
-    self._env_ranlib = self._arch + '-ranlib'
-    self._env_vars = [
-        'AR=' + self._env_ar,
-        'CC=' + self._env_cc,
-        'CXX=' + self._env_cxx,
-        'CFLAGS=' + ' '.join(self._env_cflags),
-        'NM=%s-nm' % self._arch,
-        'OBJDUMP=%s-objdump' % self._arch,
-        'PATH=%s/bin:/bin:/sbin:/usr/bin:/usr/sbin' % DIR_BUILD,
-        'PKG_CONFIG=/usr/local/bin/pkg-config',
-        'PKG_CONFIG_LIBDIR=' + os.path.join(self._prefix, 'lib/pkgconfig'),
-        'RANLIB=' + self._env_ranlib,
-        'STRIP=%s-strip' % self._arch,
-    ]
+    self._prefix = os.path.join(DIR_BUILD, self._arch)
+    self._cflags = ['-O2', '-fstack-protector-strong',
+                    '-Werror=implicit-function-declaration']
+
+  def _tool(self, name):
+    return os.path.join(DIR_BUILD, 'bin', '%s-%s' % (self._arch, name))
 
   def archive(self, object_files):
     objs = sorted(object_files)
     output = self.get_new_archive()
     print('AR', output)
-    self.run('.', [self._env_ar, '-rcs', output] + objs)
+    self.run('.', [self._tool('ar'), '-rcs', output] + objs)
     return output
 
   def autoconf(self, builddir, script, args):
@@ -315,10 +301,10 @@ class PackageBuilder(Builder):
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, [
         '/usr/local/bin/cmake', sourcedir,
-        '-DCMAKE_AR=' + self._env_ar,
+        '-DCMAKE_AR=' + self._tool('ar'),
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_INSTALL_PREFIX=/nonexistent',
-        '-DCMAKE_RANLIB=' + self._env_ranlib] + args)
+        '-DCMAKE_RANLIB=' + self._tool('ranlib')] + args)
 
   def compile(self, source, target, args):
     os.chdir(os.path.dirname(source))
@@ -327,13 +313,13 @@ class PackageBuilder(Builder):
       print('CC', source)
       self.run(
           '.',
-          [self._env_cc] + self._env_cflags + args +
+          [self._tool('cc')] + self._cflags + args +
           ['-c', '-o', target, source])
     elif ext == '.cpp':
       print('CXX', source)
       self.run(
           '.',
-          [self._env_cxx] + self._env_cflags + args +
+          [self._tool('c++')] + self._cflags + args +
           ['-c', '-o', target, source])
     else:
       raise Exception('Unknown file extension: %s' % ext)
@@ -377,7 +363,19 @@ class PackageBuilder(Builder):
     except:
       pass
     os.chdir(os.path.join(cwd))
-    subprocess.check_call(['env', '-i'] + self._env_vars + command)
+    subprocess.check_call([
+        'env', '-i',
+        'AR=' + self._tool('ar'),
+        'CC=' + self._tool('cc'),
+        'CXX=' + self._tool('c++'),
+        'CFLAGS=' + ' '.join(self._cflags),
+        'NM=' + self._tool('nm'),
+        'OBJDUMP=' + self._tool('objdump'),
+        'PATH=%s/bin:/bin:/sbin:/usr/bin:/usr/sbin' % DIR_BUILD,
+        'PKG_CONFIG=/usr/local/bin/pkg-config',
+        'PKG_CONFIG_LIBDIR=' + os.path.join(self._prefix, 'lib/pkgconfig'),
+        'RANLIB=' + self._tool('ranlib'),
+        'STRIP=' + self._tool('strip')] + command)
 
 class HostPackageBuilder(Builder):
   def __init__(self, build_directory, install_directory):
