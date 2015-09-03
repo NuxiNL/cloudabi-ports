@@ -9,11 +9,17 @@ import stat
 import subprocess
 import sys
 
+# Fake prefix directory passed to Autoconf, etc.
 FAKE_ROOTDIR = '/nonexistent'
 
+# Fixed directories where we want to do the build and provide
+# dependencies. These directories must not change, as this breaks the
+# reproducibility of the generated packages.
+DIR_BUILD = '/usr/obj/cloudabi-ports'
+DIR_DEPS = os.path.join(DIR_BUILD, 'root')
+
+# Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
-DIR_BUILD = os.path.join(DIR_ROOT, '_obj/build')
-DIR_DEPS = os.path.join(DIR_ROOT, '_obj/deps')
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
@@ -157,8 +163,9 @@ class PackageBuilder:
   # Autoconf and Automake, so that they cannot hardcode paths to actual
   # files on the system.
 
-  def __init__(self, pkg, install_directory):
+  def __init__(self, pkg, build_directory, install_directory):
     self._pkg = pkg
+    self._build_directory = build_directory
     self._install_directory = install_directory
     self._sequence_number = 0
 
@@ -191,7 +198,7 @@ class PackageBuilder:
     ]
 
   def _full_path(self, path):
-    return os.path.join(DIR_BUILD, path)
+    return os.path.join(self._build_directory, path)
 
   def _some_file(self, fmt):
     filename = fmt % self._sequence_number
@@ -272,7 +279,7 @@ class PackageBuilder:
 
   def run_autoconf(self, args=[]):
     # Replace config.sub files by an up-to-datecopy.
-    for dirname, filename in walk_files(DIR_BUILD):
+    for dirname, filename in walk_files(self._build_directory):
       if filename == 'config.sub':
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
                      os.path.join(dirname, 'config.sub'))
@@ -332,17 +339,14 @@ def build_package(pkg):
     shutil.rmtree(DIR_BUILD)
   except:
     pass
-  try:
-    shutil.rmtree(DIR_DEPS)
-  except:
-    pass
 
+  build_directory = os.path.join(DIR_BUILD, pkg['name'])
   install_directory = os.path.join(DIR_INSTALL, pkg['name'])
   if 'build_cmd' in pkg and not os.path.isdir(install_directory):
     # Install dependencies into a temporary directory.
     print('PKG', pkg['name'])
     copy_dependencies(pkg)
-    pkg['build_cmd'](PackageBuilder(pkg, install_directory))
+    pkg['build_cmd'](PackageBuilder(pkg, build_directory, install_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
   PACKAGES_BUILT.add(pkg['name'])
