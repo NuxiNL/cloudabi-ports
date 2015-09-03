@@ -149,13 +149,13 @@ def get_patched(distname):
   return source_directory
 
 def copy_file(source, target):
-  if os.path.isfile(source):
-    shutil.copy(source, target)
-  elif os.path.islink(source):
+  if os.path.islink(source):
     destination = os.readlink(source)
     if os.path.isabs(destination):
       raise Exception('%s points to absolute location %s', source, destination)
     os.symlink(destination, target)
+  elif os.path.isfile(source):
+    shutil.copy(source, target)
   else:
     raise Exception(source + ' is of an unsupported type')
 
@@ -334,10 +334,11 @@ def _copy_dependencies(pkg, done):
           make_parents(target_file)
           if target_file.endswith('.template'):
             # File is a template. Expand %%PREFIX%% tags.
+            target_file = target_file[:-9]
             with open(source_file, 'r') as f:
               contents = f.read()
             contents = contents.replace('%%PREFIX%%', DIR_DEPS)
-            with open(target_file[:-9], 'w') as f:
+            with open(target_file, 'w') as f:
               f.write(contents)
             shutil.copymode(source_file, target_file)
           else:
