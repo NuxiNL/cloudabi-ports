@@ -232,13 +232,7 @@ class PackageBuilder:
     for source_file, target_file in walk_files_concurrently(source, target):
       make_parents(target_file)
       ext = os.path.splitext(source_file)[1]
-      if ext == '.a':
-        # Remove timestamps from .a header, for determinism.
-        shutil.copyfile(source_file, target_file)
-        with open(target_file, 'r+') as f:
-          f.seek(24)
-          f.write("0           ")
-      elif ext in {'.la', '.pc'}:
+      if ext in {'.la', '.pc'}:
         # Remove references to /nonexistent and DIR_DEPS from libtool
         # archives and pkg-config files.
         with open(source_file, 'r') as f:
