@@ -501,10 +501,11 @@ if len(sys.argv) > 1:
   # Only build the packages provided on the command line.
   packages = set(sys.argv[1:])
   for pkg in packages:
-    try:
-      shutil.rmtree(os.path.join(DIR_INSTALL, pkg))
-    except:
-      pass
+    for arch in ARCHITECTURES:
+      try:
+        shutil.rmtree(os.path.join(DIR_INSTALL, arch, pkg))
+      except:
+        pass
   for pkg in packages:
     for arch in ARCHITECTURES:
       build_package(PACKAGES[pkg], arch)
