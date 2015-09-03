@@ -1,13 +1,11 @@
 --- lib/xmlparse.c
 +++ lib/xmlparse.c
-@@ -693,9 +693,7 @@
+@@ -693,8 +693,6 @@
  static unsigned long
  generate_hash_secret_salt(void)
  {
 -  unsigned int seed = time(NULL) % UINT_MAX;
 -  srand(seed);
--  return rand();
-+  return arc4random() % UINT_MAX;
+   return rand();
  }
  
- static XML_Bool  /* only valid for root parser */
