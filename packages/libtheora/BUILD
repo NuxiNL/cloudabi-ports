@@ -1,5 +1,5 @@
 def libtheora_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   ctx.run_autoconf(['--disable-examples'])
   ctx.run_make()
   ctx.run_make_install()

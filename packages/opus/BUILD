@@ -1,5 +1,5 @@
 def opus_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   ctx.run_autoconf(['--disable-extra-programs'])
   ctx.run_make()
   ctx.run_make_install()

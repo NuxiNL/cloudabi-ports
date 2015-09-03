@@ -1,5 +1,5 @@
 def bzip2_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   sources = {'blocksort.c', 'bzlib.c', 'compress.c', 'crctable.c',
              'decompress.c', 'huffman.c', 'randtable.c'}
   libbz2 = ctx.link_library(ctx.compile(f) for f in sources)

@@ -1,5 +1,5 @@
 def compiler_rt_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   sources = {
       'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
       'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',

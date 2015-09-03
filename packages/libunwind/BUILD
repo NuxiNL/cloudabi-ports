@@ -1,5 +1,5 @@
 def libunwind_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   c_sources = {
       'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
       'UnwindRegistersRestore.S', 'UnwindRegistersSave.S',
