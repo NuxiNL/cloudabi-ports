@@ -1,8 +1,8 @@
-def uriparser_build(ctx):
-  ctx.insert_sources()
-  ctx.run_autoconf(['--disable-doc', '--disable-test'])
-  ctx.run_make(['bin_PROGRAMS='])
-  ctx.install(ctx.run_make_install(['bin_PROGRAMS=', 'install']), '.')
+def uriparser_build(root):
+  root.insert_sources()
+  build = root.autoconf(['--disable-doc', '--disable-test'])
+  build.make(['bin_PROGRAMS='])
+  build.make_install(['bin_PROGRAMS=', 'install']).install()
 
 package(
     name = 'uriparser',

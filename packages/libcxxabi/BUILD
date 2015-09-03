@@ -1,6 +1,6 @@
-def libcxxabi_build(ctx):
-  ctx.insert_sources(0, '.')
-  ctx.insert_sources(1, 'libunwind')
+def libcxxabi_build(root):
+  root.insert_sources(0)
+  root.path('libunwind').insert_sources(1)
   sources = {
       'abort_message.cpp', 'cxa_aux_runtime.cpp',
       'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
@@ -10,15 +10,15 @@ def libcxxabi_build(ctx):
       'cxa_virtual.cpp', 'exception.cpp', 'private_typeinfo.cpp',
       'stdexcept.cpp', 'typeinfo.cpp',
   }
-  libcxxabi = ctx.link_library(
-      ctx.compile(
-          os.path.join('src', f),
-          ['-Iinclude', '-Ilibunwind/include', '-std=c++11'])
+  srcdir = root.path('src')
+  libcxxabi = srcdir.archive(
+      srcdir.path(f).compile(
+          ['-I../include', '-I../libunwind/include', '-std=c++11'])
       for f in sources)
 
-  ctx.install(libcxxabi, 'lib/libc++abi.a')
-  for f in {'cxxabi.h', '__cxxabi_config.h'}:
-    ctx.install(os.path.join('include', f), os.path.join('include/c++/v1', f))
+  libcxxabi.install('lib/libc++abi.a')
+  for f in {'include/cxxabi.h', 'include/__cxxabi_config.h'}:
+    root.path(f).install(f)
 
 package(
     name = 'libcxxabi',

@@ -1,6 +1,8 @@
-def libcxx_build(ctx):
-  ctx.insert_sources(0, '.')
-  ctx.insert_sources(1, 'libcxxabi')
+def libcxx_build(root):
+  root.insert_sources(0)
+  root.path('libcxxabi').insert_sources(1)
+
+  # Build libc++.a.
   sources = {
       'algorithm.cpp', 'bind.cpp', 'chrono.cpp',
       'condition_variable.cpp', 'debug.cpp', 'exception.cpp',
@@ -10,17 +12,19 @@ def libcxx_build(ctx):
       'string.cpp', 'strstream.cpp', 'system_error.cpp', 'thread.cpp',
       'typeinfo.cpp', 'utility.cpp', 'valarray.cpp'
   }
-  libcxx = ctx.link_library(
-      ctx.compile(
-          os.path.join('src', f),
-          ['-Iinclude', '-Ilibcxxabi/include', '-std=c++11',
+  srcdir = root.path('src')
+  libcxx = srcdir.archive(
+      srcdir.path(f).compile(
+          ['-I../include', '-I../libcxxabi/include', '-std=c++11',
            '-D_LIBCPP_BUILD_STATIC', '-DLIBCXX_BUILDING_LIBCXXABI'])
       for f in sources)
+  libcxx.install('lib/libc++.a')
 
-  ctx.install(libcxx, 'lib/libc++.a')
-  ctx.remove('include/CMakeLists.txt')
-  ctx.remove('include/support')
-  ctx.install('include', 'include/c++/v1')
+  # Install header files.
+  headers = root.path('include')
+  headers.path('CMakeLists.txt').remove()
+  headers.path('support').remove()
+  headers.install('include/c++/v1')
 
 package(
     name = 'libcxx',

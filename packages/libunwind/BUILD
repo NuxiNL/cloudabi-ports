@@ -1,17 +1,18 @@
-def libunwind_build(ctx):
-  ctx.insert_sources()
+def libunwind_build(root):
+  root.insert_sources()
   c_sources = {
       'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
       'UnwindRegistersRestore.S', 'UnwindRegistersSave.S',
   }
   cxx_sources = {'Unwind-EHABI.cpp', 'libunwind.cpp'}
-  libunwind = ctx.link_library(
-      {ctx.compile(os.path.join('src', f), ['-Iinclude'])
+  srcdir = root.path('src')
+  libunwind = srcdir.archive(
+      {srcdir.path(f).compile(['-I../include'])
        for f in c_sources} |
-      {ctx.compile(os.path.join('src', f), ['-Iinclude', '-std=c++11'])
+      {srcdir.path(f).compile(['-I../include', '-std=c++11'])
        for f in cxx_sources})
 
-  ctx.install(libunwind, 'lib/libunwind.a')
+  libunwind.install('lib/libunwind.a')
 
 package(
     name = 'libunwind',

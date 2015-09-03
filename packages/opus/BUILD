@@ -1,8 +1,8 @@
-def opus_build(ctx):
-  ctx.insert_sources()
-  ctx.run_autoconf(['--disable-extra-programs'])
-  ctx.run_make()
-  ctx.install(ctx.run_make_install(), '.')
+def opus_build(root):
+  root.insert_sources()
+  build = root.autoconf(['--disable-extra-programs'])
+  build.make()
+  build.make_install().install()
 
 package(
     name = 'opus',

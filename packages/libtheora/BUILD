@@ -1,8 +1,8 @@
-def libtheora_build(ctx):
-  ctx.insert_sources()
-  ctx.run_autoconf(['--disable-examples'])
-  ctx.run_make(['noinst_PROGRAMS='])
-  ctx.install(ctx.run_make_install(['noinst_PROGRAMS=', 'install']), '.')
+def libtheora_build(root):
+  root.insert_sources()
+  build = root.autoconf(['--disable-examples'])
+  build.make(['noinst_PROGRAMS='])
+  build.make_install(['noinst_PROGRAMS=', 'install']).install()
 
 package(
     name = 'libtheora',

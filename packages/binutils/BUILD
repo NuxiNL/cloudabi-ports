@@ -1,20 +1,20 @@
-def host_binutils_build(ctx):
-  ctx.insert_sources()
+def host_binutils_build(root):
+  root.insert_sources()
   for arch in ARCHITECTURES:
-    ctx.run_autoconf([
+    build = root.autoconf([
         '--target=' + arch,
         '--disable-gdb',
         '--disable-nls',
         '--disable-werror',
         '--enable-deterministic-archives'])
-    ctx.run_make('.', gnu_make=True)
-    stage = ctx.run_make_install('.')
+    build.make(gnu_make=True)
+    stage = build.make_install()
 
     # Remove extraneous '<arch>/bin' directory. We shouldn't keep
     # binaries from the host system in this directory.
-    ctx.remove(os.path.join(stage, arch, 'bin'))
-    ctx.remove(os.path.join(stage, 'share/info'))
-    ctx.install(stage)
+    stage.path(arch).path('bin').remove()
+    stage.path('share/info').remove()
+    stage.install()
 
 host_package(
     name = 'binutils',

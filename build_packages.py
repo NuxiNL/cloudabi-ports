@@ -9,14 +9,11 @@ import stat
 import subprocess
 import sys
 
-# Fake prefix directory passed to Autoconf, etc.
-FAKE_ROOTDIR = '/nonexistent'
-
 # Fixed directories where we want to do the build and provide
 # dependencies. These directories must not change, as this breaks the
 # reproducibility of the generated packages.
 DIR_BUILD = '/usr/obj/cloudabi-ports'
-DIR_DEPS = os.path.join(DIR_BUILD, 'root')
+DIR_DEPS = os.path.join(DIR_BUILD, 'x86_64-unknown-cloudabi')
 
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
@@ -26,11 +23,23 @@ DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 DIR_SOURCES = os.path.join(DIR_ROOT, '_obj/sources')
 
 PACKAGES = {}
+HOST_PACKAGES = {}
 PACKAGES_BUILT = set()
 PACKAGES_BUILDING = set()
 
-def build_nothing(ctx):
+ARCHITECTURES = {'x86_64-unknown-cloudabi'}
+
+def build_nothing(root):
   pass
+
+def host_package(**kwargs):
+  pass
+  name = kwargs['name']
+  if name in HOST_PACKAGES:
+    raise Exception('%s listed multiple times' % name)
+  if 'distfiles' not in kwargs:
+    kwargs['distfiles'] = ['%s-%s.tar' % (kwargs['name'], kwargs['version'])]
+  HOST_PACKAGES[name] = kwargs
 
 def package(**kwargs):
   name = kwargs['name']
@@ -50,11 +59,11 @@ def distfile(**kwargs):
     raise Exception('%s listed multiple times' % name)
   DISTFILES[name] = kwargs
 
-def autoconf_automake_build(ctx):
-  ctx.insert_sources()
-  ctx.run_autoconf()
-  ctx.run_make()
-  ctx.install(ctx.run_make_install(), '.')
+def autoconf_automake_build(root):
+  root.insert_sources()
+  build = root.autoconf()
+  build.make()
+  build.make_install().install()
 
 def sourceforge_sites(suffix):
   return {fmt + suffix + '/' for fmt in {
@@ -149,37 +158,127 @@ def get_patched(distname):
   return source_directory
 
 def copy_file(source, target):
+  if os.path.exists(target):
+    raise Exception('About to overwrite %s with %s' % (source, target))
   if os.path.islink(source):
+    # Preserve symbolic links.
     destination = os.readlink(source)
     if os.path.isabs(destination):
       raise Exception('%s points to absolute location %s', source, destination)
     os.symlink(destination, target)
   elif os.path.isfile(source):
+    # Copy regular files.
     shutil.copy(source, target)
   else:
+    # Bail out on anything else.
     raise Exception(source + ' is of an unsupported type')
 
-def copy_file_or_tree(source, target):
-  for source_file, target_file in walk_files_concurrently(source, target):
-    # Never overwrite any files.
-    if os.path.exists(target_file):
-      raise Exception('About to overwrite %s with %s' %
-                      (target_file, source_file))
-    make_parents(target_file)
-    copy_file(source_file, target_file)
-    shutil.copystat(source_file, target_file)
+class BuildAccess:
+  def __init__(self, builder, distfiles, path):
+    self._builder = builder
+    self._distfiles = distfiles
+    self._path = path
 
-class PackageBuilder:
+  def archive(self, objects):
+    return BuildAccess(self._builder, self._distfiles,
+                       self._builder.archive(obj._path for obj in objects))
 
-  # Fake root directory prefix that is passed to build systems such as
-  # Autoconf and Automake, so that they cannot hardcode paths to actual
-  # files on the system.
+  def autoconf(self, args=[]):
+    # Replace config.sub files by an up-to-date copy.
+    for dirname, filename in walk_files(self._path):
+      if filename == 'config.sub':
+        shutil.copy(os.path.join(DIR_ROOT, 'misc/config.sub'),
+                    os.path.join(dirname, 'config.sub'))
 
-  def __init__(self, pkg, build_directory, install_directory):
-    self._pkg = pkg
+    # Run the configure script in a separate directory.
+    builddir = self._builder.get_new_tmpdir()
+    self._builder.autoconf(
+        builddir, os.path.join(self._path, 'configure'), args)
+    return BuildAccess(self._builder, self._distfiles, builddir)
+
+  def compile(self, args=[]):
+    output = self._path + '.o'
+    self._builder.compile(self._path, output, args)
+    return BuildAccess(self._builder, self._distfiles, output)
+
+  def cmake(self, args=[]):
+    builddir = self._builder.get_new_tmpdir()
+    self._builder.cmake(builddir, self._path, args)
+    return BuildAccess(self._builder, self._distfiles, builddir)
+
+  def insert_sources(self, index=0):
+    # Add compression extension.
+    # TODO(ed): Maybe this should be done earlier on.
+    distname = self._distfiles[index]
+    if distname + '.bz2' in DISTFILES:
+      distname = distname + '.bz2'
+    elif distname + '.gz' in DISTFILES:
+      distname = distname + '.gz'
+    elif distname + '.xz' in DISTFILES:
+      distname = distname + '.xz'
+    for source_file, target_file in walk_files_concurrently(
+        get_patched(distname), self._path):
+      make_parents(target_file)
+      copy_file(source_file, target_file)
+      try:
+        shutil.copystat(source_file, target_file)
+      except:
+        pass
+
+  def install(self, path='.'):
+    self._builder.install(self._path, path)
+
+  def make(self, args=['all'], gnu_make=False):
+    self._builder.run(self._path,
+                      ['gmake' if gnu_make else 'make', '-j6'] + args)
+
+  def make_install(self, args=['install']):
+    return BuildAccess(self._builder, self._distfiles,
+                       self._builder.make_install(self._path, args))
+
+  def path(self, path):
+    return BuildAccess(self._builder, self._distfiles,
+                       os.path.join(self._path, path))
+
+  def remove(self):
+    try:
+      shutil.rmtree(self._path)
+    except:
+      os.unlink(self._path)
+
+  def run(self, command):
+    self._builder.run(self._path, command)
+
+  def symlink(self, contents):
+    os.symlink(contents, self._path)
+
+  def unhardcode_paths(self):
+    self._builder.unhardcode_paths(self._path)
+
+class Builder:
+  def __init__(self, build_directory):
     self._build_directory = build_directory
-    self._install_directory = install_directory
     self._sequence_number = 0
+
+  def get_new_archive(self):
+    path = os.path.join(self._build_directory, 'tmp',
+                        'lib%d.a' % self._sequence_number)
+    self._sequence_number += 1
+    make_parents(path)
+    return path
+
+  def get_new_tmpdir(self):
+    path = os.path.join(self._build_directory, 'tmp',
+                        str(self._sequence_number))
+    self._sequence_number += 1
+    return path
+
+class PackageBuilder(Builder):
+  def __init__(self, pkg, build_directory, install_directory):
+    super(PackageBuilder, self).__init__(build_directory)
+
+    self._pkg = pkg
+    self._install_directory = install_directory
 
     self._env_ar = '/usr/local/bin/x86_64-unknown-cloudabi-ar'
     self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
@@ -210,58 +309,47 @@ class PackageBuilder:
         'STRIP=/usr/local/bin/x86_64-unknown-cloudabi-strip',
     ]
 
-  def _full_path(self, path):
-    return os.path.join(self._build_directory, path)
-
-  def _some_file(self, fmt):
-    filename = fmt % self._sequence_number
-    self._sequence_number += 1
-    return filename
-
-  def run_cmake(self, args):
-    self.run_command('.', [
-        '/usr/local/bin/cmake',
-        '-DCMAKE_AR=' + self._env_ar,
-        '-DCMAKE_INSTALL_PREFIX=' + FAKE_ROOTDIR,
-        '-DCMAKE_RANLIB=' + self._env_ranlib,
-        '.'] + args)
-
-  def compile(self, source_file, cflags=[]):
-    ext = os.path.splitext(source_file)[1]
-    output = source_file + '.o'
-    if ext in {'.c', '.S'}:
-      print('CC', source_file)
-      self.run_command(
-          '.',
-          [self._env_cc] + self._env_cflags + cflags +
-          ['-c', '-o', output, source_file])
-    elif ext == '.cpp':
-      print('CXX', source_file)
-      self.run_command(
-          '.',
-          [self._env_cxx] + self._env_cxxflags + cflags +
-          ['-c', '-o', output, source_file])
-    else:
-      raise Exception('Unknown file extension: %s' % ext)
+  def archive(self, object_files):
+    objs = sorted(object_files)
+    output = self.get_new_archive()
+    print('AR', output)
+    self.run('.', [self._env_ar, '-rcs', output] + objs)
     return output
 
-  def insert_sources(self, index=0, location='.'):
-    # Add compression extension.
-    distname = self._pkg['distfiles'][index]
-    if distname + '.bz2' in DISTFILES:
-      distname = distname + '.bz2'
-    elif distname + '.gz' in DISTFILES:
-      distname = distname + '.gz'
-    elif distname + '.xz' in DISTFILES:
-      distname = distname + '.xz'
-    copy_file_or_tree(get_patched(distname), self._full_path(location))
+  def autoconf(self, builddir, script, args):
+    self.run(builddir, [script, '--host=x86_64-unknown-cloudabi',
+                        '--prefix=/nonexistent'] + args)
+
+  def cmake(self, builddir, sourcedir, args):
+    self.run(builddir, [
+        '/usr/local/bin/cmake', sourcedir,
+        '-DCMAKE_AR=' + self._env_ar,
+        '-DCMAKE_INSTALL_PREFIX=/nonexistent',
+        '-DCMAKE_RANLIB=' + self._env_ranlib] + args)
+
+  def compile(self, source, target, args):
+    os.chdir(os.path.dirname(source))
+    ext = os.path.splitext(source)[1]
+    if ext in {'.c', '.S'}:
+      print('CC', source)
+      self.run(
+          '.',
+          [self._env_cc] + self._env_cflags + args +
+          ['-c', '-o', target, source])
+    elif ext == '.cpp':
+      print('CXX', source)
+      self.run(
+          '.',
+          [self._env_cxx] + self._env_cxxflags + args +
+          ['-c', '-o', target, source])
+    else:
+      raise Exception('Unknown file extension: %s' % ext)
 
   def unhardcode_paths(self, path):
-    path = self._full_path(path)
     with open(path, 'r') as f:
       contents = f.read()
     contents = (contents
-        .replace(FAKE_ROOTDIR, '%%PREFIX%%')
+        .replace('/nonexistent', '%%PREFIX%%')
         .replace(DIR_DEPS, '%%PREFIX%%'))
     with open(path + '.template', 'w') as f:
       f.write(contents)
@@ -271,7 +359,6 @@ class PackageBuilder:
   def install(self, source, target):
     print('INSTALL', source, '->', target)
     target = os.path.join(self._install_directory, target)
-    source = self._full_path(source)
     for source_file, target_file in walk_files_concurrently(source, target):
       make_parents(target_file)
       ext = os.path.splitext(source_file)[1]
@@ -281,7 +368,7 @@ class PackageBuilder:
         with open(source_file, 'r') as f:
           contents = f.read()
         contents = (contents
-            .replace(FAKE_ROOTDIR, '%%PREFIX%%')
+            .replace('/nonexistent', '%%PREFIX%%')
             .replace(DIR_DEPS, '%%PREFIX%%'))
         with open(target_file + '.template', 'w') as f:
           f.write(contents)
@@ -289,47 +376,56 @@ class PackageBuilder:
         # Copy other files literally.
         copy_file(source_file, target_file)
 
-  def link_library(self, object_files):
-    objs = [self._full_path(f) for f in sorted(object_files)]
-    output = self._some_file('lib%d.a')
-    print('AR', output)
-    self.run_command('.',
-                     [self._env_ar, '-rcs', self._full_path(output)] + objs)
-    return output
+  def make_install(self, path, args):
+    stagedir = self.get_new_tmpdir()
+    self.run(path, ['make', 'DESTDIR=' + stagedir] + args)
+    return os.path.join(stagedir, 'nonexistent')
 
-  def remove(self, path):
-    path = self._full_path(path)
-    if os.path.isdir(path):
-      shutil.rmtree(self._full_path(path))
-    else:
-      os.remove(path)
-
-  def run_autoconf(self, args=[]):
-    # Replace config.sub files by an up-to-datecopy.
-    for dirname, filename in walk_files(self._build_directory):
-      if filename == 'config.sub':
-        copy_file(os.path.join(DIR_ROOT, 'misc/config.sub'),
-                  os.path.join(dirname, 'config.sub'))
-    self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
-                           '--prefix=' + FAKE_ROOTDIR] + args)
-
-  def run_command(self, cwd, command):
-    os.chdir(os.path.join(self._full_path(cwd)))
+  def run(self, cwd, command):
+    try:
+      os.makedirs(cwd)
+    except:
+      pass
+    os.chdir(os.path.join(cwd))
     subprocess.check_call(['env', '-i'] + self._env_vars + command)
 
-  def run_make(self, args=['all']):
-    self.run_command('.', ['make', '-j6'] + args)
+class HostPackageBuilder(Builder):
+  def __init__(self, build_directory, install_directory):
+    super(HostPackageBuilder, self).__init__(build_directory)
 
-  def run_make_install(self, args=['install']):
-    stagedir = self._some_file('stage%d')
-    self.run_command('.',
-                     ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
-    return os.path.join(stagedir, FAKE_ROOTDIR[1:])
+    self._install_directory = install_directory
+
+  def autoconf(self, builddir, script, args):
+    self.run(builddir, [script, '--prefix=' + DIR_BUILD] + args)
+
+  def cmake(self, builddir, sourcedir, args):
+    self.run(builddir, ['cmake', sourcedir,
+                        '-DCMAKE_INSTALL_PREFIX=' + DIR_BUILD] + args)
+
+  def install(self, source, target):
+    print('INSTALL', source, '->', target)
+    target = os.path.join(self._install_directory, target)
+    for source_file, target_file in walk_files_concurrently(source, target):
+      make_parents(target_file)
+      copy_file(source_file, target_file)
+
+  def make_install(self, path, args):
+    stagedir = self.get_new_tmpdir()
+    self.run(path, ['make', 'DESTDIR=' + stagedir] + args)
+    return os.path.join(stagedir, DIR_BUILD[1:])
+
+  def run(self, cwd, command):
+    try:
+      os.makedirs(cwd)
+    except:
+      pass
+    os.chdir(cwd)
+    subprocess.check_call(command)
 
 def _copy_dependencies(pkg, done):
   for dep in pkg['lib_depends']:
     if dep not in done:
-      source = os.path.join(DIR_INSTALL, dep)
+      source = os.path.join(DIR_INSTALL, 'x86_64-unknown-cloudabi', dep)
       if os.path.exists(source):
         # Install files from package into dependency directory.
         for source_file, target_file in walk_files_concurrently(source,
@@ -363,22 +459,35 @@ def build_package(pkg):
   for dep in pkg['lib_depends']:
     build_package(PACKAGES[dep])
 
-  # Clean up.
   try:
     shutil.rmtree(DIR_BUILD)
   except:
     pass
 
   build_directory = os.path.join(DIR_BUILD, pkg['name'])
-  install_directory = os.path.join(DIR_INSTALL, pkg['name'])
+  install_directory = os.path.join(DIR_INSTALL, 'x86_64-unknown-cloudabi', pkg['name'])
   if 'build_cmd' in pkg and not os.path.isdir(install_directory):
     # Install dependencies into a temporary directory.
     print('PKG', pkg['name'])
     copy_dependencies(pkg)
-    pkg['build_cmd'](PackageBuilder(pkg, build_directory, install_directory))
+    pkg['build_cmd'](BuildAccess(PackageBuilder(
+        pkg, build_directory, install_directory),
+        pkg['distfiles'], build_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
   PACKAGES_BUILT.add(pkg['name'])
+
+def build_host_package(pkg):
+  try:
+    shutil.rmtree(DIR_BUILD)
+  except:
+    pass
+  build_directory = os.path.join(DIR_BUILD, 'host', pkg['name'])
+  install_directory = os.path.join(DIR_INSTALL, 'host', pkg['name'])
+  if not os.path.isdir(install_directory):
+    print('HOSTPKG', pkg['name'])
+    pkg['build_cmd'](BuildAccess(HostPackageBuilder(
+        build_directory, install_directory), pkg['distfiles'], build_directory))
 
 # Clean up.
 try:
@@ -402,5 +511,7 @@ if len(sys.argv) > 1:
     build_package(PACKAGES[pkg])
 else:
   # Build all packages.
+  for pkg in HOST_PACKAGES:
+    build_host_package(HOST_PACKAGES[pkg])
   for pkg in PACKAGES:
     build_package(PACKAGES[pkg])

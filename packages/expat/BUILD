@@ -1,8 +1,8 @@
-def expat_build(ctx):
-  ctx.insert_sources()
-  ctx.run_autoconf()
-  ctx.run_make(['buildlib'])
-  ctx.install(ctx.run_make_install(['installlib']), '.')
+def expat_build(root):
+  root.insert_sources()
+  build = root.autoconf()
+  build.make(['buildlib'])
+  build.make_install(['installlib']).install()
 
 package(
     name = 'expat',

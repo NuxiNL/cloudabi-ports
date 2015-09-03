@@ -1,11 +1,11 @@
-def zlib_build(ctx):
-  ctx.insert_sources()
-  ctx.run_command('.', ['./configure'])
-  ctx.run_make(['libz.a'])
+def zlib_build(root):
+  root.insert_sources()
+  root.run(['./configure'])
+  root.make(['libz.a'])
 
-  ctx.install('libz.a', 'lib/libz.a')
-  ctx.install('zconf.h', 'include/zconf.h')
-  ctx.install('zlib.h', 'include/zlib.h')
+  root.path('libz.a').install('lib/libz.a')
+  root.path('zconf.h').install('include/zconf.h')
+  root.path('zlib.h').install('include/zlib.h')
 
 package(
     name = 'zlib',

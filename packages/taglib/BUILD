@@ -1,10 +1,10 @@
-def taglib_build(ctx):
-  ctx.insert_sources()
-  ctx.run_cmake(['-DENABLE_STATIC=ON'])
-  ctx.run_make()
-  stage = ctx.run_make_install()
-  ctx.unhardcode_paths(os.path.join(stage, 'bin/taglib-config'))
-  ctx.install(stage, '.')
+def taglib_build(root):
+  root.insert_sources()
+  build = root.cmake(['-DENABLE_STATIC=ON'])
+  build.make()
+  stage = build.make_install()
+  stage.path('bin/taglib-config').unhardcode_paths()
+  stage.install()
 
 package(
     name = 'taglib',
