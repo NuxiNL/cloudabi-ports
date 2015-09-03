@@ -9,6 +9,8 @@ import stat
 import subprocess
 import sys
 
+FAKE_ROOTDIR = '/nonexistent'
+
 DIR_ROOT = os.getcwd()
 DIR_BUILD = os.path.join(DIR_ROOT, '_obj/build')
 DIR_DEPS = os.path.join(DIR_ROOT, '_obj/deps')
@@ -43,7 +45,7 @@ def distfile(**kwargs):
   DISTFILES[name] = kwargs
 
 def autoconf_automake_build(ctx):
-  ctx.insert_sources(0, '.')
+  ctx.insert_sources()
   ctx.run_autoconf()
   ctx.run_make()
   ctx.run_make_install()
@@ -154,7 +156,6 @@ class PackageBuilder:
   # Fake root directory prefix that is passed to build systems such as
   # Autoconf and Automake, so that they cannot hardcode paths to actual
   # files on the system.
-  _FAKE_ROOTDIR = '/nonexistent'
 
   def __init__(self, pkg, install_directory):
     self._pkg = pkg
@@ -178,7 +179,8 @@ class PackageBuilder:
         'CFLAGS=' + ' '.join(self._env_cflags),
         'CPPFLAGS=-isystem %s/include' % DIR_DEPS,
         'CXXFLAGS=-nostdlibinc ' + ' '.join(self._env_cxxflags),
-        'LDFLAGS=-nostdlib -L%s/lib' % DIR_DEPS,
+        # TODO(ed): Prevent pulling in libraries from the host system.
+        'LDFLAGS=-L%s/lib' % DIR_DEPS,
         'NM=/usr/local/bin/x86_64-unknown-cloudabi-nm',
         'OBJDUMP=/usr/local/bin/x86_64-unknown-cloudabi-objdump',
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
@@ -195,6 +197,12 @@ class PackageBuilder:
     filename = fmt % self._sequence_number
     self._sequence_number += 1
     return filename
+
+  def run_cmake(self, args):
+    self.run_command('.', [
+        '/usr/local/bin/cmake',
+        '-DCMAKE_INSTALL_PREFIX=' + FAKE_ROOTDIR,
+        '.'] + args)
 
   def compile(self, source_file, cflags=[]):
     ext = os.path.splitext(source_file)[1]
@@ -215,7 +223,7 @@ class PackageBuilder:
       raise Exception('Unknown file extension: %s' % ext)
     return output
 
-  def insert_sources(self, index, location):
+  def insert_sources(self, index=0, location='.'):
     # Add compression extension.
     distname = self._pkg['distfiles'][index]
     if distname + '.bz2' in DISTFILES:
@@ -239,7 +247,7 @@ class PackageBuilder:
         with open(source_file, 'r') as f:
           contents = f.read()
         contents = (contents
-            .replace('/nonexistent', '%%PREFIX%%')
+            .replace(FAKE_ROOTDIR, '%%PREFIX%%')
             .replace(DIR_DEPS, '%%PREFIX%%'))
         with open(target_file + '.template', 'w') as f:
           f.write(contents)
@@ -269,7 +277,7 @@ class PackageBuilder:
         shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
                      os.path.join(dirname, 'config.sub'))
     self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
-                           '--prefix=' + self._FAKE_ROOTDIR] + args)
+                           '--prefix=' + FAKE_ROOTDIR] + args)
 
   def run_command(self, cwd, command):
     os.chdir(os.path.join(self._full_path(cwd)))
@@ -282,7 +290,7 @@ class PackageBuilder:
     stagedir = self._some_file('stage%d')
     self.run_command('.',
                      ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
-    self.install(os.path.join(stagedir, self._FAKE_ROOTDIR[1:]), '.')
+    self.install(os.path.join(stagedir, FAKE_ROOTDIR[1:]), '.')
 
 def _copy_dependencies(pkg, done):
   for dep in pkg['lib_depends']:
