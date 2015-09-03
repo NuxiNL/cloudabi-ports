@@ -13,7 +13,6 @@ import sys
 # dependencies. These directories must not change, as this breaks the
 # reproducibility of the generated packages.
 DIR_BUILD = '/usr/obj/cloudabi-ports'
-DIR_DEPS = os.path.join(DIR_BUILD, 'x86_64-unknown-cloudabi')
 
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
@@ -274,39 +273,32 @@ class Builder:
     return path
 
 class PackageBuilder(Builder):
-  def __init__(self, pkg, build_directory, install_directory):
+  def __init__(self, pkg, build_directory, install_directory, arch):
     super(PackageBuilder, self).__init__(build_directory)
 
     self._pkg = pkg
     self._install_directory = install_directory
+    self._arch = arch
+    self._prefix = os.path.join(DIR_BUILD, self._arch)
 
-    self._env_ar = '/usr/local/bin/x86_64-unknown-cloudabi-ar'
-    self._env_cc = '/usr/local/bin/x86_64-unknown-cloudabi-cc'
-    self._env_cxx = '/usr/local/bin/x86_64-unknown-cloudabi-c++'
-    self._env_cflags = [
-        '-nostdlibinc', '-O2', '-fstack-protector-strong',
-        '-Werror=implicit-function-declaration',
-        '-Qunused-arguments', '-isystem', '%s/include' % DIR_DEPS]
-    self._env_cxxflags = self._env_cflags + [
-        '-nostdlibinc', '-nostdinc++', '-isystem',
-        '%s/include/c++/v1' % DIR_DEPS]
-    self._env_ranlib = '/usr/local/bin/x86_64-unknown-cloudabi-ranlib'
+    self._env_ar = self._arch + '-ar'
+    self._env_cc = self._arch + '-cc'
+    self._env_cxx = self._arch + '-c++'
+    self._env_cflags = ['-O2', '-fstack-protector-strong',
+                        '-Werror=implicit-function-declaration']
+    self._env_ranlib = self._arch + '-ranlib'
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
         'CXX=' + self._env_cxx,
         'CFLAGS=' + ' '.join(self._env_cflags),
-        'CPPFLAGS=-isystem %s/include' % DIR_DEPS,
-        'CXXFLAGS=-nostdlibinc ' + ' '.join(self._env_cxxflags),
-        # TODO(ed): Prevent pulling in libraries from the host system.
-        'LDFLAGS=-L%s/lib' % DIR_DEPS,
-        'NM=/usr/local/bin/x86_64-unknown-cloudabi-nm',
-        'OBJDUMP=/usr/local/bin/x86_64-unknown-cloudabi-objdump',
-        'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
+        'NM=%s-nm' % self._arch,
+        'OBJDUMP=%s-objdump' % self._arch,
+        'PATH=%s/bin:/bin:/sbin:/usr/bin:/usr/sbin' % DIR_BUILD,
         'PKG_CONFIG=/usr/local/bin/pkg-config',
-        'PKG_CONFIG_LIBDIR=' + os.path.join(DIR_DEPS, 'lib/pkgconfig'),
+        'PKG_CONFIG_LIBDIR=' + os.path.join(self._prefix, 'lib/pkgconfig'),
         'RANLIB=' + self._env_ranlib,
-        'STRIP=/usr/local/bin/x86_64-unknown-cloudabi-strip',
+        'STRIP=%s-strip' % self._arch,
     ]
 
   def archive(self, object_files):
@@ -317,13 +309,14 @@ class PackageBuilder(Builder):
     return output
 
   def autoconf(self, builddir, script, args):
-    self.run(builddir, [script, '--host=x86_64-unknown-cloudabi',
-                        '--prefix=/nonexistent'] + args)
+    self.run(builddir,
+             [script, '--host=' + self._arch, '--prefix=/nonexistent'] + args)
 
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, [
         '/usr/local/bin/cmake', sourcedir,
         '-DCMAKE_AR=' + self._env_ar,
+        '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_INSTALL_PREFIX=/nonexistent',
         '-DCMAKE_RANLIB=' + self._env_ranlib] + args)
 
@@ -340,19 +333,22 @@ class PackageBuilder(Builder):
       print('CXX', source)
       self.run(
           '.',
-          [self._env_cxx] + self._env_cxxflags + args +
+          [self._env_cxx] + self._env_cflags + args +
           ['-c', '-o', target, source])
     else:
       raise Exception('Unknown file extension: %s' % ext)
 
-  def unhardcode_paths(self, path):
-    with open(path, 'r') as f:
+  def _unhardcode(self, source, target):
+    with open(source, 'r') as f:
       contents = f.read()
     contents = (contents
         .replace('/nonexistent', '%%PREFIX%%')
-        .replace(DIR_DEPS, '%%PREFIX%%'))
-    with open(path + '.template', 'w') as f:
+        .replace(self._prefix, '%%PREFIX%%'))
+    with open(target, 'w') as f:
       f.write(contents)
+
+  def unhardcode_paths(self, path):
+    self._unhardcode(path, path + '.template')
     shutil.copymode(path, path + '.template')
     os.unlink(path)
 
@@ -363,15 +359,9 @@ class PackageBuilder(Builder):
       make_parents(target_file)
       ext = os.path.splitext(source_file)[1]
       if ext in {'.la', '.pc'}:
-        # Remove references to /nonexistent and DIR_DEPS from libtool
+        # Remove references to /nonexistent and /usr/obj from libtool
         # archives and pkg-config files.
-        with open(source_file, 'r') as f:
-          contents = f.read()
-        contents = (contents
-            .replace('/nonexistent', '%%PREFIX%%')
-            .replace(DIR_DEPS, '%%PREFIX%%'))
-        with open(target_file + '.template', 'w') as f:
-          f.write(contents)
+        self._unhardcode(source_file, target_file + '.template')
       else:
         # Copy other files literally.
         copy_file(source_file, target_file)
@@ -400,6 +390,7 @@ class HostPackageBuilder(Builder):
 
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, ['cmake', sourcedir,
+                        '-DCMAKE_BUILD_TYPE=Release',
                         '-DCMAKE_INSTALL_PREFIX=' + DIR_BUILD] + args)
 
   def install(self, source, target):
@@ -422,21 +413,22 @@ class HostPackageBuilder(Builder):
     os.chdir(cwd)
     subprocess.check_call(command)
 
-def _copy_dependencies(pkg, done):
+def _copy_dependencies(pkg, arch, done):
   for dep in pkg['lib_depends']:
     if dep not in done:
-      source = os.path.join(DIR_INSTALL, 'x86_64-unknown-cloudabi', dep)
+      source = os.path.join(DIR_INSTALL, arch, dep)
+      target = os.path.join(DIR_BUILD, arch)
       if os.path.exists(source):
         # Install files from package into dependency directory.
-        for source_file, target_file in walk_files_concurrently(source,
-                                                                DIR_DEPS):
+        for source_file, target_file in walk_files_concurrently(
+            source, target):
           make_parents(target_file)
           if target_file.endswith('.template'):
             # File is a template. Expand %%PREFIX%% tags.
             target_file = target_file[:-9]
             with open(source_file, 'r') as f:
               contents = f.read()
-            contents = contents.replace('%%PREFIX%%', DIR_DEPS)
+            contents = contents.replace('%%PREFIX%%', target)
             with open(target_file, 'w') as f:
               f.write(contents)
             shutil.copymode(source_file, target_file)
@@ -445,33 +437,41 @@ def _copy_dependencies(pkg, done):
             copy_file(source_file, target_file)
 
       done.add(dep)
-      _copy_dependencies(PACKAGES[dep], done)
+      _copy_dependencies(PACKAGES[dep], arch, done)
 
-def copy_dependencies(pkg):
-  _copy_dependencies(pkg, set())
+def copy_dependencies(pkg, arch):
+  _copy_dependencies(pkg, arch, set())
 
-def build_package(pkg):
+def build_package(pkg, arch):
   if pkg['name'] in PACKAGES_BUILT:
     return
   if pkg['name'] in PACKAGES_BUILDING:
     raise Exception('Cyclic dependency on package %s' % pkg['name'])
   PACKAGES_BUILDING.add(pkg['name'])
   for dep in pkg['lib_depends']:
-    build_package(PACKAGES[dep])
+    build_package(PACKAGES[dep], arch)
 
   try:
     shutil.rmtree(DIR_BUILD)
   except:
     pass
 
-  build_directory = os.path.join(DIR_BUILD, pkg['name'])
-  install_directory = os.path.join(DIR_INSTALL, 'x86_64-unknown-cloudabi', pkg['name'])
+  install_directory = os.path.join(DIR_INSTALL, arch, pkg['name'])
   if 'build_cmd' in pkg and not os.path.isdir(install_directory):
-    # Install dependencies into a temporary directory.
-    print('PKG', pkg['name'])
-    copy_dependencies(pkg)
+    print('PKG', pkg['name'], arch)
+
+    # Copy the toolchain into the build directory.
+    for dep in HOST_PACKAGES:
+      for source, target in walk_files_concurrently(
+          os.path.join(DIR_INSTALL, 'host', dep), DIR_BUILD):
+        make_parents(target)
+        copy_file(source, target)
+    # Copy the dependencies into the build directory.
+    copy_dependencies(pkg, arch)
+
+    build_directory = os.path.join(DIR_BUILD, arch, pkg['name'])
     pkg['build_cmd'](BuildAccess(PackageBuilder(
-        pkg, build_directory, install_directory),
+        pkg, build_directory, install_directory, arch),
         pkg['distfiles'], build_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
@@ -485,7 +485,7 @@ def build_host_package(pkg):
   build_directory = os.path.join(DIR_BUILD, 'host', pkg['name'])
   install_directory = os.path.join(DIR_INSTALL, 'host', pkg['name'])
   if not os.path.isdir(install_directory):
-    print('HOSTPKG', pkg['name'])
+    print('PKG', pkg['name'], 'host')
     pkg['build_cmd'](BuildAccess(HostPackageBuilder(
         build_directory, install_directory), pkg['distfiles'], build_directory))
 
@@ -508,10 +508,12 @@ if len(sys.argv) > 1:
     except:
       pass
   for pkg in packages:
-    build_package(PACKAGES[pkg])
+    for arch in ARCHITECTURES:
+      build_package(PACKAGES[pkg], arch)
 else:
   # Build all packages.
   for pkg in HOST_PACKAGES:
     build_host_package(HOST_PACKAGES[pkg])
   for pkg in PACKAGES:
-    build_package(PACKAGES[pkg])
+    for arch in ARCHITECTURES:
+      build_package(PACKAGES[pkg], arch)
