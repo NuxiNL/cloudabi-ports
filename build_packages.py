@@ -276,7 +276,7 @@ class PackageBuilder:
     subprocess.check_call(['env', '-i'] + self._env_vars + command)
 
   def run_make(self, args=['all']):
-    self.run_command('.', ['make'] + args)
+    self.run_command('.', ['make', '-j6'] + args)
 
   def run_make_install(self, args=['install']):
     stagedir = self._some_file('stage%d')
