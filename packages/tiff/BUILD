@@ -1,0 +1,22 @@
+def tiff_build(ctx):
+  ctx.insert_sources(0, '.')
+  ctx.run_autoconf()
+  ctx.run_make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
+  ctx.run_make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install'])
+
+package(
+    name = 'tiff',
+    version = '4.0.5',
+    homepage = 'http://www.remotesensing.org/libtiff/',
+    maintainer = 'info@nuxi.nl',
+    lib_depends = {'c++-runtime'},
+    build_cmd = tiff_build,
+)
+
+distfile(
+    name = 'tiff-4.0.5.tar.gz',
+    checksum = 'e25eaa83ed7fab43ddd278b9b14d91a406a4b674cedc776adb95535f897f309c',
+    master_sites = {'ftp://ftp.remotesensing.org/pub/libtiff/',
+                    'http://download.osgeo.org/libtiff/'},
+    patches = {'tiff/patch-no-strcpy', 'tiff/patch-no-TIFFOpen'},
+)

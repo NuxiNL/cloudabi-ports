@@ -1,0 +1,28 @@
+--- libtiff/tif_unix.c
++++ libtiff/tif_unix.c
+@@ -221,6 +221,7 @@
+ /*
+  * Open a TIFF file for read/writing.
+  */
++#if 0
+ TIFF*
+ TIFFOpen(const char* name, const char* mode)
+ {
+@@ -252,6 +253,7 @@
+ 		close(fd);
+ 	return tif;
+ }
++#endif
+ 
+ #ifdef __WIN32__
+ #include <windows.h>
+--- libtiff/tiffio.h
++++ libtiff/tiffio.h
+@@ -434,7 +434,6 @@
+ extern int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
+ extern int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
+ extern void TIFFRGBAImageEnd(TIFFRGBAImage*);
+-extern TIFF* TIFFOpen(const char*, const char*);
+ # ifdef __WIN32__
+ extern TIFF* TIFFOpenW(const wchar_t*, const char*);
+ # endif /* __WIN32__ */
