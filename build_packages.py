@@ -191,6 +191,7 @@ class PackageBuilder:
     self._env_cxxflags = self._env_cflags + [
         '-nostdlibinc', '-nostdinc++', '-isystem',
         '%s/include/c++/v1' % DIR_DEPS]
+    self._env_ranlib = '/usr/local/bin/x86_64-unknown-cloudabi-ranlib'
     self._env_vars = [
         'AR=' + self._env_ar,
         'CC=' + self._env_cc,
@@ -205,7 +206,7 @@ class PackageBuilder:
         'PATH=/bin:/sbin:/usr/bin:/usr/sbin',
         'PKG_CONFIG=/usr/local/bin/pkg-config',
         'PKG_CONFIG_LIBDIR=' + os.path.join(DIR_DEPS, 'lib/pkgconfig'),
-        'RANLIB=/usr/local/bin/x86_64-unknown-cloudabi-ranlib',
+        'RANLIB=' + self._env_ranlib,
         'STRIP=/usr/local/bin/x86_64-unknown-cloudabi-strip',
     ]
 
@@ -220,7 +221,9 @@ class PackageBuilder:
   def run_cmake(self, args):
     self.run_command('.', [
         '/usr/local/bin/cmake',
+        '-DCMAKE_AR=' + self._env_ar,
         '-DCMAKE_INSTALL_PREFIX=' + FAKE_ROOTDIR,
+        '-DCMAKE_RANLIB=' + self._env_ranlib,
         '.'] + args)
 
   def compile(self, source_file, cflags=[]):
