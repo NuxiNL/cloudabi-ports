@@ -5,7 +5,7 @@
  __END_DECLS
  
 +static __inline int __atoi(const char *__str) {
-+  return strtol(__str, NULL, 10);
++  return (int)strtol(__str, NULL, 10);
 +}
 +
  #define alloca(size) __builtin_alloca(size)
