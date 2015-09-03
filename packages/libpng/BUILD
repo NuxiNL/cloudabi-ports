@@ -2,7 +2,9 @@ def libpng_build(ctx):
   ctx.insert_sources()
   ctx.run_autoconf()
   ctx.run_make(['bin_PROGRAMS=', 'check_PROGRAMS='])
-  ctx.run_make_install(['bin_PROGRAMS=', 'check_PROGRAMS=', 'install'])
+  stage = ctx.run_make_install(['bin_PROGRAMS=', 'check_PROGRAMS=', 'install'])
+  ctx.unhardcode_paths(os.path.join(stage, 'bin/libpng16-config'))
+  ctx.install(stage, '.')
 
 package(
     name = 'libpng',

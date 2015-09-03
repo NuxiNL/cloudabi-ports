@@ -2,7 +2,7 @@ def uriparser_build(ctx):
   ctx.insert_sources()
   ctx.run_autoconf(['--disable-doc', '--disable-test'])
   ctx.run_make(['bin_PROGRAMS='])
-  ctx.run_make_install(['bin_PROGRAMS=', 'install'])
+  ctx.install(ctx.run_make_install(['bin_PROGRAMS=', 'install']), '.')
 
 package(
     name = 'uriparser',

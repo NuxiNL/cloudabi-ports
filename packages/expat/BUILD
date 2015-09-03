@@ -2,7 +2,7 @@ def expat_build(ctx):
   ctx.insert_sources()
   ctx.run_autoconf()
   ctx.run_make(['buildlib'])
-  ctx.run_make_install(['installlib'])
+  ctx.install(ctx.run_make_install(['installlib']), '.')
 
 package(
     name = 'expat',

@@ -2,7 +2,7 @@ def yaml_build(ctx):
   ctx.insert_sources()
   ctx.run_autoconf()
   ctx.run_make(['noinst_PROGRAMS='])
-  ctx.run_make_install(['noinst_PROGRAMS=', 'install'])
+  ctx.install(ctx.run_make_install(['noinst_PROGRAMS=', 'install']), '.')
 
 package(
     name = 'yaml',

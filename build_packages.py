@@ -54,7 +54,7 @@ def autoconf_automake_build(ctx):
   ctx.insert_sources()
   ctx.run_autoconf()
   ctx.run_make()
-  ctx.run_make_install()
+  ctx.install(ctx.run_make_install(), '.')
 
 def sourceforge_sites(suffix):
   return {fmt + suffix + '/' for fmt in {
@@ -148,6 +148,17 @@ def get_patched(distname):
     open(dot_patched, 'w').close()
   return source_directory
 
+def copy_file(source, target):
+  if os.path.isfile(source):
+    shutil.copy(source, target)
+  elif os.path.islink(source):
+    destination = os.readlink(source)
+    if os.path.isabs(destination):
+      raise Exception('%s points to absolute location %s', source, destination)
+    os.symlink(destination, target)
+  else:
+    raise Exception(source + ' is of an unsupported type')
+
 def copy_file_or_tree(source, target):
   for source_file, target_file in walk_files_concurrently(source, target):
     # Never overwrite any files.
@@ -155,7 +166,8 @@ def copy_file_or_tree(source, target):
       raise Exception('About to overwrite %s with %s' %
                       (target_file, source_file))
     make_parents(target_file)
-    shutil.copy2(source_file, target_file)
+    copy_file(source_file, target_file)
+    shutil.copystat(source_file, target_file)
 
 class PackageBuilder:
 
@@ -241,6 +253,18 @@ class PackageBuilder:
       distname = distname + '.xz'
     copy_file_or_tree(get_patched(distname), self._full_path(location))
 
+  def unhardcode_paths(self, path):
+    path = self._full_path(path)
+    with open(path, 'r') as f:
+      contents = f.read()
+    contents = (contents
+        .replace(FAKE_ROOTDIR, '%%PREFIX%%')
+        .replace(DIR_DEPS, '%%PREFIX%%'))
+    with open(path + '.template', 'w') as f:
+      f.write(contents)
+    shutil.copymode(path, path + '.template')
+    os.unlink(path)
+
   def install(self, source, target):
     print('INSTALL', source, '->', target)
     target = os.path.join(self._install_directory, target)
@@ -260,7 +284,7 @@ class PackageBuilder:
           f.write(contents)
       else:
         # Copy other files literally.
-        shutil.copy(source_file, target_file)
+        copy_file(source_file, target_file)
 
   def link_library(self, object_files):
     objs = [self._full_path(f) for f in sorted(object_files)]
@@ -281,8 +305,8 @@ class PackageBuilder:
     # Replace config.sub files by an up-to-datecopy.
     for dirname, filename in walk_files(self._build_directory):
       if filename == 'config.sub':
-        shutil.copy2(os.path.join(DIR_ROOT, 'misc/config.sub'),
-                     os.path.join(dirname, 'config.sub'))
+        copy_file(os.path.join(DIR_ROOT, 'misc/config.sub'),
+                  os.path.join(dirname, 'config.sub'))
     self.run_command('.', ['./configure', '--host=x86_64-unknown-cloudabi',
                            '--prefix=' + FAKE_ROOTDIR] + args)
 
@@ -297,7 +321,7 @@ class PackageBuilder:
     stagedir = self._some_file('stage%d')
     self.run_command('.',
                      ['make', 'DESTDIR=' + self._full_path(stagedir)] + args)
-    self.install(os.path.join(stagedir, FAKE_ROOTDIR[1:]), '.')
+    return os.path.join(stagedir, FAKE_ROOTDIR[1:])
 
 def _copy_dependencies(pkg, done):
   for dep in pkg['lib_depends']:
@@ -315,9 +339,10 @@ def _copy_dependencies(pkg, done):
             contents = contents.replace('%%PREFIX%%', DIR_DEPS)
             with open(target_file[:-9], 'w') as f:
               f.write(contents)
+            shutil.copymode(source_file, target_file)
           else:
             # Regular file. Copy it over literally.
-            shutil.copy(source_file, target_file)
+            copy_file(source_file, target_file)
 
       done.add(dep)
       _copy_dependencies(PACKAGES[dep], done)
