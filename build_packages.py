@@ -172,15 +172,15 @@ def copy_file(source, target):
     # Bail out on anything else.
     raise Exception(source + ' is of an unsupported type')
 
-class BuildAccess:
+class FileHandle:
   def __init__(self, builder, distfiles, path):
     self._builder = builder
     self._distfiles = distfiles
     self._path = path
 
   def archive(self, objects):
-    return BuildAccess(self._builder, self._distfiles,
-                       self._builder.archive(obj._path for obj in objects))
+    return FileHandle(self._builder, self._distfiles,
+                      self._builder.archive(obj._path for obj in objects))
 
   def autoconf(self, args=[]):
     # Replace config.sub files by an up-to-date copy.
@@ -193,17 +193,17 @@ class BuildAccess:
     builddir = self._builder.get_new_tmpdir()
     self._builder.autoconf(
         builddir, os.path.join(self._path, 'configure'), args)
-    return BuildAccess(self._builder, self._distfiles, builddir)
+    return FileHandle(self._builder, self._distfiles, builddir)
 
   def compile(self, args=[]):
     output = self._path + '.o'
     self._builder.compile(self._path, output, args)
-    return BuildAccess(self._builder, self._distfiles, output)
+    return FileHandle(self._builder, self._distfiles, output)
 
   def cmake(self, args=[]):
     builddir = self._builder.get_new_tmpdir()
     self._builder.cmake(builddir, self._path, args)
-    return BuildAccess(self._builder, self._distfiles, builddir)
+    return FileHandle(self._builder, self._distfiles, builddir)
 
   def insert_sources(self, index=0):
     # Add compression extension.
@@ -232,11 +232,11 @@ class BuildAccess:
                       ['gmake' if gnu_make else 'make', '-j6'] + args)
 
   def make_install(self, args=['install']):
-    return BuildAccess(self._builder, self._distfiles,
+    return FileHandle(self._builder, self._distfiles,
                        self._builder.make_install(self._path, args))
 
   def path(self, path):
-    return BuildAccess(self._builder, self._distfiles,
+    return FileHandle(self._builder, self._distfiles,
                        os.path.join(self._path, path))
 
   def remove(self):
@@ -273,10 +273,9 @@ class Builder:
     return path
 
 class PackageBuilder(Builder):
-  def __init__(self, pkg, build_directory, install_directory, arch):
+  def __init__(self, build_directory, install_directory, arch):
     super(PackageBuilder, self).__init__(build_directory)
 
-    self._pkg = pkg
     self._install_directory = install_directory
     self._arch = arch
 
@@ -468,8 +467,8 @@ def build_package(pkg, arch):
     copy_dependencies(pkg, arch)
 
     build_directory = os.path.join(DIR_BUILD, arch, pkg['name'])
-    pkg['build_cmd'](BuildAccess(PackageBuilder(
-        pkg, build_directory, install_directory, arch),
+    pkg['build_cmd'](FileHandle(PackageBuilder(
+        build_directory, install_directory, arch),
         pkg['distfiles'], build_directory))
 
   PACKAGES_BUILDING.remove(pkg['name'])
@@ -484,7 +483,7 @@ def build_host_package(pkg):
   install_directory = os.path.join(DIR_INSTALL, 'host', pkg['name'])
   if not os.path.isdir(install_directory):
     print('PKG', pkg['name'], 'host')
-    pkg['build_cmd'](BuildAccess(HostPackageBuilder(
+    pkg['build_cmd'](FileHandle(HostPackageBuilder(
         build_directory, install_directory), pkg['distfiles'], build_directory))
 
 # Clean up.
