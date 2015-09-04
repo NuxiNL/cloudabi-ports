@@ -59,12 +59,13 @@ class FileHandle:
     self._builder.install(self._path, path)
 
   def make(self, args=['all'], gnu_make=False):
-    self._builder.run(self._path,
-                      ['gmake' if gnu_make else 'make', '-j6'] + args)
+    self.run(['gmake' if gnu_make else 'make', '-j6'] + args)
 
   def make_install(self, args=['install']):
+    stagedir = self._builder.get_new_directory()
+    self.run(['make', 'DESTDIR=' + stagedir] + args)
     return FileHandle(self._builder,
-                      self._builder.make_install(self._path, args))
+                      os.path.join(stagedir, self._builder.get_prefix()[1:]))
 
   def path(self, path):
     return FileHandle(self._builder, os.path.join(self._path, path))
@@ -118,37 +119,43 @@ class BuildHandle:
         os.unlink(os.path.join(dirname, filename))
     return FileHandle(self._builder, extractdir)
 
+  def prefix(self):
+    return self._builder.get_prefix()
+
 class Builder:
-  def __init__(self):
+  def __init__(self, prefix):
     self._sequence_number = 0
+    self._prefix = prefix
+    self._builddir = os.path.join(config.DIR_BUILDROOT, 'build')
+
+  def get_prefix(self):
+    return self._prefix
 
   def get_new_archive(self):
-    path = os.path.join(config.DIR_BUILDROOT, 'build',
-                        'lib%d.a' % self._sequence_number)
+    path = os.path.join(self._builddir, 'lib%d.a' % self._sequence_number)
     util.make_parent_dir(path)
     self._sequence_number += 1
     return path
 
   def get_new_directory(self):
-    path = os.path.join(config.DIR_BUILDROOT, 'build',
-                        str(self._sequence_number))
+    path = os.path.join(self._builddir, str(self._sequence_number))
     util.make_dir(path)
     self._sequence_number += 1
     return path
 
 class PackageBuilder(Builder):
   def __init__(self, install_directory, arch):
-    super(PackageBuilder, self).__init__()
+    super(PackageBuilder, self).__init__('/nonexistent')
     self._install_directory = install_directory
     self._arch = arch
 
-    self._prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
+    self._bindir = os.path.join(config.DIR_BUILDROOT, 'bin')
+    self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
     self._cflags = ['-O2', '-fstack-protector-strong',
                     '-Werror=implicit-function-declaration']
 
   def _tool(self, name):
-    return os.path.join(config.DIR_BUILDROOT, 'bin',
-                        '%s-%s' % (self._arch, name))
+    return os.path.join(self._bindir, '%s-%s' % (self._arch, name))
 
   def archive(self, object_files):
     objs = sorted(object_files)
@@ -158,16 +165,16 @@ class PackageBuilder(Builder):
     return output
 
   def autoconf(self, builddir, script, args):
-    self.run(builddir,
-             [script, '--host=' + self._arch, '--prefix=/nonexistent'] + args)
+    self.run(builddir, [script, '--host=' + self._arch,
+                        '--prefix=' + self.get_prefix()] + args)
 
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, [
         'cmake', sourcedir,
         '-DCMAKE_AR=' + self._tool('ar'),
         '-DCMAKE_BUILD_TYPE=Release',
-        '-DCMAKE_INSTALL_PREFIX=/nonexistent',
-        '-DCMAKE_PREFIX_PATH=' + self._prefix,
+        '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix(),
+        '-DCMAKE_PREFIX_PATH=' + self._localbase,
         '-DCMAKE_RANLIB=' + self._tool('ranlib'),
         # TODO(ed): We shouldn't lean on FreeBSD.
         '-DCMAKE_SYSTEM_NAME=FreeBSD',
@@ -193,8 +200,8 @@ class PackageBuilder(Builder):
     with open(source, 'r') as f:
       contents = f.read()
     contents = (contents
-        .replace('/nonexistent', '%%PREFIX%%')
-        .replace(self._prefix, '%%PREFIX%%'))
+        .replace(self.get_prefix(), '%%PREFIX%%')
+        .replace(self._localbase, '%%PREFIX%%'))
     with open(target, 'w') as f:
       f.write(contents)
 
@@ -211,17 +218,12 @@ class PackageBuilder(Builder):
       util.make_parent_dir(target_file)
       ext = os.path.splitext(source_file)[1]
       if ext in {'.la', '.pc'}:
-        # Remove references to /nonexistent and the build directory from
-        # libtool archives and pkg-config files.
+        # Remove references to the installation prefix and the localbase
+        # directory from libtool archives and pkg-config files.
         self._unhardcode(source_file, target_file + '.template')
       else:
         # Copy other files literally.
         util.copy_file(source_file, target_file, False)
-
-  def make_install(self, path, args):
-    stagedir = self.get_new_directory()
-    self.run(path, ['make', 'DESTDIR=' + stagedir] + args)
-    return os.path.join(stagedir, 'nonexistent')
 
   def run(self, cwd, command):
     _chdir(cwd)
@@ -233,23 +235,23 @@ class PackageBuilder(Builder):
         'CFLAGS=' + ' '.join(self._cflags),
         'NM=' + self._tool('nm'),
         'OBJDUMP=' + self._tool('objdump'),
-        'PATH=%s/bin:/bin:/sbin:/usr/bin:/usr/sbin' % config.DIR_BUILDROOT,
-        'PKG_CONFIG_LIBDIR=' + os.path.join(self._prefix, 'lib/pkgconfig'),
+        'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
+        'PKG_CONFIG_LIBDIR=' + os.path.join(self._localbase, 'lib/pkgconfig'),
         'RANLIB=' + self._tool('ranlib'),
         'STRIP=' + self._tool('strip')] + command)
 
 class HostPackageBuilder(Builder):
   def __init__(self, install_directory):
-    super(HostPackageBuilder, self).__init__()
+    super(HostPackageBuilder, self).__init__(config.DIR_BUILDROOT)
     self._install_directory = install_directory
 
   def autoconf(self, builddir, script, args):
-    self.run(builddir, [script, '--prefix=' + config.DIR_BUILDROOT] + args)
+    self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, [
         'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
-        '-DCMAKE_INSTALL_PREFIX=' + config.DIR_BUILDROOT] + args)
+        '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
 
   def install(self, source, target):
     print('INSTALL', source, '->', target)
@@ -258,11 +260,6 @@ class HostPackageBuilder(Builder):
         source, target):
       util.make_parent_dir(target_file)
       util.copy_file(source_file, target_file, False)
-
-  def make_install(self, path, args):
-    stagedir = self.get_new_directory()
-    self.run(path, ['make', 'DESTDIR=' + stagedir] + args)
-    return os.path.join(stagedir, config.DIR_BUILDROOT[1:])
 
   def run(self, cwd, command):
     _chdir(cwd)

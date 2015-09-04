@@ -1,11 +1,8 @@
 def zlib_build(ctx):
   root = ctx.distfile()
-  root.run(['./configure'])
+  root.run(['./configure', '--prefix=' + ctx.prefix()])
   root.make(['libz.a'])
-
-  root.path('libz.a').install('lib/libz.a')
-  root.path('zconf.h').install('include/zconf.h')
-  root.path('zlib.h').install('include/zlib.h')
+  root.make_install().install()
 
 package(
     name = 'zlib',
