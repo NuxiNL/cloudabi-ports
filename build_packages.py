@@ -81,7 +81,6 @@ def sourceforge_sites(suffix):
       'http://ncu.dl.sourceforge.net/project/',
       'http://netcologne.dl.sourceforge.net/project/',
       'http://superb-dca3.dl.sourceforge.net/project/',
-      'http://switch.dl.sourceforge.net/project/',
       'http://tenet.dl.sourceforge.net/project/',
       'http://ufpr.dl.sourceforge.net/project/',
   }}
