@@ -1,0 +1,240 @@
+--- libtiff/tif_codec.c
++++ libtiff/tif_codec.c
+@@ -108,7 +108,7 @@
+ 	const TIFFCodec* c = TIFFFindCODEC(tif->tif_dir.td_compression);
+         char compression_code[20];
+         
+-        sprintf(compression_code, "%d",tif->tif_dir.td_compression );
++        snprintf(compression_code, sizeof(compression_code), "%d",tif->tif_dir.td_compression );
+ 	TIFFErrorExt(tif->tif_clientdata, tif->tif_name,
+                      "%s compression support is not configured", 
+                      c ? c->name : compression_code );
+--- libtiff/tif_getimage.c
++++ libtiff/tif_getimage.c
+@@ -80,7 +80,7 @@
+ 	int colorchannels;
+ 
+ 	if (!tif->tif_decodestatus) {
+-		sprintf(emsg, "Sorry, requested compression method is not configured");
++		snprintf(emsg, 1024, "Sorry, requested compression method is not configured");
+ 		return (0);
+ 	}
+ 	switch (td->td_bitspersample) {
+@@ -91,7 +91,7 @@
+ 		case 16:
+ 			break;
+ 		default:
+-			sprintf(emsg, "Sorry, can not handle images with %d-bit samples",
++			snprintf(emsg, 1024, "Sorry, can not handle images with %d-bit samples",
+ 			    td->td_bitspersample);
+ 			return (0);
+ 	}
+@@ -105,7 +105,7 @@
+ 				photometric = PHOTOMETRIC_RGB;
+ 				break;
+ 			default:
+-				sprintf(emsg, "Missing needed %s tag", photoTag);
++				snprintf(emsg, 1024, "Missing needed %s tag", photoTag);
+ 				return (0);
+ 		}
+ 	}
+@@ -116,7 +116,7 @@
+ 			if (td->td_planarconfig == PLANARCONFIG_CONTIG
+ 			    && td->td_samplesperpixel != 1
+ 			    && td->td_bitspersample < 8 ) {
+-				sprintf(emsg,
++				snprintf(emsg, 1024,
+ 				    "Sorry, can not handle contiguous data with %s=%d, "
+ 				    "and %s=%d and Bits/Sample=%d",
+ 				    photoTag, photometric,
+@@ -140,7 +140,7 @@
+ 			break;
+ 		case PHOTOMETRIC_RGB:
+ 			if (colorchannels < 3) {
+-				sprintf(emsg, "Sorry, can not handle RGB image with %s=%d",
++				snprintf(emsg, 1024, "Sorry, can not handle RGB image with %s=%d",
+ 				    "Color channels", colorchannels);
+ 				return (0);
+ 			}
+@@ -150,13 +150,13 @@
+ 				uint16 inkset;
+ 				TIFFGetFieldDefaulted(tif, TIFFTAG_INKSET, &inkset);
+ 				if (inkset != INKSET_CMYK) {
+-					sprintf(emsg,
++					snprintf(emsg, 1024,
+ 					    "Sorry, can not handle separated image with %s=%d",
+ 					    "InkSet", inkset);
+ 					return 0;
+ 				}
+ 				if (td->td_samplesperpixel < 4) {
+-					sprintf(emsg,
++					snprintf(emsg, 1024,
+ 					    "Sorry, can not handle separated image with %s=%d",
+ 					    "Samples/pixel", td->td_samplesperpixel);
+ 					return 0;
+@@ -165,7 +165,7 @@
+ 			}
+ 		case PHOTOMETRIC_LOGL:
+ 			if (td->td_compression != COMPRESSION_SGILOG) {
+-				sprintf(emsg, "Sorry, LogL data must have %s=%d",
++				snprintf(emsg, 1024, "Sorry, LogL data must have %s=%d",
+ 				    "Compression", COMPRESSION_SGILOG);
+ 				return (0);
+ 			}
+@@ -173,18 +173,18 @@
+ 		case PHOTOMETRIC_LOGLUV:
+ 			if (td->td_compression != COMPRESSION_SGILOG &&
+ 			    td->td_compression != COMPRESSION_SGILOG24) {
+-				sprintf(emsg, "Sorry, LogLuv data must have %s=%d or %d",
++				snprintf(emsg, 1024, "Sorry, LogLuv data must have %s=%d or %d",
+ 				    "Compression", COMPRESSION_SGILOG, COMPRESSION_SGILOG24);
+ 				return (0);
+ 			}
+ 			if (td->td_planarconfig != PLANARCONFIG_CONTIG) {
+-				sprintf(emsg, "Sorry, can not handle LogLuv images with %s=%d",
++				snprintf(emsg, 1024, "Sorry, can not handle LogLuv images with %s=%d",
+ 				    "Planarconfiguration", td->td_planarconfig);
+ 				return (0);
+ 			}
+ 			if( td->td_samplesperpixel != 3 )
+             {
+-                sprintf(emsg,
++                snprintf(emsg, 1024,
+                         "Sorry, can not handle image with %s=%d",
+                         "Samples/pixel", td->td_samplesperpixel);
+                 return 0;
+@@ -193,7 +193,7 @@
+ 		case PHOTOMETRIC_CIELAB:
+             if( td->td_samplesperpixel != 3 || td->td_bitspersample != 8 )
+             {
+-                sprintf(emsg,
++                snprintf(emsg, 1024,
+                         "Sorry, can not handle image with %s=%d and %s=%d",
+                         "Samples/pixel", td->td_samplesperpixel,
+                         "Bits/sample", td->td_bitspersample);
+@@ -201,7 +201,7 @@
+             }
+ 			break;
+ 		default:
+-			sprintf(emsg, "Sorry, can not handle image with %s=%d",
++			snprintf(emsg, 1024, "Sorry, can not handle image with %s=%d",
+ 			    photoTag, photometric);
+ 			return (0);
+ 	}
+@@ -275,7 +275,7 @@
+ 		case 16:
+ 			break;
+ 		default:
+-			sprintf(emsg, "Sorry, can not handle images with %d-bit samples",
++			snprintf(emsg, 1024, "Sorry, can not handle images with %d-bit samples",
+ 			    img->bitspersample);
+ 			goto fail_return;
+ 	}
+@@ -325,7 +325,7 @@
+ 				img->photometric = PHOTOMETRIC_RGB;
+ 				break;
+ 			default:
+-				sprintf(emsg, "Missing needed %s tag", photoTag);
++				snprintf(emsg, 1024, "Missing needed %s tag", photoTag);
+                                 goto fail_return;
+ 		}
+ 	}
+@@ -333,7 +333,7 @@
+ 		case PHOTOMETRIC_PALETTE:
+ 			if (!TIFFGetField(tif, TIFFTAG_COLORMAP,
+ 			    &red_orig, &green_orig, &blue_orig)) {
+-				sprintf(emsg, "Missing required \"Colormap\" tag");
++				snprintf(emsg, 1024, "Missing required \"Colormap\" tag");
+                                 goto fail_return;
+ 			}
+ 
+@@ -343,7 +343,7 @@
+ 			img->greencmap = (uint16 *) _TIFFmalloc(sizeof(uint16)*n_color);
+ 			img->bluecmap = (uint16 *) _TIFFmalloc(sizeof(uint16)*n_color);
+ 			if( !img->redcmap || !img->greencmap || !img->bluecmap ) {
+-				sprintf(emsg, "Out of memory for colormap copy");
++				snprintf(emsg, 1024, "Out of memory for colormap copy");
+                                 goto fail_return;
+ 			}
+ 
+@@ -357,7 +357,7 @@
+ 			if (planarconfig == PLANARCONFIG_CONTIG
+ 			    && img->samplesperpixel != 1
+ 			    && img->bitspersample < 8 ) {
+-				sprintf(emsg,
++				snprintf(emsg, 1024,
+ 				    "Sorry, can not handle contiguous data with %s=%d, "
+ 				    "and %s=%d and Bits/Sample=%d",
+ 				    photoTag, img->photometric,
+@@ -394,7 +394,7 @@
+ 			break;
+ 		case PHOTOMETRIC_RGB:
+ 			if (colorchannels < 3) {
+-				sprintf(emsg, "Sorry, can not handle RGB image with %s=%d",
++				snprintf(emsg, 1024, "Sorry, can not handle RGB image with %s=%d",
+ 				    "Color channels", colorchannels);
+                                 goto fail_return;
+ 			}
+@@ -404,12 +404,12 @@
+ 				uint16 inkset;
+ 				TIFFGetFieldDefaulted(tif, TIFFTAG_INKSET, &inkset);
+ 				if (inkset != INKSET_CMYK) {
+-					sprintf(emsg, "Sorry, can not handle separated image with %s=%d",
++					snprintf(emsg, 1024, "Sorry, can not handle separated image with %s=%d",
+ 					    "InkSet", inkset);
+                                         goto fail_return;
+ 				}
+ 				if (img->samplesperpixel < 4) {
+-					sprintf(emsg, "Sorry, can not handle separated image with %s=%d",
++					snprintf(emsg, 1024, "Sorry, can not handle separated image with %s=%d",
+ 					    "Samples/pixel", img->samplesperpixel);
+                                         goto fail_return;
+ 				}
+@@ -417,7 +417,7 @@
+ 			break;
+ 		case PHOTOMETRIC_LOGL:
+ 			if (compress != COMPRESSION_SGILOG) {
+-				sprintf(emsg, "Sorry, LogL data must have %s=%d",
++				snprintf(emsg, 1024, "Sorry, LogL data must have %s=%d",
+ 				    "Compression", COMPRESSION_SGILOG);
+                                 goto fail_return;
+ 			}
+@@ -427,12 +427,12 @@
+ 			break;
+ 		case PHOTOMETRIC_LOGLUV:
+ 			if (compress != COMPRESSION_SGILOG && compress != COMPRESSION_SGILOG24) {
+-				sprintf(emsg, "Sorry, LogLuv data must have %s=%d or %d",
++				snprintf(emsg, 1024, "Sorry, LogLuv data must have %s=%d or %d",
+ 				    "Compression", COMPRESSION_SGILOG, COMPRESSION_SGILOG24);
+                                 goto fail_return;
+ 			}
+ 			if (planarconfig != PLANARCONFIG_CONTIG) {
+-				sprintf(emsg, "Sorry, can not handle LogLuv images with %s=%d",
++				snprintf(emsg, 1024, "Sorry, can not handle LogLuv images with %s=%d",
+ 				    "Planarconfiguration", planarconfig);
+ 				return (0);
+ 			}
+@@ -443,7 +443,7 @@
+ 		case PHOTOMETRIC_CIELAB:
+ 			break;
+ 		default:
+-			sprintf(emsg, "Sorry, can not handle image with %s=%d",
++			snprintf(emsg, 1024, "Sorry, can not handle image with %s=%d",
+ 			    photoTag, img->photometric);
+                         goto fail_return;
+ 	}
+@@ -461,12 +461,12 @@
+ 	    !(planarconfig == PLANARCONFIG_SEPARATE && img->samplesperpixel > 1);
+ 	if (img->isContig) {
+ 		if (!PickContigCase(img)) {
+-			sprintf(emsg, "Sorry, can not handle image");
++			snprintf(emsg, 1024, "Sorry, can not handle image");
+ 			goto fail_return;
+ 		}
+ 	} else {
+ 		if (!PickSeparateCase(img)) {
+-			sprintf(emsg, "Sorry, can not handle image");
++			snprintf(emsg, 1024, "Sorry, can not handle image");
+ 			goto fail_return;
+ 		}
+ 	}

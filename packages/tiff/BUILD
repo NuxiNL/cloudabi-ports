@@ -18,5 +18,6 @@ distfile(
     checksum = 'e25eaa83ed7fab43ddd278b9b14d91a406a4b674cedc776adb95535f897f309c',
     master_sites = {'ftp://ftp.remotesensing.org/pub/libtiff/',
                     'http://download.osgeo.org/libtiff/'},
-    patches = {'tiff/patch-no-strcpy', 'tiff/patch-no-TIFFOpen'},
+    patches = {'tiff/patch-no-strcpy', 'tiff/patch-no-sprintf',
+               'tiff/patch-no-TIFFOpen'},
 )
