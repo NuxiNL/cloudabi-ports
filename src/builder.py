@@ -23,9 +23,7 @@ class FileHandle:
                     os.path.join(dirname, 'config.sub'))
 
     # Run the configure script in a separate directory.
-    print(self._path, inplace)
     builddir = self._path if inplace else self._builder.get_new_directory()
-    print('Builddir', builddir)
     self._builder.autoconf(
         builddir, os.path.join(self._path, 'configure'), args)
     return FileHandle(self._builder, builddir)
