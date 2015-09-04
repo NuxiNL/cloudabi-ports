@@ -167,7 +167,10 @@ class PackageBuilder(Builder):
         '-DCMAKE_AR=' + self._tool('ar'),
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_INSTALL_PREFIX=/nonexistent',
-        '-DCMAKE_RANLIB=' + self._tool('ranlib')] + args)
+        '-DCMAKE_RANLIB=' + self._tool('ranlib'),
+        # TODO(ed): We shouldn't lean on FreeBSD.
+        '-DCMAKE_SYSTEM_NAME=FreeBSD',
+        '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0]] + args)
 
   def compile(self, source, target, args):
     os.chdir(os.path.dirname(source))
