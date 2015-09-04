@@ -163,7 +163,7 @@ class PackageBuilder(Builder):
 
   def cmake(self, builddir, sourcedir, args):
     self.run(builddir, [
-        '/usr/local/bin/cmake', sourcedir,
+        'cmake', sourcedir,
         '-DCMAKE_AR=' + self._tool('ar'),
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_INSTALL_PREFIX=/nonexistent',
