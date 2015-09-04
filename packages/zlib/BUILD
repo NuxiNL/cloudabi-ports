@@ -1,6 +1,6 @@
 def zlib_build(ctx):
   root = ctx.distfile()
-  root.run(['./configure', '--prefix=' + ctx.prefix()])
+  root.run(['./configure', '--prefix=' + ctx.prefix(), '--static'])
   root.make(['libz.a'])
   root.make_install().install()
 
