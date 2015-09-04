@@ -14,7 +14,7 @@ class FileHandle:
     self._builder = builder
     self._path = path
 
-  def autoconf(self, args=[]):
+  def autoconf(self, args=[], inplace=False):
     # Replace config.sub files by an up-to-date copy. The copy provided
     # by the tarball rarely supports CloudABI.
     for dirname, filename in util.walk_files(self._path):
@@ -23,7 +23,9 @@ class FileHandle:
                     os.path.join(dirname, 'config.sub'))
 
     # Run the configure script in a separate directory.
-    builddir = self._builder.get_new_directory()
+    print(self._path, inplace)
+    builddir = self._path if inplace else self._builder.get_new_directory()
+    print('Builddir', builddir)
     self._builder.autoconf(
         builddir, os.path.join(self._path, 'configure'), args)
     return FileHandle(self._builder, builddir)
