@@ -207,8 +207,8 @@ class PackageBuilder(Builder):
       util.make_parent_dir(target_file)
       ext = os.path.splitext(source_file)[1]
       if ext in {'.la', '.pc'}:
-        # Remove references to /nonexistent and /usr/obj from libtool
-        # archives and pkg-config files.
+        # Remove references to /nonexistent and the build directory from
+        # libtool archives and pkg-config files.
         self._unhardcode(source_file, target_file + '.template')
       else:
         # Copy other files literally.
@@ -230,7 +230,6 @@ class PackageBuilder(Builder):
         'NM=' + self._tool('nm'),
         'OBJDUMP=' + self._tool('objdump'),
         'PATH=%s/bin:/bin:/sbin:/usr/bin:/usr/sbin' % config.DIR_BUILDROOT,
-        'PKG_CONFIG=/usr/local/bin/pkg-config',
         'PKG_CONFIG_LIBDIR=' + os.path.join(self._prefix, 'lib/pkgconfig'),
         'RANLIB=' + self._tool('ranlib'),
         'STRIP=' + self._tool('strip')] + command)
