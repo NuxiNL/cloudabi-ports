@@ -1,5 +1,5 @@
-def expat_build(root):
-  root.insert_sources()
+def expat_build(ctx):
+  root = ctx.distfile()
   build = root.autoconf()
   build.make(['buildlib'])
   build.make_install(['installlib']).install()

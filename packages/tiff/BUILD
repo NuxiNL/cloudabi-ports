@@ -1,5 +1,5 @@
-def tiff_build(root):
-  root.insert_sources()
+def tiff_build(ctx):
+  root = ctx.distfile()
   build = root.autoconf()
   build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
   build.make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install']).install()

@@ -1,8 +1,8 @@
-def bzip2_build(root):
-  root.insert_sources()
+def bzip2_build(ctx):
+  root = ctx.distfile()
   sources = {'blocksort.c', 'bzlib.c', 'compress.c', 'crctable.c',
              'decompress.c', 'huffman.c', 'randtable.c'}
-  libbz2 = root.archive(root.path(f).compile() for f in sources)
+  libbz2 = ctx.archive(root.path(f).compile() for f in sources)
 
   libbz2.install('lib/libbz2.a')
   root.path('bzlib.h').install('include/bzlib.h')

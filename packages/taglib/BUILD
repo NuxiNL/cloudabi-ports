@@ -1,5 +1,5 @@
-def taglib_build(root):
-  root.insert_sources()
+def taglib_build(ctx):
+  root = ctx.distfile()
   build = root.cmake(['-DENABLE_STATIC=ON'])
   build.make()
   stage = build.make_install()

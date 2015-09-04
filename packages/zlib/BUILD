@@ -1,5 +1,5 @@
-def zlib_build(root):
-  root.insert_sources()
+def zlib_build(ctx):
+  root = ctx.distfile()
   root.run(['./configure'])
   root.make(['libz.a'])
 

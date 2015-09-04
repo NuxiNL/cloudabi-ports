@@ -1,5 +1,5 @@
-def compiler_rt_build(root):
-  root.insert_sources()
+def compiler_rt_build(ctx):
+  root = ctx.distfile()
   sources = {
       'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
       'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -37,7 +37,7 @@ def compiler_rt_build(root):
       'x86_64/floatundixf.S',
   }
   srcdir = root.path('lib/builtins')
-  library = srcdir.archive(srcdir.path(f).compile() for f in sources)
+  library = ctx.archive(srcdir.path(f).compile() for f in sources)
   library.install('lib/libcompiler_rt.a')
 
 package(

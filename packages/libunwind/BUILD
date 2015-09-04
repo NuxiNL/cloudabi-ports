@@ -1,12 +1,12 @@
-def libunwind_build(root):
-  root.insert_sources()
+def libunwind_build(ctx):
+  root = ctx.distfile()
   c_sources = {
       'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
       'UnwindRegistersRestore.S', 'UnwindRegistersSave.S',
   }
   cxx_sources = {'Unwind-EHABI.cpp', 'libunwind.cpp'}
   srcdir = root.path('src')
-  libunwind = srcdir.archive(
+  libunwind = ctx.archive(
       {srcdir.path(f).compile(['-I../include'])
        for f in c_sources} |
       {srcdir.path(f).compile(['-I../include', '-std=c++11'])

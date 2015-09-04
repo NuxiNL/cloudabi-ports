@@ -1,5 +1,5 @@
-def libxspf_build(root):
-  root.insert_sources()
+def libxspf_build(ctx):
+  root = ctx.distfile()
   build = root.autoconf(['--disable-test'])
   build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
   build.make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install']).install()

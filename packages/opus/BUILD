@@ -1,5 +1,5 @@
-def opus_build(root):
-  root.insert_sources()
+def opus_build(ctx):
+  root = ctx.distfile()
   build = root.autoconf(['--disable-extra-programs'])
   build.make()
   build.make_install().install()

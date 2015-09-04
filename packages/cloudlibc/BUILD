@@ -1,5 +1,5 @@
-def cloudlibc_build(root):
-  root.insert_sources()
+def cloudlibc_build(ctx):
+  root = ctx.distfile()
   root.run(['./build'])
 
   root.run(['DESTDIR=stage', 'PREFIX=/', './install'])

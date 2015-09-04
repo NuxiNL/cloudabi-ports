@@ -1,6 +1,6 @@
-def libcxx_build(root):
-  root.insert_sources(0)
-  root.path('libcxxabi').insert_sources(1)
+def libcxx_build(ctx):
+  root = ctx.distfile(0)
+  root.path('libcxxabi').copy(ctx.distfile(1))
 
   # Build libc++.a.
   sources = {
@@ -13,7 +13,7 @@ def libcxx_build(root):
       'typeinfo.cpp', 'utility.cpp', 'valarray.cpp'
   }
   srcdir = root.path('src')
-  libcxx = srcdir.archive(
+  libcxx = ctx.archive(
       srcdir.path(f).compile(
           ['-I../include', '-I../libcxxabi/include', '-std=c++11',
            '-D_LIBCPP_BUILD_STATIC', '-DLIBCXX_BUILDING_LIBCXXABI'])

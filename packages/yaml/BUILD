@@ -1,5 +1,5 @@
-def yaml_build(root):
-  root.insert_sources()
+def yaml_build(ctx):
+  root = ctx.distfile()
   build = root.autoconf()
   build.make(['noinst_PROGRAMS='])
   build.make_install(['noinst_PROGRAMS=', 'install']).install()

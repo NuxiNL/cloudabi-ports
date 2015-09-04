@@ -1,6 +1,6 @@
-def host_llvm_build(root):
-  root.insert_sources(0)
-  root.path('tools/clang').insert_sources(1)
+def host_llvm_build(ctx):
+  root = ctx.distfile(0)
+  root.path('tools/clang').copy(ctx.distfile(1))
 
   # Build and install LLVM.
   build = root.cmake()
