@@ -1,0 +1,28 @@
+--- file.c
++++ file.c
+@@ -425,6 +425,7 @@
+  * NAME:	file->open()
+  * DESCRIPTION:	open a file given its pathname
+  */
++#if 0
+ struct id3_file *id3_file_open(char const *path, enum id3_file_mode mode)
+ {
+   FILE *iofile;
+@@ -442,6 +443,7 @@
+ 
+   return file;
+ }
++#endif
+ 
+ /*
+  * NAME:	file->fdopen()
+--- id3tag.h
++++ id3tag.h
+@@ -244,7 +244,6 @@
+   ID3_FILE_MODE_READWRITE
+ };
+ 
+-struct id3_file *id3_file_open(char const *, enum id3_file_mode);
+ struct id3_file *id3_file_fdopen(int, enum id3_file_mode);
+ int id3_file_close(struct id3_file *);
+ 
