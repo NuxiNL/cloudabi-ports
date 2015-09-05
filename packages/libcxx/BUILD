@@ -1,6 +1,6 @@
 def libcxx_build(ctx):
   root = ctx.distfile(0)
-  root.path('libcxxabi').copy(ctx.distfile(1))
+  ctx.distfile(1).rename(root.path('libcxxabi'))
 
   # Build libc++.a.
   sources = {

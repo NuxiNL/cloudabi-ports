@@ -1,6 +1,6 @@
 def host_llvm_build(ctx):
   root = ctx.distfile(0)
-  root.path('tools/clang').copy(ctx.distfile(1))
+  ctx.distfile(1).rename(root.path('tools/clang'))
 
   # Build and install LLVM.
   build = root.cmake()

@@ -47,10 +47,8 @@ class FileHandle:
     self._builder.compile(self._path, output, args)
     return FileHandle(self._builder, output)
 
-  def copy(self, src):
-    for source, target in util.walk_files_concurrently(src._path, self._path):
-      util.make_parent_dir(target)
-      util.copy_file(source, target, True)
+  def rename(self, dst):
+    os.rename(self._path, dst._path)
 
   def cmake(self, args=[]):
     builddir = self._builder.get_new_directory()

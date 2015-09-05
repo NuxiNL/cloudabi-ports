@@ -1,6 +1,6 @@
 def libcxxabi_build(ctx):
   root = ctx.distfile(0)
-  root.path('libunwind').copy(ctx.distfile(1))
+  ctx.distfile(1).rename(root.path('libunwind'))
   sources = {
       'abort_message.cpp', 'cxa_aux_runtime.cpp',
       'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
