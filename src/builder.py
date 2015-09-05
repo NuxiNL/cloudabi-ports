@@ -76,7 +76,7 @@ class FileHandle:
         self._builder.install(self._path, path)
 
     def make(self, args=['all']):
-        self.run([self._builder.get_make()] + args)
+        self.run([self._builder.get_make(), '-j6'] + args)
 
     def make_install(self, args=['install']):
         stagedir = self._builder.get_new_directory()
