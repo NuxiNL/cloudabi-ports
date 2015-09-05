@@ -1,0 +1,37 @@
+--- src/common/mythread.h
++++ src/common/mythread.h
+@@ -134,20 +134,6 @@
+ 
+ // Use pthread_sigmask() to set the signal mask in multi-threaded programs.
+ // Do nothing on OpenVMS since it lacks pthread_sigmask().
+-static inline void
+-mythread_sigmask(int how, const sigset_t *restrict set,
+-		sigset_t *restrict oset)
+-{
+-#ifdef __VMS
+-	(void)how;
+-	(void)set;
+-	(void)oset;
+-#else
+-	int ret = pthread_sigmask(how, set, oset);
+-	assert(ret == 0);
+-	(void)ret;
+-#endif
+-}
+ 
+ 
+ // Creates a new thread with all signals blocked. Returns zero on success
+@@ -155,13 +141,8 @@
+ static inline int
+ mythread_create(mythread *thread, void *(*func)(void *arg), void *arg)
+ {
+-	sigset_t old;
+-	sigset_t all;
+-	sigfillset(&all);
+ 
+-	mythread_sigmask(SIG_SETMASK, &all, &old);
+ 	const int ret = pthread_create(thread, NULL, func, arg);
+-	mythread_sigmask(SIG_SETMASK, &old, NULL);
+ 
+ 	return ret;
+ }
