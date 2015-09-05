@@ -109,7 +109,7 @@ class BuildHandle:
     # Apply patches.
     for patch in distfile.patches():
       with open(patch) as f:
-        subprocess.check_call(['patch', '-d', extractdir, '-sp0'], stdin=f)
+        subprocess.check_call(['patch', '-d', extractdir, '-tsp0'], stdin=f)
 
     # Delete .orig files that patch leaves behind.
     for dirname, filename in util.walk_files(extractdir):
