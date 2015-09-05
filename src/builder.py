@@ -75,12 +75,12 @@ class FileHandle:
     def install(self, path='.'):
         self._builder.install(self._path, path)
 
-    def make(self, args=['all'], gnu_make=False):
-        self.run(['gmake' if gnu_make else 'make', '-j6'] + args)
+    def make(self, args=['all']):
+        self.run([self._builder.get_make()] + args)
 
     def make_install(self, args=['install']):
         stagedir = self._builder.get_new_directory()
-        self.run(['make', 'DESTDIR=' + stagedir] + args)
+        self.run([self._builder.get_make()] + args)
         return FileHandle(
             self._builder,
             os.path.join(
@@ -227,6 +227,9 @@ class PackageBuilder(Builder):
         else:
             raise Exception('Unknown file extension: %s' % ext)
 
+    def get_make():
+      return 'make'
+
     def _unhardcode(self, source, target):
         with open(source, 'r') as f:
             contents = f.read()
@@ -285,6 +288,9 @@ class HostPackageBuilder(Builder):
         self.run(builddir, [
             'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
+
+    def get_make():
+      return 'gmake'
 
     def install(self, source, target):
         print('INSTALL', source, '->', target)

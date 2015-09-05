@@ -7,7 +7,7 @@ def host_binutils_build(ctx):
             '--disable-nls',
             '--disable-werror',
             '--enable-deterministic-archives'])
-        build.make(gnu_make=True)
+        build.make()
         stage = build.make_install()
 
         # Remove extraneous '<arch>/bin' directory. We shouldn't keep
