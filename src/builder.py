@@ -171,11 +171,14 @@ class PackageBuilder(Builder):
         'cmake', sourcedir,
         '-DCMAKE_AR=' + self._tool('ar'),
         '-DCMAKE_BUILD_TYPE=Release',
+        '-DCMAKE_FIND_ROOT_PATH=' + self._localbase,
+        '-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY',
+        '-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY',
+        '-DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER',
         '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix(),
         '-DCMAKE_PREFIX_PATH=' + self._localbase,
         '-DCMAKE_RANLIB=' + self._tool('ranlib'),
-        # TODO(ed): We shouldn't lean on FreeBSD.
-        '-DCMAKE_SYSTEM_NAME=FreeBSD',
+        '-DCMAKE_SYSTEM_NAME=Generic',
         '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0]] + args)
 
   def compile(self, source, target, args):
