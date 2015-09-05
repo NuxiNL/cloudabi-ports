@@ -227,8 +227,9 @@ class PackageBuilder(Builder):
         else:
             raise Exception('Unknown file extension: %s' % ext)
 
+    @staticmethod
     def get_make():
-      return 'make'
+        return 'make'
 
     def _unhardcode(self, source, target):
         with open(source, 'r') as f:
@@ -289,8 +290,9 @@ class HostPackageBuilder(Builder):
             'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
 
+    @staticmethod
     def get_make():
-      return 'gmake'
+        return 'gmake'
 
     def install(self, source, target):
         print('INSTALL', source, '->', target)
