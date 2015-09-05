@@ -32,7 +32,7 @@ package(
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    distfiles=['libcxx-3.7.0.src.tar.xz', 'libcxxabi-3.7.0.src.tar.xz'],
+    distfiles=['%(name)s-%(version)s.src', 'libcxxabi-%(version)s.src'],
     build_cmd=libcxx_build,
 )
 

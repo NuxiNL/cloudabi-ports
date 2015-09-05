@@ -46,7 +46,7 @@ package(
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cloudlibc'},
-    distfiles=['compiler-rt-3.7.0.src.tar.xz'],
+    distfiles=['%(name)s-%(version)s.src'],
     build_cmd=compiler_rt_build,
 )
 

@@ -20,7 +20,7 @@ package(
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
-    distfiles=['libunwind-3.7.0.src.tar.xz'],
+    distfiles=['%(name)s-%(version)s.src'],
     build_cmd=libunwind_build,
 )
 

@@ -26,7 +26,7 @@ package(
     homepage='http://libcxxabi.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
-    distfiles=['libcxxabi-3.7.0.src.tar.xz', 'libunwind-3.7.0.src.tar.xz'],
+    distfiles=['%(name)s-%(version)s.src', 'libunwind-%(version)s.src'],
     build_cmd=libcxxabi_build,
 )
 

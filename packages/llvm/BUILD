@@ -22,7 +22,7 @@ host_package(
     version='3.7.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
-    distfiles=['llvm-3.7.0.src.tar.xz', 'cfe-3.7.0.src.tar.xz'],
+    distfiles=['%(name)s-%(version)s.src', 'cfe-%(version)s.src'],
     build_cmd=host_llvm_build,
 )
 

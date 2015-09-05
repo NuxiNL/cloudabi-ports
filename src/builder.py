@@ -80,7 +80,7 @@ class FileHandle:
 
     def make_install(self, args=['install']):
         stagedir = self._builder.get_new_directory()
-        self.run([self._builder.get_make()] + args)
+        self.run([self._builder.get_make(), 'DESTDIR=' + stagedir] + args)
         return FileHandle(
             self._builder,
             os.path.join(

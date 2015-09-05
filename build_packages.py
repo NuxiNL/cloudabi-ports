@@ -35,39 +35,46 @@ def build_nothing(root):
 
 
 def host_package(**kwargs):
-    pass
-    name = kwargs['name']
+    pkg = kwargs
+    name = pkg['name']
     if name in HOST_PACKAGES:
         raise Exception('%s listed multiple times' % name)
-    if 'distfiles' not in kwargs:
-        kwargs['distfiles'] = [
-            '%s-%s.tar' %
-            (kwargs['name'], kwargs['version'])]
-    HOST_PACKAGES[name] = kwargs
+    if 'distfiles' not in pkg:
+        pkg['distfiles'] = ['%(name)s-%(version)s']
+    pkg['distfiles'] = [filename % pkg for filename in pkg['distfiles']]
+    HOST_PACKAGES[name] = pkg
 
 
 def package(**kwargs):
-    name = kwargs['name']
+    pkg = kwargs
+    name = pkg['name']
     if name in PACKAGES:
         raise Exception('%s listed multiple times' % name)
-    if 'distfiles' not in kwargs:
-        kwargs['distfiles'] = [
-            '%s-%s.tar' %
-            (kwargs['name'], kwargs['version'])]
-    if 'lib_depends' not in kwargs:
-        kwargs['lib_depends'] = set()
-    PACKAGES[name] = kwargs
+    if 'distfiles' not in pkg:
+        pkg['distfiles'] = ['%(name)s-%(version)s']
+    pkg['distfiles'] = [filename % pkg for filename in pkg['distfiles']]
+    if 'lib_depends' not in pkg:
+        pkg['lib_depends'] = set()
+    PACKAGES[name] = pkg
 
 DISTFILES = {}
 
 
 def distfile(**kwargs):
-    name = kwargs['name']
+    distfile = kwargs
+
+    # Determine canonical name by stripping the file extension.
+    name = distfile['name']
+    for ext in {'.tar.gz', '.tar.bz2', '.tar.xz'}:
+        if name.endswith(ext):
+            name = name[:-len(ext)]
+            break
+
     if name in DISTFILES:
         raise Exception('%s listed multiple times' % name)
-    if 'patches' not in kwargs:
-        kwargs['patches'] = set()
-    DISTFILES[name] = kwargs
+    if 'patches' not in distfile:
+        distfile['patches'] = set()
+    DISTFILES[name] = distfile
 
 
 def autoconf_automake_build(ctx):
@@ -128,10 +135,11 @@ def make_parents(path):
 
 def get_distfile(distname):
     # Fetch distfile.
-    distfile = os.path.join(DIR_DISTFILES, distname)
+    distfile = os.path.join(DIR_DISTFILES, DISTFILES[distname]['name'])
     site = random.sample(DISTFILES[distname]['master_sites'], 1)[0]
     if not os.path.isfile(distfile):
-        subprocess.check_call(['fetch', '-o', distfile, site + distname])
+        subprocess.check_call(['fetch', '-o', distfile, site +
+                               DISTFILES[distname]['name']])
     # Validate checksum.
     with open(distfile, 'rb') as f:
         if DISTFILES[distname]['checksum'] != hashlib.sha256(
@@ -194,14 +202,7 @@ def copy_dependencies(pkg, arch):
 class Distfile:
 
     def __init__(self, name):
-        if name + '.gz' in DISTFILES:
-            self._name = name + '.gz'
-        elif name + '.bz2' in DISTFILES:
-            self._name = name + '.bz2'
-        elif name + '.xz' in DISTFILES:
-            self._name = name + '.xz'
-        else:
-            self._name = name
+        self._name = name
 
     def patches(self):
         return (os.path.join(DIR_REPOSITORY, f)
