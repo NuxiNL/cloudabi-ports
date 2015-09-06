@@ -1,8 +1,6 @@
 def autoconf_automake_build(ctx):
-    if ctx.cpu() == 'x86_64':
-        float_words_bigendian = 'no'
     build = ctx.extract().autoconf([
-        'ax_cv_c_float_words_bigendian=' + float_words_bigendian,
+        'ax_cv_c_float_words_bigendian=' + {'x86_64': 'no'}[ctx.cpu()],
         '--enable-xlib=no',
     ])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
