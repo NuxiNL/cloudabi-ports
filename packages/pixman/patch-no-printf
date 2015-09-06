@@ -1,0 +1,10 @@
+--- pixman/pixman-implementation.c
++++ pixman/pixman-implementation.c
+@@ -368,7 +368,6 @@
+ 
+ 	    if (strlen (name) == len && strncmp (name, env, len) == 0)
+ 	    {
+-		printf ("pixman: Disabled %s implementation\n", name);
+ 		return TRUE;
+ 	    }
+ 
