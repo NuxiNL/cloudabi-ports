@@ -116,6 +116,9 @@ class BuildHandle:
         return FileHandle(self._builder,
                           self._builder.archive(obj._path for obj in objects))
 
+    def cpu(self):
+        return self._builder.get_cpu()
+
     def extract(self, name='%(name)s-%(version)s'):
         return FileHandle(
             self._builder,
@@ -207,6 +210,9 @@ class PackageBuilder(Builder):
                 ['-c', '-o', target, source])
         else:
             raise Exception('Unknown file extension: %s' % ext)
+
+    def get_cpu(self):
+        return self._arch.split('-', 1)[0]
 
     @staticmethod
     def get_make():
