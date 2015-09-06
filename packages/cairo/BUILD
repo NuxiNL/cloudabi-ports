@@ -1,0 +1,30 @@
+def autoconf_automake_build(ctx):
+    if ctx.cpu() == 'x86_64':
+        float_words_bigendian = 'no'
+    build = ctx.extract().autoconf([
+        'ax_cv_c_float_words_bigendian=' + float_words_bigendian,
+        '--enable-xlib=no',
+    ])
+    build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
+    build.make_install([
+        'noinst_LTLIBRARIES=', 'noinst_PROGRAMS=', 'install'
+    ]).install()
+
+package(
+    name='cairo',
+    version='1.14.2',
+    homepage='http://cairographics.org/',
+    maintainer='info@nuxi.nl',
+    lib_depends={'c-runtime', 'libpng', 'pixman'},
+    build_cmd=autoconf_automake_build,
+)
+
+distfile(
+    name='cairo-1.14.2.tar.xz',
+    checksum='c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb',
+    master_sites={'http://cairographics.org/releases/'},
+    patches={
+        'cairo/patch-no-fopen',
+        'cairo/patch-no-printf',
+        'cairo/patch-no-strcpy'},
+)

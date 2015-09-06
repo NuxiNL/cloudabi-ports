@@ -1,0 +1,40 @@
+--- src/cairo-debug.c
++++ src/cairo-debug.c
+@@ -262,7 +262,7 @@
+ 		 box.p1.x, box.p1.y, box.p2.x, box.p2.y);
+     }
+ 
+-    fputc ('\n', stream);
++    printf ("\n");
+ }
+ 
+ void
+--- src/cairo-pattern.c
++++ src/cairo-pattern.c
+@@ -4607,14 +4607,14 @@
+ _cairo_debug_print_surface_pattern (FILE *file,
+ 				    const cairo_surface_pattern_t *pattern)
+ {
+-    printf ("  surface type: %d\n", pattern->surface->type);
++    fprintf (file, "  surface type: %d\n", pattern->surface->type);
+ }
+ 
+ static void
+ _cairo_debug_print_raster_source_pattern (FILE *file,
+ 					  const cairo_raster_source_pattern_t *raster)
+ {
+-    printf ("  content: %x, size %dx%d\n", raster->content, raster->extents.width, raster->extents.height);
++    fprintf (file, "  content: %x, size %dx%d\n", raster->content, raster->extents.width, raster->extents.height);
+ }
+ 
+ static void
+--- src/cairo-surface-observer.c
++++ src/cairo-surface-observer.c
+@@ -1218,7 +1218,6 @@
+     cairo_surface_observer_t *surface = abstract_surface;
+     cairo_status_t status;
+ 
+-    printf ("mark-dirty (%d, %d) x (%d, %d)\n", x, y, width, height);
+ 
+     status = CAIRO_STATUS_SUCCESS;
+     if (surface->target->backend->mark_dirty_rectangle)

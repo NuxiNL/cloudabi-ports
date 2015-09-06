@@ -1,0 +1,349 @@
+--- src/cairo-output-stream-private.h
++++ src/cairo-output-stream-private.h
+@@ -154,8 +154,6 @@
+  * call _cairo_output_stream_destroy (or _cairo_output_stream_close at
+  * least) in order to ensure that everything is properly cleaned up.
+  */
+-cairo_private cairo_output_stream_t *
+-_cairo_output_stream_create_for_filename (const char *filename);
+ 
+ /* This function never returns %NULL. If an error occurs (NO_MEMORY or
+  * WRITE_ERROR) while trying to create the output stream this function
+--- src/cairo-output-stream.c
++++ src/cairo-output-stream.c
+@@ -648,6 +648,7 @@
+     return &stream->base;
+ }
+ 
++#if 0
+ cairo_output_stream_t *
+ _cairo_output_stream_create_for_filename (const char *filename)
+ {
+@@ -682,6 +683,7 @@
+ 
+     return &stream->base;
+ }
++#endif
+ 
+ 
+ typedef struct _memory_stream {
+--- src/cairo-pdf-surface.c
++++ src/cairo-pdf-surface.c
+@@ -525,6 +525,7 @@
+  *
+  * Since: 1.2
+  **/
++#if 0
+ cairo_surface_t *
+ cairo_pdf_surface_create (const char		*filename,
+ 			  double		 width_in_points,
+@@ -540,6 +541,7 @@
+ 							  width_in_points,
+ 							  height_in_points);
+ }
++#endif
+ 
+ static cairo_bool_t
+ _cairo_surface_is_pdf (cairo_surface_t *surface)
+--- src/cairo-pdf.h
++++ src/cairo-pdf.h
+@@ -58,10 +58,6 @@
+     CAIRO_PDF_VERSION_1_5
+ } cairo_pdf_version_t;
+ 
+-cairo_public cairo_surface_t *
+-cairo_pdf_surface_create (const char		*filename,
+-			  double		 width_in_points,
+-			  double		 height_in_points);
+ 
+ cairo_public cairo_surface_t *
+ cairo_pdf_surface_create_for_stream (cairo_write_func_t	write_func,
+--- src/cairo-png.c
++++ src/cairo-png.c
+@@ -353,6 +353,7 @@
+  *
+  * Since: 1.0
+  **/
++#if 0
+ cairo_status_t
+ cairo_surface_write_to_png (cairo_surface_t	*surface,
+ 			    const char		*filename)
+@@ -383,6 +384,7 @@
+ 
+     return status;
+ }
++#endif
+ 
+ struct png_write_closure_t {
+     cairo_write_func_t		 write_func;
+@@ -751,6 +753,7 @@
+  *
+  * Since: 1.0
+  **/
++#if 0
+ cairo_surface_t *
+ cairo_image_surface_create_from_png (const char *filename)
+ {
+@@ -782,6 +785,7 @@
+ 
+     return surface;
+ }
++#endif
+ 
+ /**
+  * cairo_image_surface_create_from_png_stream:
+--- src/cairo-polygon-reduce.c
++++ src/cairo-polygon-reduce.c
+@@ -1382,11 +1382,6 @@
+     if (unlikely (0 == num_events))
+ 	return CAIRO_STATUS_SUCCESS;
+ 
+-    if (DEBUG_POLYGON) {
+-	FILE *file = fopen ("reduce_in.txt", "w");
+-	_cairo_debug_print_polygon (file, polygon);
+-	fclose (file);
+-    }
+ 
+     events = stack_events;
+     event_ptrs = stack_event_ptrs;
+@@ -1428,11 +1423,6 @@
+     if (events != stack_events)
+ 	free (events);
+ 
+-    if (DEBUG_POLYGON) {
+-	FILE *file = fopen ("reduce_out.txt", "w");
+-	_cairo_debug_print_polygon (file, polygon);
+-	fclose (file);
+-    }
+ 
+     return status;
+ }
+--- src/cairo-ps-surface.c
++++ src/cairo-ps-surface.c
+@@ -1132,6 +1132,7 @@
+  *
+  * Since: 1.2
+  **/
++#if 0
+ cairo_surface_t *
+ cairo_ps_surface_create (const char		*filename,
+ 			 double			 width_in_points,
+@@ -1147,6 +1148,7 @@
+ 							 width_in_points,
+ 							 height_in_points);
+ }
++#endif
+ 
+ /**
+  * cairo_ps_surface_create_for_stream:
+--- src/cairo-ps.h
++++ src/cairo-ps.h
+@@ -63,10 +63,6 @@
+     CAIRO_PS_LEVEL_3
+ } cairo_ps_level_t;
+ 
+-cairo_public cairo_surface_t *
+-cairo_ps_surface_create (const char		*filename,
+-			 double			 width_in_points,
+-			 double			 height_in_points);
+ 
+ cairo_public cairo_surface_t *
+ cairo_ps_surface_create_for_stream (cairo_write_func_t	write_func,
+--- src/cairo-script-surface.c
++++ src/cairo-script-surface.c
+@@ -3752,6 +3752,7 @@
+  *
+  * Since: 1.12
+  **/
++#if 0
+ cairo_device_t *
+ cairo_script_create (const char *filename)
+ {
+@@ -3764,6 +3765,7 @@
+ 
+     return _cairo_script_context_create (stream);
+ }
++#endif
+ 
+ /**
+  * cairo_script_create_for_stream:
+--- src/cairo-script.h
++++ src/cairo-script.h
+@@ -56,8 +56,6 @@
+     CAIRO_SCRIPT_MODE_BINARY
+ } cairo_script_mode_t;
+ 
+-cairo_public cairo_device_t *
+-cairo_script_create (const char *filename);
+ 
+ cairo_public cairo_device_t *
+ cairo_script_create_for_stream (cairo_write_func_t	 write_func,
+--- src/cairo-svg-surface.c
++++ src/cairo-svg-surface.c
+@@ -262,6 +262,7 @@
+  *
+  * Since: 1.2
+  **/
++#if 0
+ cairo_surface_t *
+ cairo_svg_surface_create (const char	*filename,
+ 			  double	 width,
+@@ -275,6 +276,7 @@
+ 
+     return _cairo_svg_surface_create_for_stream_internal (stream, width, height, CAIRO_SVG_VERSION_1_1);
+ }
++#endif
+ 
+ static cairo_bool_t
+ _cairo_surface_is_svg (cairo_surface_t *surface)
+--- src/cairo-svg.h
++++ src/cairo-svg.h
+@@ -53,10 +53,6 @@
+     CAIRO_SVG_VERSION_1_2
+ } cairo_svg_version_t;
+ 
+-cairo_public cairo_surface_t *
+-cairo_svg_surface_create (const char   *filename,
+-			  double	width_in_points,
+-			  double	height_in_points);
+ 
+ cairo_public cairo_surface_t *
+ cairo_svg_surface_create_for_stream (cairo_write_func_t	write_func,
+--- src/cairo-xml-surface.c
++++ src/cairo-xml-surface.c
+@@ -1113,6 +1113,7 @@
+     return &surface->base;
+ }
+ 
++#if 0
+ cairo_device_t *
+ cairo_xml_create (const char *filename)
+ {
+@@ -1125,6 +1126,7 @@
+ 
+     return _cairo_xml_create_internal (stream);
+ }
++#endif
+ 
+ cairo_device_t *
+ cairo_xml_create_for_stream (cairo_write_func_t	 write_func,
+--- src/cairo-xml.h
++++ src/cairo-xml.h
+@@ -42,8 +42,6 @@
+ 
+ CAIRO_BEGIN_DECLS
+ 
+-cairo_public cairo_device_t *
+-cairo_xml_create (const char *filename);
+ 
+ cairo_public cairo_device_t *
+ cairo_xml_create_for_stream (cairo_write_func_t	 write_func,
+--- src/cairo.h
++++ src/cairo.h
+@@ -2405,9 +2405,6 @@
+ 
+ #if CAIRO_HAS_PNG_FUNCTIONS
+ 
+-cairo_public cairo_status_t
+-cairo_surface_write_to_png (cairo_surface_t	*surface,
+-			    const char		*filename);
+ 
+ cairo_public cairo_status_t
+ cairo_surface_write_to_png_stream (cairo_surface_t	*surface,
+@@ -2544,8 +2541,6 @@
+ 
+ #if CAIRO_HAS_PNG_FUNCTIONS
+ 
+-cairo_public cairo_surface_t *
+-cairo_image_surface_create_from_png (const char	*filename);
+ 
+ cairo_public cairo_surface_t *
+ cairo_image_surface_create_from_png_stream (cairo_read_func_t	read_func,
+--- util/cairo-script/cairo-script-file.c
++++ util/cairo-script/cairo-script-file.c
+@@ -47,6 +47,7 @@
+ 
+ #define OWN_STREAM 0x1
+ 
++#if 0
+ csi_status_t
+ csi_file_new (csi_t *ctx,
+ 	      csi_object_t *obj,
+@@ -82,6 +83,7 @@
+     obj->datum.file = file;
+     return CAIRO_STATUS_SUCCESS;
+ }
++#endif
+ 
+ csi_status_t
+ csi_file_new_for_stream (csi_t *ctx,
+--- util/cairo-script/cairo-script-interpreter.c
++++ util/cairo-script/cairo-script-interpreter.c
+@@ -543,6 +543,7 @@
+     ctx->hooks = *hooks;
+ }
+ 
++#if 0
+ cairo_status_t
+ cairo_script_interpreter_run (csi_t *ctx, const char *filename)
+ {
+@@ -564,6 +565,7 @@
+ 
+     return ctx->status;
+ }
++#endif
+ 
+ cairo_status_t
+ cairo_script_interpreter_feed_stream (csi_t *ctx, FILE *stream)
+--- util/cairo-script/cairo-script-interpreter.h
++++ util/cairo-script/cairo-script-interpreter.h
+@@ -89,9 +89,6 @@
+ cairo_script_interpreter_install_hooks (cairo_script_interpreter_t *ctx,
+ 					const cairo_script_interpreter_hooks_t *hooks);
+ 
+-cairo_public cairo_status_t
+-cairo_script_interpreter_run (cairo_script_interpreter_t *ctx,
+-			      const char *filename);
+ 
+ cairo_public cairo_status_t
+ cairo_script_interpreter_feed_stream (cairo_script_interpreter_t *ctx,
+--- util/cairo-script/cairo-script-operators.c
++++ util/cairo-script/cairo-script-operators.c
+@@ -6286,6 +6286,7 @@
+     return CSI_STATUS_SUCCESS;
+ }
+ 
++#if 0
+ static csi_status_t
+ _write_to_png (csi_t *ctx)
+ {
+@@ -6350,6 +6351,7 @@
+     pop (1);
+     return CSI_STATUS_SUCCESS;
+ }
++#endif
+ 
+ static csi_status_t
+ _xor (csi_t *ctx)
+@@ -6649,8 +6651,6 @@
+     { "user-to-device", NULL },
+     { "user-to-device-distance", NULL },
+     { "where", NULL },
+-    { "write-to-png", _write_to_png },
+-    { "write-to-script", _write_to_script },
+     { "xor", _xor },
+ 
+     { "=", _debug_print },
+--- util/cairo-script/cairo-script-private.h
++++ util/cairo-script/cairo-script-private.h
+@@ -509,10 +509,6 @@
+ 
+ /* cairo-script-file.c */
+ 
+-csi_private csi_status_t
+-csi_file_new (csi_t *ctx,
+-	      csi_object_t *obj,
+-	      const char *path, const char *mode);
+ 
+ csi_private csi_status_t
+ csi_file_new_for_stream (csi_t *ctx,
