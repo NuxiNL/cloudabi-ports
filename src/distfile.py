@@ -27,11 +27,11 @@ class Distfile:
             try:
                 checksum = hashlib.sha256()
                 with open(self._pathname, 'rb') as f:
-                  while True:
-                    data = f.read(16384)
-                    if not data:
-                      break
-                    checksum.update(data)
+                    while True:
+                        data = f.read(16384)
+                        if not data:
+                            break
+                        checksum.update(data)
                 if checksum.hexdigest() == self._checksum:
                     return
             except FileNotFoundError:
@@ -41,13 +41,13 @@ class Distfile:
             url = random.sample(self._master_sites, 1)[0] + self._name
             print('FETCH', url)
             with urllib.request.urlopen(url) as fin:
-              util.make_parents(self._distdir)
-              with open(self._pathname, 'wb') as fout:
-                while True:
-                  data = fin.read(16384)
-                  if not data:
-                    break
-                  fout.write(data)
+                util.make_parents(self._distdir)
+                with open(self._pathname, 'wb') as fout:
+                    while True:
+                        data = fin.read(16384)
+                        if not data:
+                            break
+                        fout.write(data)
         raise Exception('Failed to fetch %s' % self._name)
 
     def extract(self, target):
@@ -68,7 +68,8 @@ class Distfile:
         # Apply patches.
         for patch in self._patches:
             with open(os.path.join(self._patchdir, patch)) as f:
-                subprocess.check_call(['patch', '-d', target, '-tsp0'], stdin=f)
+                subprocess.check_call(
+                    ['patch', '-d', target, '-tsp0'], stdin=f)
 
         # Delete .orig files that patch leaves behind.
         for dirname, filename in util.walk_files(target):
