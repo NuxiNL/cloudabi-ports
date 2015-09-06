@@ -1,5 +1,5 @@
 def compiler_rt_build(ctx):
-    root = ctx.distfile()
+    root = ctx.extract('%(name)s-%(version)s.src')
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
         'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -46,7 +46,6 @@ package(
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cloudlibc'},
-    distfiles=['%(name)s-%(version)s.src'],
     build_cmd=compiler_rt_build,
 )
 

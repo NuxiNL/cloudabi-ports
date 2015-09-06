@@ -1,7 +1,6 @@
 def xz_build(ctx):
-    root = ctx.distfile()
-    build = root.autoconf(['--disable-lzmadec', '--disable-lzmainfo',
-                           '--disable-xz', '--disable-xzdec'])
+    build = ctx.extract().autoconf(['--disable-lzmadec', '--disable-lzmainfo',
+                                    '--disable-xz', '--disable-xzdec'])
     build.make()
     build.make_install().install()
 

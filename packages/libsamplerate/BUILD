@@ -1,5 +1,5 @@
 def libsamplerate_build(ctx):
-    root = ctx.distfile()
+    root = ctx.extract()
     build = root.autoconf()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
     build.make_install(

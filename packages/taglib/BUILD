@@ -1,6 +1,5 @@
 def taglib_build(ctx):
-    root = ctx.distfile()
-    build = root.cmake(['-DENABLE_STATIC=ON'])
+    build = ctx.extract().cmake(['-DENABLE_STATIC=ON'])
     build.make()
     stage = build.make_install()
     stage.path('bin/taglib-config').unhardcode_paths()

@@ -1,6 +1,6 @@
 def libcxx_build(ctx):
-    root = ctx.distfile(0)
-    ctx.distfile(1).rename(root.path('libcxxabi'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('libcxxabi-%(version)s.src').rename(root.path('libcxxabi'))
 
     # Build libc++.a.
     sources = {
@@ -32,7 +32,6 @@ package(
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    distfiles=['%(name)s-%(version)s.src', 'libcxxabi-%(version)s.src'],
     build_cmd=libcxx_build,
 )
 

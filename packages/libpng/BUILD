@@ -1,5 +1,5 @@
 def libpng_build(ctx):
-    root = ctx.distfile()
+    root = ctx.extract()
     build = root.autoconf()
     build.make(['bin_PROGRAMS=', 'check_PROGRAMS='])
     stage = build.make_install(['bin_PROGRAMS=', 'check_PROGRAMS=', 'install'])

@@ -1,6 +1,6 @@
 def libcxxabi_build(ctx):
-    root = ctx.distfile(0)
-    ctx.distfile(1).rename(root.path('libunwind'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('libunwind-%(version)s.src').rename(root.path('libunwind'))
     sources = {
         'abort_message.cpp', 'cxa_aux_runtime.cpp',
         'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
@@ -26,7 +26,6 @@ package(
     homepage='http://libcxxabi.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
-    distfiles=['%(name)s-%(version)s.src', 'libunwind-%(version)s.src'],
     build_cmd=libcxxabi_build,
 )
 

@@ -1,5 +1,5 @@
 def host_binutils_build(ctx):
-    root = ctx.distfile()
+    root = ctx.extract()
     for arch in ARCHITECTURES:
         build = root.autoconf([
             '--target=' + arch,

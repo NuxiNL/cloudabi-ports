@@ -1,6 +1,5 @@
 def yaml_build(ctx):
-    root = ctx.distfile()
-    build = root.autoconf()
+    build = ctx.extract().autoconf()
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 

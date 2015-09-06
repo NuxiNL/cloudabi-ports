@@ -9,6 +9,7 @@ import stat
 import subprocess
 import sys
 
+from src.distfile import Distfile
 from src import builder
 
 # Fixed directories where we want to do the build and provide
@@ -64,22 +65,20 @@ def distfile(**kwargs):
     distfile = kwargs
 
     # Determine canonical name by stripping the file extension.
-    name = distfile['name']
+    key = name = distfile['name']
     for ext in {'.tar.gz', '.tar.bz2', '.tar.xz'}:
         if name.endswith(ext):
-            name = name[:-len(ext)]
+            key = name[:-len(ext)]
             break
 
     if name in DISTFILES:
         raise Exception('%s listed multiple times' % name)
-    if 'patches' not in distfile:
-        distfile['patches'] = set()
-    DISTFILES[name] = distfile
+    DISTFILES[key] = Distfile(distdir=DIR_DISTFILES,
+                              patchdir=DIR_REPOSITORY, **distfile)
 
 
 def autoconf_automake_build(ctx):
-    root = ctx.distfile()
-    build = root.autoconf()
+    build = ctx.extract().autoconf()
     build.make()
     build.make_install().install()
 
@@ -133,21 +132,6 @@ def make_parents(path):
         pass
 
 
-def get_distfile(distname):
-    # Fetch distfile.
-    distfile = os.path.join(DIR_DISTFILES, DISTFILES[distname]['name'])
-    site = random.sample(DISTFILES[distname]['master_sites'], 1)[0]
-    if not os.path.isfile(distfile):
-        subprocess.check_call(['fetch', '-o', distfile, site +
-                               DISTFILES[distname]['name']])
-    # Validate checksum.
-    with open(distfile, 'rb') as f:
-        if DISTFILES[distname]['checksum'] != hashlib.sha256(
-                f.read()).hexdigest():
-            raise Exception('Checksum mismatch')
-    return distfile
-
-
 def copy_file(source, target):
     if os.path.exists(target):
         raise Exception('About to overwrite %s with %s' % (source, target))
@@ -199,19 +183,6 @@ def copy_dependencies(pkg, arch):
     _copy_dependencies(pkg, arch, set())
 
 
-class Distfile:
-
-    def __init__(self, name):
-        self._name = name
-
-    def patches(self):
-        return (os.path.join(DIR_REPOSITORY, f)
-                for f in DISTFILES[self._name]['patches'])
-
-    def tarball(self):
-        return get_distfile(self._name)
-
-
 def build_package(pkg, arch):
     if pkg['name'] in PACKAGES_BUILT:
         return
@@ -240,8 +211,7 @@ def build_package(pkg, arch):
         copy_dependencies(pkg, arch)
 
         pkg['build_cmd'](builder.BuildHandle(builder.PackageBuilder(
-            install_directory, arch),
-            [Distfile(d) for d in pkg['distfiles']]))
+            install_directory, arch), pkg['name'], pkg['version'], DISTFILES))
 
     PACKAGES_BUILDING.remove(pkg['name'])
     PACKAGES_BUILT.add(pkg['name'])
@@ -256,8 +226,7 @@ def build_host_package(pkg):
     if not os.path.isdir(install_directory):
         print('PKG', pkg['name'], 'host')
         pkg['build_cmd'](builder.BuildHandle(builder.HostPackageBuilder(
-            install_directory),
-            [Distfile(d) for d in pkg['distfiles']]))
+            install_directory), pkg['name'], pkg['version'], DISTFILES))
 
 # Clean up.
 try:

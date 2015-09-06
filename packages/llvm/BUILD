@@ -1,6 +1,6 @@
 def host_llvm_build(ctx):
-    root = ctx.distfile(0)
-    ctx.distfile(1).rename(root.path('tools/clang'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
 
     # Build and install LLVM.
     build = root.cmake()
@@ -22,7 +22,6 @@ host_package(
     version='3.7.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
-    distfiles=['%(name)s-%(version)s.src', 'cfe-%(version)s.src'],
     build_cmd=host_llvm_build,
 )
 

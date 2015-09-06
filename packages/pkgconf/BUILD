@@ -1,8 +1,7 @@
 def host_pkgconf_build(ctx):
     # This tool should only be used for cross building. Disable any access
     # to global system paths.
-    root = ctx.distfile()
-    build = root.autoconf([
+    build = ctx.extract().autoconf([
         '--with-pkg-config-dir=/nonexistent',
         '--with-system-libdir=/nonexistent',
         '--with-system-includedir=/nonexistent'], inplace=True)

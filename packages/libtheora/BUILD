@@ -1,5 +1,5 @@
 def libtheora_build(ctx):
-    root = ctx.distfile()
+    root = ctx.extract()
     build = root.autoconf(['--disable-examples'])
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()

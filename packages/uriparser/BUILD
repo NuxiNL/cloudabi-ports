@@ -1,6 +1,5 @@
 def uriparser_build(ctx):
-    root = ctx.distfile()
-    build = root.autoconf(['--disable-doc', '--disable-test'])
+    build = ctx.extract().autoconf(['--disable-doc', '--disable-test'])
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'install']).install()
 

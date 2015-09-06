@@ -106,42 +106,23 @@ class FileHandle:
 
 class BuildHandle:
 
-    def __init__(self, builder, distfiles):
+    def __init__(self, builder, name, version, distfiles):
         self._builder = builder
+        self._name = name
+        self._version = version
         self._distfiles = distfiles
 
     def archive(self, objects):
         return FileHandle(self._builder,
                           self._builder.archive(obj._path for obj in objects))
 
-    def distfile(self, index=0):
-        # Extract the distfile.
-        distfile = self._distfiles[index]
-        extractdir = self._builder.get_new_directory()
-        subprocess.check_call(['tar', '-xC', extractdir, '-f',
-                               distfile.tarball()])
-
-        # Remove leading directory names.
-        while True:
-            entries = os.listdir(extractdir)
-            if len(entries) != 1:
-                break
-            subdir = os.path.join(extractdir, entries[0])
-            if not os.path.isdir(subdir):
-                break
-            extractdir = subdir
-
-        # Apply patches.
-        for patch in distfile.patches():
-            with open(patch) as f:
-                subprocess.check_call(
-                    ['patch', '-d', extractdir, '-tsp0'], stdin=f)
-
-        # Delete .orig files that patch leaves behind.
-        for dirname, filename in util.walk_files(extractdir):
-            if filename.endswith('.orig'):
-                os.unlink(os.path.join(dirname, filename))
-        return FileHandle(self._builder, extractdir)
+    def extract(self, name='%(name)s-%(version)s'):
+        return FileHandle(
+            self._builder,
+            self._distfiles[
+                name % {'name': self._name, 'version': self._version}
+            ].extract(self._builder.get_new_directory())
+        )
 
     def prefix(self):
         return self._builder.get_prefix()
