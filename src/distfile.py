@@ -1,6 +1,7 @@
 import hashlib
 import os
 import random
+import ssl
 import subprocess
 import urllib.request
 
@@ -38,10 +39,14 @@ class Distfile:
             except FileNotFoundError:
                 pass
 
-            # Fetch file through HTTP/FTP.
+            # Fetch file through HTTP/FTP. There is no need to do
+            # certificate checking, as we already validate the checksum.
             url = random.sample(self._master_sites, 1)[0] + self._name
             print('FETCH', url)
-            with urllib.request.urlopen(url) as fin:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            with urllib.request.urlopen(url, context=ctx) as fin:
                 util.make_parent_dir(self._distdir)
                 with open(self._pathname, 'wb') as fout:
                     while True:
