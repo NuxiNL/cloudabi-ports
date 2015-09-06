@@ -255,6 +255,7 @@ class PackageBuilder(Builder):
             'CC=' + self._tool('cc'),
             'CXX=' + self._tool('c++'),
             'CFLAGS=' + ' '.join(self._cflags),
+            'CXXFLAGS=' + ' '.join(self._cflags),
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
             'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
