@@ -1,16 +1,19 @@
 def host_pkgconf_build(ctx):
-    # This tool should only be used for cross building. Disable any access
-    # to global system paths.
-    build = ctx.extract().autoconf([
-        '--with-pkg-config-dir=/nonexistent',
-        '--with-system-libdir=/nonexistent',
-        '--with-system-includedir=/nonexistent'], inplace=True)
-    build.make()
-
-    # Add a symbolic link to 'pkg-config' for compatibility.
-    stage = build.make_install()
-    stage.path('bin/pkg-config').symlink('pkgconf')
-    stage.install()
+    # Install a copy of pkgconf for every architecture under the name
+    # <arch>-pkg-config. Each copy will use its own library and include
+    # directory. Autoconf is smart enough to automatically detect the
+    # right copy, based on the host type.
+    root = ctx.extract()
+    for arch in ARCHITECTURES:
+        prefix = os.path.join(ctx.prefix(), arch)
+        build = root.autoconf([
+            '--with-pkg-config-dir=' + os.path.join(prefix, 'lib/pkgconfig'),
+            '--with-system-libdir=' + os.path.join(prefix, 'lib'),
+            '--with-system-includedir=' + os.path.join(prefix, 'include'),
+        ], inplace=True)
+        build.make()
+        stage = build.make_install()
+        stage.path('bin/pkgconf').install('bin/%s-pkg-config' % arch)
 
 host_package(
     name='pkgconf',

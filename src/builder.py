@@ -259,7 +259,7 @@ class PackageBuilder(Builder):
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
             'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
-            'PKG_CONFIG_LIBDIR=' + os.path.join(self._localbase, 'lib/pkgconfig'),
+            'PKG_CONFIG=' + self._tool('pkg-config'),
             'RANLIB=' + self._tool('ranlib'),
             'STRIP=' + self._tool('strip')] + command)
 
