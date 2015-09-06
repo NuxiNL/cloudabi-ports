@@ -24,6 +24,7 @@ class Distfile:
     def _fetch(self):
         for i in range(10):
             # Validate the existing file on disk.
+            print('CHECKSUM', self._pathname)
             try:
                 checksum = hashlib.sha256()
                 with open(self._pathname, 'rb') as f:
@@ -41,7 +42,7 @@ class Distfile:
             url = random.sample(self._master_sites, 1)[0] + self._name
             print('FETCH', url)
             with urllib.request.urlopen(url) as fin:
-                util.make_parents(self._distdir)
+                util.make_parent_dir(self._distdir)
                 with open(self._pathname, 'wb') as fout:
                     while True:
                         data = fin.read(16384)
