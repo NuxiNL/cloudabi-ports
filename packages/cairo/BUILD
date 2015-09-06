@@ -1,4 +1,4 @@
-def autoconf_automake_build(ctx):
+def cairo_build(ctx):
     build = ctx.extract().autoconf([
         'ax_cv_c_float_words_bigendian=' + {'x86_64': 'no'}[ctx.cpu()],
         '--enable-xlib=no',
@@ -14,7 +14,7 @@ package(
     homepage='http://cairographics.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libpng', 'pixman'},
-    build_cmd=autoconf_automake_build,
+    build_cmd=cairo_build,
 )
 
 distfile(
