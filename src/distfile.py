@@ -41,13 +41,14 @@ class Distfile:
 
             # Fetch file through HTTP/FTP. There is no need to do
             # certificate checking, as we already validate the checksum.
-            url = random.sample(self._master_sites, 1)[0] + self._name
+            url = (random.sample(self._master_sites, 1)[0] +
+                   os.path.basename(self._name))
             print('FETCH', url)
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
             with urllib.request.urlopen(url, context=ctx) as fin:
-                util.make_parent_dir(self._distdir)
+                util.make_parent_dir(self._pathname)
                 with open(self._pathname, 'wb') as fout:
                     while True:
                         data = fin.read(16384)
