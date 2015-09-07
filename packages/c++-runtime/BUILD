@@ -4,4 +4,5 @@ package(
     homepage='https://github.com/NuxiNL/cloudlibc',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx', 'libcxxabi', 'libunwind'},
+    build_cmd=None,
 )
