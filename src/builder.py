@@ -280,7 +280,7 @@ class HostPackageBuilder(Builder):
 
     @staticmethod
     def get_make():
-        return 'gmake'
+        return config.GNU_MAKE
 
     def install(self, source, target):
         print('INSTALL', source, '->', target)
