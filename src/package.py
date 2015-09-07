@@ -127,6 +127,7 @@ class TargetPackage:
         # which we can call into to create the package.
         self.build()
         self._prepare_buildroot(set(['pkg']), set())
+        print('PKG', path)
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
@@ -158,10 +159,6 @@ class TargetPackage:
                 })
 
             # Create entry for every file.
-            # TODO(ed): This should be deterministic/reproducible. This
-            # doesn't seem to be possible right now, as pkg stores
-            # filesystem metadata in the tarballs.
-            # TODO(ed): Set executable bit.
             for dirname, filename in util.walk_files(filesdir):
                 fullpath = os.path.join(dirname, filename)
                 if os.path.islink(fullpath):

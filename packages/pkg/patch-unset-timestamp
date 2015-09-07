@@ -1,0 +1,11 @@
+--- libpkg/pkg_config.c
++++ libpkg/pkg_config.c
+@@ -244,7 +244,7 @@
+ 	{
+ 		PKG_BOOL,
+ 		"UNSET_TIMESTAMP",
+-		"NO",
++		"YES",
+ 		"Do not include timestamps in the package",
+ 	},
+ 	{
