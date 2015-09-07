@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 
 from . import config
 from . import util
@@ -73,6 +74,8 @@ class TargetPackage:
         self._arch = arch
         self._name = name
         self._version = version
+        self._homepage = homepage
+        self._maintainer = maintainer
         self._host_packages = host_packages
         self._lib_depends = lib_depends
         self._build_cmd = build_cmd
@@ -128,8 +131,73 @@ class TargetPackage:
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
         prefix = os.path.join('/usr/local', self._arch)
-        installdir = os.path.join(config.DIR_BUILDROOT, 'install', prefix[1:])
-        self.extract(installdir, prefix)
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        filesdir = os.path.join(installdir, prefix[1:])
+        self.extract(filesdir, prefix)
+
+        # Create a manifest file.
+        util.make_dir(installdir)
+        with open(os.path.join(installdir, '+MANIFEST'), 'w') as f:
+            # Preamble.
+            # TODO(ed): Encode dependencies.
+            f.write(
+                'name: %(arch)s-%(name)s\n'
+                'version: \"%(version)s\"\n'
+                'origin: devel/%(arch)s-%(name)s\n'
+                'comment: %(name)s for %(arch)s\n'
+                'www: %(homepage)s\n'
+                'maintainer: %(maintainer)s\n'
+                'prefix: /usr/local\n'
+                'desc: %(name)s for %(arch)s\n'
+                'files {\n' % {
+                    'arch': self._arch,
+                    'homepage': self._homepage,
+                    'maintainer': self._maintainer,
+                    'name': self._name,
+                    'version': self._version
+                })
+
+            # Create entry for every file.
+            # TODO(ed): This should be deterministic/reproducible. This
+            # doesn't seem to be possible right now, as pkg stores
+            # filesystem metadata in the tarballs.
+            # TODO(ed): Set executable bit.
+            for dirname, filename in util.walk_files(filesdir):
+                fullpath = os.path.join(dirname, filename)
+                if os.path.islink(fullpath):
+                    perm = 0o777
+                elif (os.lstat(fullpath).st_mode & 0o111) != 0:
+                    perm = 0o555
+                else:
+                    perm = 0o444
+                relpath = os.path.join(
+                    '/',
+                    os.path.relpath(
+                        fullpath,
+                        installdir))
+                f.write(
+                    '  \"/%s\": { uname: root, gname: wheel, perm: 0%o }' %
+                    (relpath, perm))
+
+            f.write('}\n')
+
+        # Create the package.
+        subprocess.check_call([
+            os.path.join(config.DIR_BUILDROOT, 'sbin/pkg'),
+            'create',
+            '-r', installdir,
+            '-m', installdir,
+            '-o', config.DIR_BUILDROOT,
+        ])
+        util.make_parent_dir(path)
+        os.rename(
+            os.path.join(
+                config.DIR_BUILDROOT,
+                '%s-%s-%s.txz' %
+                (self._arch,
+                 self._name,
+                 self._version)),
+            path)
 
     def extract(self, path, expandpath):
         for source_file, target_file in util.walk_files_concurrently(
