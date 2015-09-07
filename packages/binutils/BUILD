@@ -1,4 +1,4 @@
-def host_binutils_build(ctx):
+def build(ctx):
     root = ctx.extract()
     for arch in ARCHITECTURES:
         build = root.autoconf([
@@ -21,7 +21,7 @@ host_package(
     version='2.25.1',
     homepage='http://www.gnu.org/software/binutils/',
     maintainer='info@nuxi.nl',
-    build_cmd=host_binutils_build,
+    build_cmd=build,
 )
 
 distfile(

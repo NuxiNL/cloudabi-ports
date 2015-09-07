@@ -1,4 +1,4 @@
-def zlib_build(ctx):
+def build(ctx):
     root = ctx.extract()
     root.run(['./configure', '--prefix=' + ctx.prefix(), '--static'])
     root.make(['libz.a'])
@@ -10,7 +10,7 @@ package(
     homepage='http://www.zlib.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=zlib_build,
+    build_cmd=build,
 )
 
 distfile(

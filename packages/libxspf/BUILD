@@ -1,4 +1,4 @@
-def libxspf_build(ctx):
+def build(ctx):
     root = ctx.extract()
     build = root.autoconf(['--disable-test'])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
@@ -11,7 +11,7 @@ package(
     homepage='http://libspiff.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c++-runtime', 'expat', 'uriparser'},
-    build_cmd=libxspf_build,
+    build_cmd=build,
 )
 
 distfile(

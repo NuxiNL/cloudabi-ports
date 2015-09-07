@@ -1,4 +1,4 @@
-def host_pkgconf_build(ctx):
+def build(ctx):
     # Install a copy of pkgconf for every architecture under the name
     # <arch>-pkg-config. Each copy will use its own library and include
     # directory. Autoconf is smart enough to automatically detect the
@@ -20,7 +20,7 @@ host_package(
     version='0.9.12',
     homepage='https://github.com/pkgconf/pkgconf',
     maintainer='info@nuxi.nl',
-    build_cmd=host_pkgconf_build,
+    build_cmd=build,
 )
 
 distfile(

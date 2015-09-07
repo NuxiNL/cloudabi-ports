@@ -1,4 +1,4 @@
-def libcxxabi_build(ctx):
+def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
     ctx.extract('libunwind-%(version)s.src').rename(root.path('libunwind'))
     sources = {
@@ -26,7 +26,7 @@ package(
     homepage='http://libcxxabi.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
-    build_cmd=libcxxabi_build,
+    build_cmd=build,
 )
 
 distfile(

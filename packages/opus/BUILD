@@ -1,4 +1,4 @@
-def opus_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf(['--disable-extra-programs'])
     build.make()
     build.make_install().install()
@@ -9,7 +9,7 @@ package(
     homepage='http://www.opus-codec.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=opus_build,
+    build_cmd=build,
 )
 
 distfile(

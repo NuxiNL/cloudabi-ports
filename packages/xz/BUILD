@@ -1,4 +1,4 @@
-def xz_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf([
         '--disable-lzmadec', '--disable-lzmainfo', '--disable-scripts',
         '--disable-xz', '--disable-xzdec',
@@ -12,7 +12,7 @@ package(
     homepage='http://tukaani.org/xz/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=xz_build,
+    build_cmd=build,
 )
 
 distfile(

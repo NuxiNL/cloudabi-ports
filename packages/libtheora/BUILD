@@ -1,4 +1,4 @@
-def libtheora_build(ctx):
+def build(ctx):
     root = ctx.extract()
     build = root.autoconf(['--disable-examples'])
     build.make(['noinst_PROGRAMS='])
@@ -10,7 +10,7 @@ package(
     homepage='http://www.theora.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libogg'},
-    build_cmd=libtheora_build,
+    build_cmd=build,
 )
 
 distfile(

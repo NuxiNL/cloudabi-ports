@@ -1,4 +1,4 @@
-def re2_build(ctx):
+def build(ctx):
     root = ctx.extract('%(name)s/2015-08-01')
     root.make()
     root.make_install(['prefix=' + ctx.prefix(), 'install']).install()
@@ -9,7 +9,7 @@ package(
     homepage='https://github.com/google/re2',
     maintainer='info@nuxi.nl',
     lib_depends={'c++-runtime'},
-    build_cmd=re2_build,
+    build_cmd=build,
 )
 
 distfile(

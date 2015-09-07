@@ -1,4 +1,4 @@
-def host_llvm_build(ctx):
+def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
     ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
 
@@ -22,7 +22,7 @@ host_package(
     version='3.7.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
-    build_cmd=host_llvm_build,
+    build_cmd=build,
 )
 
 distfile(

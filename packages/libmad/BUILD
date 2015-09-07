@@ -4,7 +4,7 @@ package(
     homepage='http://www.underbit.com/products/mad/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=autoconf_automake_build,
+    build_cmd=build_autoconf_automake,
 )
 
 distfile(

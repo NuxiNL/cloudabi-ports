@@ -1,4 +1,4 @@
-def libpng_build(ctx):
+def build(ctx):
     root = ctx.extract()
     build = root.autoconf()
     build.make(['bin_PROGRAMS=', 'check_PROGRAMS='])
@@ -12,7 +12,7 @@ package(
     homepage='http://www.libpng.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'zlib'},
-    build_cmd=libpng_build,
+    build_cmd=build,
 )
 
 distfile(

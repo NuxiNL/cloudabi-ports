@@ -1,4 +1,4 @@
-def pkg_build(ctx):
+def build(ctx):
     # Only install the statically linked executable.
     build = ctx.extract().autoconf()
     build.make()
@@ -9,7 +9,7 @@ host_package(
     version='1.5.6',
     homepage='https://github.com/freebsd/pkg',
     maintainer='info@nuxi.nl',
-    build_cmd=pkg_build,
+    build_cmd=build,
 )
 
 distfile(

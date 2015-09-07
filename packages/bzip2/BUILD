@@ -1,4 +1,4 @@
-def bzip2_build(ctx):
+def build(ctx):
     root = ctx.extract()
     sources = {'blocksort.c', 'bzlib.c', 'compress.c', 'crctable.c',
                'decompress.c', 'huffman.c', 'randtable.c'}
@@ -13,7 +13,7 @@ package(
     homepage='http://www.bzip.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=bzip2_build,
+    build_cmd=build,
 )
 
 distfile(

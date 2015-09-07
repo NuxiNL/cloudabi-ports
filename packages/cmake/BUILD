@@ -3,7 +3,7 @@ host_package(
     version='3.3.1',
     homepage='http://www.cmake.org/',
     maintainer='info@nuxi.nl',
-    build_cmd=autoconf_automake_build,
+    build_cmd=build_autoconf_automake,
 )
 
 distfile(

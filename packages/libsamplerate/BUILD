@@ -1,4 +1,4 @@
-def libsamplerate_build(ctx):
+def build(ctx):
     root = ctx.extract()
     build = root.autoconf()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
@@ -11,7 +11,7 @@ package(
     homepage='http://www.mega-nerd.com/SRC/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=libsamplerate_build,
+    build_cmd=build,
 )
 
 distfile(

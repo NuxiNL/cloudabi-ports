@@ -1,4 +1,4 @@
-def tiff_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
     build.make_install(
@@ -10,7 +10,7 @@ package(
     homepage='http://www.remotesensing.org/libtiff/',
     maintainer='info@nuxi.nl',
     lib_depends={'c++-runtime'},
-    build_cmd=tiff_build,
+    build_cmd=build,
 )
 
 distfile(

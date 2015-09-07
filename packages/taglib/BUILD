@@ -1,4 +1,4 @@
-def taglib_build(ctx):
+def build(ctx):
     build = ctx.extract().cmake(['-DENABLE_STATIC=ON'])
     build.make()
     stage = build.make_install()
@@ -11,7 +11,7 @@ package(
     homepage='https://taglib.github.io/',
     maintainer='info@nuxi.nl',
     lib_depends={'c++-runtime', 'zlib'},
-    build_cmd=taglib_build,
+    build_cmd=build,
 )
 
 distfile(

@@ -3,7 +3,7 @@ host_package(
     version='4.1',
     homepage='https://www.gnu.org/software/make/',
     maintainer='info@nuxi.nl',
-    build_cmd=autoconf_automake_build,
+    build_cmd=build_autoconf_automake,
 )
 
 distfile(

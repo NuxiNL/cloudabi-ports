@@ -1,4 +1,4 @@
-def uriparser_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf(['--disable-doc', '--disable-test'])
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'install']).install()
@@ -9,7 +9,7 @@ package(
     homepage='http://uriparser.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=uriparser_build,
+    build_cmd=build,
 )
 
 distfile(

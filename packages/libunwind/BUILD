@@ -1,4 +1,4 @@
-def libunwind_build(ctx):
+def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
     c_sources = {
         'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
@@ -20,7 +20,7 @@ package(
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
-    build_cmd=libunwind_build,
+    build_cmd=build,
 )
 
 distfile(

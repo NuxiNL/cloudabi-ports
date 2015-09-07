@@ -1,4 +1,4 @@
-def expat_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf()
     build.make(['buildlib'])
     build.make_install(['installlib']).install()
@@ -9,7 +9,7 @@ package(
     homepage='http://expat.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=expat_build,
+    build_cmd=build,
 )
 
 distfile(

@@ -1,4 +1,4 @@
-def pixman_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf()
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
     build.make_install([
@@ -11,7 +11,7 @@ package(
     homepage='http://www.pixman.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=pixman_build,
+    build_cmd=build,
 )
 
 distfile(

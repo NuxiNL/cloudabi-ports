@@ -1,4 +1,4 @@
-def yaml_build(ctx):
+def build(ctx):
     build = ctx.extract().autoconf()
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
@@ -9,7 +9,7 @@ package(
     homepage='http://pyyaml.org/wiki/LibYAML',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
-    build_cmd=yaml_build,
+    build_cmd=build,
 )
 
 distfile(

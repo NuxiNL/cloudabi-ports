@@ -1,4 +1,4 @@
-def cloudlibc_build(ctx):
+def build(ctx):
     root = ctx.extract()
     root.run(['./build'])
 
@@ -10,7 +10,7 @@ package(
     version='0.5',
     homepage='https://github.com/NuxiNL/cloudlibc',
     maintainer='info@nuxi.nl',
-    build_cmd=cloudlibc_build,
+    build_cmd=build,
 )
 
 distfile(
