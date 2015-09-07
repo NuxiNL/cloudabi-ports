@@ -16,7 +16,7 @@ class Repository:
         self._host_packages = {}
         self._target_packages = {}
 
-        self._deferred_host_packages = []
+        self._deferred_host_packages = {}
         self._deferred_target_packages = {}
 
     def add_build_file(self, path, distdir):
@@ -49,7 +49,11 @@ class Repository:
             )
 
         def op_host_package(**kwargs):
-            self._deferred_host_packages.append(kwargs)
+            package = kwargs
+            name = package['name']
+            if name in self._deferred_host_packages:
+                raise Exception('%s is redeclaring packages %s' % (path, name))
+            self._deferred_host_packages[name] = package
 
         def op_package(**kwargs):
             package = kwargs
@@ -96,21 +100,34 @@ class Repository:
 
     def get_target_packages(self):
         # Create host packages that haven't been instantiated yet.
-        for host_package in self._deferred_host_packages:
-            name = host_package['name']
-            if name in self._host_packages:
-                raise Exception('%s is declared multiple times' % name)
-            self._host_packages[name] = HostPackage(
-                install_directory=os.path.join(
-                    self._install_directory,
-                    'host',
-                    name),
-                distfiles=self._distfiles,
-                **host_package)
-        self._deferred_host_packages = []
+        # This implicitly checks for dependency loops.
+        def get_host_package(name):
+            if name in self._deferred_host_packages:
+                package = self._deferred_host_packages.pop(name)
+                if name in self._host_packages:
+                    raise Exception('%s is declared multiple times' % name)
+                lib_depends = set()
+                if 'lib_depends' in package:
+                    lib_depends = {
+                        get_host_package(dep) for dep in package['lib_depends']}
+                    del package['lib_depends']
+                self._host_packages[name] = HostPackage(
+                    install_directory=os.path.join(
+                        self._install_directory,
+                        'host',
+                        name),
+                    distfiles=self._distfiles,
+                    lib_depends=lib_depends,
+                    **package)
+            return self._host_packages[name]
+
+        while self._deferred_host_packages:
+            get_host_package(
+                random.sample(
+                    self._deferred_host_packages.keys(),
+                    1)[0])
 
         # Create target packages that haven't been instantiated yet.
-        # This implicitly checks for dependency loops.
         def get_target_package(name, arch):
             if (name, arch) in self._deferred_target_packages:
                 package = self._deferred_target_packages.pop((name, arch))

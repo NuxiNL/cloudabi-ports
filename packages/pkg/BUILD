@@ -9,6 +9,7 @@ host_package(
     version='1.5.6',
     homepage='https://github.com/freebsd/pkg',
     maintainer='info@nuxi.nl',
+    lib_depends={'libarchive'},
     build_cmd=build,
 )
 

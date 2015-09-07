@@ -24,6 +24,7 @@ class HostPackage:
             version,
             homepage,
             maintainer,
+            lib_depends,
             distfiles,
             build_cmd):
         self._install_directory = install_directory
@@ -32,13 +33,29 @@ class HostPackage:
         self._distfiles = distfiles
         self._build_cmd = build_cmd
 
+        # Compute the set of transitive library dependencies.
+        self._lib_depends = set()
+        for dep in lib_depends:
+            self._lib_depends.add(dep)
+            self._lib_depends |= dep._lib_depends
+
+    def _prepare_buildroot(self):
+        # Ensure that all dependencies have been built.
+        for dep in self._lib_depends:
+            dep.build()
+
+        # Install dependencies into an empty buildroot.
+        _empty_dir(config.DIR_BUILDROOT)
+        for dep in self._lib_depends:
+            dep.extract()
+
     def build(self):
         # Skip this package if it has been built already.
         if os.path.isdir(self._install_directory):
             return
 
         # Perform the build inside an empty buildroot.
-        _empty_dir(config.DIR_BUILDROOT)
+        self._prepare_buildroot()
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
@@ -77,27 +94,32 @@ class TargetPackage:
         self._homepage = homepage
         self._maintainer = maintainer
         self._host_packages = host_packages
-        self._lib_depends = lib_depends
         self._build_cmd = build_cmd
         self._distfiles = distfiles
 
         # Compute the set of transitive library dependencies.
-        self._transitive_lib_depends = set()
-        for dep in self._lib_depends:
-            self._transitive_lib_depends.add(dep)
-            self._transitive_lib_depends |= dep._transitive_lib_depends
+        self._lib_depends = set()
+        for dep in lib_depends:
+            self._lib_depends.add(dep)
+            self._lib_depends |= dep._lib_depends
 
     def _prepare_buildroot(self, host_depends, lib_depends):
         # Ensure that all dependencies have been built.
         for dep in host_depends:
-            self._host_packages[dep].build()
+            package = self._host_packages[dep]
+            package.build()
+            for depdep in package._lib_depends:
+                depdep.build()
         for dep in lib_depends:
             dep.build()
 
         # Install dependencies into an empty buildroot.
         _empty_dir(config.DIR_BUILDROOT)
         for dep in host_depends:
-            self._host_packages[dep].extract()
+            package = self._host_packages[dep]
+            package.extract()
+            for depdep in package._lib_depends:
+                depdep.extract()
         prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
         for dep in lib_depends:
             dep.extract(prefix, prefix)
@@ -111,7 +133,7 @@ class TargetPackage:
         # installed in place.
         self._prepare_buildroot(set([
             'binutils', 'cmake', 'llvm', 'make', 'pkgconf',
-        ]), self._transitive_lib_depends)
+        ]), self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
