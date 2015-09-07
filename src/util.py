@@ -1,5 +1,7 @@
 import os
 import shutil
+import ssl
+import urllib.request
 
 
 def copy_file(source, target, preserve_attributes):
@@ -22,6 +24,21 @@ def copy_file(source, target, preserve_attributes):
     else:
         # Bail out on anything else.
         raise Exception(source + ' is of an unsupported type')
+
+
+def unsafe_fetch(url):
+    # Fetch a file over HTTP, HTTPS or FTP. For HTTPS, we don't do any
+    # certificate checking. The caller should validate the authenticity
+    # of the result.
+    try:
+        # Python >= 3.4.3.
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return urllib.request.urlopen(url, context=ctx)
+    except TypeError:
+        # Python < 3.4.3.
+        return urllib.request.urlopen(url)
 
 
 def make_dir(path):
