@@ -64,7 +64,7 @@ def walk_files(path):
         for root, dirs, files in os.walk(path):
             for f in files:
                 yield (root, f)
-    else:
+    elif os.path.exists(path):
         yield os.path.split(path)
 
 

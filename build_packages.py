@@ -11,6 +11,7 @@ import sys
 
 from src.distfile import Distfile
 from src import builder
+from src import packager
 
 # Fixed directories where we want to do the build and provide
 # dependencies. These directories must not change, as this breaks the
@@ -155,26 +156,14 @@ def copy_file(source, target):
 def _copy_dependencies(pkg, arch, done):
     for dep in pkg['lib_depends']:
         if dep not in done:
-            source = os.path.join(DIR_INSTALL, arch, dep)
-            target = os.path.join(DIR_BUILD, arch)
-            if os.path.exists(source):
-                # Install files from package into dependency directory.
-                for source_file, target_file in walk_files_concurrently(
-                        source, target):
-                    make_parents(target_file)
-                    if target_file.endswith('.template'):
-                        # File is a template. Expand %%PREFIX%% tags.
-                        target_file = target_file[:-9]
-                        with open(source_file, 'r') as f:
-                            contents = f.read()
-                        contents = contents.replace('%%PREFIX%%', target)
-                        with open(target_file, 'w') as f:
-                            f.write(contents)
-                        shutil.copymode(source_file, target_file)
-                    else:
-                        # Regular file. Copy it over literally.
-                        copy_file(source_file, target_file)
-
+            packager.Packager(
+                os.path.join(
+                    DIR_INSTALL,
+                    arch,
+                    dep)).extract(
+                os.path.join(
+                    DIR_BUILD,
+                    arch))
             done.add(dep)
             _copy_dependencies(PACKAGES[dep], arch, done)
 
