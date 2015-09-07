@@ -131,8 +131,7 @@ class Repository:
                         name),
                     arch=arch,
                     distfiles=self._distfiles,
-                    host_depends=set(
-                        self._host_packages.values()),
+                    host_packages=self._host_packages,
                     lib_depends=lib_depends,
                     **package)
             return self._target_packages[(name, arch)]

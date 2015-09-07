@@ -17,6 +17,7 @@ from src.repository import Repository
 DIR_ROOT = os.getcwd()
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
+DIR_PACKAGES = os.path.join(DIR_ROOT, '_obj/packages')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 
 # Parse all of the BUILD rules.
@@ -30,8 +31,12 @@ if len(sys.argv) > 1:
     # Only build the packages provided on the command line.
     for name in set(sys.argv[1:]):
         for arch in config.ARCHITECTURES:
+            # target_packages[(name, arch)].create_freebsd_package(
+            #    os.path.join(DIR_PACKAGES, arch, name + '.txz'))
             target_packages[(name, arch)].build()
 else:
     # Build all packages.
     for name, arch in target_packages:
+        # target_packages[(name, arch)].create_freebsd_package(
+        #    os.path.join(DIR_PACKAGES, arch, name + '.txz'))
         target_packages[(name, arch)].build()
