@@ -154,10 +154,10 @@ class Builder:
         return path
 
 
-class PackageBuilder(Builder):
+class TargetBuilder(Builder):
 
     def __init__(self, install_directory, arch):
-        super(PackageBuilder, self).__init__('/nonexistent')
+        super(TargetBuilder, self).__init__('/nonexistent')
         self._install_directory = install_directory
         self._arch = arch
 
@@ -264,10 +264,10 @@ class PackageBuilder(Builder):
             'STRIP=' + self._tool('strip')] + command)
 
 
-class HostPackageBuilder(Builder):
+class HostBuilder(Builder):
 
     def __init__(self, install_directory):
-        super(HostPackageBuilder, self).__init__(config.DIR_BUILDROOT)
+        super(HostBuilder, self).__init__(config.DIR_BUILDROOT)
         self._install_directory = install_directory
 
     def autoconf(self, builddir, script, args):

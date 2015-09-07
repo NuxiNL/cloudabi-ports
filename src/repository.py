@@ -1,15 +1,26 @@
 import os
+import random
+
+from . import config
 
 from .distfile import Distfile
+from .package import HostPackage, TargetPackage
 
 
 class Repository:
 
-    def __init__(self):
+    def __init__(self, install_directory):
+        self._install_directory = install_directory
+
         self._distfiles = {}
+        self._host_packages = {}
+        self._target_packages = {}
+
+        self._deferred_host_packages = []
+        self._deferred_target_packages = {}
 
     def add_build_file(self, path, distdir):
-        def op_autoconf_automake_build(ctx):
+        def op_build_autoconf_automake(ctx):
             build = ctx.extract().autoconf()
             build.make()
             build.make_install().install()
@@ -17,10 +28,10 @@ class Repository:
         def op_distfile(**kwargs):
             # Determine canonical name by stripping the file extension.
             distfile = kwargs
-            key = name = distfile['name']
+            name = distfile['name']
             for ext in {'.tar.gz', '.tar.bz2', '.tar.xz'}:
-                if name.endswith(ext):
-                    key = name[:-len(ext)]
+                if distfile['name'].endswith(ext):
+                    name = distfile['name'][:-len(ext)]
                     break
 
             # Turn patch filenames into full paths.
@@ -32,16 +43,23 @@ class Repository:
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))
-            self._distfiles[key] = Distfile(
+            self._distfiles[name] = Distfile(
                 distdir=distdir,
                 **distfile
             )
 
         def op_host_package(**kwargs):
-            pass
+            self._deferred_host_packages.append(kwargs)
 
         def op_package(**kwargs):
-            pass
+            package = kwargs
+            name = package['name']
+            for arch in config.ARCHITECTURES:
+                if (name, arch) in self._deferred_target_packages:
+                    raise Exception(
+                        '%s is redeclaring package %s/%s' %
+                        (path, arch, name))
+                self._deferred_target_packages[(name, arch)] = package
 
         def op_sourceforge_sites(suffix):
             return {fmt + suffix + '/' for fmt in {
@@ -62,7 +80,8 @@ class Repository:
             }}
 
         identifiers = {
-            'autoconf_automake_build': op_autoconf_automake_build,
+            'ARCHITECTURES': config.ARCHITECTURES,
+            'build_autoconf_automake': op_build_autoconf_automake,
             'distfile': op_distfile,
             'host_package': op_host_package,
             'package': op_package,
@@ -74,3 +93,54 @@ class Repository:
 
     def get_distfiles(self):
         return self._distfiles
+
+    def get_target_packages(self):
+        # Create host packages that haven't been instantiated yet.
+        for host_package in self._deferred_host_packages:
+            name = host_package['name']
+            if name in self._host_packages:
+                raise Exception('%s is declared multiple times' % name)
+            self._host_packages[name] = HostPackage(
+                install_directory=os.path.join(
+                    self._install_directory,
+                    'host',
+                    name),
+                distfiles=self._distfiles,
+                **host_package)
+        self._deferred_host_packages = []
+
+        # Create target packages that haven't been instantiated yet.
+        # This implicitly checks for dependency loops.
+        def get_target_package(name, arch):
+            if (name, arch) in self._deferred_target_packages:
+                package = self._deferred_target_packages.pop((name, arch))
+                if (name, arch) in self._target_packages:
+                    raise Exception('%s is declared multiple times' % name)
+                lib_depends = set()
+                if 'lib_depends' in package:
+                    lib_depends = {
+                        get_target_package(
+                            dep, arch) for dep in package['lib_depends']}
+                    del package['lib_depends']
+                self._target_packages[
+                    (name,
+                     arch)] = TargetPackage(
+                    install_directory=os.path.join(
+                        self._install_directory,
+                        arch,
+                        name),
+                    arch=arch,
+                    distfiles=self._distfiles,
+                    host_depends=set(
+                        self._host_packages.values()),
+                    lib_depends=lib_depends,
+                    **package)
+            return self._target_packages[(name, arch)]
+
+        while self._deferred_target_packages:
+            get_target_package(
+                *
+                random.sample(
+                    self._deferred_target_packages.keys(),
+                    1)[0])
+        return self._target_packages
