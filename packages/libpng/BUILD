@@ -20,6 +20,7 @@ distfile(
     checksum='2e10c13b7949883ac961db6177c516d778184432d440317e9f0391305c360963',
     master_sites=sourceforge_sites('libpng/libpng16/1.6.18'),
     patches={
-        'libpng/patch-no-fopen',
-        'libpng/patch-no-gmtime'},
+        'no-fopen',
+        'no-gmtime',
+    },
 )

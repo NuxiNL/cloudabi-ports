@@ -20,5 +20,5 @@ distfile(
     name='bzip2-1.0.6.tar.gz',
     checksum='a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd',
     master_sites={'http://www.bzip.org/1.0.6/'},
-    patches={'bzip2/patch-no-BZ2_bzopen'},
+    patches={'no-BZ2_bzopen'},
 )

@@ -19,6 +19,7 @@ distfile(
     checksum='3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904',
     master_sites={'http://cairographics.org/releases/'},
     patches={
-        'pixman/patch-asm-constraints',
-        'pixman/patch-no-printf'},
+        'asm-constraints',
+        'no-printf',
+    },
 )

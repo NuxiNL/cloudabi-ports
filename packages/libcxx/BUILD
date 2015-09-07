@@ -39,5 +39,5 @@ distfile(
     name='libcxx-3.7.0.src.tar.xz',
     checksum='c18f3c8333cd7e678c1424a57fe5e25efe740ca7caf62ac67152b4723f3ad08e',
     master_sites={'http://llvm.org/releases/3.7.0/'},
-    patches={'libcxx/patch-no-std-funcs'},
+    patches={'no-std-funcs'},
 )

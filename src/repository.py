@@ -27,9 +27,8 @@ class Repository:
             if 'patches' in distfile:
                 distfile['patches'] = {
                     os.path.join(
-                        os.path.dirname(
-                            os.path.dirname(path)),
-                        patch) for patch in distfile['patches']}
+                        os.path.dirname(path),
+                        'patch-' + patch) for patch in distfile['patches']}
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))

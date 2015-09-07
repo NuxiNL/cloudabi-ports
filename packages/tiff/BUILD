@@ -20,7 +20,8 @@ distfile(
         'ftp://ftp.remotesensing.org/pub/libtiff/',
         'http://download.osgeo.org/libtiff/'},
     patches={
-        'tiff/patch-no-strcpy',
-        'tiff/patch-no-sprintf',
-        'tiff/patch-no-TIFFOpen'},
+        'no-strcpy',
+        'no-sprintf',
+        'no-TIFFOpen',
+    },
 )

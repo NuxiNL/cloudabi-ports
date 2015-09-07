@@ -28,5 +28,5 @@ distfile(
     name='binutils-2.25.1.tar.bz2',
     checksum='b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22',
     master_sites={'http://ftp.gnu.org/gnu/binutils/'},
-    patches={'binutils/patch-cloudabi'},
+    patches={'cloudabi'},
 )

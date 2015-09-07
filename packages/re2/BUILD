@@ -17,6 +17,7 @@ distfile(
     checksum='0fd7388097dcc7b26a8fc7c4e704e2831d264015818fa3f13665f36d40afabf8',
     master_sites={'https://github.com/google/re2/archive/'},
     patches={
-        're2/patch-makefile',
-        're2/patch-snprintf'},
+        'makefile',
+        'snprintf',
+    },
 )
