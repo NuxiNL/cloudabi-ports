@@ -1,6 +1,9 @@
 def xz_build(ctx):
-    build = ctx.extract().autoconf(['--disable-lzmadec', '--disable-lzmainfo',
-                                    '--disable-xz', '--disable-xzdec'])
+    build = ctx.extract().autoconf([
+        '--disable-lzmadec', '--disable-lzmainfo',
+        '--disable-xz', '--disable-xzdec',
+        'gl_cv_posix_shell=/bin/sh',
+    ])
     build.make()
     build.make_install().install()
 
