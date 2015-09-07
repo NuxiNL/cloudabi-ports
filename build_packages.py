@@ -13,6 +13,7 @@ from src.distfile import Distfile
 from src import builder
 from src import config
 from src import packager
+from src import repository
 from src import util
 
 # Locations relative to the source tree.
@@ -56,23 +57,9 @@ def package(**kwargs):
         pkg['lib_depends'] = set()
     PACKAGES[name] = pkg
 
-DISTFILES = {}
-
 
 def distfile(**kwargs):
-    distfile = kwargs
-
-    # Determine canonical name by stripping the file extension.
-    key = name = distfile['name']
-    for ext in {'.tar.gz', '.tar.bz2', '.tar.xz'}:
-        if name.endswith(ext):
-            key = name[:-len(ext)]
-            break
-
-    if name in DISTFILES:
-        raise Exception('%s listed multiple times' % name)
-    DISTFILES[key] = Distfile(distdir=DIR_DISTFILES,
-                              patchdir=DIR_REPOSITORY, **distfile)
+    pass
 
 
 def autoconf_automake_build(ctx):
@@ -117,8 +104,10 @@ def walk_files_concurrently(source, target):
         yield source_filename, target_filename
 
 # Parse all of the BUILD rules.
+repo = repository.Repository()
 for dirname, filename in walk_files(DIR_REPOSITORY):
     if filename == 'BUILD':
+        repo.add_build_file(os.path.join(dirname, 'BUILD'), DIR_DISTFILES)
         with open(os.path.join(dirname, 'BUILD'), 'r') as f:
             exec(f.read())
 
@@ -170,7 +159,8 @@ def build_package(pkg, arch):
         copy_dependencies(pkg, arch)
 
         pkg['build_cmd'](builder.BuildHandle(builder.PackageBuilder(
-            install_directory, arch), pkg['name'], pkg['version'], DISTFILES))
+            install_directory, arch), pkg['name'], pkg['version'],
+            repo.get_distfiles()))
 
     PACKAGES_BUILDING.remove(pkg['name'])
     PACKAGES_BUILT.add(pkg['name'])
@@ -185,13 +175,8 @@ def build_host_package(pkg):
     if not os.path.isdir(install_directory):
         print('PKG', pkg['name'], 'host')
         pkg['build_cmd'](builder.BuildHandle(builder.HostPackageBuilder(
-            install_directory), pkg['name'], pkg['version'], DISTFILES))
-
-# Clean up.
-try:
-    os.makedirs(DIR_DISTFILES)
-except:
-    pass
+            install_directory), pkg['name'], pkg['version'],
+            repo.get_distfiles()))
 
 if len(sys.argv) > 1:
     # Only build the packages provided on the command line.

@@ -8,22 +8,23 @@ from . import util
 
 class Distfile:
 
-    def __init__(self, distdir, patchdir, name, checksum, master_sites,
+    def __init__(self, distdir, name, checksum, master_sites,
                  patches=frozenset()):
-        self._distdir = distdir
-        self._patchdir = patchdir
+        for patch in patches:
+            if not os.path.isfile(patch):
+                raise Exception('Patch %s does not exist' % patch)
 
+        self._distdir = distdir
         self._name = name
         self._checksum = checksum
         self._master_sites = master_sites
         self._patches = patches
-
         self._pathname = os.path.join(distdir, self._name)
 
     def _fetch(self):
         for i in range(10):
-            # Validate the existing file on disk.
             print('CHECKSUM', self._pathname)
+            # Validate the existing file on disk.
             try:
                 checksum = hashlib.sha256()
                 with open(self._pathname, 'rb') as f:
@@ -67,7 +68,7 @@ class Distfile:
 
         # Apply patches.
         for patch in self._patches:
-            with open(os.path.join(self._patchdir, patch)) as f:
+            with open(patch) as f:
                 subprocess.check_call(
                     ['patch', '-d', target, '-tsp0'], stdin=f)
 

@@ -21,5 +21,4 @@ class Packager:
                 shutil.copymode(source_file, target_file)
             else:
                 # Regular file. Copy it over literally.
-                print(source_file, target_file)
                 util.copy_file(source_file, target_file, False)
