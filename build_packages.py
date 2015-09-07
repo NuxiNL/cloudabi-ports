@@ -11,12 +11,9 @@ import sys
 
 from src.distfile import Distfile
 from src import builder
+from src import config
 from src import packager
-
-# Fixed directories where we want to do the build and provide
-# dependencies. These directories must not change, as this breaks the
-# reproducibility of the generated packages.
-DIR_BUILD = '/usr/obj/cloudabi-ports'
+from src import util
 
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
@@ -126,33 +123,6 @@ for dirname, filename in walk_files(DIR_REPOSITORY):
             exec(f.read())
 
 
-def make_parents(path):
-    try:
-        os.makedirs(os.path.dirname(path))
-    except:
-        pass
-
-
-def copy_file(source, target):
-    if os.path.exists(target):
-        raise Exception('About to overwrite %s with %s' % (source, target))
-    if os.path.islink(source):
-        # Preserve symbolic links.
-        destination = os.readlink(source)
-        if os.path.isabs(destination):
-            raise Exception(
-                '%s points to absolute location %s',
-                source,
-                destination)
-        os.symlink(destination, target)
-    elif os.path.isfile(source):
-        # Copy regular files.
-        shutil.copy(source, target)
-    else:
-        # Bail out on anything else.
-        raise Exception(source + ' is of an unsupported type')
-
-
 def _copy_dependencies(pkg, arch, done):
     for dep in pkg['lib_depends']:
         if dep not in done:
@@ -162,7 +132,7 @@ def _copy_dependencies(pkg, arch, done):
                     arch,
                     dep)).extract(
                 os.path.join(
-                    DIR_BUILD,
+                    config.DIR_BUILDROOT,
                     arch))
             done.add(dep)
             _copy_dependencies(PACKAGES[dep], arch, done)
@@ -182,7 +152,7 @@ def build_package(pkg, arch):
         build_package(PACKAGES[dep], arch)
 
     try:
-        shutil.rmtree(DIR_BUILD)
+        shutil.rmtree(config.DIR_BUILDROOT)
     except:
         pass
 
@@ -193,9 +163,9 @@ def build_package(pkg, arch):
         # Copy the toolchain into the build directory.
         for dep in HOST_PACKAGES:
             for source, target in walk_files_concurrently(
-                    os.path.join(DIR_INSTALL, 'host', dep), DIR_BUILD):
-                make_parents(target)
-                copy_file(source, target)
+                    os.path.join(DIR_INSTALL, 'host', dep), config.DIR_BUILDROOT):
+                util.make_parent_dir(target)
+                util.copy_file(source, target, False)
         # Copy the dependencies into the build directory.
         copy_dependencies(pkg, arch)
 
@@ -208,7 +178,7 @@ def build_package(pkg, arch):
 
 def build_host_package(pkg):
     try:
-        shutil.rmtree(DIR_BUILD)
+        shutil.rmtree(config.DIR_BUILDROOT)
     except:
         pass
     install_directory = os.path.join(DIR_INSTALL, 'host', pkg['name'])
