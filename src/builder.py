@@ -182,7 +182,12 @@ class HostBuilder(Builder):
 
     def run(self, cwd, command):
         _chdir(cwd)
-        subprocess.check_call(command)
+        subprocess.check_call([
+            'env',
+            'CFLAGS=-I' + os.path.join(config.DIR_BUILDROOT, 'include'),
+            'CXXFLAGS=-I' + os.path.join(config.DIR_BUILDROOT, 'include'),
+            'LDFLAGS=-L' + os.path.join(config.DIR_BUILDROOT, 'lib'),
+        ] + command)
 
 
 class TargetBuilder(Builder):
@@ -292,4 +297,5 @@ class TargetBuilder(Builder):
             'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
             'PKG_CONFIG=' + self._tool('pkg-config'),
             'RANLIB=' + self._tool('ranlib'),
-            'STRIP=' + self._tool('strip')] + command)
+            'STRIP=' + self._tool('strip'),
+        ] + command)

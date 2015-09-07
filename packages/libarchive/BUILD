@@ -1,9 +1,14 @@
+def build(ctx):
+    build = ctx.extract().autoconf(['--without-iconv'])
+    build.make()
+    build.make_install().install()
+
 host_package(
     name='libarchive',
     version='3.1.2',
     homepage='http://www.libarchive.org/',
     maintainer='info@nuxi.nl',
-    build_cmd=build_autoconf_automake,
+    build_cmd=build,
 )
 
 distfile(
