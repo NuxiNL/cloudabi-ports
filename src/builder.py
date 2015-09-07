@@ -154,6 +154,37 @@ class Builder:
         return path
 
 
+class HostBuilder(Builder):
+
+    def __init__(self, install_directory):
+        super(HostBuilder, self).__init__(config.DIR_BUILDROOT)
+        self._install_directory = install_directory
+
+    def autoconf(self, builddir, script, args):
+        self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
+
+    def cmake(self, builddir, sourcedir, args):
+        self.run(builddir, [
+            'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
+            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
+
+    @staticmethod
+    def get_make():
+        return config.GNU_MAKE
+
+    def install(self, source, target):
+        print('INSTALL', source, '->', target)
+        target = os.path.join(self._install_directory, target)
+        for source_file, target_file in util.walk_files_concurrently(
+                source, target):
+            util.make_parent_dir(target_file)
+            util.copy_file(source_file, target_file, False)
+
+    def run(self, cwd, command):
+        _chdir(cwd)
+        subprocess.check_call(command)
+
+
 class TargetBuilder(Builder):
 
     def __init__(self, install_directory, arch):
@@ -262,34 +293,3 @@ class TargetBuilder(Builder):
             'PKG_CONFIG=' + self._tool('pkg-config'),
             'RANLIB=' + self._tool('ranlib'),
             'STRIP=' + self._tool('strip')] + command)
-
-
-class HostBuilder(Builder):
-
-    def __init__(self, install_directory):
-        super(HostBuilder, self).__init__(config.DIR_BUILDROOT)
-        self._install_directory = install_directory
-
-    def autoconf(self, builddir, script, args):
-        self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
-
-    def cmake(self, builddir, sourcedir, args):
-        self.run(builddir, [
-            'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
-            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
-
-    @staticmethod
-    def get_make():
-        return config.GNU_MAKE
-
-    def install(self, source, target):
-        print('INSTALL', source, '->', target)
-        target = os.path.join(self._install_directory, target)
-        for source_file, target_file in util.walk_files_concurrently(
-                source, target):
-            util.make_parent_dir(target_file)
-            util.copy_file(source_file, target_file, False)
-
-    def run(self, cwd, command):
-        _chdir(cwd)
-        subprocess.check_call(command)
