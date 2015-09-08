@@ -195,9 +195,7 @@ class TargetPackage:
                     os.path.relpath(
                         fullpath,
                         installdir))
-                f.write(
-                    '  \"/%s\": { uname: root, gname: wheel, perm: 0%o }' %
-                    (relpath, perm))
+                f.write('  \"/%s\": { perm: 0%o }' % (relpath, perm))
 
             f.write('}\n')
 
