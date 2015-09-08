@@ -32,7 +32,8 @@ if len(sys.argv) > 1:
     for name in set(sys.argv[1:]):
         for arch in config.ARCHITECTURES:
             path = target_packages[(name, arch)].create_freebsd_package()
-            target = os.path.join(DIR_PACKAGES, 'freebsd', os.path.basename(path))
+            target = os.path.join(
+                DIR_PACKAGES, 'freebsd', os.path.basename(path))
             util.make_parent_dir(target)
             os.rename(path, target)
 else:
