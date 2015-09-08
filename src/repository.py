@@ -65,7 +65,49 @@ class Repository:
                         (path, arch, name))
                 self._deferred_target_packages[(name, arch)] = package
 
-        def op_sourceforge_sites(suffix):
+        def op_sites_debian(name):
+            return {
+                '%s/debian/pool/main/%.1s/%s/' %
+                (site,
+                 name,
+                 name) for site in {
+                    'ftp://ftp.acc.umu.se',
+                    'ftp://ftp.au.debian.org',
+                    'ftp://ftp.bg.debian.org',
+                    'ftp://ftp.br.debian.org',
+                    'ftp://ftp.cl.debian.org',
+                    'ftp://ftp.cz.debian.org',
+                    'ftp://ftp.de.debian.org',
+                    'ftp://ftp.df.lth.se/pub',
+                    'ftp://ftp.ee.debian.org',
+                    'ftp://ftp.es.debian.org',
+                    'ftp://ftp.fi.debian.org',
+                    'ftp://ftp.fr.debian.org',
+                    'ftp://ftp.hk.debian.org',
+                    'ftp://ftp.hr.debian.org',
+                    'ftp://ftp.hu.debian.org',
+                    'ftp://ftp.ie.debian.org',
+                    'ftp://ftp.is.debian.org',
+                    'ftp://ftp.it.debian.org',
+                    'ftp://ftp.jp.debian.org',
+                    'ftp://ftp.nl.debian.org',
+                    'ftp://ftp.no.debian.org',
+                    'ftp://ftp.pl.debian.org',
+                    'ftp://ftp.ru.debian.org',
+                    'ftp://ftp.se.debian.org',
+                    'ftp://ftp.si.debian.org',
+                    'ftp://ftp.sk.debian.org',
+                    'ftp://ftp.snt.utwente.nl/pub/linux',
+                    'ftp://ftp.uk.debian.org',
+                    'ftp://ftp.us.debian.org',
+                    'ftp://ftp.wa.au.debian.org',
+                    'ftp://ftp2.de.debian.org',
+                    'ftp://mirror.symnds.com',
+                    'http://cdn.debian.net',
+                    'http://www.gtlib.gatech.edu/pub',
+                }}
+
+        def op_sites_sourceforge(suffix):
             return {fmt + suffix + '/' for fmt in {
                 'http://downloads.sourceforge.net/project/',
                 'http://freefr.dl.sourceforge.net/project/',
@@ -89,7 +131,8 @@ class Repository:
             'distfile': op_distfile,
             'host_package': op_host_package,
             'package': op_package,
-            'sourceforge_sites': op_sourceforge_sites,
+            'sites_debian': op_sites_debian,
+            'sites_sourceforge': op_sites_sourceforge,
         }
 
         with open(path, 'r') as f:
