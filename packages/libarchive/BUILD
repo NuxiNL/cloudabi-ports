@@ -8,6 +8,7 @@ host_package(
     version='3.1.2',
     homepage='http://www.libarchive.org/',
     maintainer='info@nuxi.nl',
+    lib_depends={'xz'},
     build_cmd=build,
 )
 
