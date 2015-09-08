@@ -1,5 +1,6 @@
 import os
 import shutil
+import stat
 import subprocess
 
 from . import config
@@ -103,6 +104,19 @@ class TargetPackage:
             self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
+    @staticmethod
+    def _get_suggested_mode(path):
+        mode = os.lstat(path).st_mode
+        if stat.S_ISLNK(mode):
+            # Symbolic links.
+            return 0o777
+        elif stat.S_ISDIR(mode) or (mode & 0o111) != 0:
+            # Directories and executable files.
+            return 0o555
+        else:
+            # Non-executable files.
+            return 0o444
+
     def _prepare_buildroot(self, host_depends, lib_depends):
         # Ensure that all dependencies have been built.
         for dep in host_depends:
@@ -143,6 +157,67 @@ class TargetPackage:
                 self._name,
                 self._version,
                 self._distfiles))
+
+    def create_debian_package(self):
+        self.build()
+        self._prepare_buildroot(set(['binutils', 'libarchive']), set())
+        print('PKG', self._name)
+        safe_name = '%s-%s' % (self._arch.replace('_', '-'), self._name)
+
+        rootdir = config.DIR_BUILDROOT
+        debian_binary = os.path.join(rootdir, 'debian-binary')
+        controldir = os.path.join(rootdir, 'control')
+        datadir = os.path.join(rootdir, 'data')
+
+        # Create 'debian-binary' file.
+        with open(debian_binary, 'w') as f:
+            f.write('2.0\n')
+
+        def tar(directory):
+            # TODO(ed): Fix up the file permissions.
+            # TODO(ed): Fix ordering of files.
+            subprocess.check_call([
+                os.path.join(rootdir, 'bin/bsdtar'),
+                '-cJf', directory + '.tar.xz',
+                '-C', directory,
+                '.',
+            ])
+
+        # Create 'control.tar.gz' tarball that contains the control file.
+        # TODO(ed): Add dependencies.
+        util.make_dir(controldir)
+        with open(os.path.join(controldir, 'control'), 'w') as f:
+            f.write(
+                'Package: %(safe_name)s\n'
+                'Version: %(version)s\n'
+                'Architecture: all\n'
+                'Maintainer: %(maintainer)s\n'
+                'Description: %(name)s for %(arch)s\n'
+                'Homepage: %(homepage)s\n' % {
+                    'arch': self._arch,
+                    'homepage': self._homepage,
+                    'maintainer': self._maintainer,
+                    'name': self._name,
+                    'safe_name': safe_name,
+                    'version': self._version
+                })
+        tar(controldir)
+
+        # Create 'data.tar.xz' tarball that contains the files that need
+        # to be installed by the package.
+        prefix = os.path.join('/usr', self._arch)
+        util.make_dir(datadir)
+        self.extract(os.path.join(datadir, prefix[1:]), prefix)
+        tar(datadir)
+
+        path = os.path.join(
+            rootdir, '%s_%s_all.deb' % (safe_name, self._version))
+        subprocess.check_call([
+            os.path.join(rootdir, 'bin/x86_64-unknown-cloudabi-ar'),
+            '-rc', path,
+            debian_binary, controldir + '.tar.xz', datadir + '.tar.xz',
+        ])
+        return path
 
     def create_freebsd_package(self):
         # Install just a copy of FreeBSD's pkg(8) into the buildroot,
@@ -192,14 +267,10 @@ class TargetPackage:
             # Create entry for every file.
             f.write('files: {\n')
             for path in sorted(util.walk_files(filesdir)):
-                if os.path.islink(path):
-                    perm = 0o777
-                elif (os.lstat(path).st_mode & 0o111) != 0:
-                    perm = 0o555
-                else:
-                    perm = 0o444
-                relpath = os.path.join('/', os.path.relpath(path, installdir))
-                f.write('  \"/%s\": { perm: 0%o }' % (relpath, perm))
+                f.write(
+                    '  \"/%s\": { perm: 0%o }' % (
+                        os.path.relpath(path, installdir),
+                        self._get_suggested_mode(path)))
             f.write('}\n')
 
         # Create the package.

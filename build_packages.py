@@ -27,19 +27,26 @@ for filename in util.walk_files(DIR_REPOSITORY):
         repo.add_build_file(filename, DIR_DISTFILES)
 target_packages = repo.get_target_packages()
 
+
+def build_packages(package):
+    # Build a package for Debian.
+    path = package.create_debian_package()
+    target = os.path.join(DIR_PACKAGES, 'debian', os.path.basename(path))
+    util.make_parent_dir(target)
+    os.rename(path, target)
+
+    # Build a package for FreeBSD.
+    path = package.create_freebsd_package()
+    target = os.path.join(DIR_PACKAGES, 'freebsd', os.path.basename(path))
+    util.make_parent_dir(target)
+    os.rename(path, target)
+
 if len(sys.argv) > 1:
     # Only build the packages provided on the command line.
     for name in set(sys.argv[1:]):
         for arch in config.ARCHITECTURES:
-            path = target_packages[(name, arch)].create_freebsd_package()
-            target = os.path.join(
-                DIR_PACKAGES, 'freebsd', os.path.basename(path))
-            util.make_parent_dir(target)
-            os.rename(path, target)
+            build_packages(target_packages[(name, arch)])
 else:
     # Build all packages.
-    for name, arch in target_packages:
-        path = target_packages[(name, arch)].create_freebsd_package()
-        target = os.path.join(DIR_PACKAGES, 'freebsd', os.path.basename(path))
-        util.make_parent_dir(target)
-        os.rename(path, target)
+    for package in target_packages.values():
+        build_packages(package)
