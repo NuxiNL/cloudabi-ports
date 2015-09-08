@@ -58,6 +58,13 @@ EOF
 pkg update
 ```
 
+All of the packages in the repository can be listed by running the
+following command:
+
+```sh
+pkg search -r CloudABI '.*'
+```
+
 All packages are named `<arch>-<name>` and install their files under
 `/usr/local/<arch>`. If you want to install the
 [standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
