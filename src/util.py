@@ -52,11 +52,23 @@ def make_parent_dir(path):
     make_dir(os.path.dirname(path))
 
 
-def remove(path):
+def _remove(path):
     try:
         shutil.rmtree(path)
     except:
         os.unlink(path)
+
+
+def remove(path):
+    try:
+        # First try to remove the file or directory directly.
+        _remove(path)
+    except PermissionError:
+        # If that fails, add write permissions to the directories stored
+        # inside and retry.
+        for root, dirs, files in os.walk(path):
+            os.lchmod(root, 0o755)
+        _remove(path)
 
 
 def walk_files(path):
