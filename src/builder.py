@@ -184,8 +184,8 @@ class HostBuilder(Builder):
         _chdir(cwd)
         subprocess.check_call([
             'env',
-            'CFLAGS=-I' + os.path.join(config.DIR_BUILDROOT, 'include'),
-            'CXXFLAGS=-I' + os.path.join(config.DIR_BUILDROOT, 'include'),
+            'CFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
+            'CXXFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
             'LDFLAGS=-L' + os.path.join(config.DIR_BUILDROOT, 'lib'),
         ] + command)
 
