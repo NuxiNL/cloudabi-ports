@@ -162,7 +162,6 @@ class TargetPackage:
         util.make_dir(installdir)
         with open(os.path.join(installdir, '+MANIFEST'), 'w') as f:
             # Preamble.
-            # TODO(ed): Encode dependencies.
             f.write(
                 'name: %(arch)s-%(name)s\n'
                 'version: \"%(version)s\"\n'
@@ -173,8 +172,7 @@ class TargetPackage:
                 'prefix: /usr/local\n'
                 'desc: %(name)s for %(arch)s\n'
                 'abi: FreeBSD:*\n'
-                'arch: freebsd:*\n'
-                'files {\n' % {
+                'arch: freebsd:*\n' % {
                     'arch': self._arch,
                     'homepage': self._homepage,
                     'maintainer': self._maintainer,
@@ -182,7 +180,17 @@ class TargetPackage:
                     'version': self._version
                 })
 
+            # Dependencies.
+            f.write('deps: {\n')
+            for dep in sorted('%s-%s' % (pkg._arch, pkg._name)
+                              for pkg in self._lib_depends):
+                f.write(
+                    '  \"%s\": {origin: devel/%s, version: 0}\n' %
+                    (dep, dep))
+            f.write('}\n')
+
             # Create entry for every file.
+            f.write('files: {\n')
             for path in sorted(util.walk_files(filesdir)):
                 if os.path.islink(path):
                     perm = 0o777
@@ -192,7 +200,6 @@ class TargetPackage:
                     perm = 0o444
                 relpath = os.path.join('/', os.path.relpath(path, installdir))
                 f.write('  \"/%s\": { perm: 0%o }' % (relpath, perm))
-
             f.write('}\n')
 
         # Create the package.
