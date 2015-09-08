@@ -174,8 +174,14 @@ class TargetPackage:
             f.write('2.0\n')
 
         def tar(directory):
-            # TODO(ed): Fix up the file permissions.
-            # TODO(ed): Fix ordering of files.
+            # Reset permissions to sane values.
+            for root, dirs, files in os.walk(directory):
+                os.lchmod(root, 0o555)
+                for filename in files:
+                    path = os.path.join(root, filename)
+                    os.lchmod(path, self._get_suggested_mode(path))
+
+            # Create tarball.
             subprocess.check_call([
                 os.path.join(rootdir, 'bin/bsdtar'),
                 '-cJf', directory + '.tar.xz',
