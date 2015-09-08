@@ -31,10 +31,14 @@ if len(sys.argv) > 1:
     # Only build the packages provided on the command line.
     for name in set(sys.argv[1:]):
         for arch in config.ARCHITECTURES:
-            target_packages[(name, arch)].create_freebsd_package(
-                os.path.join(DIR_PACKAGES, arch, name + '.txz'))
+            path = target_packages[(name, arch)].create_freebsd_package()
+            target = os.path.join(DIR_PACKAGES, 'freebsd', os.path.basename(path))
+            util.make_parent_dir(target)
+            os.rename(path, target)
 else:
     # Build all packages.
     for name, arch in target_packages:
-        target_packages[(name, arch)].create_freebsd_package(
-            os.path.join(DIR_PACKAGES, arch, name + '.txz'))
+        path = target_packages[(name, arch)].create_freebsd_package()
+        target = os.path.join(DIR_PACKAGES, 'freebsd', os.path.basename(path))
+        util.make_parent_dir(target)
+        os.rename(path, target)

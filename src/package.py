@@ -144,12 +144,12 @@ class TargetPackage:
                 self._version,
                 self._distfiles))
 
-    def create_freebsd_package(self, path):
+    def create_freebsd_package(self):
         # Install just a copy of FreeBSD's pkg(8) into the buildroot,
         # which we can call into to create the package.
         self.build()
         self._prepare_buildroot(set(['pkg']), set())
-        print('PKG', path)
+        print('PKG', self._name)
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
@@ -183,18 +183,14 @@ class TargetPackage:
                 })
 
             # Create entry for every file.
-            for fullpath in sorted(util.walk_files(filesdir)):
-                if os.path.islink(fullpath):
+            for path in sorted(util.walk_files(filesdir)):
+                if os.path.islink(path):
                     perm = 0o777
-                elif (os.lstat(fullpath).st_mode & 0o111) != 0:
+                elif (os.lstat(path).st_mode & 0o111) != 0:
                     perm = 0o555
                 else:
                     perm = 0o444
-                relpath = os.path.join(
-                    '/',
-                    os.path.relpath(
-                        fullpath,
-                        installdir))
+                relpath = os.path.join('/', os.path.relpath(path, installdir))
                 f.write('  \"/%s\": { perm: 0%o }' % (relpath, perm))
 
             f.write('}\n')
@@ -207,15 +203,9 @@ class TargetPackage:
             '-m', installdir,
             '-o', config.DIR_BUILDROOT,
         ])
-        util.make_parent_dir(path)
-        os.rename(
-            os.path.join(
-                config.DIR_BUILDROOT,
-                '%s-%s-%s.txz' %
-                (self._arch,
-                 self._name,
-                 self._version)),
-            path)
+        return os.path.join(
+            config.DIR_BUILDROOT, '%s-%s-%s.txz' %
+            (self._arch, self._name, self._version))
 
     def extract(self, path, expandpath):
         for source_file, target_file in util.walk_files_concurrently(
