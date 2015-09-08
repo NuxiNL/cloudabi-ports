@@ -44,8 +44,9 @@ for name, arch in target_packages:
 # Sign the repositories.
 # TODO(ed): Use the 'pkg' binary from the build process, instead of
 # using the one from the host system.
-# TODO(ed): Sign the repository.
-subprocess.check_call(['pkg', 'repo', freebsd_repo])
+subprocess.check_call([
+    'pkg', 'repo', freebsd_repo, '/home/edje/.cloudabi-ports-freebsd.key',
+])
 
 # Exchange the old repositories with the new ones.
 os.rename(DIR_FREEBSD_REPO, os.path.join(DIR_TMP, 'freebsd.old'))
