@@ -1,6 +1,6 @@
 --- libpkg/packing.c
 +++ libpkg/packing.c
-@@ -186,31 +186,8 @@
+@@ -186,31 +186,10 @@
  		archive_entry_set_size(entry, 0);
  	}
  
@@ -30,11 +30,13 @@
 -		archive_entry_set_gname(entry, gname);
 -	}
 +	archive_entry_set_uid(entry, 0);
++	archive_entry_set_uname(entry, "root");
 +	archive_entry_set_gid(entry, 0);
++	archive_entry_set_gname(entry, "wheel");
  
  	if (fflags > 0)
  		archive_entry_set_fflags(entry, fflags, 0);
-@@ -218,14 +195,10 @@
+@@ -218,14 +197,10 @@
  	if (perm != 0)
  		archive_entry_set_perm(entry, perm);
  
