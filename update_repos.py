@@ -20,6 +20,9 @@ DIR_TMP = '/usr/local/www/nuxi.nl/repo.tmp'
 # Final location of the FreeBSD packages.
 DIR_FREEBSD_REPO = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/freebsd'
 
+# Location of the FreeBSD repository signing key.
+PATH_FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
+
 # Zap the old temporary directory.
 try:
     util.remove(DIR_TMP)
@@ -45,7 +48,7 @@ for name, arch in target_packages:
 # TODO(ed): Use the 'pkg' binary from the build process, instead of
 # using the one from the host system.
 subprocess.check_call([
-    'pkg', 'repo', freebsd_repo, '/home/edje/.cloudabi-ports-freebsd.key',
+    'pkg', 'repo', freebsd_repo, PATH_FREEBSD_PRIVATE_KEY,
 ])
 
 # Exchange the old repositories with the new ones.
