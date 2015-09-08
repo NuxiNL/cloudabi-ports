@@ -58,7 +58,8 @@ EOF
 pkg update
 ```
 
-All packages are named `<arch>-<name>`. The
+All packages are named `<arch>-<name>` and install their files under
+`/usr/local/<arch>`. The
 [standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
 can be installed by running the following command:
 
