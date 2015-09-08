@@ -61,8 +61,8 @@ pkg update
 All packages are named `<arch>-<name>` and install their files under
 `/usr/local/<arch>`. If you want to install the
 [standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
-for building a CloudABI for x86-64 (`x86_64-unknown-cloudabi`), just run
-the following command:
+for building a CloudABI platform that needs to run on x86-64
+(`x86_64-unknown-cloudabi`), just run the following command:
 
 ```sh
 pkg install x86_64-unknown-cloudabi-c++-runtime
