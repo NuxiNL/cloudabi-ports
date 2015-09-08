@@ -1,0 +1,147 @@
+--- libarchive/archive_read_disk_posix.c
++++ libarchive/archive_read_disk_posix.c
+@@ -197,8 +197,9 @@
+ struct tree {
+ 	struct tree_entry	*stack;
+ 	struct tree_entry	*current;
+-	DIR			*d;
+-#define	INVALID_DIR_HANDLE NULL
++	struct dirent		**namelist;
++	int 			 namelist_len;
++	int			 namelist_pos;
+ 	struct dirent		*de;
+ #if defined(HAVE_READDIR_R)
+ 	struct dirent		*dirent;
+@@ -2075,7 +2076,7 @@
+ 	t->depth = 0;
+ 	t->descend = 0;
+ 	t->current = NULL;
+-	t->d = INVALID_DIR_HANDLE;
++	t->namelist = NULL;
+ 	t->symlink_mode = t->initial_symlink_mode;
+ 	archive_string_empty(&t->path);
+ 	t->entry_fd = -1;
+@@ -2240,7 +2241,7 @@
+ 
+ 	while (t->stack != NULL) {
+ 		/* If there's an open dir, get the next entry from there. */
+-		if (t->d != INVALID_DIR_HANDLE) {
++		if (t->namelist != NULL) {
+ 			r = tree_dir_next_posix(t);
+ 			if (r == 0)
+ 				continue;
+@@ -2292,82 +2293,40 @@
+ }
+ 
+ static int
++binary_sort(const struct dirent **d1, const struct dirent **d2) {
++	return strcmp((*d1)->d_name, (*d2)->d_name);
++}
++
++static int
+ tree_dir_next_posix(struct tree *t)
+ {
+ 	int r;
+ 	const char *name;
+ 	size_t namelen;
+ 
+-	if (t->d == NULL) {
+-#if defined(HAVE_READDIR_R)
+-		size_t dirent_size;
+-#endif
+-
+-#if defined(HAVE_FDOPENDIR)
+-		t->d = fdopendir(tree_dup(t->working_dir_fd));
+-#else /* HAVE_FDOPENDIR */
++	if (t->namelist == NULL) {
+ 		if (tree_enter_working_dir(t) == 0) {
+-			t->d = opendir(".");
+-#if HAVE_DIRFD || defined(dirfd)
+-			__archive_ensure_cloexec_flag(dirfd(t->d));
+-#endif
++			t->namelist_len = scandir(".", &t->namelist, NULL, binary_sort);
++			t->namelist_pos = 0;
+ 		}
+-#endif /* HAVE_FDOPENDIR */
+-		if (t->d == NULL) {
++		if (t->namelist == NULL) {
+ 			r = tree_ascend(t); /* Undo "chdir" */
+ 			tree_pop(t);
+ 			t->tree_errno = errno;
+ 			t->visit_type = r != 0 ? r : TREE_ERROR_DIR;
+ 			return (t->visit_type);
+ 		}
+-#if defined(HAVE_READDIR_R)
+-		dirent_size = offsetof(struct dirent, d_name) +
+-		  t->filesystem_table[t->current->filesystem_id].name_max + 1;
+-		if (t->dirent == NULL || t->dirent_allocated < dirent_size) {
+-			free(t->dirent);
+-			t->dirent = malloc(dirent_size);
+-			if (t->dirent == NULL) {
+-				closedir(t->d);
+-				t->d = INVALID_DIR_HANDLE;
+-				(void)tree_ascend(t);
+-				tree_pop(t);
+-				t->tree_errno = ENOMEM;
+-				t->visit_type = TREE_ERROR_DIR;
+-				return (t->visit_type);
+-			}
+-			t->dirent_allocated = dirent_size;
+-		}
+-#endif /* HAVE_READDIR_R */
+ 	}
+ 	for (;;) {
+-		errno = 0;
+-#if defined(HAVE_READDIR_R)
+-		r = readdir_r(t->d, t->dirent, &t->de);
+-#ifdef _AIX
+-		/* Note: According to the man page, return value 9 indicates
+-		 * that the readdir_r was not successful and the error code
+-		 * is set to the global errno variable. And then if the end
+-		 * of directory entries was reached, the return value is 9
+-		 * and the third parameter is set to NULL and errno is
+-		 * unchanged. */
+-		if (r == 9)
+-			r = errno;
+-#endif /* _AIX */
+-		if (r != 0 || t->de == NULL) {
+-#else
+-		t->de = readdir(t->d);
+-		if (t->de == NULL) {
+-			r = errno;
+-#endif
+-			closedir(t->d);
+-			t->d = INVALID_DIR_HANDLE;
+-			if (r != 0) {
+-				t->tree_errno = r;
+-				t->visit_type = TREE_ERROR_DIR;
+-				return (t->visit_type);
+-			} else
+-				return (0);
++		if (t->namelist_pos >= t->namelist_len) {
++			for (int i = 0; i < t->namelist_len; ++i)
++				free(t->namelist[i]);
++			free(t->namelist);
++			t->namelist = NULL;
++			t->de = NULL;
++			return (0);
+ 		}
++		t->de = t->namelist[t->namelist_pos++];
+ 		name = t->de->d_name;
+ 		namelen = D_NAMELEN(t->de);
+ 		t->flags &= ~hasLstat;
+@@ -2562,9 +2521,11 @@
+ 		t->entry_fd = -1;
+ 	}
+ 	/* Close the handle of readdir(). */
+-	if (t->d != INVALID_DIR_HANDLE) {
+-		closedir(t->d);
+-		t->d = INVALID_DIR_HANDLE;
++	if (t->namelist != NULL) {
++		for (int i = 0; i < t->namelist_len; ++i)
++			free(t->namelist[i]);
++		free(t->namelist);
++		t->namelist = NULL;
+ 	}
+ 	/* Release anything remaining in the stack. */
+ 	while (t->stack != NULL) {
