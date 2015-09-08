@@ -22,9 +22,9 @@ DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 
 # Parse all of the BUILD rules.
 repo = Repository(DIR_INSTALL)
-for dirname, filename in util.walk_files(DIR_REPOSITORY):
-    if filename == 'BUILD':
-        repo.add_build_file(os.path.join(dirname, 'BUILD'), DIR_DISTFILES)
+for filename in util.walk_files(DIR_REPOSITORY):
+    if os.path.basename(filename) == 'BUILD':
+        repo.add_build_file(filename, DIR_DISTFILES)
 target_packages = repo.get_target_packages()
 
 if len(sys.argv) > 1:

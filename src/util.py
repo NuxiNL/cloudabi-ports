@@ -63,14 +63,13 @@ def walk_files(path):
     if os.path.isdir(path):
         for root, dirs, files in os.walk(path):
             for f in files:
-                yield (root, f)
+                yield os.path.join(root, f)
     elif os.path.exists(path):
-        yield os.path.split(path)
+        yield path
 
 
 def walk_files_concurrently(source, target):
-    for dirname, filename in walk_files(source):
-        source_filename = os.path.join(dirname, filename)
+    for source_filename in walk_files(source):
         target_filename = os.path.normpath(
             os.path.join(target, os.path.relpath(source_filename, source)))
         yield source_filename, target_filename

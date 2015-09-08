@@ -73,7 +73,7 @@ class Distfile:
                     ['patch', '-d', target, '-tsp0'], stdin=f)
 
         # Delete .orig files that patch leaves behind.
-        for dirname, filename in util.walk_files(target):
-            if filename.endswith('.orig'):
-                os.unlink(os.path.join(dirname, filename))
+        for path in util.walk_files(target):
+            if path.endswith('.orig'):
+                os.unlink(path)
         return target

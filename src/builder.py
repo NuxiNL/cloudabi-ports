@@ -18,8 +18,8 @@ class FileHandle:
         self._path = path
 
     def autoconf(self, args=[], inplace=False):
-        for dirname, filename in util.walk_files(self._path):
-            path = os.path.join(dirname, filename)
+        for path in util.walk_files(self._path):
+            filename = os.path.basename(path)
             if filename == 'config.sub':
                 # Replace config.sub files by an up-to-date copy. The copy
                 # provided by the tarball rarely supports CloudABI.

@@ -172,6 +172,8 @@ class TargetPackage:
                 'maintainer: %(maintainer)s\n'
                 'prefix: /usr/local\n'
                 'desc: %(name)s for %(arch)s\n'
+                'abi: FreeBSD:*\n'
+                'arch: freebsd:*\n'
                 'files {\n' % {
                     'arch': self._arch,
                     'homepage': self._homepage,
@@ -181,8 +183,7 @@ class TargetPackage:
                 })
 
             # Create entry for every file.
-            for dirname, filename in util.walk_files(filesdir):
-                fullpath = os.path.join(dirname, filename)
+            for fullpath in sorted(util.walk_files(filesdir)):
                 if os.path.islink(fullpath):
                     perm = 0o777
                 elif (os.lstat(fullpath).st_mode & 0o111) != 0:
