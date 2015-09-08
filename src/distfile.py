@@ -2,7 +2,9 @@ import hashlib
 import os
 import random
 import subprocess
+import urllib
 
+from . import config
 from . import util
 
 
@@ -17,7 +19,7 @@ class Distfile:
         self._distdir = distdir
         self._name = name
         self._checksum = checksum
-        self._master_sites = master_sites
+        self._master_sites = master_sites | config.FALLBACK_MIRRORS
         self._patches = patches
         self._pathname = os.path.join(distdir, self._name)
 
@@ -35,20 +37,23 @@ class Distfile:
                         checksum.update(data)
                 if checksum.hexdigest() == self._checksum:
                     return
-            except FileNotFoundError:
-                pass
+            except FileNotFoundError as e:
+                print(e)
 
             url = (random.sample(self._master_sites, 1)[0] +
                    os.path.basename(self._name))
             print('FETCH', url)
-            with util.unsafe_fetch(url) as fin:
-                util.make_parent_dir(self._pathname)
-                with open(self._pathname, 'wb') as fout:
-                    while True:
-                        data = fin.read(16384)
-                        if not data:
-                            break
-                        fout.write(data)
+            try:
+                with util.unsafe_fetch(url) as fin:
+                    util.make_parent_dir(self._pathname)
+                    with open(self._pathname, 'wb') as fout:
+                        while True:
+                            data = fin.read(16384)
+                            if not data:
+                                break
+                            fout.write(data)
+            except urllib.error.URLError as e:
+                print(e)
         raise Exception('Failed to fetch %s' % self._name)
 
     def extract(self, target):

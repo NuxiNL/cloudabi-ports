@@ -12,5 +12,9 @@ DIR_BUILDROOT = '/usr/obj/cloudabi-ports'
 # Location where resource files are stored.
 DIR_RESOURCES = os.path.join(os.getcwd(), 'misc')
 
+# Location at which distfiles can be fetched in case the master sites
+# are down.
+FALLBACK_MIRRORS = {'https://nuxi.nl/distfiles/third_party/'}
+
 # Name of the GNU Make executable.
 GNU_MAKE = 'gmake' if platform.system() == 'FreeBSD' else 'make'
