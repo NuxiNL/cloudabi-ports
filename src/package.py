@@ -101,7 +101,8 @@ class TargetPackage:
         # Compute the set of transitive library dependencies.
         self._lib_depends = set()
         for dep in lib_depends:
-            self._lib_depends.add(dep)
+            if dep._build_cmd:
+                self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
     @staticmethod
