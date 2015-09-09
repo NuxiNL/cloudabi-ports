@@ -15,7 +15,6 @@ from src.version import FullVersion
 
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
-DIR_CATALOG = os.path.join(DIR_ROOT, '_obj/catalog')
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
 DIR_PACKAGES_DEBIAN = os.path.join(DIR_ROOT, '_obj/packages/debian')
