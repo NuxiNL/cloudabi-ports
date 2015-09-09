@@ -48,6 +48,7 @@ def lchmod(path, mode):
         if not os.path.islink(path):
             os.chmod(path, mode)
 
+
 def make_dir(path):
     try:
         os.makedirs(path)
