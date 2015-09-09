@@ -1,0 +1,34 @@
+--- libarchive/archive_read_disk_set_standard_lookup.c
++++ libarchive/archive_read_disk_set_standard_lookup.c
+@@ -182,7 +182,14 @@
+ 		    &lookup_uname_helper, (id_t)uid));
+ }
+ 
+-#if HAVE_GETPWUID_R
++#if 1
++static const char *
++lookup_uname_helper(struct name_cache *cache, id_t id)
++{
++
++	return strdup("root");
++}
++#elif HAVE_GETPWUID_R
+ static const char *
+ lookup_uname_helper(struct name_cache *cache, id_t id)
+ {
+@@ -250,7 +257,14 @@
+ 		    &lookup_gname_helper, (id_t)gid));
+ }
+ 
+-#if HAVE_GETGRGID_R
++#if 1
++static const char *
++lookup_gname_helper(struct name_cache *cache, id_t id)
++{
++
++	return strdup("wheel");
++}
++#elif HAVE_GETGRGID_R
+ static const char *
+ lookup_gname_helper(struct name_cache *cache, id_t id)
+ {
