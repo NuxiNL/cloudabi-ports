@@ -1,3 +1,4 @@
+import lzma
 import os
 import stat
 import subprocess
@@ -11,6 +12,7 @@ class Catalog:
     def __init__(self, old_path, new_path):
         self._old_path = old_path
         self._new_path = new_path
+        self._packages = set()
 
     @staticmethod
     def _get_suggested_mode(path):
@@ -30,6 +32,7 @@ class Catalog:
         os.link(
             path,
             os.path.join(self._new_path, self._get_filename(package, version)))
+        self._packages.add((package, version))
 
     def lookup_at_version(self, package, version):
         path = os.path.join(
@@ -52,16 +55,62 @@ class DebianCatalog(Catalog):
         return '%s_%s_all.deb' % (
             package.get_debian_name(), version.get_debian())
 
+    @staticmethod
+    def _get_control_snippet(package, version):
+        snippet = (
+            'Package: %(debian_name)s\n'
+            'Version: %(version)s\n'
+            'Architecture: all\n'
+            'Maintainer: %(maintainer)s\n'
+            'Description: %(name)s for %(arch)s\n'
+            'Homepage: %(homepage)s\n' % {
+                'arch': package.get_arch(),
+                'homepage': package.get_homepage(),
+                'maintainer': package.get_maintainer(),
+                'name': package.get_name(),
+                'debian_name': package.get_debian_name(),
+                'version': version.get_debian(),
+            })
+        lib_depends = package.get_lib_depends()
+        if lib_depends:
+            snippet += 'Depends: %s\n' % ', '.join(sorted(
+                dep.get_debian_name() for dep in lib_depends))
+        return snippet
+
     def finish(self):
-        # TODO(ed): Implement.
-        pass
+        # Create package index.
+        index = os.path.join(self._new_path, 'Packages.xz')
+        with lzma.open(index, 'wt') as f:
+            for package, version in self._packages:
+                f.write(self._get_control_snippet(package, version))
+                filename = self._get_filename(package, version)
+                path = os.path.join(self._new_path, filename)
+                f.write(
+                    'Filename: %s\n'
+                    'Size: %u\n'
+                    'SHA256: %s\n' % (
+                        filename,
+                        os.path.getsize(path),
+                        util.sha256(path),
+                    ))
+
+                f.write('\n')
+
+        # Link the index into the per-architecture directory.
+        for arch in {'amd64', 'i386'}:
+            index_arch = os.path.join(
+                self._new_path,
+                'dists/cloudabi/cloudabi/binary-%s/Packages.xz' %
+                arch)
+            util.make_parent_dir(index_arch)
+            os.link(index, index_arch)
+        os.unlink(index)
 
     def package(self, package, version):
         package.build()
         # TODO(ed): Should this be public API?
         package._prepare_buildroot(set(['binutils', 'libarchive']), set())
-        name = package.get_name()
-        print('PKG', name, 'Debian')
+        print('PKG', package.get_name(), 'Debian')
 
         rootdir = config.DIR_BUILDROOT
         debian_binary = os.path.join(rootdir, 'debian-binary')
@@ -90,32 +139,13 @@ class DebianCatalog(Catalog):
 
         # Create 'control.tar.gz' tarball that contains the control file.
         util.make_dir(controldir)
-        arch = package.get_arch()
         with open(os.path.join(controldir, 'control'), 'w') as f:
-            f.write(
-                'Package: %(debian_name)s\n'
-                'Version: %(version)s\n'
-                'Architecture: all\n'
-                'Maintainer: %(maintainer)s\n'
-                'Description: %(name)s for %(arch)s\n'
-                'Homepage: %(homepage)s\n' % {
-                    'arch': arch,
-                    'homepage': package.get_homepage(),
-                    'maintainer': package.get_maintainer(),
-                    'name': name,
-                    'debian_name': package.get_debian_name(),
-                    'version': version.get_debian(),
-                })
-            lib_depends = package.get_lib_depends()
-            if lib_depends:
-                f.write(
-                    'Depends: %s\n' % ', '.join(sorted(
-                        dep.get_debian_name() for dep in lib_depends)))
+            f.write(self._get_control_snippet(package, version))
         tar(controldir)
 
         # Create 'data.tar.xz' tarball that contains the files that need
         # to be installed by the package.
-        prefix = os.path.join('/usr', arch)
+        prefix = os.path.join('/usr', package.get_arch())
         util.make_dir(datadir)
         package.extract(os.path.join(datadir, prefix[1:]), prefix)
         tar(datadir)
