@@ -142,13 +142,9 @@ class Repository:
                             dep, arch) for dep in package['lib_depends']}
                     del package['lib_depends']
                 package['version'] = Version(package['version'])
-                self._target_packages[
-                    (name,
-                     arch)] = TargetPackage(
+                self._target_packages[(name, arch)] = TargetPackage(
                     install_directory=os.path.join(
-                        self._install_directory,
-                        arch,
-                        name),
+                        self._install_directory, arch, name),
                     arch=arch,
                     distfiles=self._distfiles,
                     host_packages=self._host_packages,
@@ -158,8 +154,6 @@ class Repository:
 
         while self._deferred_target_packages:
             get_target_package(
-                *
-                random.sample(
-                    self._deferred_target_packages.keys(),
-                    1)[0])
+                *random.sample(
+                    self._deferred_target_packages.keys(), 1)[0])
         return self._target_packages
