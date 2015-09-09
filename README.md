@@ -30,7 +30,7 @@ are built periodically. The instructions below can be used to add the
 repository for your operating system to the configuration of your
 package manager.
 
-### Debian and Ubuntu
+### Debian, Ubuntu and other Debian derivatives
 
 Debian's `apt-get` can be configured to access the CloudABI repository
 by running the following commands:
