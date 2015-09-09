@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import lzma
 import os
-import subprocess
 
 from src import util
 from src.catalog import DebianCatalog, FreeBSDCatalog
