@@ -10,16 +10,8 @@ from .builder import BuildHandle, HostBuilder, TargetBuilder
 
 class HostPackage:
 
-    def __init__(
-            self,
-            install_directory,
-            name,
-            version,
-            homepage,
-            maintainer,
-            lib_depends,
-            distfiles,
-            build_cmd):
+    def __init__(self, install_directory, name, version, homepage,
+                 maintainer, lib_depends, distfiles, build_cmd):
         self._install_directory = install_directory
         self._name = name
         self._version = version
@@ -68,18 +60,9 @@ class HostPackage:
 
 class TargetPackage:
 
-    def __init__(
-            self,
-            install_directory,
-            arch,
-            name,
-            version,
-            homepage,
-            maintainer,
-            host_packages,
-            lib_depends,
-            build_cmd,
-            distfiles):
+    def __init__(self, install_directory, arch, name, version, homepage,
+                 maintainer, host_packages, lib_depends, build_cmd,
+                 distfiles):
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
