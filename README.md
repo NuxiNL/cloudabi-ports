@@ -72,7 +72,7 @@ for building a CloudABI application that needs to run on x86-64
 (`x86_64-unknown-cloudabi`), just run the following command:
 
 ```sh
-pkg install x86_64-unknown-cloudabi-c++-runtime
+pkg install x86_64-unknown-cloudabi-cxx-runtime
 ```
 
 A cross compiler for CloudABI can be obtained by installing FreeBSD's

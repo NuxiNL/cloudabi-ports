@@ -10,7 +10,7 @@ package(
     version='1.2.0',
     homepage='http://libspiff.sourceforge.net/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c++-runtime', 'expat', 'uriparser'},
+    lib_depends={'cxx-runtime', 'expat', 'uriparser'},
     build_cmd=build,
 )
 

@@ -8,7 +8,7 @@ package(
     version='0.20150801',
     homepage='https://github.com/google/re2',
     maintainer='info@nuxi.nl',
-    lib_depends={'c++-runtime'},
+    lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 

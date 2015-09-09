@@ -10,7 +10,7 @@ package(
     version='1.9.1',
     homepage='https://taglib.github.io/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c++-runtime', 'zlib'},
+    lib_depends={'cxx-runtime', 'zlib'},
     build_cmd=build,
 )
 
