@@ -96,8 +96,12 @@ class DebianCatalog(Catalog):
 
                 f.write('\n')
 
-        # Link the index into the per-architecture directory.
-        for arch in {'amd64', 'i386'}:
+        # Link the index into the per-architecture directory. List of
+        # official supported architectures obtained from
+        # https://www.debian.org/ports/#portlist-released.
+        for arch in {'amd64', 'armel', 'armhf', 'i386', 'ia64',
+                     'kfreebsd-amd64', 'kfreebsd-i386', 'mips', 'mipsel',
+                     'powerpc', 'ppc64el', 's390', 's390x', 'sparc'}:
             index_arch = os.path.join(
                 self._new_path,
                 'dists/cloudabi/cloudabi/binary-%s/Packages.xz' %
