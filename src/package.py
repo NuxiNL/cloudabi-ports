@@ -161,7 +161,7 @@ class TargetPackage:
     def create_debian_package(self):
         self.build()
         self._prepare_buildroot(set(['binutils', 'libarchive']), set())
-        print('PKG', self._name)
+        print('PKG', self._name, 'Debian')
         safe_name = '%s-%s' % (self._arch.replace('_', '-'), self._name)
 
         rootdir = config.DIR_BUILDROOT
@@ -230,7 +230,7 @@ class TargetPackage:
         # which we can call into to create the package.
         self.build()
         self._prepare_buildroot(set(['pkg']), set())
-        print('PKG', self._name)
+        print('PKG', self._name, 'FreeBSD')
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
