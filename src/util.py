@@ -26,6 +26,19 @@ def copy_file(source, target, preserve_attributes):
         raise Exception(source + ' is of an unsupported type')
 
 
+def file_contents_equal(path1, path2):
+    # Compare file contents.
+    with open(path1, 'rb') as f1:
+        with open(path2, 'rb') as f2:
+            while True:
+                b1 = f1.read(16384)
+                b2 = f2.read(16384)
+                if b1 != b2:
+                    return False
+                elif not b1:
+                    return True
+
+
 def unsafe_fetch(url):
     # Fetch a file over HTTP, HTTPS or FTP. For HTTPS, we don't do any
     # certificate checking. The caller should validate the authenticity
@@ -52,7 +65,7 @@ def lchmod(path, mode):
 def make_dir(path):
     try:
         os.makedirs(path)
-    except:
+    except FileExistsError:
         pass
 
 
@@ -63,6 +76,8 @@ def make_parent_dir(path):
 def _remove(path):
     try:
         shutil.rmtree(path)
+    except FileNotFoundError:
+        pass
     except NotADirectoryError:
         os.unlink(path)
 
@@ -77,6 +92,14 @@ def remove(path):
         for root, dirs, files in os.walk(path):
             os.chmod(root, 0o755)
         _remove(path)
+
+
+def remove_and_make_dir(path):
+    try:
+        remove(path)
+    except FileNotFoundError:
+        pass
+    make_dir(path)
 
 
 def walk_files(path):

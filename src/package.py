@@ -8,14 +8,6 @@ from . import util
 from .builder import BuildHandle, HostBuilder, TargetBuilder
 
 
-def _empty_dir(self):
-    # TODO(ed): This should not delete the actual directory.
-    try:
-        util.remove(config.DIR_BUILDROOT)
-    except FileNotFoundError:
-        pass
-
-
 class HostPackage:
 
     def __init__(
@@ -46,7 +38,7 @@ class HostPackage:
             dep.build()
 
         # Install dependencies into an empty buildroot.
-        _empty_dir(config.DIR_BUILDROOT)
+        util.remove_and_make_dir(config.DIR_BUILDROOT)
         for dep in self._lib_depends:
             dep.extract()
 
@@ -105,22 +97,6 @@ class TargetPackage:
                 self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
-        # Debian package naming scheme.
-        self._debian_name = '%s-%s' % (arch.replace('_', '-'), name)
-
-    @staticmethod
-    def _get_suggested_mode(path):
-        mode = os.lstat(path).st_mode
-        if stat.S_ISLNK(mode):
-            # Symbolic links.
-            return 0o777
-        elif stat.S_ISDIR(mode) or (mode & 0o111) != 0:
-            # Directories and executable files.
-            return 0o555
-        else:
-            # Non-executable files.
-            return 0o444
-
     def _prepare_buildroot(self, host_depends, lib_depends):
         # Ensure that all dependencies have been built.
         for dep in host_depends:
@@ -132,7 +108,7 @@ class TargetPackage:
             dep.build()
 
         # Install dependencies into an empty buildroot.
-        _empty_dir(config.DIR_BUILDROOT)
+        util.remove_and_make_dir(config.DIR_BUILDROOT)
         for dep in host_depends:
             package = self._host_packages[dep]
             package.extract()
@@ -162,140 +138,32 @@ class TargetPackage:
                 self._version,
                 self._distfiles))
 
-    def create_debian_package(self):
-        self.build()
-        self._prepare_buildroot(set(['binutils', 'libarchive']), set())
-        print('PKG', self._name, 'Debian')
+    def clean(self):
+        util.remove(self._install_directory)
 
-        rootdir = config.DIR_BUILDROOT
-        debian_binary = os.path.join(rootdir, 'debian-binary')
-        controldir = os.path.join(rootdir, 'control')
-        datadir = os.path.join(rootdir, 'data')
+    def get_arch(self):
+        return self._arch
 
-        # Create 'debian-binary' file.
-        with open(debian_binary, 'w') as f:
-            f.write('2.0\n')
+    def get_debian_name(self):
+        return '%s-%s' % (self._arch.replace('_', '-'), self._name)
 
-        def tar(directory):
-            # Reset permissions to sane values.
-            for root, dirs, files in os.walk(directory):
-                util.lchmod(root, 0o555)
-                for filename in files:
-                    path = os.path.join(root, filename)
-                    util.lchmod(path, self._get_suggested_mode(path))
+    def get_freebsd_name(self):
+        return '%s-%s' % (self._arch, self._name)
 
-            # Create tarball.
-            subprocess.check_call([
-                os.path.join(rootdir, 'bin/bsdtar'),
-                '-cJf', directory + '.tar.xz',
-                '-C', directory,
-                '.',
-            ])
+    def get_homepage(self):
+        return self._homepage
 
-        # Create 'control.tar.gz' tarball that contains the control file.
-        util.make_dir(controldir)
-        with open(os.path.join(controldir, 'control'), 'w') as f:
-            f.write(
-                'Package: %(debian_name)s\n'
-                'Version: %(version)s\n'
-                'Architecture: all\n'
-                'Maintainer: %(maintainer)s\n'
-                'Description: %(name)s for %(arch)s\n'
-                'Homepage: %(homepage)s\n' % {
-                    'arch': self._arch,
-                    'homepage': self._homepage,
-                    'maintainer': self._maintainer,
-                    'name': self._name,
-                    'debian_name': self._debian_name,
-                    'version': self._version
-                })
-            if self._lib_depends:
-                f.write(
-                    'Depends: %s\n' % ', '.join(sorted(
-                        dep._debian_name for dep in self._lib_depends)))
-        tar(controldir)
+    def get_lib_depends(self):
+        return self._lib_depends
 
-        # Create 'data.tar.xz' tarball that contains the files that need
-        # to be installed by the package.
-        prefix = os.path.join('/usr', self._arch)
-        util.make_dir(datadir)
-        self.extract(os.path.join(datadir, prefix[1:]), prefix)
-        tar(datadir)
+    def get_maintainer(self):
+        return self._maintainer
 
-        path = os.path.join(
-            rootdir, '%s_%s_all.deb' % (self._debian_name, self._version))
-        subprocess.check_call([
-            os.path.join(rootdir, 'bin/x86_64-unknown-cloudabi-ar'),
-            '-rc', path,
-            debian_binary, controldir + '.tar.xz', datadir + '.tar.xz',
-        ])
-        return path
+    def get_name(self):
+        return self._name
 
-    def create_freebsd_package(self):
-        # Install just a copy of FreeBSD's pkg(8) into the buildroot,
-        # which we can call into to create the package.
-        self.build()
-        self._prepare_buildroot(set(['pkg']), set())
-        print('PKG', self._name, 'FreeBSD')
-
-        # The package needs to be installed in /usr/local/<arch> on the
-        # FreeBSD system.
-        prefix = os.path.join('/usr/local', self._arch)
-        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
-        filesdir = os.path.join(installdir, prefix[1:])
-        self.extract(filesdir, prefix)
-
-        # Create a manifest file.
-        util.make_dir(installdir)
-        with open(os.path.join(installdir, '+MANIFEST'), 'w') as f:
-            # Preamble.
-            f.write(
-                'name: %(arch)s-%(name)s\n'
-                'version: \"%(version)s\"\n'
-                'origin: devel/%(arch)s-%(name)s\n'
-                'comment: %(name)s for %(arch)s\n'
-                'www: %(homepage)s\n'
-                'maintainer: %(maintainer)s\n'
-                'prefix: /usr/local\n'
-                'desc: %(name)s for %(arch)s\n'
-                'abi: FreeBSD:*\n'
-                'arch: freebsd:*\n' % {
-                    'arch': self._arch,
-                    'homepage': self._homepage,
-                    'maintainer': self._maintainer,
-                    'name': self._name,
-                    'version': self._version
-                })
-
-            # Dependencies.
-            f.write('deps: {\n')
-            for dep in sorted('%s-%s' % (pkg._arch, pkg._name)
-                              for pkg in self._lib_depends):
-                f.write(
-                    '  \"%s\": {origin: devel/%s, version: 0}\n' %
-                    (dep, dep))
-            f.write('}\n')
-
-            # Create entry for every file.
-            f.write('files: {\n')
-            for path in sorted(util.walk_files(filesdir)):
-                f.write(
-                    '  \"/%s\": { perm: 0%o }' % (
-                        os.path.relpath(path, installdir),
-                        self._get_suggested_mode(path)))
-            f.write('}\n')
-
-        # Create the package.
-        subprocess.check_call([
-            os.path.join(config.DIR_BUILDROOT, 'sbin/pkg'),
-            'create',
-            '-r', installdir,
-            '-m', installdir,
-            '-o', config.DIR_BUILDROOT,
-        ])
-        return os.path.join(
-            config.DIR_BUILDROOT, '%s-%s-%s.txz' %
-            (self._arch, self._name, self._version))
+    def get_version(self):
+        return self._version
 
     def extract(self, path, expandpath):
         for source_file, target_file in util.walk_files_concurrently(

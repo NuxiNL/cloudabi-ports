@@ -30,6 +30,17 @@ are built periodically. The instructions below can be used to add the
 repository for your operating system to the configuration of your
 package manager.
 
+### Debian and Ubuntu
+
+Debian's `apt-get` can be configured to access the CloudABI repository
+by running the following commands:
+
+```sh
+sudo add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
+```
+
+TODO(ed): Incomplete.
+
 ### FreeBSD
 
 FreeBSD's `pkg` can be configured to access the CloudABI repository by
