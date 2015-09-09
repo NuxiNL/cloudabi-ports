@@ -112,8 +112,7 @@ class DebianCatalog(Catalog):
 
     def package(self, package, version):
         package.build()
-        # TODO(ed): Should this be public API?
-        package._prepare_buildroot(set(['binutils', 'libarchive']), set())
+        package.initialize_buildroot({'binutils', 'libarchive'})
         print('PKG', package.get_name(), 'Debian')
 
         rootdir = config.DIR_BUILDROOT
@@ -183,8 +182,7 @@ class FreeBSDCatalog(Catalog):
         # Install just a copy of FreeBSD's pkg(8) into the buildroot,
         # which we can call into to create the package.
         package.build()
-        # TODO(ed): Should this be public API?
-        package._prepare_buildroot(set(['pkg']), set())
+        package.initialize_buildroot({'pkg'})
         name = package.get_name()
         print('PKG', name, 'FreeBSD')
 

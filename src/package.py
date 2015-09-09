@@ -24,7 +24,7 @@ class HostPackage:
             self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
-    def _prepare_buildroot(self):
+    def _initialize_buildroot(self):
         # Ensure that all dependencies have been built.
         for dep in self._lib_depends:
             dep.build()
@@ -40,7 +40,7 @@ class HostPackage:
             return
 
         # Perform the build inside an empty buildroot.
-        self._prepare_buildroot()
+        self._initialize_buildroot()
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
@@ -80,27 +80,6 @@ class TargetPackage:
                 self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
-    def _prepare_buildroot(self, host_depends, lib_depends):
-        # Ensure that all dependencies have been built.
-        for dep in host_depends:
-            package = self._host_packages[dep]
-            package.build()
-            for depdep in package._lib_depends:
-                depdep.build()
-        for dep in lib_depends:
-            dep.build()
-
-        # Install dependencies into an empty buildroot.
-        util.remove_and_make_dir(config.DIR_BUILDROOT)
-        for dep in host_depends:
-            package = self._host_packages[dep]
-            package.extract()
-            for depdep in package._lib_depends:
-                depdep.extract()
-        prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
-        for dep in lib_depends:
-            dep.extract(prefix, prefix)
-
     def build(self):
         # Skip this package if it has been built already.
         if not self._build_cmd or os.path.isdir(self._install_directory):
@@ -108,9 +87,9 @@ class TargetPackage:
 
         # Perform the build inside a buildroot with its dependencies
         # installed in place.
-        self._prepare_buildroot(set([
-            'binutils', 'cmake', 'llvm', 'make', 'pkgconf',
-        ]), self._lib_depends)
+        self.initialize_buildroot(
+            {'binutils', 'cmake', 'llvm', 'make', 'pkgconf'},
+            self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
@@ -123,6 +102,23 @@ class TargetPackage:
 
     def clean(self):
         util.remove(self._install_directory)
+
+    def extract(self, path, expandpath):
+        for source_file, target_file in util.walk_files_concurrently(
+                self._install_directory, path):
+            util.make_parent_dir(target_file)
+            if target_file.endswith('.template'):
+                # File is a template. Expand %%PREFIX%% tags.
+                target_file = target_file[:-9]
+                with open(source_file, 'r') as f:
+                    contents = f.read()
+                contents = contents.replace('%%PREFIX%%', expandpath)
+                with open(target_file, 'w') as f:
+                    f.write(contents)
+                shutil.copymode(source_file, target_file)
+            else:
+                # Regular file. Copy it over literally.
+                util.copy_file(source_file, target_file, False)
 
     def get_arch(self):
         return self._arch
@@ -148,19 +144,23 @@ class TargetPackage:
     def get_version(self):
         return self._version
 
-    def extract(self, path, expandpath):
-        for source_file, target_file in util.walk_files_concurrently(
-                self._install_directory, path):
-            util.make_parent_dir(target_file)
-            if target_file.endswith('.template'):
-                # File is a template. Expand %%PREFIX%% tags.
-                target_file = target_file[:-9]
-                with open(source_file, 'r') as f:
-                    contents = f.read()
-                contents = contents.replace('%%PREFIX%%', expandpath)
-                with open(target_file, 'w') as f:
-                    f.write(contents)
-                shutil.copymode(source_file, target_file)
-            else:
-                # Regular file. Copy it over literally.
-                util.copy_file(source_file, target_file, False)
+    def initialize_buildroot(self, host_depends, lib_depends=set()):
+        # Ensure that all dependencies have been built.
+        for dep in host_depends:
+            package = self._host_packages[dep]
+            package.build()
+            for depdep in package._lib_depends:
+                depdep.build()
+        for dep in lib_depends:
+            dep.build()
+
+        # Install dependencies into an empty buildroot.
+        util.remove_and_make_dir(config.DIR_BUILDROOT)
+        for dep in host_depends:
+            package = self._host_packages[dep]
+            package.extract()
+            for depdep in package._lib_depends:
+                depdep.extract()
+        prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
+        for dep in lib_depends:
+            dep.extract(prefix, prefix)
