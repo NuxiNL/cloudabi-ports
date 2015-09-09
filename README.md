@@ -26,14 +26,13 @@ that you're familiar with to install and manage CloudABI libraries.
 ## Accessing the CloudABI Ports Collection
 
 Nuxi provides pre-built packages for a variety of operating systems that
-are built periodically. The instructions below can be used to add the
-repository for your operating system to the configuration of your
-package manager.
+are updated periodically. The instructions below can be used to add the
+repository for your operating system to your system's configuration.
 
 ### Debian, Ubuntu and other Debian derivatives
 
 Debian's `apt-get` can be configured to access the CloudABI repository
-by running the following commands:
+by running the following command:
 
 ```sh
 sudo add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
@@ -48,9 +47,9 @@ grep -h ^Package /var/lib/apt/lists/nuxi.nl* | sort -u
 
 All packages are named `<arch>-<name>`, but keep in mind that
 underscores in the architecture name are replaced by a dash (e.g,
-`x86-64-unknown-cloudabi` instead of `x86_64-unknown-cloudabi`). The
-packages install their files under `/usr/<arch>`. If you want to install
-the
+`x86-64-unknown-cloudabi` instead of the offical
+`x86_64-unknown-cloudabi` target triple). The packages install their
+files under `/usr/<arch>`. If you want to install the
 [standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/cxx-runtime/BUILD)
 for building a CloudABI application that needs to run on x86-64, just
 run the following command:
@@ -71,15 +70,14 @@ FreeBSD's `pkg` can be configured to access the CloudABI repository by
 running the following commands:
 
 ```sh
-cd /etc/pkg
-cat > CloudABI.conf << EOF
+cat > /etc/pkg/CloudABI.conf << EOF
 CloudABI: {
   url: https://nuxi.nl/distfiles/cloudabi-ports/freebsd
   signature_type: pubkey
   pubkey: /etc/pkg/CloudABI.key
 }
 EOF
-cat > CloudABI.key << EOF
+cat > /etc/pkg/CloudABI.key << EOF
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7WeFa5CRgGzaJjsMuc4g
 sBmBN54eazb7W97TC7jhZUMdtx+MguAomC0ducBPbuZtW1UQkIRY6FaVvMNOV/iE
