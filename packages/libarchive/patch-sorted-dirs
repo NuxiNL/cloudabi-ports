@@ -30,7 +30,7 @@
  			r = tree_dir_next_posix(t);
  			if (r == 0)
  				continue;
-@@ -2292,82 +2293,40 @@
+@@ -2292,82 +2293,41 @@
  }
  
  static int
@@ -41,6 +41,7 @@
 +static int
  tree_dir_next_posix(struct tree *t)
  {
++	int i;
  	int r;
  	const char *name;
  	size_t namelen;
@@ -119,7 +120,7 @@
 -			} else
 -				return (0);
 +		if (t->namelist_pos >= t->namelist_len) {
-+			for (int i = 0; i < t->namelist_len; ++i)
++			for (i = 0; i < t->namelist_len; ++i)
 +				free(t->namelist[i]);
 +			free(t->namelist);
 +			t->namelist = NULL;
@@ -130,7 +131,15 @@
  		name = t->de->d_name;
  		namelen = D_NAMELEN(t->de);
  		t->flags &= ~hasLstat;
-@@ -2562,9 +2521,11 @@
+@@ -2554,6 +2514,7 @@
+ static void
+ tree_close(struct tree *t)
+ {
++	int i;
+ 
+ 	if (t == NULL)
+ 		return;
+@@ -2562,9 +2523,11 @@
  		t->entry_fd = -1;
  	}
  	/* Close the handle of readdir(). */
@@ -138,7 +147,7 @@
 -		closedir(t->d);
 -		t->d = INVALID_DIR_HANDLE;
 +	if (t->namelist != NULL) {
-+		for (int i = 0; i < t->namelist_len; ++i)
++		for (i = 0; i < t->namelist_len; ++i)
 +			free(t->namelist[i]);
 +		free(t->namelist);
 +		t->namelist = NULL;
