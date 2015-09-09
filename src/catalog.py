@@ -27,11 +27,12 @@ class Catalog:
             # Non-executable files.
             return 0o444
 
-    def insert(self, package, version, path):
+    def insert(self, package, version, source):
+        target = os.path.join(
+            self._new_path, self._get_filename(package, version))
         util.make_dir(self._new_path)
-        os.link(
-            path,
-            os.path.join(self._new_path, self._get_filename(package, version)))
+        util.remove(target)
+        os.link(source, target)
         self._packages.add((package, version))
 
     def lookup_at_version(self, package, version):
