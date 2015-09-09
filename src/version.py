@@ -28,7 +28,7 @@ class FullVersion:
         self._revision = revision
 
     def __str__(self):
-        return self.get_freebsd_string()
+        return self.get_debian_string()
 
     def get_debian(self):
         version = str(self._version)
