@@ -18,5 +18,6 @@ distfile(
     master_sites={'http://www.libarchive.org/downloads/'},
     patches={
         'no-metadata',
-        'sorted-dirs'},
+        'sorted-dirs',
+    },
 )
