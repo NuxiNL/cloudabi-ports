@@ -45,7 +45,7 @@ class CatalogSet:
         # packages.
         if do_rebuild:
             package.clean()
-            for idx, catalog in do_rebuild:
+            for idx, catalog in enumerate(do_rebuild):
                 path1 = os.path.join(tmpdir, str(idx))
                 path2 = catalog.package(package, version)
                 if not util.file_contents_equal(path1, path2):
