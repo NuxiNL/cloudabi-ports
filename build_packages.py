@@ -25,18 +25,16 @@ for filename in util.walk_files(DIR_REPOSITORY):
         repo.add_build_file(filename, DIR_DISTFILES)
 target_packages = repo.get_target_packages()
 
-debian_catalog = DebianCatalog('/nonexistent', DIR_PACKAGES_DEBIAN)
-freebsd_catalog = FreeBSDCatalog('/nonexistent', DIR_PACKAGES_FREEBSD)
+catalogs = {
+    DebianCatalog(None, DIR_PACKAGES_DEBIAN),
+    FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
+}
 
 
 def build_package(package):
     version = FullVersion(0, package.get_version(), 0)
-    debian_catalog.insert(
-        package, version,
-        debian_catalog.package(package, version))
-    freebsd_catalog.insert(
-        package, version,
-        freebsd_catalog.package(package, version))
+    for catalog in catalogs:
+        catalog.insert(package, version, catalog.package(package, version))
 
 
 if len(sys.argv) > 1:
