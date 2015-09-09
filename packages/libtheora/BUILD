@@ -1,6 +1,6 @@
 def build(ctx):
     root = ctx.extract()
-    build = root.autoconf(['--disable-examples'])
+    build = root.autoconf(['HAVE_PKG_CONFIG=yes', '--disable-examples'])
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 
