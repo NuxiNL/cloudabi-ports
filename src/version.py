@@ -28,6 +28,17 @@ class FullVersion:
         self._revision = revision
 
     def __str__(self):
+        return self.get_freebsd_string()
+
+    def get_debian(self):
+        version = str(self._version)
+        if self._epoch:
+            version = '%d:' % self._epoch + version
+        if self._revision:
+            version += '_%d' % self._revision
+        return version
+
+    def get_freebsd(self):
         version = str(self._version)
         if self._revision:
             version += '_%d' % self._revision
