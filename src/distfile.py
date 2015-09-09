@@ -1,4 +1,3 @@
-import hashlib
 import os
 import random
 import subprocess
@@ -28,14 +27,7 @@ class Distfile:
             print('CHECKSUM', self._pathname)
             # Validate the existing file on disk.
             try:
-                checksum = hashlib.sha256()
-                with open(self._pathname, 'rb') as f:
-                    while True:
-                        data = f.read(16384)
-                        if not data:
-                            break
-                        checksum.update(data)
-                if checksum.hexdigest() == self._checksum:
+                if util.sha256(self._pathname) == self._checksum:
                     return
             except FileNotFoundError as e:
                 print(e)

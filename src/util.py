@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import ssl
@@ -100,6 +101,16 @@ def remove_and_make_dir(path):
     except FileNotFoundError:
         pass
     make_dir(path)
+
+
+def sha256(path):
+    checksum = hashlib.sha256()
+    with open(path, 'rb') as f:
+        while True:
+            data = f.read(16384)
+            if not data:
+                return checksum.hexdigest()
+            checksum.update(data)
 
 
 def walk_files(path):
