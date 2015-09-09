@@ -105,6 +105,9 @@ class TargetPackage:
                 self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
+        # Debian package naming scheme.
+        self._debian_name = '%s-%s' % (arch.replace('_', '-'), name)
+
     @staticmethod
     def _get_suggested_mode(path):
         mode = os.lstat(path).st_mode
@@ -163,7 +166,6 @@ class TargetPackage:
         self.build()
         self._prepare_buildroot(set(['binutils', 'libarchive']), set())
         print('PKG', self._name, 'Debian')
-        safe_name = '%s-%s' % (self._arch.replace('_', '-'), self._name)
 
         rootdir = config.DIR_BUILDROOT
         debian_binary = os.path.join(rootdir, 'debian-binary')
@@ -191,11 +193,10 @@ class TargetPackage:
             ])
 
         # Create 'control.tar.gz' tarball that contains the control file.
-        # TODO(ed): Add dependencies.
         util.make_dir(controldir)
         with open(os.path.join(controldir, 'control'), 'w') as f:
             f.write(
-                'Package: %(safe_name)s\n'
+                'Package: %(debian_name)s\n'
                 'Version: %(version)s\n'
                 'Architecture: all\n'
                 'Maintainer: %(maintainer)s\n'
@@ -205,9 +206,13 @@ class TargetPackage:
                     'homepage': self._homepage,
                     'maintainer': self._maintainer,
                     'name': self._name,
-                    'safe_name': safe_name,
+                    'debian_name': self._debian_name,
                     'version': self._version
                 })
+            if self._lib_depends:
+                f.write(
+                    'Depends: %s\n' % ', '.join(sorted(
+                        dep._debian_name for dep in self._lib_depends)))
         tar(controldir)
 
         # Create 'data.tar.xz' tarball that contains the files that need
@@ -218,7 +223,7 @@ class TargetPackage:
         tar(datadir)
 
         path = os.path.join(
-            rootdir, '%s_%s_all.deb' % (safe_name, self._version))
+            rootdir, '%s_%s_all.deb' % (self._debian_name, self._version))
         subprocess.check_call([
             os.path.join(rootdir, 'bin/x86_64-unknown-cloudabi-ar'),
             '-rc', path,
