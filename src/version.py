@@ -1,4 +1,5 @@
 class Version:
+
     def __init__(self, version):
         # Strip off trailing letter.
         if version[-1].isalpha():
@@ -21,7 +22,9 @@ class Version:
     def __str__(self):
         return '.'.join(str(part) for part in self._numbers) + self._letter
 
+
 class FullVersion:
+
     def __init__(self, epoch, version, revision):
         self._epoch = epoch
         self._version = version
