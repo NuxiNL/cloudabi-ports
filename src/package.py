@@ -179,10 +179,10 @@ class TargetPackage:
         def tar(directory):
             # Reset permissions to sane values.
             for root, dirs, files in os.walk(directory):
-                os.lchmod(root, 0o555)
+                util.lchmod(root, 0o555)
                 for filename in files:
                     path = os.path.join(root, filename)
-                    os.lchmod(path, self._get_suggested_mode(path))
+                    util.lchmod(path, self._get_suggested_mode(path))
 
             # Create tarball.
             subprocess.check_call([

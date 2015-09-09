@@ -41,6 +41,13 @@ def unsafe_fetch(url):
         return urllib.request.urlopen(url)
 
 
+def lchmod(path, mode):
+    try:
+        os.lchmod(path, mode)
+    except AttributeError:
+        if not os.path.islink(path):
+            os.chmod(path, mode)
+
 def make_dir(path):
     try:
         os.makedirs(path)
@@ -55,7 +62,7 @@ def make_parent_dir(path):
 def _remove(path):
     try:
         shutil.rmtree(path)
-    except:
+    except NotADirectoryError:
         os.unlink(path)
 
 
@@ -67,7 +74,7 @@ def remove(path):
         # If that fails, add write permissions to the directories stored
         # inside and retry.
         for root, dirs, files in os.walk(path):
-            os.lchmod(root, 0o755)
+            os.chmod(root, 0o755)
         _remove(path)
 
 
