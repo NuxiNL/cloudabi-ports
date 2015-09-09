@@ -1,4 +1,4 @@
-class Version:
+class SimpleVersion:
 
     def __init__(self, version):
         # Strip off trailing letter.

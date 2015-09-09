@@ -5,7 +5,7 @@ from . import config
 
 from .distfile import Distfile
 from .package import HostPackage, TargetPackage
-from .version import Version
+from .version import SimpleVersion
 
 
 class Repository:
@@ -112,7 +112,7 @@ class Repository:
                     lib_depends = {
                         get_host_package(dep) for dep in package['lib_depends']}
                     del package['lib_depends']
-                package['version'] = Version(package['version'])
+                package['version'] = SimpleVersion(package['version'])
                 self._host_packages[name] = HostPackage(
                     install_directory=os.path.join(
                         self._install_directory,
@@ -141,7 +141,7 @@ class Repository:
                         get_target_package(
                             dep, arch) for dep in package['lib_depends']}
                     del package['lib_depends']
-                package['version'] = Version(package['version'])
+                package['version'] = SimpleVersion(package['version'])
                 self._target_packages[(name, arch)] = TargetPackage(
                     install_directory=os.path.join(
                         self._install_directory, arch, name),
