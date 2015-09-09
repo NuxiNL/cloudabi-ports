@@ -4,8 +4,8 @@
  		 box.p1.x, box.p1.y, box.p2.x, box.p2.y);
      }
  
--    fputc ('\n', stream);
-+    printf ("\n");
+-    printf ("\n");
++    fputc ('\n', stream);
  }
  
  void
