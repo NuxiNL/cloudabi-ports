@@ -33,6 +33,20 @@ class FullVersion:
     def __str__(self):
         return self.get_debian_string()
 
+    def bump_to_version(self, version):
+        if version < self._version:
+            # New version is lower. Increase the Epoch number.
+            return FullVersion(self._epoch + 1, version, 0)
+        elif self._version < version:
+            # New version is higher. Reset the revision number.
+            return FullVersion(self._epoch, version, 0)
+        else:
+            # Version is identical. Nothing to do.
+            return self
+
+    def bump_revision(self):
+        return FullVersion(self._epoch, self._version, self._revision + 1)
+
     def get_debian(self):
         version = str(self._version)
         if self._epoch:
@@ -48,17 +62,3 @@ class FullVersion:
         if self._epoch:
             version += ',%d' % self._epoch
         return version
-
-    def bump_to_version(self, version):
-        if version < self._version:
-            # New version is lower. Increase the Epoch number.
-            return FullVersion(self._epoch + 1, version, 0)
-        elif self._version < version:
-            # New version is higher. Reset the revision number.
-            return FullVersion(self._epoch, version, 0)
-        else:
-            # Version is identical. Nothing to do.
-            return self
-
-    def bump_revision(self):
-        return FullVersion(self._epoch, self._version, self._revision + 1)
