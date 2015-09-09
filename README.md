@@ -51,7 +51,7 @@ underscores in the architecture name are replaced by a dash (e.g,
 `x86-64-unknown-cloudabi` instead of `x86_64-unknown-cloudabi`). The
 packages install their files under `/usr/<arch>`. If you want to install
 the
-[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
+[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/cxx-runtime/BUILD)
 for building a CloudABI application that needs to run on x86-64, just
 run the following command:
 
@@ -102,7 +102,7 @@ pkg search -r CloudABI '.*'
 
 All packages are named `<arch>-<name>` and install their files under
 `/usr/local/<arch>`. If you want to install the
-[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
+[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/cxx-runtime/BUILD)
 for building a CloudABI application that needs to run on x86-64
 (`x86_64-unknown-cloudabi`), just run the following command:
 
