@@ -39,7 +39,30 @@ by running the following commands:
 sudo add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
 ```
 
-TODO(ed): Incomplete.
+After adding the repository, all of its packages can be listed by
+running the following command:
+
+```sh
+grep -h ^Package /var/lib/apt/lists/nuxi.nl* | sort -u
+```
+
+All packages are named `<arch>-<name>`, but keep in mind that
+underscores in the architecture name are replaced by a dash (e.g,
+`x86-64` instead of `x86_64`). The packages install their files under
+`/usr/<arch>`. If you want to install the
+[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/c%2B%2B-runtime/BUILD)
+for building a CloudABI application that needs to run on x86-64
+(`x86_64-unknown-cloudabi`), just run the following command:
+
+```sh
+apt-get install x86-64-unknown-cloudabi-cxx-runtime
+```
+
+There are no prebuilt cross compiler packages yet.
+
+TODO(ed): Fix package signing.
+
+TODO(ed): Document how a cross compiler can be built.
 
 ### FreeBSD
 
@@ -69,8 +92,8 @@ EOF
 pkg update
 ```
 
-All of the packages in the repository can be listed by running the
-following command:
+After adding the repository, all of its packages can be listed by
+running the following command:
 
 ```sh
 pkg search -r CloudABI '.*'
