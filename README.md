@@ -61,8 +61,6 @@ apt-get install x86-64-unknown-cloudabi-cxx-runtime
 
 There are no prebuilt cross compiler packages yet.
 
-TODO(ed): Fix package signing.
-
 TODO(ed): Document how a cross compiler can be built.
 
 ### FreeBSD
