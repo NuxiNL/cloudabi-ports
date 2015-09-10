@@ -72,7 +72,7 @@ running the following commands:
 ```sh
 cat > /etc/pkg/CloudABI.conf << EOF
 CloudABI: {
-  url: https://nuxi.nl/distfiles/cloudabi-ports/freebsd
+  url: https://nuxi.nl/distfiles/cloudabi-ports/freebsd/
   signature_type: pubkey
   pubkey: /etc/pkg/CloudABI.key
 }
