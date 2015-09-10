@@ -32,10 +32,11 @@ repository for your operating system to your system's configuration.
 ### Debian, Ubuntu and other Debian derivatives
 
 Debian's `apt-get` can be configured to access the CloudABI repository
-by running the following command:
+by running the following commands:
 
 ```sh
 add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
+wget -O - 'https://pgp.mit.edu/pks/lookup?op=get&search=0x0DA51B8531344B15' | apt-key add -
 ```
 
 After adding the repository, all of its packages can be listed by
