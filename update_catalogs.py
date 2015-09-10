@@ -29,8 +29,8 @@ FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
 util.remove_and_make_dir(DIR_TMP)
 
 # Parse all of the BUILD rules.
-# repo = Repository(os.path.join(DIR_TMP, 'install'))
-repo = Repository(os.path.join(os.getcwd(), '_obj/install'))
+repo = Repository(os.path.join(DIR_TMP, 'install'))
+# repo = Repository(os.path.join(os.getcwd(), '_obj/install'))
 for filename in util.walk_files(os.path.join(os.getcwd(), 'packages')):
     if os.path.basename(filename) == 'BUILD':
         repo.add_build_file(filename, DIR_DISTFILES)
