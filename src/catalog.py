@@ -53,6 +53,14 @@ class Catalog:
 
 class DebianCatalog(Catalog):
 
+    # List of official supported architectures obtained from
+    # https://www.debian.org/ports/#portlist-released.
+    _architectures = {
+        'amd64', 'armel', 'armhf', 'i386', 'ia64', 'kfreebsd-amd64',
+        'kfreebsd-i386', 'mips', 'mipsel', 'powerpc', 'ppc64el', 's390',
+        's390x', 'sparc'
+    }
+
     def __init__(self, old_path, new_path):
         super(DebianCatalog, self).__init__(old_path, new_path)
 
@@ -83,38 +91,64 @@ class DebianCatalog(Catalog):
                 dep.get_debian_name() for dep in lib_depends))
         return snippet
 
-    def finish(self):
+    def finish(self, private_key):
         # Create package index.
-        index = os.path.join(self._new_path, 'Packages.xz')
-        with lzma.open(index, 'wt') as f:
-            for package, version in self._packages:
-                f.write(self._get_control_snippet(package, version))
-                filename = self._get_filename(package, version)
-                path = os.path.join(self._new_path, filename)
-                f.write(
-                    'Filename: %s\n'
-                    'Size: %u\n'
-                    'SHA256: %s\n' % (
-                        filename,
-                        os.path.getsize(path),
-                        util.sha256(path),
-                    ))
+        def write_entry(f, package, version):
+            f.write(self._get_control_snippet(package, version))
+            filename = self._get_filename(package, version)
+            path = os.path.join(self._new_path, filename)
+            f.write(
+                'Filename: %s\n'
+                'Size: %u\n'
+                'SHA256: %s\n' % (
+                    filename,
+                    os.path.getsize(path),
+                    util.sha256(path),
+                ))
 
-                f.write('\n')
+            f.write('\n')
+        index = os.path.join(self._new_path, 'Packages')
+        with open(index, 'wt') as f:
+            with lzma.open(index + '.xz', 'wt') as f_xz:
+                for package, version in self._packages:
+                    write_entry(f, package, version)
+                    write_entry(f_xz, package, version)
 
-        # Link the index into the per-architecture directory. List of
-        # official supported architectures obtained from
-        # https://www.debian.org/ports/#portlist-released.
-        for arch in {'amd64', 'armel', 'armhf', 'i386', 'ia64',
-                     'kfreebsd-amd64', 'kfreebsd-i386', 'mips', 'mipsel',
-                     'powerpc', 'ppc64el', 's390', 's390x', 'sparc'}:
+        # Link the index into the per-architecture directory.
+        for arch in self._architectures:
             index_arch = os.path.join(
                 self._new_path,
-                'dists/cloudabi/cloudabi/binary-%s/Packages.xz' %
-                arch)
+                'dists/cloudabi/cloudabi/binary-%s/Packages' % arch)
             util.make_parent_dir(index_arch)
             os.link(index, index_arch)
+            os.link(index + '.xz', index_arch + '.xz')
+        checksum = util.sha256(index)
+        checksum_xz = util.sha256(index + '.xz')
+        size = os.path.getsize(index)
+        size_xz = os.path.getsize(index + '.xz')
         os.unlink(index)
+        os.unlink(index + '.xz')
+
+        # Create the InRelease file.
+        with open(
+            os.path.join(self._new_path, 'dists/cloudabi/InRelease'), 'w'
+        ) as f:
+            with subprocess.Popen([
+                'gpg', '--default-key', private_key, '--armor',
+                '--sign', '--clearsign',
+            ], stdin=subprocess.PIPE, stdout=f) as proc:
+                def append(text):
+                    proc.stdin.write(bytes(text, encoding='ASCII'))
+                append(
+                    'Suite: cloudabi\n'
+                    'Components: cloudabi\n'
+                    'Architectures: %s\n'
+                    'SHA256:\n' % ' '.join(sorted(self._architectures)))
+                for arch in sorted(self._architectures):
+                    append(' %s %d cloudabi/binary-%s/Packages\n' %
+                           (checksum, size, arch))
+                    append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
+                           (checksum_xz, size_xz, arch))
 
     def package(self, package, version):
         package.build()

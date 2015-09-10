@@ -21,15 +21,16 @@ DIR_TMP = '/usr/local/www/nuxi.nl/repo.tmp'
 DIR_DEBIAN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/debian'
 DIR_FREEBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/freebsd'
 
-# Location of the FreeBSD catalogs signing key.
-PATH_FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
+# Location of the catalog signing keys.
+DEBIAN_PRIVATE_KEY = '31344B15'
+FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
 
 # Zap the old temporary directory.
 util.remove_and_make_dir(DIR_TMP)
 
 # Parse all of the BUILD rules.
-repo = Repository(os.path.join(DIR_TMP, 'install'))
-# repo = Repository(os.path.join(os.getcwd(), '_obj/install'))
+# repo = Repository(os.path.join(DIR_TMP, 'install'))
+repo = Repository(os.path.join(os.getcwd(), '_obj/install'))
 for filename in util.walk_files(os.path.join(os.getcwd(), 'packages')):
     if os.path.basename(filename) == 'BUILD':
         repo.add_build_file(filename, DIR_DISTFILES)
@@ -46,8 +47,8 @@ catalog_set = CatalogSet({debian_catalog, freebsd_catalog})
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
 
-debian_catalog.finish()
-freebsd_catalog.finish(PATH_FREEBSD_PRIVATE_KEY)
+debian_catalog.finish(DEBIAN_PRIVATE_KEY)
+freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_DEBIAN_CATALOG, os.path.join(DIR_TMP, 'debian.old'))
