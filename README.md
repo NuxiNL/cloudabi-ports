@@ -35,14 +35,14 @@ Debian's `apt-get` can be configured to access the CloudABI repository
 by running the following command:
 
 ```sh
-sudo add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
+add-apt-repository 'deb https://nuxi.nl/distfiles/cloudabi-ports/debian/ cloudabi cloudabi'
 ```
 
 After adding the repository, all of its packages can be listed by
 running the following command:
 
 ```sh
-grep -h ^Package /var/lib/apt/lists/nuxi.nl* | sort -u
+grep -h ^Package: /var/lib/apt/lists/nuxi.nl* | sort -u
 ```
 
 All packages are named `<arch>-<name>`, but keep in mind that
