@@ -3,6 +3,7 @@
 # This file is distrbuted under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import gzip
 import hashlib
 import os
 import shutil
@@ -43,6 +44,16 @@ def file_contents_equal(path1, path2):
                     return False
                 elif not b1:
                     return True
+
+
+def gzip_file(source, target):
+    with open(source, 'rb') as fin:
+        with gzip.open(target, 'wb') as fout:
+            while True:
+                b = fin.read(16384)
+                if not b:
+                    return
+                fout.write(b)
 
 
 def unsafe_fetch(url):
