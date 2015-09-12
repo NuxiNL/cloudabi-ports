@@ -58,7 +58,7 @@ class FullVersion:
         if self._epoch:
             version = '%d:' % self._epoch + version
         if self._revision:
-            version += '_%d' % self._revision
+            version += '-%d' % self._revision
         return version
 
     def get_freebsd(self):
