@@ -17,9 +17,8 @@ class CatalogSet:
     def _determine_start_version(self, package):
         version = FullVersion(0, package.get_version(), 0)
         for catalog in self._catalogs:
-            latest_version = catalog.lookup_latest_version(package)
-            if latest_version and latest_version > version:
-                version = latest_version.bump_version(package.get_version())
+            version = catalog.lookup_latest_version(
+                package).bump_to_version(package.get_version())
         return version
 
     def _build_at_version(self, package, version, tmpdir):

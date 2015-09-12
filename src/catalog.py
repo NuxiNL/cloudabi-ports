@@ -10,6 +10,7 @@ import subprocess
 
 from . import config
 from . import util
+from .version import FullVersion, SimpleVersion
 
 
 class Catalog:
@@ -48,7 +49,7 @@ class Catalog:
 
     def lookup_latest_version(self, package):
         # TODO(ed): Implement.
-        return None
+        return FullVersion(0, SimpleVersion('0'), 0)
 
 
 class DebianCatalog(Catalog):
@@ -153,7 +154,7 @@ class DebianCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'binutils', 'libarchive'})
-        print('PKG', package.get_name(), 'Debian')
+        print('PKG', self._get_filename(package, version))
 
         rootdir = config.DIR_BUILDROOT
         debian_binary = os.path.join(rootdir, 'debian-binary')
@@ -223,8 +224,7 @@ class FreeBSDCatalog(Catalog):
         # which we can call into to create the package.
         package.build()
         package.initialize_buildroot({'pkg'})
-        name = package.get_name()
-        print('PKG', name, 'FreeBSD')
+        print('PKG', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
@@ -253,7 +253,7 @@ class FreeBSDCatalog(Catalog):
                     'freebsd_name': package.get_freebsd_name(),
                     'homepage': package.get_homepage(),
                     'maintainer': package.get_maintainer(),
-                    'name': name,
+                    'name': package.get_name(),
                     'version': version.get_freebsd(),
                 })
 
