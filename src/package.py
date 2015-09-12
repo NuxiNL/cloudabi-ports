@@ -85,6 +85,9 @@ class TargetPackage:
                 self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
+    def __str__(self):
+        return '%s %s' % (self.get_freebsd_name(), self._version)
+
     def build(self):
         # Skip this package if it has been built already.
         if not self._build_cmd or os.path.isdir(self._install_directory):

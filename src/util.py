@@ -35,25 +35,19 @@ def copy_file(source, target, preserve_attributes):
 
 def file_contents_equal(path1, path2):
     # Compare file contents.
-    with open(path1, 'rb') as f1:
-        with open(path2, 'rb') as f2:
-            while True:
-                b1 = f1.read(16384)
-                b2 = f2.read(16384)
-                if b1 != b2:
-                    return False
-                elif not b1:
-                    return True
+    with open(path1, 'rb') as f1, open(path2, 'rb') as f2:
+        while True:
+            b1 = f1.read(16384)
+            b2 = f2.read(16384)
+            if b1 != b2:
+                return False
+            elif not b1:
+                return True
 
 
 def gzip_file(source, target):
-    with open(source, 'rb') as fin:
-        with gzip.open(target, 'wb') as fout:
-            while True:
-                b = fin.read(16384)
-                if not b:
-                    return
-                fout.write(b)
+    with open(source, 'rb') as f1, gzip.GzipFile(target, 'wb', mtime=0) as f2:
+        shutil.copyfileobj(f1, f2)
 
 
 def unsafe_fetch(url):

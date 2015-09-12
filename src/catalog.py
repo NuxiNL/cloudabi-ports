@@ -121,11 +121,10 @@ class DebianCatalog(Catalog):
 
             f.write('\n')
         index = os.path.join(self._new_path, 'Packages')
-        with open(index, 'wt') as f:
-            with lzma.open(index + '.xz', 'wt') as f_xz:
-                for package, version in self._packages:
-                    write_entry(f, package, version)
-                    write_entry(f_xz, package, version)
+        with open(index, 'wt') as f, lzma.open(index + '.xz', 'wt') as f_xz:
+            for package, version in self._packages:
+                write_entry(f, package, version)
+                write_entry(f_xz, package, version)
 
         # Link the index into the per-architecture directory.
         for arch in self._architectures:
@@ -145,23 +144,22 @@ class DebianCatalog(Catalog):
         # Create the InRelease file.
         with open(
             os.path.join(self._new_path, 'dists/cloudabi/InRelease'), 'w'
-        ) as f:
-            with subprocess.Popen([
-                'gpg', '--default-key', private_key, '--armor',
-                '--sign', '--clearsign',
-            ], stdin=subprocess.PIPE, stdout=f) as proc:
-                def append(text):
-                    proc.stdin.write(bytes(text, encoding='ASCII'))
-                append(
-                    'Suite: cloudabi\n'
-                    'Components: cloudabi\n'
-                    'Architectures: %s\n'
-                    'SHA256:\n' % ' '.join(sorted(self._architectures)))
-                for arch in sorted(self._architectures):
-                    append(' %s %d cloudabi/binary-%s/Packages\n' %
-                           (checksum, size, arch))
-                    append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
-                           (checksum_xz, size_xz, arch))
+        ) as f, subprocess.Popen([
+            'gpg', '--default-key', private_key, '--armor',
+            '--sign', '--clearsign',
+        ], stdin=subprocess.PIPE, stdout=f) as proc:
+            def append(text):
+                proc.stdin.write(bytes(text, encoding='ASCII'))
+            append(
+                'Suite: cloudabi\n'
+                'Components: cloudabi\n'
+                'Architectures: %s\n'
+                'SHA256:\n' % ' '.join(sorted(self._architectures)))
+            for arch in sorted(self._architectures):
+                append(' %s %d cloudabi/binary-%s/Packages\n' %
+                       (checksum, size, arch))
+                append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
+                       (checksum_xz, size_xz, arch))
 
     def lookup_latest_version(self, package):
         return self._existing[package.get_debian_name()]

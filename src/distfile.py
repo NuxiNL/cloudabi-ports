@@ -41,14 +41,9 @@ class Distfile:
                    os.path.basename(self._name))
             print('FETCH', url)
             try:
-                with util.unsafe_fetch(url) as fin:
-                    util.make_parent_dir(self._pathname)
-                    with open(self._pathname, 'wb') as fout:
-                        while True:
-                            data = fin.read(16384)
-                            if not data:
-                                break
-                            fout.write(data)
+                util.make_parent_dir(self._pathname)
+                with util.unsafe_fetch(url) as fin, open(self._pathname, 'wb') as fout:
+                    shutil.copyfileobj(fin, fout)
             except urllib.error.URLError as e:
                 print(e)
         raise Exception('Failed to fetch %s' % self._name)

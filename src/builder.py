@@ -36,15 +36,14 @@ class FileHandle:
             elif filename == 'configure':
                 # Patch up configure scripts to remove constructs that are known
                 # to fail, for example due to functions being missing.
-                with open(path, 'r') as fin:
-                    with open(path + '.new', 'w') as fout:
-                        for l in fin.readlines():
-                            # Bad C99 features test.
-                            if l.startswith('#define showlist(...)'):
-                                l = '#define showlist(...) fputs (stderr, #__VA_ARGS__)\n'
-                            elif l.startswith('#define report(test,...)'):
-                                l = '#define report(...) fprintf (stderr, __VA_ARGS__)\n'
-                            fout.write(l)
+                with open(path, 'r') as fin, open(path + '.new', 'w') as fout:
+                    for l in fin.readlines():
+                        # Bad C99 features test.
+                        if l.startswith('#define showlist(...)'):
+                            l = '#define showlist(...) fputs (stderr, #__VA_ARGS__)\n'
+                        elif l.startswith('#define report(test,...)'):
+                            l = '#define report(...) fprintf (stderr, __VA_ARGS__)\n'
+                        fout.write(l)
                 shutil.copymode(path, path + '.new')
                 os.rename(path + '.new', path)
 
