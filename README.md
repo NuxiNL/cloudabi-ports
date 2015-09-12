@@ -108,4 +108,4 @@ pkg install x86_64-unknown-cloudabi-cxx-runtime
 ```
 
 A cross compiler for CloudABI can be obtained by installing FreeBSD's
-`devel/cloudabi-clang` package.
+`devel/cloudabi-toolchain` package.

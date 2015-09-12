@@ -1,6 +1,6 @@
 --- include/cstdio
 +++ include/cstdio
-@@ -151,7 +151,6 @@ using ::setvbuf;
+@@ -151,7 +151,6 @@
  using ::fprintf;
  using ::fscanf;
  using ::snprintf;
@@ -8,7 +8,7 @@
  using ::sscanf;
  #ifndef _LIBCPP_MSVCRT
  using ::vfprintf;
-@@ -159,14 +158,12 @@ using ::vfscanf;
+@@ -159,7 +158,6 @@
  using ::vsscanf;
  #endif // _LIBCPP_MSVCRT
  using ::vsnprintf;
@@ -16,16 +16,9 @@
  using ::fgetc;
  using ::fgets;
  using ::fputc;
- using ::fputs;
- using ::getc;
- using ::putc;
--using ::ungetc;
- using ::fread;
- using ::fwrite;
- using ::fgetpos;
 --- include/cstdlib
 +++ include/cstdlib
-@@ -118,7 +118,6 @@ using ::strtoul;
+@@ -118,7 +118,6 @@
  using ::strtoull;
  #endif // _LIBCPP_HAS_NO_LONG_LONG
  using ::rand;
@@ -35,7 +28,7 @@
  using ::malloc;
 --- include/cstring
 +++ include/cstring
-@@ -69,10 +69,7 @@ _LIBCPP_BEGIN_NAMESPACE_STD
+@@ -69,10 +69,7 @@
  using ::size_t;
  using ::memcpy;
  using ::memmove;
@@ -48,18 +41,15 @@
  using ::strncmp;
 --- include/cwchar
 +++ include/cwchar
-@@ -135,10 +135,8 @@ using ::fgetwc;
+@@ -135,7 +135,6 @@
  using ::fgetws;
  using ::fputwc;
  using ::fputws;
 -using ::fwide;
  using ::getwc;
  using ::putwc;
--using ::ungetwc;
- using ::wcstod;
- #ifndef _LIBCPP_MSVCRT
- using ::wcstof;
-@@ -152,10 +150,7 @@ using ::wcstoul;
+ using ::ungetwc;
+@@ -152,10 +151,7 @@
  #ifndef _LIBCPP_HAS_NO_LONG_LONG
  using ::wcstoull;
  #endif // _LIBCPP_HAS_NO_LONG_LONG
@@ -70,7 +60,7 @@
  using ::wcscmp;
  using ::wcscoll;
  using ::wcsncmp;
-@@ -199,7 +194,6 @@ using ::wmemset;
+@@ -199,7 +195,6 @@
  using ::wcsftime;
  using ::btowc;
  using ::wctob;
