@@ -41,7 +41,7 @@ class CatalogSet:
                     return False
             else:
                 # A new package. Keep it.
-                new = os.path.join(tmpdir, str(len(do_preserve)))
+                new = os.path.join(tmpdir, str(len(do_rebuild)))
                 os.rename(path, new)
                 do_rebuild.append(catalog)
 
