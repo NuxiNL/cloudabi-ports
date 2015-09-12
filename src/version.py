@@ -82,15 +82,31 @@ class FullVersion:
 
     @staticmethod
     def parse_debian(string):
-        # Parse leading epoch number.
         epoch = 0
         revision = 0
-        s = string.split(':')
+        # Parse leading Epoch number.
+        s = string.split(':', 1)
         if len(s) == 2:
             epoch = int(s[0])
             string = s[1]
         # Parse trailing revision number.
-        s = string.split('-')
+        s = string.rsplit('-', 1)
+        if len(s) == 2:
+            string = s[0]
+            revision = int(s[1])
+        return FullVersion(epoch, SimpleVersion(string), revision)
+
+    @staticmethod
+    def parse_freebsd(string):
+        epoch = 0
+        revision = 0
+        # Parse trailing Epoch number.
+        s = string.rsplit(',', 1)
+        if len(s) == 2:
+            string = s[0]
+            epoch = int(s[1])
+        # Parse trailing revision number.
+        s = string.rsplit('_', 1)
         if len(s) == 2:
             string = s[0]
             revision = int(s[1])

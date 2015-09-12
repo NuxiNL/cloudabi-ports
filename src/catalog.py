@@ -221,6 +221,21 @@ class FreeBSDCatalog(Catalog):
     def __init__(self, old_path, new_path):
         super(FreeBSDCatalog, self).__init__(old_path, new_path)
 
+        # Scan the existing directory hierarchy to find the latest
+        # version of all of the packages. We need to know this in order
+        # to determine the Epoch and revision number for any new
+        # packages we're going to build.
+        self._existing = collections.defaultdict(FullVersion)
+        if old_path:
+            for root, dirs, files in os.walk(old_path):
+                for filename in files:
+                    parts = filename.rsplit('-', 1)
+                    if len(parts) == 2 and parts[1].endswith('.txz'):
+                        name = parts[0]
+                        version = FullVersion.parse_freebsd(parts[1][:-4])
+                        if self._existing[name] < version:
+                            self._existing[name] = version
+
     @staticmethod
     def _get_filename(package, version):
         return '%s-%s.txz' % (package.get_freebsd_name(),
@@ -233,8 +248,7 @@ class FreeBSDCatalog(Catalog):
         # TODO(ed): Copy in some of the old files to keep clients happy.
 
     def lookup_latest_version(self, package):
-        # TODO(ed): Implement.
-        return FullVersion()
+        return self._existing[package.get_freebsd_name()]
 
     def package(self, package, version):
         # Install just a copy of FreeBSD's pkg(8) into the buildroot,
