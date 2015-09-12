@@ -14,13 +14,6 @@ class CatalogSet:
     def __init__(self, catalogs):
         self._catalogs = catalogs
 
-    def _determine_start_version(self, package):
-        version = FullVersion(0, package.get_version(), 0)
-        for catalog in self._catalogs:
-            version = catalog.lookup_latest_version(
-                package).bump_to_version(package.get_version())
-        return version
-
     def _build_at_version(self, package, version, tmpdir):
         # Round 1: Build the packages.
         util.remove_and_make_dir(tmpdir)
@@ -62,6 +55,14 @@ class CatalogSet:
         return True
 
     def package_and_insert(self, package, tmpdir):
-        version = self._determine_start_version(package)
+        # Scan the existing catalogs to determine the Epoch and revision
+        # numbers of the latest version of the package. At this version
+        # we need to start building.
+        version = FullVersion(0, package.get_version(), 0)
+        for catalog in self._catalogs:
+            version.bump_epoch_revision(catalog.lookup_latest_version(package))
+
+        # Increment the revision if we rebuild a package and the
+        # checksum has changed.
         while not self._build_at_version(package, version, tmpdir):
             version = version.bump_revision()

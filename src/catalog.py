@@ -3,6 +3,7 @@
 # This file is distrbuted under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import collections
 import lzma
 import os
 import stat
@@ -47,10 +48,6 @@ class Catalog:
             self._get_filename(package, version))
         return path if os.path.exists(path) else None
 
-    def lookup_latest_version(self, package):
-        # TODO(ed): Implement.
-        return FullVersion(0, SimpleVersion('0'), 0)
-
 
 class DebianCatalog(Catalog):
 
@@ -64,6 +61,21 @@ class DebianCatalog(Catalog):
 
     def __init__(self, old_path, new_path):
         super(DebianCatalog, self).__init__(old_path, new_path)
+
+        # Scan the existing directory hierarchy to find the latest
+        # version of all of the packages. We need to know this in order
+        # to determine the Epoch and revision number for any new
+        # packages we're going to build.
+        self._existing = collections.defaultdict(FullVersion)
+        if old_path:
+            for root, dirs, files in os.walk(old_path):
+                for filename in files:
+                    parts = filename.split('_')
+                    if len(parts) == 3 and parts[2] == 'all.deb':
+                        name = parts[0]
+                        version = FullVersion.parse_debian(parts[1])
+                        if self._existing[name] < version:
+                            self._existing[name] = version
 
     @staticmethod
     def _get_filename(package, version):
@@ -151,6 +163,9 @@ class DebianCatalog(Catalog):
                     append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
                            (checksum_xz, size_xz, arch))
 
+    def lookup_latest_version(self, package):
+        return self._existing[package.get_debian_name()]
+
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'binutils', 'libarchive'})
@@ -218,6 +233,10 @@ class FreeBSDCatalog(Catalog):
             'pkg', 'repo', self._new_path, private_key,
         ])
         # TODO(ed): Copy in some of the old files to keep clients happy.
+
+    def lookup_latest_version(self, package):
+        # TODO(ed): Implement.
+        return FullVersion()
 
     def package(self, package, version):
         # Install just a copy of FreeBSD's pkg(8) into the buildroot,

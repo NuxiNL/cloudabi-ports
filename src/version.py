@@ -22,6 +22,9 @@ class SimpleVersion:
         if version != str(self):
             raise Exception('Version %s is not canonical', version)
 
+    def __eq__(self, other):
+        return (self._numbers, self._letter) == (other._numbers, other._letter)
+
     def __lt__(self, other):
         return (self._numbers, self._letter) < (other._numbers, other._letter)
 
@@ -31,24 +34,32 @@ class SimpleVersion:
 
 class FullVersion:
 
-    def __init__(self, epoch, version, revision):
+    def __init__(self, epoch=0, version=SimpleVersion('0'), revision=0):
         self._epoch = epoch
         self._version = version
         self._revision = revision
 
-    def __str__(self):
-        return self.get_debian_string()
+    def __lt__(self, other):
+        return ((self._epoch, self._version, self._revision) <
+                (other._epoch, other._version, other._revision))
 
-    def bump_to_version(self, version):
-        if version < self._version:
-            # New version is lower. Increase the Epoch number.
-            return FullVersion(self._epoch + 1, version, 0)
-        elif self._version < version:
-            # New version is higher. Reset the revision number.
-            return FullVersion(self._epoch, version, 0)
-        else:
-            # Version is identical. Nothing to do.
-            return self
+    def __str__(self):
+        return self.get_debian()
+
+    def bump_epoch_revision(self, other):
+        if self._epoch > other._epoch:
+            # Epoch counter is already larger. Skip.
+            return
+        self._epoch = other._epoch
+        if self._version < other._version:
+            # Version is decreasing. Increase the Epoch and reset the
+            # revision number.
+            self._epoch += 1
+            self._revision = 0
+        elif (self._version == other._version and self._revision < other._revision):
+            # Package of the same version already exists. Ensure that we
+            # don't decrement the revision number.
+            self._revision = other._revision
 
     def bump_revision(self):
         return FullVersion(self._epoch, self._version, self._revision + 1)
@@ -68,3 +79,19 @@ class FullVersion:
         if self._epoch:
             version += ',%d' % self._epoch
         return version
+
+    @staticmethod
+    def parse_debian(string):
+        # Parse leading epoch number.
+        epoch = 0
+        revision = 0
+        s = string.split(':')
+        if len(s) == 2:
+            epoch = int(s[0])
+            string = s[1]
+        # Parse trailing revision number.
+        s = string.split('-')
+        if len(s) == 2:
+            string = s[0]
+            revision = int(s[1])
+        return FullVersion(epoch, SimpleVersion(string), revision)
