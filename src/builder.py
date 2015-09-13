@@ -28,6 +28,7 @@ class FileHandle:
             if filename == 'config.sub':
                 # Replace config.sub files by an up-to-date copy. The copy
                 # provided by the tarball rarely supports CloudABI.
+                os.unlink(path)
                 shutil.copy(
                     os.path.join(
                         config.DIR_RESOURCES,
