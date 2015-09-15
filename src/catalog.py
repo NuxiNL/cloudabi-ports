@@ -34,6 +34,20 @@ class Catalog:
             # Non-executable files.
             return 0o444
 
+    @staticmethod
+    def _sanitize_permissions(directory):
+        for root, dirs, files in os.walk(directory):
+            util.lchmod(root, 0o555)
+            for filename in files:
+                path = os.path.join(root, filename)
+                util.lchmod(path, Catalog._get_suggested_mode(path))
+
+    @staticmethod
+    def _run_tar(args):
+        subprocess.check_call([
+            os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')
+        ] + args)
+
     def insert(self, package, version, source):
         target = os.path.join(
             self._new_path, self._get_filename(package, version))
@@ -80,7 +94,7 @@ class DebianCatalog(Catalog):
     @staticmethod
     def _get_filename(package, version):
         return '%s_%s_all.deb' % (
-            package.get_debian_name(), version.get_debian())
+            package.get_debian_name(), version.get_debian_version())
 
     @staticmethod
     def _get_control_snippet(package, version):
@@ -96,7 +110,7 @@ class DebianCatalog(Catalog):
                 'maintainer': package.get_maintainer(),
                 'name': package.get_name(),
                 'debian_name': package.get_debian_name(),
-                'version': version.get_debian(),
+                'version': version.get_debian_version(),
             })
         lib_depends = package.get_lib_depends()
         if lib_depends:
@@ -179,16 +193,8 @@ class DebianCatalog(Catalog):
             f.write('2.0\n')
 
         def tar(directory):
-            # Reset permissions to sane values.
-            for root, dirs, files in os.walk(directory):
-                util.lchmod(root, 0o555)
-                for filename in files:
-                    path = os.path.join(root, filename)
-                    util.lchmod(path, self._get_suggested_mode(path))
-
-            # Create tarball.
-            subprocess.check_call([
-                os.path.join(rootdir, 'bin/bsdtar'),
+            self._sanitize_permissions(directory)
+            self._run_tar([
                 '-cJf', directory + '.tar.xz',
                 '-C', directory,
                 '.',
@@ -239,7 +245,7 @@ class FreeBSDCatalog(Catalog):
     @staticmethod
     def _get_filename(package, version):
         return '%s-%s.txz' % (package.get_freebsd_name(),
-                              version.get_freebsd())
+                              version.get_freebsd_version())
 
     def finish(self, private_key):
         subprocess.check_call([
@@ -285,7 +291,7 @@ class FreeBSDCatalog(Catalog):
                     'homepage': package.get_homepage(),
                     'maintainer': package.get_maintainer(),
                     'name': package.get_name(),
-                    'version': version.get_freebsd(),
+                    'version': version.get_freebsd_version(),
                 })
 
             # Dependencies.
@@ -317,3 +323,82 @@ class FreeBSDCatalog(Catalog):
         return os.path.join(
             config.DIR_BUILDROOT,
             self._get_filename(package, version))
+
+
+class NetBSDCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(NetBSDCatalog, self).__init__(old_path, new_path)
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s-%s.tgz' % (package.get_netbsd_name(),
+                              version.get_netbsd_version())
+
+    def lookup_latest_version(self, package):
+        # TODO(ed): Implement repository scanning.
+        return FullVersion()
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        # The package needs to be installed in /usr/pkg/<arch> on the
+        # NetBSD system.
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        arch = package.get_arch()
+        prefix = os.path.join('/usr/pkg', arch)
+        package.extract(installdir, prefix)
+        files = sorted(util.walk_files(installdir))
+
+        # Package contents list.
+        util.make_dir(installdir)
+        with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
+            f.write(
+                '@cwd /usr/pkg/%s\n'
+                '@name %s-%s\n' % (
+                    arch, package.get_netbsd_name(),
+                    version.get_netbsd_version()))
+            for dep in sorted(pkg.get_netbsd_name()
+                              for pkg in package.get_lib_depends()):
+                f.write('@pkgdep %s-[0-9]*\n' % dep)
+            for path in files:
+                f.write(os.path.relpath(path, installdir) + '\n')
+
+        # Package description.
+        with open(os.path.join(installdir, '+COMMENT'), 'w') as f:
+            f.write('%s for %s\n' % (package.get_name(), package.get_arch()))
+        with open(os.path.join(installdir, '+DESC'), 'w') as f:
+            f.write(
+                '%(name)s for %(arch)s\n'
+                '\n'
+                'Homepage:\n'
+                '%(homepage)s\n' % {
+                    'arch': package.get_arch(),
+                    'name': package.get_name(),
+                    'homepage': package.get_homepage(),
+                }
+            )
+
+        # Build information file.
+        # TODO(ed): We MUST specify a machine architecture and operating
+        # system, meaning that these packages are currently only
+        # installable on NetBSD/x86-64. Figure out a way we can create
+        # packages that are installable on any system that uses pkgsrc.
+        with open(os.path.join(installdir, '+BUILD_INFO'), 'w') as f:
+            f.write(
+                'MACHINE_ARCH=x86_64\n'
+                'PKGTOOLS_VERSION=00000000\n'
+                'OPSYS=NetBSD\n'
+                'OS_VERSION=\n'
+            )
+
+        self._sanitize_permissions(installdir)
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
+        self._run_tar([
+            '-cJf', output,
+            '-C', installdir,
+            '+CONTENTS', '+COMMENT', '+DESC', '+BUILD_INFO',
+        ] + [os.path.relpath(path, installdir) for path in files])
+        return output

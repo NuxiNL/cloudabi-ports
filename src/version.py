@@ -44,7 +44,7 @@ class FullVersion:
                 (other._epoch, other._version, other._revision))
 
     def __str__(self):
-        return self.get_debian()
+        return self.get_debian_version()
 
     def bump_epoch_revision(self, other):
         if self._epoch > other._epoch:
@@ -64,7 +64,7 @@ class FullVersion:
     def bump_revision(self):
         return FullVersion(self._epoch, self._version, self._revision + 1)
 
-    def get_debian(self):
+    def get_debian_version(self):
         version = str(self._version)
         if self._epoch:
             version = '%d:' % self._epoch + version
@@ -72,12 +72,20 @@ class FullVersion:
             version += '-%d' % self._revision
         return version
 
-    def get_freebsd(self):
+    def get_freebsd_version(self):
         version = str(self._version)
         if self._revision:
             version += '_%d' % self._revision
         if self._epoch:
             version += ',%d' % self._epoch
+        return version
+
+    def get_netbsd_version(self):
+        # TODO(ed): NetBSD does not seem to support the Epoch numbers?
+        assert self._epoch == 0
+        version = str(self._version)
+        if self._revision:
+            version += 'nb%d' % self._revision
         return version
 
     @staticmethod
