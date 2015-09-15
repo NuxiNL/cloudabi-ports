@@ -109,7 +109,7 @@ class Repository:
         # This implicitly checks for dependency loops.
         def get_host_package(name):
             if name in self._deferred_host_packages:
-                package = self._deferred_host_packages.pop(name)
+                package = dict(self._deferred_host_packages.pop(name))
                 if name in self._host_packages:
                     raise Exception('%s is declared multiple times' % name)
                 lib_depends = set()
@@ -137,7 +137,7 @@ class Repository:
         # Create target packages that haven't been instantiated yet.
         def get_target_package(name, arch):
             if (name, arch) in self._deferred_target_packages:
-                package = self._deferred_target_packages.pop((name, arch))
+                package = dict(self._deferred_target_packages.pop((name, arch)))
                 if (name, arch) in self._target_packages:
                     raise Exception('%s is declared multiple times' % name)
                 lib_depends = set()
