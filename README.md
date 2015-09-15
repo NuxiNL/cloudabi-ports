@@ -109,3 +109,27 @@ pkg install x86_64-unknown-cloudabi-cxx-runtime
 
 A cross compiler for CloudABI can be obtained by installing FreeBSD's
 `devel/cloudabi-toolchain` package.
+
+### NetBSD
+
+Packages for NetBSD can be obtained from
+[nuxi.nl](https://nuxi.nl/distfiles/cloudabi-ports/netbsd/). They can be
+installed using `pkg_add`.
+
+All packages are named `<arch>-<name>` and install their files under
+`/usr/pkg/<arch>`. If you want to install the
+[standard C++ runtime](https://github.com/NuxiNL/cloudabi-ports/blob/master/packages/cxx-runtime/BUILD)
+for building a CloudABI application that needs to run on x86-64
+(`x86_64-unknown-cloudabi`), just run the following command:
+
+```sh
+pkg_add https://nuxi.nl/distfiles/cloudabi-ports/netbsd/x86_64-unknown-cloudabi-cxx-runtime-\*
+```
+
+As `pkg_add` does not seem to provide any support for architecture
+independent packages, these packages currently assume `x86_64`. They can
+only be installed on other architectures by specifying `-f`.
+
+There are no prebuilt cross compiler packages yet.
+
+TODO(ed): Document how a cross compiler can be built.
