@@ -137,7 +137,8 @@ class Repository:
         # Create target packages that haven't been instantiated yet.
         def get_target_package(name, arch):
             if (name, arch) in self._deferred_target_packages:
-                package = dict(self._deferred_target_packages.pop((name, arch)))
+                package = dict(
+                    self._deferred_target_packages.pop((name, arch)))
                 if (name, arch) in self._target_packages:
                     raise Exception('%s is declared multiple times' % name)
                 lib_depends = set()
