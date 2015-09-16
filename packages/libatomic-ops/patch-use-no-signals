@@ -1,0 +1,11 @@
+--- src/config.h.in
++++ src/config.h.in
+@@ -48,7 +48,7 @@
+ 
+ /* Do not block signals in compare_and_swap (only if atomic operations are
+    emulated) */
+-#undef AO_USE_NO_SIGNALS
++#define AO_USE_NO_SIGNALS
+ 
+ /* Use Pentium 4 'mfence' instruction (only x86) */
+ #undef AO_USE_PENTIUM4_INSTRS
