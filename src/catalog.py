@@ -57,10 +57,13 @@ class Catalog:
         self._packages.add((package, version))
 
     def lookup_at_version(self, package, version):
-        path = os.path.join(
-            self._old_path,
-            self._get_filename(package, version))
-        return path if os.path.exists(path) else None
+        if self._old_path:
+            path = os.path.join(
+                self._old_path,
+                self._get_filename(package, version))
+            if os.path.exists(path):
+                return path
+        return None
 
 
 class DebianCatalog(Catalog):
@@ -284,8 +287,8 @@ class FreeBSDCatalog(Catalog):
                 'maintainer: %(maintainer)s\n'
                 'prefix: /usr/local\n'
                 'desc: %(name)s for %(arch)s\n'
-                'abi: FreeBSD:*\n'
-                'arch: freebsd:*\n' % {
+                'abi: *\n'
+                'arch: *\n' % {
                     'arch': arch,
                     'freebsd_name': package.get_freebsd_name(),
                     'homepage': package.get_homepage(),
