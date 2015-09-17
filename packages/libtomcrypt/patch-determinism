@@ -1,0 +1,10 @@
+--- src/misc/crypt/crypt.c
++++ src/misc/crypt/crypt.c
+@@ -18,7 +18,6 @@
+ const char *crypt_build_settings =
+    "LibTomCrypt " SCRYPT " (Tom St Denis, tomstdenis@gmail.com)\n"
+    "LibTomCrypt is public domain software.\n"
+-   "Built on " __DATE__ " at " __TIME__ "\n\n\n"
+    "Endianess: "
+ #if defined(ENDIAN_NEUTRAL)
+    "neutral\n"

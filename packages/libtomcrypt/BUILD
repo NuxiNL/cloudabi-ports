@@ -29,6 +29,7 @@ distfile(
     master_sites={'http://www.libtom.net/files/'},
     patches={
         'clang',
+        'determinism',
         'makefile',
         'no-fopen',
     },
