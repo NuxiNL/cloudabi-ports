@@ -3,13 +3,19 @@
 # This file is distrbuted under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+
+def build(ctx):
+    build = ctx.extract('%(name)s-0.15.1b').autoconf()
+    build.make()
+    build.make_install().install()
+
 package(
     name='libid3tag',
-    version='0.15.1b',
+    version='0.15.1.2',
     homepage='http://www.underbit.com/products/mad/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'zlib'},
-    build_cmd=build_autoconf_automake,
+    build_cmd=build,
 )
 
 distfile(
