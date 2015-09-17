@@ -1,0 +1,11 @@
+--- libspeexdsp/os_support.h
++++ libspeexdsp/os_support.h
+@@ -154,7 +154,7 @@
+ #define speex_fatal(str) _speex_fatal(str, __FILE__, __LINE__);
+ #define speex_assert(cond) {if (!(cond)) {speex_fatal("assertion failed: " #cond);}}
+ 
+-#ifndef RELEASE
++#if 0
+ static inline void print_vec(float *vec, int len, char *name)
+ {
+    int i;
