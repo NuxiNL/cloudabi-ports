@@ -28,6 +28,7 @@ distfile(
     checksum='e33b47d77a495091c8703175a25c8228aff043140b2554c08a3c3cd71f79d116',
     master_sites={'http://www.libtom.net/files/'},
     patches={
+        'arc4random',
         'clang',
         'determinism',
         'makefile',

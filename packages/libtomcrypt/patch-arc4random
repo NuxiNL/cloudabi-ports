@@ -1,0 +1,22 @@
+--- src/prngs/rng_get_bytes.c
++++ src/prngs/rng_get_bytes.c
+@@ -10,6 +10,14 @@
+  */
+ #include "tomcrypt.h"
+ 
++unsigned long rng_get_bytes(unsigned char *out, unsigned long outlen,
++                            void (*callback)(void))
++{
++   arc4random_buf(out, outlen);
++   return 0;
++}
++
++#if 0
+ /** 
+    @file rng_get_bytes.c
+    portable way to get secure random bits to feed a PRNG (Tom St Denis)
+@@ -146,3 +154,4 @@
+ /* $Source: /cvs/libtom/libtomcrypt/src/prngs/rng_get_bytes.c,v $ */
+ /* $Revision: 1.7 $ */
+ /* $Date: 2007/05/12 14:32:35 $ */
++#endif
