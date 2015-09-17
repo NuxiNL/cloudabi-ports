@@ -63,20 +63,21 @@ There are no prebuilt cross compiler packages yet.
 
 TODO(ed): Document how a cross compiler can be built.
 
-### FreeBSD
+### FreeBSD and DragonFly BSD
 
-FreeBSD's `pkg` can be configured to access the CloudABI repository by
-running the following commands:
+`pkg` can be configured to access the CloudABI repository by running the
+following commands:
 
 ```sh
-cat > /etc/pkg/CloudABI.conf << EOF
+CONFDIR=/etc/pkg  # On DragonFly BSD: /usr/local/etc/pkg/repos
+cat > $CONFDIR/CloudABI.conf << EOF
 CloudABI: {
   url: https://nuxi.nl/distfiles/cloudabi-ports/freebsd/
   signature_type: pubkey
-  pubkey: /etc/pkg/CloudABI.key
+  pubkey: $CONFDIR/CloudABI.key
 }
 EOF
-cat > /etc/pkg/CloudABI.key << EOF
+cat > $CONFDIR/CloudABI.key << EOF
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7WeFa5CRgGzaJjsMuc4g
 sBmBN54eazb7W97TC7jhZUMdtx+MguAomC0ducBPbuZtW1UQkIRY6FaVvMNOV/iE
@@ -107,8 +108,8 @@ for building a CloudABI application that needs to run on x86-64
 pkg install x86_64-unknown-cloudabi-cxx-runtime
 ```
 
-A cross compiler for CloudABI can be obtained by installing FreeBSD's
-`devel/cloudabi-toolchain` package.
+A cross compiler for CloudABI can be obtained by installing the
+`devel/cloudabi-toolchain` package, both on FreeBSD and DragonFly BSD.
 
 ### NetBSD
 
