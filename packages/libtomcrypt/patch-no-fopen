@@ -1,11 +1,96 @@
---- src/headers/tomcrypt_custom.h
-+++ src/headers/tomcrypt_custom.h
-@@ -114,7 +114,7 @@
- /* #define LTC_CLEAN_STACK */
+--- makefile
++++ makefile
+@@ -125,21 +125,21 @@
+ src/encauth/ocb/ocb_encrypt_authenticate_memory.o src/encauth/ocb/ocb_encrypt.o \
+ src/encauth/ocb/ocb_init.o src/encauth/ocb/ocb_ntz.o src/encauth/ocb/ocb_shift_xor.o \
+ src/encauth/ocb/ocb_test.o src/encauth/ocb/s_ocb_done.o src/hashes/chc/chc.o \
+-src/hashes/helper/hash_file.o src/hashes/helper/hash_filehandle.o src/hashes/helper/hash_memory.o \
++src/hashes/helper/hash_filehandle.o src/hashes/helper/hash_memory.o \
+ src/hashes/helper/hash_memory_multi.o src/hashes/md2.o src/hashes/md4.o src/hashes/md5.o \
+ src/hashes/rmd128.o src/hashes/rmd160.o src/hashes/rmd256.o src/hashes/rmd320.o src/hashes/sha1.o \
+ src/hashes/sha2/sha256.o src/hashes/sha2/sha512.o src/hashes/tiger.o src/hashes/whirl/whirl.o \
+-src/mac/f9/f9_done.o src/mac/f9/f9_file.o src/mac/f9/f9_init.o src/mac/f9/f9_memory.o \
++src/mac/f9/f9_done.o src/mac/f9/f9_init.o src/mac/f9/f9_memory.o \
+ src/mac/f9/f9_memory_multi.o src/mac/f9/f9_process.o src/mac/f9/f9_test.o src/mac/hmac/hmac_done.o \
+-src/mac/hmac/hmac_file.o src/mac/hmac/hmac_init.o src/mac/hmac/hmac_memory.o \
++src/mac/hmac/hmac_init.o src/mac/hmac/hmac_memory.o \
+ src/mac/hmac/hmac_memory_multi.o src/mac/hmac/hmac_process.o src/mac/hmac/hmac_test.o \
+-src/mac/omac/omac_done.o src/mac/omac/omac_file.o src/mac/omac/omac_init.o src/mac/omac/omac_memory.o \
++src/mac/omac/omac_done.o src/mac/omac/omac_init.o src/mac/omac/omac_memory.o \
+ src/mac/omac/omac_memory_multi.o src/mac/omac/omac_process.o src/mac/omac/omac_test.o \
+ src/mac/pelican/pelican.o src/mac/pelican/pelican_memory.o src/mac/pelican/pelican_test.o \
+-src/mac/pmac/pmac_done.o src/mac/pmac/pmac_file.o src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
++src/mac/pmac/pmac_done.o src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
+ src/mac/pmac/pmac_memory_multi.o src/mac/pmac/pmac_ntz.o src/mac/pmac/pmac_process.o \
+ src/mac/pmac/pmac_shift_xor.o src/mac/pmac/pmac_test.o src/mac/xcbc/xcbc_done.o \
+-src/mac/xcbc/xcbc_file.o src/mac/xcbc/xcbc_init.o src/mac/xcbc/xcbc_memory.o \
++src/mac/xcbc/xcbc_init.o src/mac/xcbc/xcbc_memory.o \
+ src/mac/xcbc/xcbc_memory_multi.o src/mac/xcbc/xcbc_process.o src/mac/xcbc/xcbc_test.o \
+ src/math/fp/ltc_ecc_fp_mulmod.o src/math/gmp_desc.o src/math/ltm_desc.o src/math/multi.o \
+ src/math/rand_prime.o src/math/tfm_desc.o src/misc/base64/base64_decode.o \
+--- src/headers/tomcrypt_hash.h
++++ src/headers/tomcrypt_hash.h
+@@ -335,7 +335,6 @@
+ int hash_memory_multi(int hash, unsigned char *out, unsigned long *outlen,
+                       const unsigned char *in, unsigned long inlen, ...);
+ int hash_filehandle(int hash, FILE *in, unsigned char *out, unsigned long *outlen);
+-int hash_file(int hash, const char *fname, unsigned char *out, unsigned long *outlen);
  
- /* disable all file related functions */
--/* #define LTC_NO_FILE */
-+#define LTC_NO_FILE
+ /* a simple macro for making hash "process" functions */
+ #define HASH_PROCESS(func_name, compress_name, state_var, block_size)                       \
+--- src/headers/tomcrypt_mac.h
++++ src/headers/tomcrypt_mac.h
+@@ -18,9 +18,6 @@
+                 const unsigned char *key,  unsigned long keylen,
+                       unsigned char *out,  unsigned long *outlen,
+                 const unsigned char *in,   unsigned long inlen, ...);
+-int hmac_file(int hash, const char *fname, const unsigned char *key,
+-              unsigned long keylen, 
+-              unsigned char *dst, unsigned long *dstlen);
+ #endif
  
- /* disable all forms of ASM */
- /* #define LTC_NO_ASM */
+ #ifdef LTC_OMAC
+@@ -46,10 +43,6 @@
+                 const unsigned char *key, unsigned long keylen,
+                       unsigned char *out, unsigned long *outlen,
+                 const unsigned char *in,  unsigned long inlen, ...);
+-int omac_file(int cipher, 
+-              const unsigned char *key, unsigned long keylen,
+-              const          char *filename, 
+-                    unsigned char *out, unsigned long *outlen);
+ int omac_test(void);
+ #endif /* LTC_OMAC */
+ 
+@@ -83,10 +76,6 @@
+                       unsigned char *out, unsigned long *outlen,
+                 const unsigned char *in, unsigned long inlen, ...);
+ 
+-int pmac_file(int cipher, 
+-             const unsigned char *key, unsigned long keylen,
+-             const          char *filename, 
+-                   unsigned char *out, unsigned long *outlen);
+ 
+ int pmac_test(void);
+ 
+@@ -336,10 +325,6 @@
+                 const unsigned char *key, unsigned long keylen,
+                       unsigned char *out, unsigned long *outlen,
+                 const unsigned char *in,  unsigned long inlen, ...);
+-int xcbc_file(int cipher, 
+-              const unsigned char *key, unsigned long keylen,
+-              const          char *filename, 
+-                    unsigned char *out, unsigned long *outlen);
+ int xcbc_test(void);
+ 
+ #endif
+@@ -370,10 +355,6 @@
+                 const unsigned char *key, unsigned long keylen,
+                       unsigned char *out, unsigned long *outlen,
+                 const unsigned char *in,  unsigned long inlen, ...);
+-int f9_file(int cipher, 
+-              const unsigned char *key, unsigned long keylen,
+-              const          char *filename, 
+-                    unsigned char *out, unsigned long *outlen);
+ int f9_test(void);
+ 
+ #endif
