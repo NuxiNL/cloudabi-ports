@@ -8,7 +8,7 @@
 +                            void (*callback)(void))
 +{
 +   arc4random_buf(out, outlen);
-+   return 0;
++   return outlen;
 +}
 +
 +#if 0
