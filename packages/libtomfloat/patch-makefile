@@ -1,0 +1,26 @@
+--- makefile
++++ makefile
+@@ -44,7 +44,7 @@
+ 
+ libtomfloat.a: $(OBJECTS)
+ 	$(AR) $(ARFLAGS) libtomfloat.a $(OBJECTS)
+-	ranlib libtomfloat.a
++	$(RANLIB) libtomfloat.a
+ 
+ ex1: libtomfloat.a demos/ex1.o
+ 	$(CC) demos/ex1.o libtomfloat.a -ltommath -o ex1
+@@ -63,10 +63,10 @@
+ 	rm -f float.aux float.dvi float.log float.idx float.lof float.out float.toc
+ 
+ install: libtomfloat.a
+-	install -d -g root -o root $(DESTDIR)$(LIBPATH)
+-	install -d -g root -o root $(DESTDIR)$(INCPATH)
+-	install -g root -o root $(LIBNAME) $(DESTDIR)$(LIBPATH)
+-	install -g root -o root $(HEADERS) $(DESTDIR)$(INCPATH)
++	install -d $(DESTDIR)$(LIBPATH)
++	install -d $(DESTDIR)$(INCPATH)
++	install $(LIBNAME) $(DESTDIR)$(LIBPATH)
++	install $(HEADERS) $(DESTDIR)$(INCPATH)
+ 
+ clean:
+ 	rm -f $(OBJECTS) libtomfloat.a *~ demos/*.o demos/*~ ex1

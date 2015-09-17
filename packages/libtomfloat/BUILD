@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    root = ctx.extract('libtom/tfm-%(version)s')
+    root = ctx.extract('libtom/ltf-0.02')
     root.make(['IGNORE_SPEED=yes', 'default'])
     root.make_install([
         'INCPATH=%s/include' % ctx.prefix(),
@@ -14,21 +14,17 @@ def build(ctx):
     ]).install()
 
 package(
-    name='tomsfastmath',
-    version='0.12',
+    name='libtomfloat',
+    version='0.2',
     homepage='http://www.libtom.net/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c-runtime'},
+    lib_depends={'c-runtime', 'libtommath'},
     build_cmd=build,
 )
 
 distfile(
-    name='libtom/tfm-0.12.tar.bz2',
-    checksum='aa854c6664c3ba173809326ad9d3c18918b52f84040658b247e2ce7527032021',
+    name='libtom/ltf-0.02.tar.bz2',
+    checksum='7e80498e526888e3999cb711bd9b2ffc6738723adb89c7dd400f133b46a88707',
     master_sites={'http://www.libtom.net/files/'},
-    patches={
-        'assembly',
-        'bad-strncat',
-        'makefile',
-    },
+    patches={'makefile'},
 )
