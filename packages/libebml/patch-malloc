@@ -1,0 +1,10 @@
+--- ebml/EbmlBinary.h
++++ ebml/EbmlBinary.h
+@@ -38,6 +38,7 @@
+ #define LIBEBML_BINARY_H
+ 
+ #include <cstring>
++#include <stdlib.h>
+ 
+ #include "EbmlTypes.h"
+ #include "EbmlElement.h"

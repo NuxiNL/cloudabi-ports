@@ -1,0 +1,35 @@
+--- ebml/StdIOCallback.h
++++ ebml/StdIOCallback.h
+@@ -62,6 +62,7 @@
+ };
+ 
+ // This class is currently private to the library, so there's no MATROSKA_EXPORT.
++#if 0
+ class EBML_DLL_API StdIOCallback:public IOCallback
+ {
+     private:
+@@ -95,6 +96,7 @@
+   // should be thrown.
+   virtual void close();
+ };
++#endif
+ 
+ END_LIBEBML_NAMESPACE
+ 
+--- src/StdIOCallback.cpp
++++ src/StdIOCallback.cpp
+@@ -60,6 +60,7 @@
+ }
+ 
+ 
++#if 0
+ StdIOCallback::StdIOCallback(const char*Path, const open_mode aMode)
+ {
+   assert(Path!=0);
+@@ -189,5 +190,6 @@
+ 
+   File=0;
+ }
++#endif
+ 
+ END_LIBEBML_NAMESPACE
