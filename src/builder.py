@@ -206,9 +206,7 @@ class TargetBuilder(Builder):
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
         self._cflags = [
             '-O2', '-fstack-protector-strong',
-            '-Werror=implicit-function-declaration',
-            '-Wno-builtin-macro-redefined',
-            '-U__DATE__', '-U__TIME__', '-U__TIMESTAMP__',
+            '-Werror=implicit-function-declaration', '-Werror=date-time',
         ]
 
     def _tool(self, name):
