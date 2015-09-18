@@ -1,0 +1,55 @@
+--- lib/dgif_lib.c
++++ lib/dgif_lib.c
+@@ -46,6 +46,7 @@
+  Returns dynamically allocated GifFileType pointer which serves as the GIF
+  info record.
+ ******************************************************************************/
++#if 0
+ GifFileType *
+ DGifOpenFileName(const char *FileName, int *Error)
+ {
+@@ -61,6 +62,7 @@
+     GifFile = DGifOpenFileHandle(FileHandle, Error);
+     return GifFile;
+ }
++#endif
+ 
+ /******************************************************************************
+  Update a new GIF file, given its file handle.
+--- lib/egif_lib.c
++++ lib/egif_lib.c
+@@ -50,6 +50,7 @@
+  Returns a dynamically allocated GifFileType pointer which serves as the GIF
+  info record. The Error member is cleared if successful.
+ ******************************************************************************/
++#if 0
+ GifFileType *
+ EGifOpenFileName(const char *FileName, const bool TestExistence, int *Error)
+ {
+@@ -74,6 +75,7 @@
+         (void)close(FileHandle);
+     return GifFile;
+ }
++#endif
+ 
+ /******************************************************************************
+  Update a new GIF file, given its file handle, which must be opened for
+--- lib/gif_lib.h
++++ lib/gif_lib.h
+@@ -123,8 +123,6 @@
+ ******************************************************************************/
+ 
+ /* Main entry points */
+-GifFileType *EGifOpenFileName(const char *GifFileName,
+-                              const bool GifTestExistence, int *Error);
+ GifFileType *EGifOpenFileHandle(const int GifFileHandle, int *Error);
+ GifFileType *EGifOpen(void *userPtr, OutputFunc writeFunc, int *Error);
+ int EGifSpew(GifFileType * GifFile);
+@@ -176,7 +174,6 @@
+ ******************************************************************************/
+ 
+ /* Main entry points */
+-GifFileType *DGifOpenFileName(const char *GifFileName, int *Error);
+ GifFileType *DGifOpenFileHandle(int GifFileHandle, int *Error);
+ int DGifSlurp(GifFileType * GifFile);
+ GifFileType *DGifOpen(void *userPtr, InputFunc readFunc, int *Error);    /* new one (TVT) */
