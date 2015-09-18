@@ -26,5 +26,4 @@ distfile(
     name='libtom/ltp-0.04.tar.bz2',
     checksum='6ce0d39caeda866b8f81029e8354efb9d5393850e78ea24f64475bd87b97fc0b',
     master_sites={'http://www.libtom.net/files/'},
-    patches={'makefile'},
 )

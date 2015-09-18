@@ -24,8 +24,4 @@ distfile(
     name='libxspf-1.2.0.tar.bz2',
     checksum='ba9e93a0066469b074b4022b480004651ad3aa5b4313187fd407d833f79b43a5',
     master_sites=sites_sourceforge('libspiff/Sources/1.2.0'),
-    patches={
-        'no-fopen',
-        'no-strcpy',
-    },
 )

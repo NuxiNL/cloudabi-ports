@@ -26,9 +26,4 @@ distfile(
     name='libtom/tfm-0.12.tar.bz2',
     checksum='aa854c6664c3ba173809326ad9d3c18918b52f84040658b247e2ce7527032021',
     master_sites={'http://www.libtom.net/files/'},
-    patches={
-        'assembly',
-        'bad-strncat',
-        'makefile',
-    },
 )

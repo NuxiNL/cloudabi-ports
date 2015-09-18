@@ -22,5 +22,4 @@ distfile(
     name='speex-1.2rc2.tar.gz',
     checksum='caa27c7247ff15c8521c2ae0ea21987c9e9710a8f2d3448e8b79da9806bce891',
     master_sites={'http://downloads.xiph.org/releases/speex/'},
-    patches={'no-printf'},
 )

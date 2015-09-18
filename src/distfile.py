@@ -15,8 +15,7 @@ from . import util
 
 class Distfile:
 
-    def __init__(self, distdir, name, checksum, master_sites,
-                 patches=frozenset()):
+    def __init__(self, distdir, name, checksum, master_sites, patches):
         for patch in patches:
             if not os.path.isfile(patch):
                 raise Exception('Patch %s does not exist' % patch)

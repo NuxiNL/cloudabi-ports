@@ -16,5 +16,4 @@ distfile(
     name='libsodium-1.0.3.tar.gz',
     checksum='cbcfc63cc90c05d18a20f229a62c7e7054a73731d0aa858c0517152c549b1288',
     master_sites={'https://download.libsodium.org/libsodium/releases/'},
-    patches={'arc4random'},
 )

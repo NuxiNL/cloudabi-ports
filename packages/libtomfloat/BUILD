@@ -26,5 +26,4 @@ distfile(
     name='libtom/ltf-0.02.tar.bz2',
     checksum='7e80498e526888e3999cb711bd9b2ffc6738723adb89c7dd400f133b46a88707',
     master_sites={'http://www.libtom.net/files/'},
-    patches={'makefile'},
 )

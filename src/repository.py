@@ -40,12 +40,16 @@ class Repository:
                     name = distfile['name'][:-len(ext)]
                     break
 
+            # Automatically add patches if none are given.
+            dirname = os.path.dirname(path)
+            if 'patches' not in distfile:
+                distfile['patches'] = (name[6:]
+                                       for name in os.listdir(dirname)
+                                       if name.startswith('patch-'))
+
             # Turn patch filenames into full paths.
-            if 'patches' in distfile:
-                distfile['patches'] = {
-                    os.path.join(
-                        os.path.dirname(path),
-                        'patch-' + patch) for patch in distfile['patches']}
+            distfile['patches'] = {os.path.join(dirname, 'patch-' + patch)
+                                   for patch in distfile['patches']}
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))

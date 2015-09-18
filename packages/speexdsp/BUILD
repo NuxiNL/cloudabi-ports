@@ -22,5 +22,4 @@ distfile(
     name='speexdsp-1.2rc3.tar.gz',
     checksum='4ae688600039f5d224bdf2e222d2fbde65608447e4c2f681585e4dca6df692f1',
     master_sites={'http://downloads.xiph.org/releases/speex/'},
-    patches={'no-printf'},
 )

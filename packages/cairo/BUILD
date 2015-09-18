@@ -27,9 +27,4 @@ distfile(
     name='cairo-1.14.2.tar.xz',
     checksum='c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb',
     master_sites={'http://cairographics.org/releases/'},
-    patches={
-        'no-fopen',
-        'no-printf',
-        'no-strcpy',
-    },
 )

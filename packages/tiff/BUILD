@@ -25,9 +25,4 @@ distfile(
     master_sites={
         'ftp://ftp.remotesensing.org/pub/libtiff/',
         'http://download.osgeo.org/libtiff/'},
-    patches={
-        'no-strcpy',
-        'no-sprintf',
-        'no-TIFFOpen',
-    },
 )

@@ -25,8 +25,4 @@ distfile(
     name='libpng-1.6.18.tar.xz',
     checksum='2e10c13b7949883ac961db6177c516d778184432d440317e9f0391305c360963',
     master_sites=sites_sourceforge('libpng/libpng16/1.6.18'),
-    patches={
-        'no-fopen',
-        'no-gmtime',
-    },
 )

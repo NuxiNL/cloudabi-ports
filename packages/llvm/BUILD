@@ -35,10 +35,10 @@ distfile(
     name='cfe-3.7.0.src.tar.xz',
     checksum='4ed740c5a91df1c90a4118c5154851d6a475f39a91346bdf268c1c29c13aa1cc',
     master_sites={'http://llvm.org/releases/3.7.0/'},
-    patches={'implicit-library-functions'},
 )
 distfile(
     name='llvm-3.7.0.src.tar.xz',
     checksum='ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153',
     master_sites={'http://llvm.org/releases/3.7.0/'},
+    patches=set(),
 )
