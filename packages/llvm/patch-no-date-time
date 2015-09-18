@@ -1,0 +1,64 @@
+--- include/clang/Lex/Preprocessor.h
++++ include/clang/Lex/Preprocessor.h
+@@ -118,10 +118,8 @@
+ 
+   /// Identifiers for builtin macros and other builtins.
+   IdentifierInfo *Ident__LINE__, *Ident__FILE__;   // __LINE__, __FILE__
+-  IdentifierInfo *Ident__DATE__, *Ident__TIME__;   // __DATE__, __TIME__
+   IdentifierInfo *Ident__INCLUDE_LEVEL__;          // __INCLUDE_LEVEL__
+   IdentifierInfo *Ident__BASE_FILE__;              // __BASE_FILE__
+-  IdentifierInfo *Ident__TIMESTAMP__;              // __TIMESTAMP__
+   IdentifierInfo *Ident__COUNTER__;                // __COUNTER__
+   IdentifierInfo *Ident_Pragma, *Ident__pragma;    // _Pragma, __pragma
+   IdentifierInfo *Ident__identifier;               // __identifier
+--- lib/Lex/PPMacroExpansion.cpp
++++ lib/Lex/PPMacroExpansion.cpp
+@@ -281,8 +281,6 @@
+ void Preprocessor::RegisterBuiltinMacros() {
+   Ident__LINE__ = RegisterBuiltinMacro(*this, "__LINE__");
+   Ident__FILE__ = RegisterBuiltinMacro(*this, "__FILE__");
+-  Ident__DATE__ = RegisterBuiltinMacro(*this, "__DATE__");
+-  Ident__TIME__ = RegisterBuiltinMacro(*this, "__TIME__");
+   Ident__COUNTER__ = RegisterBuiltinMacro(*this, "__COUNTER__");
+   Ident_Pragma  = RegisterBuiltinMacro(*this, "_Pragma");
+ 
+@@ -296,7 +294,6 @@
+   // GCC Extensions.
+   Ident__BASE_FILE__     = RegisterBuiltinMacro(*this, "__BASE_FILE__");
+   Ident__INCLUDE_LEVEL__ = RegisterBuiltinMacro(*this, "__INCLUDE_LEVEL__");
+-  Ident__TIMESTAMP__     = RegisterBuiltinMacro(*this, "__TIMESTAMP__");
+ 
+   // Microsoft Extensions.
+   if (LangOpts.MicrosoftExt) {
+@@ -1516,6 +1513,7 @@
+       OS << '"' << FN << '"';
+     }
+     Tok.setKind(tok::string_literal);
++#if 0
+   } else if (II == Ident__DATE__) {
+     Diag(Tok.getLocation(), diag::warn_pp_date_time);
+     if (!DATELoc.isValid())
+@@ -1536,6 +1534,7 @@
+                                                  Tok.getLocation(),
+                                                  Tok.getLength()));
+     return;
++#endif
+   } else if (II == Ident__INCLUDE_LEVEL__) {
+     // Compute the presumed include depth of this token.  This can be affected
+     // by GNU line markers.
+@@ -1551,6 +1550,7 @@
+     // __INCLUDE_LEVEL__ expands to a simple numeric value.
+     OS << Depth;
+     Tok.setKind(tok::numeric_constant);
++#if 0
+   } else if (II == Ident__TIMESTAMP__) {
+     Diag(Tok.getLocation(), diag::warn_pp_date_time);
+     // MSVC, ICC, GCC, VisualAge C++ extension.  The generated string should be
+@@ -1575,6 +1575,7 @@
+     // Surround the string with " and strip the trailing newline.
+     OS << '"' << StringRef(Result).drop_back() << '"';
+     Tok.setKind(tok::string_literal);
++#endif
+   } else if (II == Ident__COUNTER__) {
+     // __COUNTER__ expands to a simple numeric value.
+     OS << CounterValue++;
