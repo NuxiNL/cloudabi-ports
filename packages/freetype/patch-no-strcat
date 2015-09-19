@@ -6,7 +6,7 @@
      const char*  tmp;
 -    const char*  slash;
 -    size_t       new_length;
-+    size_t       insertion_len, original_len;
++    size_t       insertion_len, original_len, split_len;
      FT_Error     error = FT_Err_Ok;
  
      FT_UNUSED( error );
@@ -27,7 +27,7 @@
 -                  (size_t)( tmp - original_name + 1 ) );
 -      new_name[tmp - original_name + 1] = '\0';
 -      slash = tmp + 1;
-+      size_t split_len = ++tmp - original_name;
++      split_len = ++tmp - original_name;
 +      ft_memcpy( new_name, original_name, split_len );
 +      ft_memcpy( new_name + split_len, insertion, insertion_len );
 +      ft_memcpy( new_name + split_len + insertion_len, tmp,
