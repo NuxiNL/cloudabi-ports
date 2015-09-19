@@ -16,7 +16,6 @@ package(
     version='2.6',
     homepage='http://www.freetype.org/',
     maintainer='info@nuxi.nl',
-    # TODO(ed): Depend on Harfbuzz.
     lib_depends={'bzip2', 'c-runtime', 'libpng', 'zlib'},
     build_cmd=build,
 )
