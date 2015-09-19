@@ -1,0 +1,32 @@
+--- src/libjasper/jpc/jpc_util.c
++++ src/libjasper/jpc/jpc_util.c
+@@ -95,13 +95,14 @@
+ 	int n;
+ 	double *vs;
+ 	char *cp;
++	char *last;
+ 
+ 	strncpy(buf, s, sizeof(buf));
+ 	buf[sizeof(buf) - 1] = '\0';
+ 	n = 0;
+-	if ((cp = strtok(buf, delim))) {
++	if ((cp = strtok_r(buf, delim, &last))) {
+ 		++n;
+-		while ((cp = strtok(0, delim))) {
++		while ((cp = strtok_r(0, delim, &last))) {
+ 			if (cp != '\0') {
+ 				++n;
+ 			}
+@@ -116,10 +117,10 @@
+ 		strncpy(buf, s, sizeof(buf));
+ 		buf[sizeof(buf) - 1] = '\0';
+ 		n = 0;
+-		if ((cp = strtok(buf, delim))) {
++		if ((cp = strtok_r(buf, delim, &last))) {
+ 			vs[n] = atof(cp);
+ 			++n;
+-			while ((cp = strtok(0, delim))) {
++			while ((cp = strtok_r(0, delim, &last))) {
+ 				if (cp != '\0') {
+ 					vs[n] = atof(cp);
+ 					++n;

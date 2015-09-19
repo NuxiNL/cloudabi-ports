@@ -1,0 +1,74 @@
+--- src/libjasper/base/jas_seq.c
++++ src/libjasper/base/jas_seq.c
+@@ -422,6 +422,7 @@
+ 	char buf[MAXLINELEN + 1];
+ 	char sbuf[MAXLINELEN + 1];
+ 	int n;
++	int o;
+ 
+ 	fprintf(out, "%d %d\n", jas_seq2d_xstart(matrix),
+ 	  jas_seq2d_ystart(matrix));
+@@ -432,15 +433,16 @@
+ 	for (i = 0; i < jas_matrix_numrows(matrix); ++i) {
+ 		for (j = 0; j < jas_matrix_numcols(matrix); ++j) {
+ 			x = jas_matrix_get(matrix, i, j);
+-			sprintf(sbuf, "%s%4ld", (strlen(buf) > 0) ? " " : "",
+-			  JAS_CAST(long, x));
+ 			n = strlen(buf);
+-			if (n + strlen(sbuf) > MAXLINELEN) {
++			snprintf(sbuf, sizeof(buf), "%s%4ld", (n > 0) ? " " : "",
++			  JAS_CAST(long, x));
++			o = strlen(sbuf) + 1;
++			if (n + o > sizeof(buf)) {
+ 				fputs(buf, out);
+ 				fputs("\n", out);
+ 				buf[0] = '\0';
+ 			}
+-			strcat(buf, sbuf);
++			memcpy(buf + n, sbuf, o);
+ 			if (j == jas_matrix_numcols(matrix) - 1) {
+ 				fputs(buf, out);
+ 				fputs("\n", out);
+--- src/libjasper/base/jas_string.c
++++ src/libjasper/base/jas_string.c
+@@ -91,6 +91,6 @@
+ 	if (!(p = jas_malloc(n * sizeof(char)))) {
+ 		return 0;
+ 	}
+-	strcpy(p, s);
++	memcpy(p, s, n);
+ 	return p;
+ }
+--- src/libjasper/jp2/jp2_enc.c
++++ src/libjasper/jp2/jp2_enc.c
+@@ -343,7 +343,7 @@
+ 	/* Output the JPEG-2000 code stream. */
+ 
+ 	overhead = jas_stream_getrwcount(out);
+-	sprintf(buf, "%s\n_jp2overhead=%lu\n", (optstr ? optstr : ""),
++	snprintf(buf, sizeof(buf), "%s\n_jp2overhead=%lu\n", (optstr ? optstr : ""),
+ 	  (unsigned long) overhead);
+ 
+ 	if (jpc_encode(image, out, buf)) {
+--- src/libjasper/jpc/jpc_enc.c
++++ src/libjasper/jpc/jpc_enc.c
+@@ -958,7 +958,7 @@
+ 	if (!(enc->mrk = jpc_ms_create(JPC_MS_COM))) {
+ 		return -1;
+ 	}
+-	sprintf(buf, "Creator: JasPer Version %s", jas_getversion());
++	snprintf(buf, sizeof(buf), "Creator: JasPer Version %s", jas_getversion());
+ 	com = &enc->mrk->parms.com;
+ 	com->len = strlen(buf);
+ 	com->regid = JPC_COM_LATIN;
+--- src/libjasper/pnm/pnm_enc.c
++++ src/libjasper/pnm/pnm_enc.c
+@@ -374,7 +374,7 @@
+ 						}
+ 					}
+ 				} else {
+-					n = sprintf(buf, "%s%ld", ((!(!x && !cmptno)) ? " " : ""),
++					n = snprintf(buf, sizeof(buf), "%s%ld", ((!(!x && !cmptno)) ? " " : ""),
+ 					  (long) v);
+ 					if (linelen > 0 && linelen + n > PNM_MAXLINELEN) {
+ 						jas_stream_printf(out, "\n");
