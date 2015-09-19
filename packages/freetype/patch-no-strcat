@@ -1,0 +1,49 @@
+--- src/base/ftrfork.c
++++ src/base/ftrfork.c
+@@ -799,35 +799,31 @@
+   {
+     char*        new_name = NULL;
+     const char*  tmp;
+-    const char*  slash;
+-    size_t       new_length;
++    size_t       insertion_len, original_len;
+     FT_Error     error = FT_Err_Ok;
+ 
+     FT_UNUSED( error );
+ 
+-
+-    new_length = ft_strlen( original_name ) + ft_strlen( insertion );
+-    if ( FT_ALLOC( new_name, new_length + 1 ) )
++    insertion_len = ft_strlen( insertion );
++    original_len = ft_strlen( original_name ) + 1;
++    if ( FT_ALLOC( new_name, insertion_len +  original_len ) )
+       return NULL;
+ 
+     tmp = ft_strrchr( original_name, '/' );
+     if ( tmp )
+     {
+-      ft_strncpy( new_name,
+-                  original_name,
+-                  (size_t)( tmp - original_name + 1 ) );
+-      new_name[tmp - original_name + 1] = '\0';
+-      slash = tmp + 1;
++      size_t split_len = ++tmp - original_name;
++      ft_memcpy( new_name, original_name, split_len );
++      ft_memcpy( new_name + split_len, insertion, insertion_len );
++      ft_memcpy( new_name + split_len + insertion_len, tmp,
++                 original_len - split_len );
+     }
+     else
+     {
+-      slash       = original_name;
+-      new_name[0] = '\0';
++      ft_memcpy( new_name, insertion, insertion_len );
++      ft_memcpy( new_name + insertion_len, original_name, original_len );
+     }
+ 
+-    ft_strcat( new_name, insertion );
+-    ft_strcat( new_name, slash );
+-
+     return new_name;
+   }
+ 

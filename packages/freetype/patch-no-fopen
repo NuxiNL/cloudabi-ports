@@ -1,0 +1,37 @@
+--- include/internal/ftstream.h
++++ include/internal/ftstream.h
+@@ -318,7 +318,7 @@
+ #define FT_READ_ULONG_LE( var )   FT_READ_MACRO( FT_Stream_ReadULongLE, FT_ULong, var )
+ 
+ 
+-#ifndef FT_CONFIG_OPTION_NO_DEFAULT_SYSTEM
++#if 0
+ 
+   /* initialize a stream for reading a regular system stream */
+   FT_BASE( FT_Error )
+--- src/base/ftobjs.c
++++ src/base/ftobjs.c
+@@ -183,12 +183,6 @@
+ 
+ #ifndef FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
+ 
+-    else if ( args->flags & FT_OPEN_PATHNAME )
+-    {
+-      /* create a normal system stream */
+-      error = FT_Stream_Open( stream, args->pathname );
+-      stream->pathname.pointer = args->pathname;
+-    }
+     else if ( ( args->flags & FT_OPEN_STREAM ) && args->stream )
+     {
+       /* use an existing, user-provided stream */
+--- src/base/ftsystem.c
++++ src/base/ftsystem.c
+@@ -137,7 +137,7 @@
+   /*                                                                       */
+   /*************************************************************************/
+ 
+-#ifndef FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
++#if 0
+ 
+   /*************************************************************************/
+   /*                                                                       */
