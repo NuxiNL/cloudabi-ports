@@ -4,7 +4,9 @@
 # See the LICENSE file for details.
 
 import os
+import random
 import shutil
+import string
 import subprocess
 
 from . import config
@@ -198,7 +200,12 @@ class HostBuilder(Builder):
 class TargetBuilder(Builder):
 
     def __init__(self, install_directory, arch):
-        super(TargetBuilder, self).__init__('/nonexistent')
+        # Pick a random prefix directory. That way the build will fail
+        # due to nondeterminism in case our piece of software hardcodes
+        # the prefix directory.
+        prefixdir = '/' + ''.join(
+            random.choice(string.ascii_letters) for i in range(16))
+        super(TargetBuilder, self).__init__(prefixdir)
         self._install_directory = install_directory
         self._arch = arch
 
