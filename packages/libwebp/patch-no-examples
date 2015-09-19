@@ -1,0 +1,11 @@
+--- Makefile.in
++++ Makefile.in
+@@ -330,7 +330,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ ACLOCAL_AMFLAGS = -I m4
+-SUBDIRS = src examples man
++SUBDIRS = src
+ EXTRA_DIST = COPYING autogen.sh
+ all: all-recursive
+ 
