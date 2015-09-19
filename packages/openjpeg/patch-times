@@ -1,0 +1,29 @@
+--- src/lib/openjp2/opj_clock.c
++++ src/lib/openjp2/opj_clock.c
+@@ -33,7 +33,6 @@
+ #include <windows.h>
+ #else
+ #include <sys/time.h>
+-#include <sys/resource.h>
+ #include <sys/times.h>
+ #endif /* _WIN32 */
+ #include "opj_includes.h"
+@@ -50,15 +49,9 @@
+     return ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) ;
+ #else
+ 	/* Unix or Linux: use resource usage */
+-    struct rusage t;
+-    OPJ_FLOAT64 procTime;
+-    /* (1) Get the rusage data structure at this moment (man getrusage) */
+-    getrusage(0,&t);
+-    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+-	/* (2a) Get the seconds */
+-    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
+-    /* (2b) More precisely! Get the microseconds part ! */
+-    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
++    struct tms t;
++    times(&t);
++    return (OPJ_FLOAT64)(t.tms_utime + t.tms_stime) / CLOCKS_PER_SEC;
+ #endif
+ }
+ 

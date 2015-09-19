@@ -1,0 +1,10 @@
+--- src/lib/openjp2/opj_includes.h
++++ src/lib/openjp2/opj_includes.h
+@@ -44,7 +44,6 @@
+    Standard includes used by the library
+  ==========================================================
+ */
+-#include <memory.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <math.h>
