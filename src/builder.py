@@ -243,7 +243,8 @@ class TargetBuilder(Builder):
             '-DCMAKE_PREFIX_PATH=' + self._localbase,
             '-DCMAKE_RANLIB=' + self._tool('ranlib'),
             '-DCMAKE_SYSTEM_NAME=Generic',
-            '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0]] + args)
+            '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0],
+            '-DUNIX=YES'] + args)
 
     def compile(self, source, target, args):
         os.chdir(os.path.dirname(source))
