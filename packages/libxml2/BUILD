@@ -7,9 +7,11 @@
 def build(ctx):
     build = ctx.extract().autoconf(['--without-ftp', '--without-http'])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES='])
-    build.make_install([
+    stage = build.make_install([
         'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=', 'install',
-    ]).install()
+    ])
+    stage.path('bin/xml2-config').unhardcode_paths()
+    stage.install()
 
 package(
     name='libxml2',
