@@ -7,7 +7,11 @@
 def build(ctx):
     build = ctx.extract('libsigc++-%(version)s').autoconf()
     build.make(['noinst_PROGRAMS='])
-    build.make_install(['noinst_PROGRAMS=', 'install']).install()
+    stage = build.make_install(['noinst_PROGRAMS=', 'install'])
+    stage.path(
+        'share/devhelp/books/libsigc++-2.0/libsigc++-2.0.devhelp2'
+    ).unhardcode_paths()
+    stage.install()
 
 package(
     name='libsigcxx',
