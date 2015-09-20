@@ -1,0 +1,29 @@
+--- configure
++++ configure
+@@ -16170,7 +16170,7 @@
+     void operator()(T a, T b)
+     {
+       T c = a + b;
+-      std::cout << c << std::endl;
++      std::cerr << c << std::endl;
+     }
+   };
+ 
+@@ -16231,7 +16231,7 @@
+     void operator()(T a, T b)
+     {
+       T c = a + b;
+-      std::cout << c << std::endl;
++      std::cerr << c << std::endl;
+     }
+   };
+ 
+@@ -16339,7 +16339,7 @@
+       using std::bidirectional_iterator_tag;
+       using std::string;
+       using std::istream;
+-      using std::cout;
++      using std::cerr;
+ 
+   ;
+   return 0;
