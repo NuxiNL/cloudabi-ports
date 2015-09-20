@@ -1,0 +1,155 @@
+--- buf.c
++++ buf.c
+@@ -549,8 +549,6 @@
+ 	return(0);
+     }
+     CHECK_COMPAT(buf)
+-    if (file == NULL)
+-	file = stdout;
+     ret = fwrite(buf->content, sizeof(xmlChar), buf->use, file);
+     return(ret);
+ }
+--- debugXML.c
++++ debugXML.c
+@@ -61,7 +61,7 @@
+     ctxt->depth = 0;
+     ctxt->check = 0;
+     ctxt->errors = 0;
+-    ctxt->output = stdout;
++    ctxt->output = NULL;
+     ctxt->doc = NULL;
+     ctxt->node = NULL;
+     ctxt->dict = NULL;
+@@ -1348,8 +1348,6 @@
+ {
+     int i;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     if (str == NULL) {
+         fprintf(output, "(NULL)");
+         return;
+@@ -1461,8 +1459,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.output = output;
+     ctxt.depth = depth;
+@@ -1483,8 +1479,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.output = output;
+     ctxt.depth = depth;
+@@ -1504,8 +1498,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.options |= DUMP_TEXT_TYPE;
+     ctxt.output = output;
+@@ -1525,8 +1517,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.options |= DUMP_TEXT_TYPE;
+     ctxt.output = output;
+@@ -1546,8 +1536,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.options |= DUMP_TEXT_TYPE;
+     ctxt.output = output;
+@@ -1576,8 +1564,6 @@
+ {
+     xmlDebugCtxt ctxt;
+ 
+-    if (output == NULL)
+-	output = stdout;
+     xmlCtxtDumpInitCtxt(&ctxt);
+     ctxt.output = output;
+     ctxt.check = 1;
+@@ -1893,10 +1879,7 @@
+ 
+     if (!node)
+         return;
+-    if (ctxt == NULL)
+-	fp = stdout;
+-    else
+-	fp = ctxt->output;
++    fp = ctxt->output;
+ 
+     if (node->type == XML_DOCUMENT_NODE)
+         xmlDocDump(fp, (xmlDocPtr) node);
+@@ -2821,8 +2804,6 @@
+         return;
+     if (input == NULL)
+         return;
+-    if (output == NULL)
+-        output = stdout;
+     ctxt = (xmlShellCtxtPtr) xmlMalloc(sizeof(xmlShellCtxt));
+     if (ctxt == NULL)
+         return;
+--- tree.c
++++ tree.c
+@@ -7304,8 +7304,6 @@
+ #endif
+ 	return(0);
+     }
+-    if (file == NULL)
+-	file = stdout;
+     ret = fwrite(buf->content, sizeof(xmlChar), buf->use, file);
+     return(ret);
+ }
+--- xmlIO.c
++++ xmlIO.c
+@@ -1075,14 +1069,12 @@
+     if (context == NULL)
+         return(-1);
+     fil = (FILE *) context;
+-    if ((fil == stdout) || (fil == stderr)) {
++    if (fil == stderr) {
+         ret = fflush(fil);
+ 	if (ret < 0)
+ 	    xmlIOErr(0, "fflush()");
+ 	return(0);
+     }
+-    if (fil == stdin)
+-	return(0);
+     ret = ( fclose((FILE *) context) == EOF ) ? -1 : 0;
+     if (ret < 0)
+         xmlIOErr(0, "fclose()");
+--- xmlreader.c
++++ xmlreader.c
+@@ -978,7 +978,6 @@
+ 	     */
+ 	    node = xmlTextReaderExpand(reader);
+ 	    if (node == NULL) {
+-printf("Expand failed !\n");
+ 	        ret = -1;
+ 	    } else {
+ 		ret = xmlRelaxNGValidateFullElement(reader->rngValidCtxt,
+--- xmlregexp.c
++++ xmlregexp.c
+@@ -3000,7 +3000,6 @@
+ 	    return(accept);
+ 	}
+         case XML_REGEXP_STRING:
+-	    printf("TODO: XML_REGEXP_STRING\n");
+ 	    return(-1);
+         case XML_REGEXP_ANYCHAR:
+         case XML_REGEXP_ANYSPACE:

@@ -1,0 +1,243 @@
+--- catalog.c
++++ catalog.c
+@@ -92,7 +92,6 @@
+ #endif
+ 
+ static xmlChar *xmlCatalogNormalizePublic(const xmlChar *pubID);
+-static int xmlExpandCatalog(xmlCatalogPtr catal, const char *filename);
+ 
+ /************************************************************************
+  *									*
+@@ -951,6 +950,7 @@
+  *
+  * Returns a pointer to the 0 terminated string or NULL in case of error
+  */
++#if 0
+ static xmlChar *
+ xmlLoadFileContent(const char *filename)
+ {
+@@ -1016,6 +1016,7 @@
+ 
+     return(content);
+ }
++#endif
+ 
+ /**
+  * xmlCatalogNormalizePublic:
+@@ -2321,6 +2322,7 @@
+  *
+  * Returns 0 in case of success, -1 in case of error.
+  */
++#if 0
+ static int
+ xmlParseSGMLCatalog(xmlCatalogPtr catal, const xmlChar *value,
+ 	            const char *file, int super) {
+@@ -2525,6 +2527,7 @@
+ 	return(-1);
+     return(0);
+ }
++#endif
+ 
+ /************************************************************************
+  *									*
+@@ -2638,6 +2641,7 @@
+  *
+  * Returns the catalog parsed or NULL in case of error
+  */
++#if 0
+ xmlCatalogPtr
+ xmlLoadSGMLSuperCatalog(const char *filename)
+ {
+@@ -2767,6 +2771,7 @@
+     }
+     return (0);
+ }
++#endif
+ 
+ /**
+  * xmlACatalogResolveSystem:
+@@ -3193,6 +3198,7 @@
+  *
+  * Returns 0 in case of success -1 in case of error
+  */
++#if 0
+ int
+ xmlLoadCatalog(const char *filename)
+ {
+@@ -3267,6 +3273,7 @@
+ 	    cur++;
+     }
+ }
++#endif
+ 
+ /**
+  * xmlCatalogCleanup:
+--- debugXML.c
++++ debugXML.c
+@@ -2494,7 +2477,7 @@
+     return (0);
+ }
+ 
+-#ifdef LIBXML_OUTPUT_ENABLED
++#if 0
+ /**
+  * xmlShellWrite:
+  * @ctxt:  the shell context
+@@ -2944,7 +2925,7 @@
+         } else if (!strcmp(command, "relaxng")) {
+             xmlShellRNGValidate(ctxt, arg, NULL, NULL);
+ #endif
+-#ifdef LIBXML_OUTPUT_ENABLED
++#if 0
+         } else if (!strcmp(command, "save")) {
+             xmlShellSave(ctxt, arg, NULL, NULL);
+         } else if (!strcmp(command, "write")) {
+--- include/libxml/catalog.h
++++ include/libxml/catalog.h
+@@ -68,10 +68,6 @@
+  */
+ XMLPUBFUN xmlCatalogPtr XMLCALL
+ 		xmlNewCatalog		(int sgml);
+-XMLPUBFUN xmlCatalogPtr XMLCALL
+-		xmlLoadACatalog		(const char *filename);
+-XMLPUBFUN xmlCatalogPtr XMLCALL
+-		xmlLoadSGMLSuperCatalog	(const char *filename);
+ XMLPUBFUN int XMLCALL
+ 		xmlConvertSGMLCatalog	(xmlCatalogPtr catal);
+ XMLPUBFUN int XMLCALL
+@@ -110,10 +106,6 @@
+  */
+ XMLPUBFUN void XMLCALL
+ 		xmlInitializeCatalog	(void);
+-XMLPUBFUN int XMLCALL
+-		xmlLoadCatalog		(const char *filename);
+-XMLPUBFUN void XMLCALL
+-		xmlLoadCatalogs		(const char *paths);
+ XMLPUBFUN void XMLCALL
+ 		xmlCatalogCleanup	(void);
+ #ifdef LIBXML_OUTPUT_ENABLED
+--- include/libxml/debugXML.h
++++ include/libxml/debugXML.h
+@@ -169,16 +169,6 @@
+ 				 char *arg,
+ 				 xmlNodePtr node,
+ 				 xmlNodePtr node2);
+-XMLPUBFUN int XMLCALL
+-	xmlShellWrite		(xmlShellCtxtPtr ctxt,
+-				 char *filename,
+-				 xmlNodePtr node,
+-				 xmlNodePtr node2);
+-XMLPUBFUN int XMLCALL
+-	xmlShellSave		(xmlShellCtxtPtr ctxt,
+-				 char *filename,
+-				 xmlNodePtr node,
+-				 xmlNodePtr node2);
+ #endif /* LIBXML_OUTPUT_ENABLED */
+ #ifdef LIBXML_VALID_ENABLED
+ XMLPUBFUN int XMLCALL
+--- include/libxml/xmlIO.h
++++ include/libxml/xmlIO.h
+@@ -313,8 +313,6 @@
+  */
+ XMLPUBFUN int XMLCALL
+ 	xmlFileMatch			(const char *filename);
+-XMLPUBFUN void * XMLCALL
+-	xmlFileOpen			(const char *filename);
+ XMLPUBFUN int XMLCALL
+ 	xmlFileRead			(void * context,
+ 					 char * buffer,
+--- xmlIO.c
++++ xmlIO.c
+@@ -892,6 +892,7 @@
+  *
+  * Returns an I/O context or NULL in case of error
+  */
++#if 0
+ static void *
+ xmlFileOpen_real (const char *filename) {
+     const char *path = filename;
+@@ -937,6 +933,7 @@
+     if (fd == NULL) xmlIOErr(0, path);
+     return((void *) fd);
+ }
++#endif
+ 
+ /**
+  * xmlFileOpen:
+@@ -947,6 +944,7 @@
+  *
+  * Returns a handler or NULL in case or failure
+  */
++#if 0
+ void *
+ xmlFileOpen (const char *filename) {
+     char *unescaped;
+@@ -963,8 +961,9 @@
+ 
+     return retval;
+ }
++#endif
+ 
+-#ifdef LIBXML_OUTPUT_ENABLED
++#if 0
+ /**
+  * xmlFileOpenW:
+  * @filename:  the URI for matching
+@@ -2322,8 +2314,6 @@
+     xmlInitPlatformSpecificIo();
+ #endif
+ 
+-    xmlRegisterInputCallbacks(xmlFileMatch, xmlFileOpen,
+-	                      xmlFileRead, xmlFileClose);
+ #ifdef HAVE_ZLIB_H
+     xmlRegisterInputCallbacks(xmlGzfileMatch, xmlGzfileOpen,
+ 	                      xmlGzfileRead, xmlGzfileClose);
+@@ -2360,8 +2350,6 @@
+     xmlInitPlatformSpecificIo();
+ #endif
+ 
+-    xmlRegisterOutputCallbacks(xmlFileMatch, xmlFileOpenW,
+-	                      xmlFileWrite, xmlFileClose);
+ 
+ #ifdef LIBXML_HTTP_ENABLED
+     xmlRegisterOutputCallbacks(xmlIOHTTPMatch, xmlIOHTTPDfltOpenW,
+@@ -3840,11 +3828,6 @@
+         if (cur == dir) dir[1] = 0;
+ 	else *cur = 0;
+ 	ret = xmlMemStrdup(dir);
+-    } else {
+-        if (getcwd(dir, 1024) != NULL) {
+-	    dir[1023] = 0;
+-	    ret = xmlMemStrdup(dir);
+-	}
+     }
+     return(ret);
+ #undef IS_XMLPGD_SEP
+--- xmlmemory.c
++++ xmlmemory.c
+@@ -655,12 +655,6 @@
+     if (nbBytes <= 0)
+         return;
+ 
+-    if (fp == NULL) {
+-	fp = fopen(".memorylist", "w");
+-	if (fp == NULL)
+-	    return;
+-    }
+-
+ #ifdef MEM_LIST
+     fprintf(fp,"   Last %li MEMORY ALLOCATED : %lu, MAX was %lu\n",
+             nbBytes, debugMemSize, debugMaxMemSize);
+@@ -728,12 +722,6 @@
+ #endif
+     FILE *old_fp = fp;
+ 
+-    if (fp == NULL) {
+-	fp = fopen(".memorylist", "w");
+-	if (fp == NULL)
+-	    return;
+-    }
+-
+ #ifdef MEM_LIST
+ #if defined(HAVE_LOCALTIME) && defined(HAVE_STRFTIME)
+     currentTime = time(NULL);
