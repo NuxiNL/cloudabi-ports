@@ -11,6 +11,7 @@ def build(ctx):
         'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=', 'install',
     ])
     stage.path('bin/xml2-config').unhardcode_paths()
+    stage.path('lib/xml2Conf.sh').unhardcode_paths()
     stage.install()
 
 package(
