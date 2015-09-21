@@ -1,0 +1,22 @@
+--- debug.c
++++ debug.c
+@@ -51,7 +51,7 @@
+ 		vsyslog(LOG_DEBUG, msg, ap);
+ 	} else
+ #endif
+-		vprintf(msg, ap);
++		vfprintf(stderr, msg, ap);
+     va_end(ap);
+   }
+ }
+--- linkhash.c
++++ linkhash.c
+@@ -28,7 +28,7 @@
+ {
+ 	va_list ap;
+ 	va_start(ap, msg);
+-	vprintf(msg, ap);
++	vfprintf(stderr, msg, ap);
+ 	va_end(ap);
+ 	exit(1);
+ }

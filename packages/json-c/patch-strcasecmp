@@ -1,0 +1,10 @@
+--- json_tokener.c
++++ json_tokener.c
+@@ -21,6 +21,7 @@
+ #include <stddef.h>
+ #include <ctype.h>
+ #include <string.h>
++#include <strings.h>
+ #include <limits.h>
+ 
+ #include "bits.h"
