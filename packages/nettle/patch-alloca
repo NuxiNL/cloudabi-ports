@@ -1,0 +1,30 @@
+--- ecc-point-mul-g.c
++++ ecc-point-mul-g.c
+@@ -36,6 +36,7 @@
+ #endif
+ 
+ #include <assert.h>
++#include <stdlib.h>
+ 
+ #include "ecc.h"
+ #include "ecc-internal.h"
+--- ecc-random.c
++++ ecc-random.c
+@@ -36,6 +36,7 @@
+ #endif
+ 
+ #include <assert.h>
++#include <stdlib.h>
+ 
+ #include "ecc.h"
+ #include "ecc-internal.h"
+--- getopt.c
++++ getopt.c
+@@ -30,6 +30,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ /* Comment out all this code if we are using the GNU C Library, and are not
+    actually compiling the library itself.  This code is part of the GNU C
