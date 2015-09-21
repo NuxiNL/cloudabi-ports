@@ -90,10 +90,7 @@ class FileHandle:
         self.run([self._builder.get_make(), 'DESTDIR=' + stagedir] + args)
         return FileHandle(
             self._builder,
-            os.path.join(
-                stagedir,
-                self._builder.get_prefix()[
-                    1:]))
+            os.path.join(stagedir, self._builder.get_prefix()[1:]))
 
     def path(self, path):
         return FileHandle(self._builder, os.path.join(self._path, path))
