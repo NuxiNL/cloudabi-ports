@@ -1,0 +1,100 @@
+--- gmp-h.in
++++ gmp-h.in
+@@ -597,9 +589,6 @@
+ __GMP_DECLSPEC int gmp_fscanf (FILE *, const char *, ...);
+ #endif
+ 
+-#define gmp_scanf __gmp_scanf
+-__GMP_DECLSPEC int gmp_scanf (const char *, ...);
+-
+ #define gmp_sscanf __gmp_sscanf
+ __GMP_DECLSPEC int gmp_sscanf (const char *, const char *, ...);
+ 
+@@ -608,11 +597,6 @@
+ __GMP_DECLSPEC int gmp_vfscanf (FILE *, const char *, va_list);
+ #endif
+ 
+-#define gmp_vscanf __gmp_vscanf
+-#if defined (_GMP_H_HAVE_VA_LIST)
+-__GMP_DECLSPEC int gmp_vscanf (const char *, va_list);
+-#endif
+-
+ #define gmp_vsscanf __gmp_vsscanf
+ #if defined (_GMP_H_HAVE_VA_LIST)
+ __GMP_DECLSPEC int gmp_vsscanf (const char *, const char *, va_list);
+--- mpf/inp_str.c
++++ mpf/inp_str.c
+@@ -43,9 +43,6 @@
+   int res;
+   size_t nread;
+ 
+-  if (stream == 0)
+-    stream = stdin;
+-
+   alloc_size = 100;
+   str = (char *) (*__gmp_allocate_func) (alloc_size);
+   str_size = 0;
+--- mpq/inp_str.c
++++ mpq/inp_str.c
+@@ -40,9 +40,6 @@
+   size_t  nread;
+   int     c;
+ 
+-  if (fp == NULL)
+-    fp = stdin;
+-
+   SIZ(DEN(q)) = 1;
+   PTR(DEN(q))[0] = 1;
+ 
+--- mpz/inp_raw.c
++++ mpz/inp_raw.c
+@@ -71,9 +71,6 @@
+   mp_ptr         xp, sp, ep;
+   mp_limb_t      slimb, elimb;
+ 
+-  if (fp == 0)
+-    fp = stdin;
+-
+   /* 4 bytes for size */
+   if (fread (csize_bytes, sizeof (csize_bytes), 1, fp) != 1)
+     return 0;
+--- mpz/inp_str.c
++++ mpz/inp_str.c
+@@ -48,9 +48,6 @@
+   int c;
+   size_t nread;
+ 
+-  if (stream == 0)
+-    stream = stdin;
+-
+   nread = 0;
+ 
+   /* Skip whitespace.  */
+--- scanf/scanf.c
++++ scanf/scanf.c
+@@ -35,6 +35,7 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_scanf (const char *fmt, ...)
+ {
+@@ -46,3 +47,4 @@
+   va_end (ap);
+   return ret;
+ }
++#endif
+--- scanf/vscanf.c
++++ scanf/vscanf.c
+@@ -36,8 +36,10 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_vscanf (const char *fmt, va_list ap)
+ {
+   return __gmp_doscan (&__gmp_fscanf_funs, stdin, fmt, ap);
+ }
++#endif

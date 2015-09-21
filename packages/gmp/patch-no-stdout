@@ -1,0 +1,176 @@
+--- gmp-h.in
++++ gmp-h.in
+@@ -555,9 +555,6 @@
+ __GMP_DECLSPEC int gmp_obstack_vprintf (struct obstack *, const char *, va_list);
+ #endif
+ 
+-#define gmp_printf __gmp_printf
+-__GMP_DECLSPEC int gmp_printf (const char *, ...);
+-
+ #define gmp_snprintf __gmp_snprintf
+ __GMP_DECLSPEC int gmp_snprintf (char *, size_t, const char *, ...);
+ 
+@@ -574,11 +571,6 @@
+ __GMP_DECLSPEC int gmp_vfprintf (FILE *, const char *, va_list);
+ #endif
+ 
+-#define gmp_vprintf __gmp_vprintf
+-#if defined (_GMP_H_HAVE_VA_LIST)
+-__GMP_DECLSPEC int gmp_vprintf (const char *, va_list);
+-#endif
+-
+ #define gmp_vsnprintf __gmp_vsnprintf
+ #if defined (_GMP_H_HAVE_VA_LIST)
+ __GMP_DECLSPEC int gmp_vsnprintf (char *, size_t, const char *, va_list);
+@@ -741,9 +725,6 @@
+ #define mpz_divisible_2exp_p __gmpz_divisible_2exp_p
+ __GMP_DECLSPEC int mpz_divisible_2exp_p (mpz_srcptr, mp_bitcnt_t) __GMP_NOTHROW __GMP_ATTRIBUTE_PURE;
+ 
+-#define mpz_dump __gmpz_dump
+-__GMP_DECLSPEC void mpz_dump (mpz_srcptr);
+-
+ #define mpz_export __gmpz_export
+ __GMP_DECLSPEC void *mpz_export (void *, size_t *, int, size_t, int, size_t, mpz_srcptr);
+ 
+@@ -1288,9 +1269,6 @@
+ #define mpf_div_ui __gmpf_div_ui
+ __GMP_DECLSPEC void mpf_div_ui (mpf_ptr, mpf_srcptr, unsigned long int);
+ 
+-#define mpf_dump __gmpf_dump
+-__GMP_DECLSPEC void mpf_dump (mpf_srcptr);
+-
+ #define mpf_eq __gmpf_eq
+ __GMP_DECLSPEC int mpf_eq (mpf_srcptr, mpf_srcptr, mp_bitcnt_t) __GMP_ATTRIBUTE_PURE;
+ 
+--- gmp-impl.h
++++ gmp-impl.h
+@@ -1050,9 +1050,6 @@
+ #define mpn_divrem_1c __MPN(divrem_1c)
+ __GMP_DECLSPEC mp_limb_t mpn_divrem_1c (mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t);
+ 
+-#define mpn_dump __MPN(dump)
+-__GMP_DECLSPEC void mpn_dump (mp_srcptr, mp_size_t);
+-
+ #define mpn_fib2_ui __MPN(fib2_ui)
+ __GMP_DECLSPEC mp_size_t mpn_fib2_ui (mp_ptr, mp_ptr, unsigned long);
+ 
+--- mpf/dump.c
++++ mpf/dump.c
+@@ -38,6 +38,7 @@
+ #include "gmp.h"
+ #include "gmp-impl.h"
+ 
++#if 0
+ void
+ mpf_dump (mpf_srcptr u)
+ {
+@@ -51,3 +52,4 @@
+     printf ("0.%se%ld\n", str, exp);
+   (*__gmp_free_func) (str, strlen (str) + 1);
+ }
++#endif
+--- mpf/out_str.c
++++ mpf/out_str.c
+@@ -65,9 +65,6 @@
+   if (n_digits == 0)
+     MPF_SIGNIFICANT_DIGITS (n_digits, base, op->_mp_prec);
+ 
+-  if (stream == 0)
+-    stream = stdout;
+-
+   /* Consider these changes:
+      * Don't allocate memory here for huge n_digits; pass NULL to mpf_get_str.
+      * Make mpf_get_str allocate extra space when passed NULL, to avoid
+--- mpn/generic/dump.c
++++ mpn/generic/dump.c
+@@ -35,6 +35,7 @@
+ #include "gmp.h"
+ #include "gmp-impl.h"
+ 
++#if 0
+ #if GMP_NUMB_BITS % 4 == 0
+ void
+ mpn_dump (mp_srcptr ptr, mp_size_t n)
+@@ -98,3 +99,4 @@
+ }
+ 
+ #endif
++#endif
+--- mpq/out_str.c
++++ mpq/out_str.c
+@@ -39,9 +39,6 @@
+ {
+   size_t  written;
+ 
+-  if (stream == NULL)
+-    stream = stdout;
+-
+   written = mpz_out_str (stream, base, mpq_numref (q));
+ 
+   if (mpz_cmp_ui (mpq_denref (q), 1) != 0)
+--- mpz/dump.c
++++ mpz/dump.c
+@@ -38,6 +38,7 @@
+ #include "gmp.h"
+ #include "gmp-impl.h"
+ 
++#if 0
+ void
+ mpz_dump (mpz_srcptr u)
+ {
+@@ -47,3 +48,4 @@
+   printf ("%s\n", str);
+   (*__gmp_free_func) (str, strlen (str) + 1);
+ }
++#endif
+--- mpz/out_raw.c
++++ mpz/out_raw.c
+@@ -163,8 +163,6 @@
+   bp[-1] = bytes;
+   bp -= 4;
+ 
+-  if (fp == 0)
+-    fp = stdout;
+   if (fwrite (bp, ssize, 1, fp) != 1)
+     ssize = 0;
+ 
+--- mpz/out_str.c
++++ mpz/out_str.c
+@@ -47,9 +47,6 @@
+   const char *num_to_text;
+   TMP_DECL;
+ 
+-  if (stream == 0)
+-    stream = stdout;
+-
+   if (base >= 0)
+     {
+       num_to_text = "0123456789abcdefghijklmnopqrstuvwxyz";
+--- printf/printf.c
++++ printf/printf.c
+@@ -35,6 +35,7 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_printf (const char *fmt, ...)
+ {
+@@ -47,3 +48,4 @@
+   va_end (ap);
+   return ret;
+ }
++#endif
+--- printf/vprintf.c
++++ printf/vprintf.c
+@@ -35,8 +35,10 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_vprintf (const char *fmt, va_list ap)
+ {
+   return __gmp_doprnt (&__gmp_fprintf_funs, stdout, fmt, ap);
+ }
++#endif

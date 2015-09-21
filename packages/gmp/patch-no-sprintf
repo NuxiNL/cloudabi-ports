@@ -1,0 +1,79 @@
+--- gmp-h.in
++++ gmp-h.in
+@@ -561,9 +561,6 @@
+ #define gmp_snprintf __gmp_snprintf
+ __GMP_DECLSPEC int gmp_snprintf (char *, size_t, const char *, ...);
+ 
+-#define gmp_sprintf __gmp_sprintf
+-__GMP_DECLSPEC int gmp_sprintf (char *, const char *, ...);
+-
+ #define gmp_vasprintf __gmp_vasprintf
+ #if defined (_GMP_H_HAVE_VA_LIST)
+ __GMP_DECLSPEC int gmp_vasprintf (char **, const char *, va_list);
+@@ -584,11 +581,6 @@
+ __GMP_DECLSPEC int gmp_vsnprintf (char *, size_t, const char *, va_list);
+ #endif
+ 
+-#define gmp_vsprintf __gmp_vsprintf
+-#if defined (_GMP_H_HAVE_VA_LIST)
+-__GMP_DECLSPEC int gmp_vsprintf (char *, const char *, va_list);
+-#endif
+-
+ 
+ /**************** Formatted input routines.  ****************/
+ 
+--- gmp-impl.h
++++ gmp-impl.h
+@@ -4416,7 +4416,6 @@
+ };
+ 
+ extern const struct doprnt_funs_t  __gmp_fprintf_funs;
+-extern const struct doprnt_funs_t  __gmp_sprintf_funs;
+ extern const struct doprnt_funs_t  __gmp_snprintf_funs;
+ extern const struct doprnt_funs_t  __gmp_obstack_printf_funs;
+ extern const struct doprnt_funs_t  __gmp_ostream_funs;
+--- printf/sprintf.c
++++ printf/sprintf.c
+@@ -35,6 +35,7 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_sprintf (char *buf, const char *fmt, ...)
+ {
+@@ -53,3 +54,4 @@
+ 
+   return ret;
+ }
++#endif
+--- printf/sprintffuns.c
++++ printf/sprintffuns.c
+@@ -49,6 +49,7 @@
+ /* If vsprintf returns -1 then pass it upwards.  It doesn't matter that
+    "*bufp" is ruined in this case, since gmp_doprint will bail out
+    immediately anyway.  */
++#if 0
+ static int
+ gmp_sprintf_format (char **bufp, const char *fmt, va_list ap)
+ {
+@@ -93,3 +94,4 @@
+   (doprnt_reps_t)   gmp_sprintf_reps,
+   (doprnt_final_t)  gmp_sprintf_final
+ };
++#endif
+--- printf/vsprintf.c
++++ printf/vsprintf.c
+@@ -35,6 +35,7 @@
+ #include "gmp-impl.h"
+ 
+ 
++#if 0
+ int
+ gmp_vsprintf (char *buf, const char *fmt, va_list ap)
+ {
+@@ -49,3 +50,4 @@
+ 
+   return ret;
+ }
++#endif
