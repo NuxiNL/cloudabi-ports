@@ -1,0 +1,149 @@
+--- src/dump.c
++++ src/dump.c
+@@ -22,9 +22,11 @@
+ 
+ #include "mpfr-impl.h"
+ 
++#if 0
+ void
+ mpfr_dump (mpfr_srcptr u)
+ {
+   mpfr_print_binary(u);
+   putchar('\n');
+ }
++#endif
+--- src/inp_str.c
++++ src/inp_str.c
+@@ -37,9 +37,6 @@
+   int retval;
+   size_t nread;
+ 
+-  if (stream == NULL)
+-    stream = stdin;
+-
+   alloc_size = 100;
+   str = (unsigned char *) (*__gmp_allocate_func) (alloc_size);
+   str_size = 0;
+--- src/mpfr-impl.h
++++ src/mpfr-impl.h
+@@ -1853,9 +1853,6 @@
+ #ifdef _MPFR_H_HAVE_FILE
+ __MPFR_DECLSPEC void mpfr_fprint_binary _MPFR_PROTO ((FILE *, mpfr_srcptr));
+ #endif
+-__MPFR_DECLSPEC void mpfr_print_binary _MPFR_PROTO ((mpfr_srcptr));
+-__MPFR_DECLSPEC void mpfr_print_mant_binary _MPFR_PROTO ((const char*,
+-                                          const mp_limb_t*, mpfr_prec_t));
+ __MPFR_DECLSPEC void mpfr_set_str_binary _MPFR_PROTO((mpfr_ptr, const char*));
+ 
+ __MPFR_DECLSPEC int mpfr_round_raw _MPFR_PROTO ((mp_limb_t *,
+@@ -1908,10 +1905,6 @@
+ __MPFR_DECLSPEC int mpfr_round_p _MPFR_PROTO ((mp_limb_t *, mp_size_t,
+                                                mpfr_exp_t, mpfr_prec_t));
+ 
+-__MPFR_DECLSPEC void mpfr_dump_mant _MPFR_PROTO ((const mp_limb_t *,
+-                                                  mpfr_prec_t, mpfr_prec_t,
+-                                                  mpfr_prec_t));
+-
+ __MPFR_DECLSPEC int mpfr_round_near_x _MPFR_PROTO ((mpfr_ptr, mpfr_srcptr,
+                                                     mpfr_uexp_t, int,
+                                                     mpfr_rnd_t));
+--- src/mpfr.h
++++ src/mpfr.h
+@@ -430,11 +430,8 @@
+ __MPFR_DECLSPEC void mpfr_nextbelow _MPFR_PROTO ((mpfr_ptr));
+ __MPFR_DECLSPEC void mpfr_nexttoward _MPFR_PROTO ((mpfr_ptr, mpfr_srcptr));
+ 
+-__MPFR_DECLSPEC int mpfr_printf _MPFR_PROTO ((__gmp_const char*, ...));
+ __MPFR_DECLSPEC int mpfr_asprintf _MPFR_PROTO ((char**, __gmp_const char*,
+                                                 ...));
+-__MPFR_DECLSPEC int mpfr_sprintf _MPFR_PROTO ((char*, __gmp_const char*,
+-                                               ...));
+ __MPFR_DECLSPEC int mpfr_snprintf _MPFR_PROTO ((char*, size_t,
+                                                 __gmp_const char*, ...));
+ 
+@@ -597,7 +594,6 @@
+ __MPFR_DECLSPEC void mpfr_extract _MPFR_PROTO ((mpz_ptr, mpfr_srcptr,
+                                                 unsigned int));
+ __MPFR_DECLSPEC void mpfr_swap _MPFR_PROTO ((mpfr_ptr, mpfr_ptr));
+-__MPFR_DECLSPEC void mpfr_dump _MPFR_PROTO ((mpfr_srcptr));
+ 
+ __MPFR_DECLSPEC int mpfr_nan_p _MPFR_PROTO((mpfr_srcptr));
+ __MPFR_DECLSPEC int mpfr_inf_p _MPFR_PROTO((mpfr_srcptr));
+@@ -1017,15 +1013,10 @@
+ extern "C" {
+ #endif
+ 
+-#define mpfr_vprintf __gmpfr_vprintf
+ #define mpfr_vasprintf __gmpfr_vasprintf
+-#define mpfr_vsprintf __gmpfr_vsprintf
+ #define mpfr_vsnprintf __gmpfr_vsnprintf
+-__MPFR_DECLSPEC int mpfr_vprintf _MPFR_PROTO ((__gmp_const char*, va_list));
+ __MPFR_DECLSPEC int mpfr_vasprintf _MPFR_PROTO ((char**, __gmp_const char*,
+                                                  va_list));
+-__MPFR_DECLSPEC int mpfr_vsprintf _MPFR_PROTO ((char*, __gmp_const char*,
+-                                               va_list));
+ __MPFR_DECLSPEC int mpfr_vsnprintf _MPFR_PROTO ((char*, size_t,
+                                                 __gmp_const char*, va_list));
+ 
+--- src/out_str.c
++++ src/out_str.c
+@@ -43,10 +43,6 @@
+ 
+   MPFR_ASSERTN (base >= 2 && base <= 62);
+ 
+-  /* when stream=NULL, output to stdout */
+-  if (stream == NULL)
+-    stream = stdout;
+-
+   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (op)))
+     {
+       if (MPFR_IS_NAN (op))
+--- src/print_raw.c
++++ src/print_raw.c
+@@ -72,6 +72,7 @@
+     }
+ }
+ 
++#if 0
+ void
+ mpfr_print_binary (mpfr_srcptr x)
+ {
+@@ -127,3 +128,4 @@
+     }
+   putchar('\n');
+ }
++#endif
+--- src/printf.c
++++ src/printf.c
+@@ -79,6 +79,7 @@
+         }                                       \
+     } while (0)
+ 
++#if 0
+ int
+ mpfr_printf (const char *fmt, ...)
+ {
+@@ -104,6 +105,7 @@
+   mpfr_free_str (str);
+   return ret;
+ }
++#endif
+ 
+ 
+ int
+@@ -133,6 +135,7 @@
+ }
+ #endif /* _MPFR_H_HAVE_FILE */
+ 
++#if 0
+ int
+ mpfr_sprintf (char *buf, const char *fmt, ...)
+ {
+@@ -158,6 +161,7 @@
+   mpfr_free_str (str);
+   return ret;
+ }
++#endif
+ 
+ int
+ mpfr_snprintf (char *buf, size_t size, const char *fmt, ...)
