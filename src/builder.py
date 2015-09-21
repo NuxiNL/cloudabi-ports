@@ -290,12 +290,17 @@ class TargetBuilder(Builder):
             relpath = os.path.relpath(target_file, self._install_directory)
             ext = os.path.splitext(source_file)[1]
             if ext in {'.la', '.pc'}:
-                # Remove references to the installation prefix and the localbase
-                # directory from libtool archives and pkg-config files.
+                # Remove references to the installation prefix and the
+                # localbase directory from libtool archives and
+                # pkg-config files.
                 self._unhardcode(source_file, target_file + '.template')
             elif relpath.startswith('share/man/') and ext != '.gz':
                 # Compress manual pages.
                 util.gzip_file(source_file, target_file + '.gz')
+            elif relpath == 'share/info/dir':
+                # Don't install the GNU Info directory, as it should be
+                # regenerated based on the set of packages installed.
+                pass
             else:
                 # Copy other files literally.
                 util.copy_file(source_file, target_file, False)
