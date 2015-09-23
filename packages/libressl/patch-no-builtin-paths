@@ -30,6 +30,17 @@
  
  /* This function takes a list separated by 'sep' and calls the
   * callback function giving the start and length of each member
+--- crypto/cversion.c
++++ crypto/cversion.c
+@@ -73,8 +73,6 @@
+ 		return("compiler: information not available");
+ 	case SSLEAY_PLATFORM:
+ 		return("platform: information not available");
+-	case SSLEAY_DIR:
+-		return "OPENSSLDIR: \"" OPENSSLDIR "\"";
+ 	}
+ 	return("not available");
+ }
 --- crypto/x509/x509_def.c
 +++ crypto/x509/x509_def.c
 @@ -61,6 +61,7 @@
@@ -55,6 +66,16 @@
  
  int CONF_parse_list(const char *list, int sep, int nospc,
      int (*list_cb)(const char *elem, int len, void *usr), void *arg);
+--- include/openssl/crypto.h
++++ include/openssl/crypto.h
+@@ -140,7 +140,6 @@
+ #define SSLEAY_CFLAGS		2
+ #define SSLEAY_BUILT_ON		3
+ #define SSLEAY_PLATFORM		4
+-#define SSLEAY_DIR		5
+ 
+ /* A generic structure to pass assorted data in a expandable way */
+ typedef struct openssl_item_st {
 --- include/openssl/x509.h
 +++ include/openssl/x509.h
 @@ -779,12 +779,6 @@
