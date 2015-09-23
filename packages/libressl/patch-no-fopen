@@ -392,6 +392,21 @@
  
  	if (SSL_CTX_check_private_key(ctx->ssl_ctx) != 1) {
  		tls_set_error(ctx, "private/public key mismatch");
+--- tls/tls_client.c
++++ tls/tls_client.c
+@@ -211,10 +211,12 @@
+ 				    "ssl verify memory setup failure");
+ 				goto err;
+ 			}
++#if 0
+ 		} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
+ 		    ctx->config->ca_file, ctx->config->ca_path) != 1) {
+ 			tls_set_error(ctx, "ssl verify setup failure");
+ 			goto err;
++#endif
+ 		}
+ 		if (ctx->config->verify_depth >= 0)
+ 			SSL_CTX_set_verify_depth(ctx->ssl_ctx,
 --- tls/tls_config.c
 +++ tls/tls_config.c
 @@ -68,8 +68,6 @@
