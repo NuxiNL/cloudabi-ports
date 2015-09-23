@@ -95,9 +95,9 @@ class TargetPackage:
 
         # Perform the build inside a buildroot with its dependencies
         # installed in place.
-        self.initialize_buildroot(
-            {'autoconf', 'binutils', 'cmake', 'llvm', 'make', 'pkgconf'},
-            self._lib_depends)
+        self.initialize_buildroot({
+            'autoconf', 'binutils', 'bison', 'cmake', 'llvm', 'make', 'pkgconf'
+        }, self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
