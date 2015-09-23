@@ -1,0 +1,773 @@
+--- crypto/bio/b_sock.c
++++ crypto/bio/b_sock.c
+@@ -75,6 +75,7 @@
+ #include <openssl/buffer.h>
+ #include <openssl/err.h>
+ 
++#if 0
+ int
+ BIO_get_host_ip(const char *str, unsigned char *ip)
+ {
+@@ -110,6 +111,7 @@
+ 	} else
+ 		return 1;
+ }
++#endif
+ 
+ int
+ BIO_get_port(const char *str, unsigned short *port_ptr)
+@@ -186,11 +188,13 @@
+ 	return (err);
+ }
+ 
++#if 0
+ struct hostent *
+ BIO_gethostbyname(const char *name)
+ {
+ 	return gethostbyname(name);
+ }
++#endif
+ 
+ int
+ BIO_socket_ioctl(int fd, long type, void *arg)
+@@ -203,6 +207,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ BIO_get_accept_socket(char *host, int bind_mode)
+ {
+@@ -360,6 +365,7 @@
+ 	}
+ 	return (s);
+ }
++#endif
+ 
+ int
+ BIO_accept(int sock, char **addr)
+@@ -437,8 +443,10 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ BIO_set_tcp_ndelay(int s, int on)
+ {
+ 	return (setsockopt(s, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == 0);
+ }
++#endif
+--- crypto/bio/bss_acpt.c
++++ crypto/bio/bss_acpt.c
+@@ -200,6 +200,7 @@
+ again:
+ 	switch (c->state) {
+ 	case ACPT_S_BEFORE:
++#if 0
+ 		if (c->param_addr == NULL) {
+ 			BIOerr(BIO_F_ACPT_STATE, BIO_R_NO_ACCEPT_PORT_SPECIFIED);
+ 			return (-1);
+@@ -220,6 +221,9 @@
+ 		c->state = ACPT_S_GET_ACCEPT_SOCKET;
+ 		return (1);
+ 		/* break; */
++#endif
++		BIOerr(BIO_F_ACPT_STATE, BIO_R_UNABLE_TO_BIND_SOCKET);
++		return (-1);
+ 	case ACPT_S_GET_ACCEPT_SOCKET:
+ 		if (b->next_bio != NULL) {
+ 			c->state = ACPT_S_OK;
+--- crypto/bio/bss_conn.c
++++ crypto/bio/bss_conn.c
+@@ -166,10 +166,8 @@
+ 			break;
+ 
+ 		case BIO_CONN_S_GET_IP:
+-			if (BIO_get_host_ip(c->param_hostname, &(c->ip[0])) <= 0)
+-				goto exit_loop;
+-			c->state = BIO_CONN_S_GET_PORT;
+-			break;
++			BIOerr(BIO_F_BIO_GET_HOST_IP, BIO_R_BAD_HOSTNAME_LOOKUP);
++			goto exit_loop;
+ 
+ 		case BIO_CONN_S_GET_PORT:
+ 			if (c->param_port == NULL) {
+@@ -232,6 +230,7 @@
+ 			break;
+ 
+ 		case BIO_CONN_S_CONNECT:
++#if 0
+ 			BIO_clear_retry_flags(b);
+ 			ret = connect(b->num,
+ 			(struct sockaddr *)&c->them,
+@@ -253,6 +252,9 @@
+ 			} else
+ 				c->state = BIO_CONN_S_OK;
+ 			break;
++#endif
++			BIOerr(BIO_F_CONN_STATE, BIO_R_CONNECT_ERROR);
++			return (-1);
+ 
+ 		case BIO_CONN_S_BLOCKED_CONNECT:
+ 			i = BIO_sock_error(b->num);
+--- crypto/bio/bss_dgram.c
++++ crypto/bio/bss_dgram.c
+@@ -291,6 +291,7 @@
+ 	bio_dgram_data *data = (bio_dgram_data *)b->ptr;
+ 	errno = 0;
+ 
++#if 0
+ 	if (data->connected)
+ 		ret = write(b->num, in, inl);
+ 	else {
+@@ -302,6 +303,8 @@
+ 			peerlen = sizeof(data->peer.sa_in6);
+ 		ret = sendto(b->num, in, inl, 0, &data->peer.sa, peerlen);
+ 	}
++#endif
++	ret = write(b->num, in, inl);
+ 
+ 	BIO_clear_retry_flags(b);
+ 	if (ret <= 0) {
+--- crypto/bio/bss_file.c
++++ crypto/bio/bss_file.c
+@@ -110,6 +110,7 @@
+ 	.destroy = file_free
+ };
+ 
++#if 0
+ BIO *
+ BIO_new_file(const char *filename, const char *mode)
+ {
+@@ -135,6 +136,7 @@
+ 	BIO_set_fp(ret, file, BIO_CLOSE);
+ 	return (ret);
+ }
++#endif
+ 
+ BIO *
+ BIO_new_fp(FILE *stream, int close_flag)
+@@ -232,6 +234,7 @@
+ 		b->ptr = ptr;
+ 		b->init = 1;
+ 		break;
++#if 0
+ 	case BIO_C_SET_FILENAME:
+ 		file_free(b);
+ 		b->shutdown = (int)num&BIO_CLOSE;
+@@ -261,6 +264,7 @@
+ 		b->ptr = fp;
+ 		b->init = 1;
+ 		break;
++#endif
+ 	case BIO_C_GET_FILE_PTR:
+ 		/* the ptr parameter is actually a FILE ** in this case. */
+ 		if (ptr != NULL) {
+--- crypto/rand/randfile.c
++++ crypto/rand/randfile.c
+@@ -86,6 +86,7 @@
+ 		return bytes;
+ }
+ 
++#if 0
+ int
+ RAND_write_file(const char *file)
+ {
+@@ -133,6 +134,7 @@
+ 	OPENSSL_cleanse(buf, BUFSIZE);
+ 	return ret;
+ }
++#endif
+ 
+ const char *
+ RAND_file_name(char * buf, size_t size)
+--- crypto/ui/ui_lib.c
++++ crypto/ui/ui_lib.c
+@@ -66,8 +66,6 @@
+ 
+ #include "ui_locl.h"
+ 
+-static const UI_METHOD *default_UI_meth = NULL;
+-
+ UI *
+ UI_new(void)
+ {
+@@ -84,10 +82,7 @@
+ 		UIerr(UI_F_UI_NEW_METHOD, ERR_R_MALLOC_FAILURE);
+ 		return NULL;
+ 	}
+-	if (method == NULL)
+-		ret->meth = UI_get_default_method();
+-	else
+-		ret->meth = method;
++	ret->meth = method;
+ 
+ 	ret->strings = NULL;
+ 	ret->user_data = NULL;
+@@ -555,6 +550,7 @@
+ 	return (CRYPTO_get_ex_data(&r->ex_data, idx));
+ }
+ 
++#if 0
+ void
+ UI_set_default_method(const UI_METHOD *meth)
+ {
+@@ -569,6 +565,7 @@
+ 	}
+ 	return default_UI_meth;
+ }
++#endif
+ 
+ const UI_METHOD *
+ UI_get_method(UI *ui)
+--- crypto/ui/ui_openssl.c
++++ crypto/ui/ui_openssl.c
+@@ -114,6 +114,7 @@
+  * [including the GNU Public Licence.]
+  */
+ 
++#if 0
+ #include <sys/ioctl.h>
+ 
+ #include <openssl/opensslconf.h>
+@@ -395,3 +396,4 @@
+ {
+ 	intr_signal = i;
+ }
++#endif
+--- crypto/x509/by_dir.c
++++ crypto/x509/by_dir.c
+@@ -72,6 +72,7 @@
+ 
+ # include <sys/stat.h>
+ 
++#if 0
+ typedef struct lookup_dir_hashes_st {
+ 	unsigned long hash;
+ 	int suffix;
+@@ -420,3 +421,4 @@
+ 		BUF_MEM_free(b);
+ 	return (ok);
+ }
++#endif
+--- crypto/x509/by_file.c
++++ crypto/x509/by_file.c
+@@ -67,6 +67,7 @@
+ #include <openssl/lhash.h>
+ #include <openssl/x509.h>
+ 
++#if 0
+ static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
+     long argl, char **ret);
+ 
+@@ -272,4 +273,5 @@
+ 	sk_X509_INFO_pop_free(inf, X509_INFO_free);
+ 	return count;
+ }
++#endif
+ 
+--- crypto/x509/x509_d2.c
++++ crypto/x509/x509_d2.c
+@@ -63,6 +63,7 @@
+ #include <openssl/err.h>
+ #include <openssl/x509.h>
+ 
++#if 0
+ int
+ X509_STORE_set_default_paths(X509_STORE *ctx)
+ {
+@@ -107,6 +108,7 @@
+ 		return (0);
+ 	return (1);
+ }
++#endif
+ 
+ int
+ X509_STORE_load_mem(X509_STORE *ctx, void *buf, int len)
+--- include/compat/netinet/tcp.h
++++ include/compat/netinet/tcp.h
+@@ -3,8 +3,3 @@
+  * netinet/tcp.h compatibility shim
+  */
+ 
+-#ifndef _WIN32
+-#include_next <netinet/tcp.h>
+-#else
+-#include <win32netcompat.h>
+-#endif
+--- include/openssl/bio.h
++++ include/openssl/bio.h
+@@ -347,7 +347,6 @@
+ #define BIO_C_GET_FD				105
+ #define BIO_C_SET_FILE_PTR			106
+ #define BIO_C_GET_FILE_PTR			107
+-#define BIO_C_SET_FILENAME			108
+ #define BIO_C_SET_SSL				109
+ #define BIO_C_GET_SSL				110
+ #define BIO_C_SET_MD				111
+@@ -457,14 +456,6 @@
+ 
+ /* name is cast to lose const, but might be better to route through a function
+    so we can do it safely */
+-#define BIO_read_filename(b,name) BIO_ctrl(b,BIO_C_SET_FILENAME, \
+-		BIO_CLOSE|BIO_FP_READ,(char *)name)
+-#define BIO_write_filename(b,name) BIO_ctrl(b,BIO_C_SET_FILENAME, \
+-		BIO_CLOSE|BIO_FP_WRITE,name)
+-#define BIO_append_filename(b,name) BIO_ctrl(b,BIO_C_SET_FILENAME, \
+-		BIO_CLOSE|BIO_FP_APPEND,name)
+-#define BIO_rw_filename(b,name) BIO_ctrl(b,BIO_C_SET_FILENAME, \
+-		BIO_CLOSE|BIO_FP_READ|BIO_FP_WRITE,name)
+ 
+ /* WARNING WARNING, this ups the reference count on the read bio of the
+  * SSL structure.  This is because the ssl read BIO is now pointed to by
+@@ -640,7 +631,6 @@
+ int BIO_dump_indent(BIO *b, const char *bytes, int len, int indent);
+ int BIO_dump_fp(FILE *fp, const char *s, int len);
+ int BIO_dump_indent_fp(FILE *fp, const char *s, int len, int indent);
+-struct hostent *BIO_gethostbyname(const char *name);
+ /* We might want a thread-safe interface too:
+  * struct hostent *BIO_gethostbyname_r(const char *name,
+  *     struct hostent *result, void *buffer, size_t buflen);
+@@ -653,12 +643,9 @@
+ int BIO_socket_ioctl(int fd, long type, void *arg);
+ int BIO_socket_nbio(int fd, int mode);
+ int BIO_get_port(const char *str, unsigned short *port_ptr);
+-int BIO_get_host_ip(const char *str, unsigned char *ip);
+-int BIO_get_accept_socket(char *host_port, int mode);
+ int BIO_accept(int sock, char **ip_port);
+ int BIO_sock_init(void );
+ void BIO_sock_cleanup(void);
+-int BIO_set_tcp_ndelay(int sock, int turn_on);
+ 
+ BIO *BIO_new_socket(int sock, int close_flag);
+ BIO *BIO_new_dgram(int fd, int close_flag);
+--- include/openssl/rand.h
++++ include/openssl/rand.h
+@@ -95,7 +95,6 @@
+ void RAND_seed(const void *buf, int num);
+ void RAND_add(const void *buf, int num, double entropy);
+ int  RAND_load_file(const char *file, long max_bytes);
+-int  RAND_write_file(const char *file);
+ const char *RAND_file_name(char *file, size_t num);
+ int RAND_status(void);
+ int RAND_poll(void);
+--- include/openssl/ssl.h
++++ include/openssl/ssl.h
+@@ -1570,19 +1570,7 @@
+ int	SSL_use_certificate(SSL *ssl, X509 *x);
+ int	SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len);
+ 
+-int	SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type);
+-int	SSL_use_PrivateKey_file(SSL *ssl, const char *file, int type);
+-int	SSL_use_certificate_file(SSL *ssl, const char *file, int type);
+-int	SSL_CTX_use_RSAPrivateKey_file(SSL_CTX *ctx, const char *file, int type);
+-int	SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type);
+-int	SSL_CTX_use_certificate_file(SSL_CTX *ctx, const char *file, int type);
+-int	SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file); /* PEM type */
+ int	SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len);
+-STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file);
+-int	SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *stackCAs,
+-	    const char *file);
+-int	SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stackCAs,
+-	    const char *dir);
+ 
+ void	SSL_load_error_strings(void );
+ const char *SSL_state_string(const SSL *s);
+@@ -1748,9 +1736,6 @@
+ void SSL_set_shutdown(SSL *ssl,int mode);
+ int SSL_get_shutdown(const SSL *ssl);
+ int SSL_version(const SSL *ssl);
+-int SSL_CTX_set_default_verify_paths(SSL_CTX *ctx);
+-int SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile,
+-    const char *CApath);
+ int SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len);
+ #define SSL_get0_session SSL_get_session /* just peek at pointer */
+ SSL_SESSION *SSL_get_session(const SSL *ssl);
+--- include/openssl/ui.h
++++ include/openssl/ui.h
+@@ -235,13 +235,10 @@
+ void *UI_get_ex_data(UI *r, int idx);
+ 
+ /* Use specific methods instead of the built-in one */
+-void UI_set_default_method(const UI_METHOD *meth);
+-const UI_METHOD *UI_get_default_method(void);
+ const UI_METHOD *UI_get_method(UI *ui);
+ const UI_METHOD *UI_set_method(UI *ui, const UI_METHOD *meth);
+ 
+ /* The method with all the built-in thingies */
+-UI_METHOD *UI_OpenSSL(void);
+ 
+ 
+ /* ---------- For method writers ---------- */
+--- include/openssl/x509_vfy.h
++++ include/openssl/x509_vfy.h
+@@ -428,8 +428,6 @@
+ 
+ X509_LOOKUP *X509_STORE_add_lookup(X509_STORE *v, X509_LOOKUP_METHOD *m);
+ 
+-X509_LOOKUP_METHOD *X509_LOOKUP_hash_dir(void);
+-X509_LOOKUP_METHOD *X509_LOOKUP_file(void);
+ X509_LOOKUP_METHOD *X509_LOOKUP_mem(void);
+ 
+ int X509_STORE_add_cert(X509_STORE *ctx, X509 *x);
+@@ -441,9 +439,6 @@
+ int X509_LOOKUP_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
+ 	long argl, char **ret);
+ 
+-int X509_load_cert_file(X509_LOOKUP *ctx, const char *file, int type);
+-int X509_load_crl_file(X509_LOOKUP *ctx, const char *file, int type);
+-int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type);
+ 
+ 
+ X509_LOOKUP *X509_LOOKUP_new(X509_LOOKUP_METHOD *method);
+@@ -459,10 +454,7 @@
+ 	int len, X509_OBJECT *ret);
+ int X509_LOOKUP_shutdown(X509_LOOKUP *ctx);
+ 
+-int	X509_STORE_load_locations (X509_STORE *ctx,
+-		const char *file, const char *dir);
+ int	X509_STORE_load_mem(X509_STORE *ctx, void *buf, int len);
+-int	X509_STORE_set_default_paths(X509_STORE *ctx);
+ 
+ int X509_STORE_CTX_get_ex_new_index(long argl, void *argp, CRYPTO_EX_new *new_func,
+ 	CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func);
+--- include/tls.h
++++ include/tls.h
+@@ -49,18 +49,13 @@
+ struct tls_config *tls_config_new(void);
+ void tls_config_free(struct tls_config *_config);
+ 
+-int tls_config_set_ca_file(struct tls_config *_config, const char *_ca_file);
+-int tls_config_set_ca_path(struct tls_config *_config, const char *_ca_path);
+ int tls_config_set_ca_mem(struct tls_config *_config, const uint8_t *_ca,
+     size_t _len);
+-int tls_config_set_cert_file(struct tls_config *_config,
+-    const char *_cert_file);
+ int tls_config_set_cert_mem(struct tls_config *_config, const uint8_t *_cert,
+     size_t _len);
+ int tls_config_set_ciphers(struct tls_config *_config, const char *_ciphers);
+ int tls_config_set_dheparams(struct tls_config *_config, const char *_params);
+ int tls_config_set_ecdhecurve(struct tls_config *_config, const char *_name);
+-int tls_config_set_key_file(struct tls_config *_config, const char *_key_file);
+ int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
+     size_t _len);
+ void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
+@@ -82,19 +77,14 @@
+ int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read,
+     int _fd_write);
+ int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket);
+-int tls_connect(struct tls *_ctx, const char *_host, const char *_port);
+ int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write,
+     const char *_servername);
+-int tls_connect_servername(struct tls *_ctx, const char *_host,
+-    const char *_port, const char *_servername);
+ int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername);
+ int tls_read(struct tls *_ctx, void *_buf, size_t _buflen, size_t *_outlen);
+ int tls_write(struct tls *_ctx, const void *_buf, size_t _buflen,
+     size_t *_outlen);
+ int tls_close(struct tls *_ctx);
+ 
+-uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
+-
+ #ifdef __cplusplus
+ }
+ #endif
+--- ssl/ssl_cert.c
++++ ssl/ssl_cert.c
+@@ -574,6 +574,7 @@
+  * \param file the file containing one or more certs.
+  * \return a ::STACK containing the certs.
+  */
++#if 0
+ STACK_OF(X509_NAME) *
+ SSL_load_client_CA_file(const char *file)
+ {
+@@ -733,3 +734,4 @@
+ 	}
+ 	return ret;
+ }
++#endif
+--- ssl/ssl_lib.c
++++ ssl/ssl_lib.c
+@@ -2903,6 +2903,7 @@
+ 	return (ssl->ctx);
+ }
+ 
++#if 0
+ int
+ SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)
+ {
+@@ -2915,6 +2916,7 @@
+ {
+ 	return (X509_STORE_load_locations(ctx->cert_store, CAfile, CApath));
+ }
++#endif
+ 
+ int
+ SSL_CTX_load_verify_mem(SSL_CTX *ctx, void *buf, int len)
+--- ssl/ssl_rsa.c
++++ ssl/ssl_rsa.c
+@@ -84,6 +84,7 @@
+ 	return (ssl_set_cert(ssl->cert, x));
+ }
+ 
++#if 0
+ int
+ SSL_use_certificate_file(SSL *ssl, const char *file, int type)
+ {
+@@ -127,6 +128,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len)
+@@ -214,6 +216,7 @@
+ 	return (1);
+ }
+ 
++#if 0
+ int
+ SSL_use_RSAPrivateKey_file(SSL *ssl, const char *file, int type)
+ {
+@@ -253,6 +256,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_use_RSAPrivateKey_ASN1(SSL *ssl, unsigned char *d, long len)
+@@ -289,6 +293,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ SSL_use_PrivateKey_file(SSL *ssl, const char *file, int type)
+ {
+@@ -328,6 +333,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_use_PrivateKey_ASN1(int type, SSL *ssl, const unsigned char *d, long len)
+@@ -419,6 +425,7 @@
+ 	return (1);
+ }
+ 
++#if 0
+ int
+ SSL_CTX_use_certificate_file(SSL_CTX *ctx, const char *file, int type)
+ {
+@@ -461,6 +468,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_CTX_use_certificate_ASN1(SSL_CTX *ctx, int len, const unsigned char *d)
+@@ -506,6 +514,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ SSL_CTX_use_RSAPrivateKey_file(SSL_CTX *ctx, const char *file, int type)
+ {
+@@ -545,6 +554,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_CTX_use_RSAPrivateKey_ASN1(SSL_CTX *ctx, const unsigned char *d, long len)
+@@ -579,6 +589,7 @@
+ 	return (ssl_set_pkey(ctx->cert, pkey));
+ }
+ 
++#if 0
+ int
+ SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type)
+ {
+@@ -619,6 +630,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_CTX_use_PrivateKey_ASN1(int type, SSL_CTX *ctx, const unsigned char *d,
+@@ -711,6 +723,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file)
+ {
+@@ -734,6 +747,7 @@
+ 	BIO_free(in);
+ 	return (ret);
+ }
++#endif
+ 
+ int
+ SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len)
+--- tls/tls.c
++++ tls/tls.c
+@@ -150,6 +150,7 @@
+ 		pkey = NULL;
+ 	}
+ 
++#if 0
+ 	if (ctx->config->cert_file != NULL) {
+ 		if (SSL_CTX_use_certificate_chain_file(ctx->ssl_ctx,
+ 		    ctx->config->cert_file) != 1) {
+@@ -164,6 +165,7 @@
+ 			goto err;
+ 		}
+ 	}
++#endif
+ 
+ 	if (SSL_CTX_check_private_key(ctx->ssl_ctx) != 1) {
+ 		tls_set_error(ctx, "private/public key mismatch");
+--- tls/tls_client.c
++++ tls/tls_client.c
+@@ -44,6 +44,7 @@
+ 	return (ctx);
+ }
+ 
++#if 0
+ static int
+ tls_connect_host(struct tls *ctx, const char *host, const char *port,
+     int af, int flag)
+@@ -151,6 +152,7 @@
+ 
+ 	return (rv);
+ }
++#endif
+ 
+ int
+ tls_connect_socket(struct tls *ctx, int s, const char *servername)
+@@ -211,10 +213,12 @@
+ 				    "ssl verify memory setup failure");
+ 				goto err;
+ 			}
++#if 0
+ 		} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
+ 		    ctx->config->ca_file, ctx->config->ca_path) != 1) {
+ 			tls_set_error(ctx, "ssl verify setup failure");
+ 			goto err;
++#endif
+ 		}
+ 		if (ctx->config->verify_depth >= 0)
+ 			SSL_CTX_set_verify_depth(ctx->ssl_ctx,
+--- tls/tls_config.c
++++ tls/tls_config.c
+@@ -68,8 +68,6 @@
+ 	/*
+ 	 * Default configuration.
+ 	 */
+-	if (tls_config_set_ca_file(config, _PATH_SSL_CA_FILE) != 0)
+-		goto err;
+ 	if (tls_config_set_dheparams(config, "none") != 0)
+ 		goto err;
+ 	if (tls_config_set_ecdhecurve(config, "auto") != 0)
+@@ -97,12 +95,8 @@
+ 
+ 	tls_config_clear_keys(config);
+ 
+-	free((char *)config->ca_file);
+-	free((char *)config->ca_path);
+-	free((char *)config->cert_file);
+ 	free(config->cert_mem);
+ 	free((char *)config->ciphers);
+-	free((char *)config->key_file);
+ 	free(config->key_mem);
+ 
+ 	free(config);
+@@ -174,6 +168,7 @@
+ 	return (0);
+ }
+ 
++#if 0
+ int
+ tls_config_set_ca_file(struct tls_config *config, const char *ca_file)
+ {
+@@ -185,6 +180,7 @@
+ {
+ 	return set_string(&config->ca_path, ca_path);
+ }
++#endif
+ 
+ int
+ tls_config_set_ca_mem(struct tls_config *config, const uint8_t *ca, size_t len)
+@@ -192,11 +188,13 @@
+ 	return set_mem(&config->ca_mem, &config->ca_len, ca, len);
+ }
+ 
++#if 0
+ int
+ tls_config_set_cert_file(struct tls_config *config, const char *cert_file)
+ {
+ 	return set_string(&config->cert_file, cert_file);
+ }
++#endif
+ 
+ int
+ tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
+@@ -255,11 +253,13 @@
+ 	return (0);
+ }
+ 
++#if 0
+ int
+ tls_config_set_key_file(struct tls_config *config, const char *key_file)
+ {
+ 	return set_string(&config->key_file, key_file);
+ }
++#endif
+ 
+ int
+ tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
+--- tls/tls_internal.h
++++ tls/tls_internal.h
+@@ -29,17 +29,13 @@
+ #define TLS_CIPHERS_DEFAULT	"TLSv1.2+AEAD+ECDHE:TLSv1.2+AEAD+DHE"
+ 
+ struct tls_config {
+-	const char *ca_file;
+-	const char *ca_path;
+ 	char *ca_mem;
+ 	size_t ca_len;
+-	const char *cert_file;
+ 	char *cert_mem;
+ 	size_t cert_len;
+ 	const char *ciphers;
+ 	int dheparams;
+ 	int ecdhecurve;
+-	const char *key_file;
+ 	char *key_mem;
+ 	size_t key_len;
+ 	uint32_t protocols;
+--- tls/tls_util.c
++++ tls/tls_util.c
+@@ -86,6 +86,7 @@
+ 	return (rv);
+ }
+ 
++#if 0
+ static int
+ tls_password_cb(char *buf, int size, int rwflag, void *u)
+ {
+@@ -167,3 +168,4 @@
+ 
+ 	return (NULL);
+ }
++#endif

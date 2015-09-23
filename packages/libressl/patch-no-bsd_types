@@ -1,0 +1,15 @@
+--- include/compat/sys/types.h
++++ include/compat/sys/types.h
+@@ -18,11 +18,11 @@
+ #include <_bsd_types.h>
+ #endif
+ 
+-#ifdef _MSC_VER
+ typedef unsigned char   u_char;
+ typedef unsigned short  u_short;
+ typedef unsigned int    u_int;
+ 
++#ifdef _MSC_VER
+ #include <basetsd.h>
+ typedef SSIZE_T ssize_t;
+ 

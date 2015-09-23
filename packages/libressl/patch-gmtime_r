@@ -1,0 +1,19 @@
+--- crypto/ts/ts_rsp_sign.c
++++ crypto/ts/ts_rsp_sign.c
+@@ -955,6 +955,7 @@
+ TS_RESP_set_genTime_with_precision(ASN1_GENERALIZEDTIME *asn1_time,
+     time_t sec, long usec, unsigned precision)
+ {
++	struct tm tmobj;
+ 	struct tm *tm = NULL;
+ 	char genTime_str[17 + TS_MAX_CLOCK_PRECISION_DIGITS];
+ 	char usecstr[TS_MAX_CLOCK_PRECISION_DIGITS + 2];
+@@ -964,7 +965,7 @@
+ 	if (precision > TS_MAX_CLOCK_PRECISION_DIGITS)
+ 		goto err;
+ 
+-	if (!(tm = gmtime(&sec)))
++	if (!(tm = gmtime_r(&sec, &tmobj)))
+ 		goto err;
+ 
+ 	/*

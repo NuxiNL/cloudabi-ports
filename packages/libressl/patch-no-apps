@@ -1,0 +1,11 @@
+--- Makefile.in
++++ Makefile.in
+@@ -360,7 +360,7 @@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-SUBDIRS = crypto ssl tls include apps tests man
++SUBDIRS = crypto ssl tls include man
+ ACLOCAL_AMFLAGS = -I m4
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = libcrypto.pc libssl.pc libtls.pc openssl.pc
