@@ -1,0 +1,24 @@
+--- gl/version-etc.c
++++ gl/version-etc.c
+@@ -235,6 +235,7 @@
+   va_end (authors);
+ }
+ 
++#if 0
+ void
+ emit_bug_reporting_address (void)
+ {
+@@ -256,3 +257,4 @@
+   fputs (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"),
+          stdout);
+ }
++#endif
+--- gl/version-etc.h
++++ gl/version-etc.h
+@@ -73,6 +73,5 @@
+   _GL_ATTRIBUTE_SENTINEL;
+ 
+ /* Display the usual "Report bugs to" stanza.  */
+-extern void emit_bug_reporting_address (void);
+ 
+ #endif /* VERSION_ETC_H */

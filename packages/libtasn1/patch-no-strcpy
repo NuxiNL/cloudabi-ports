@@ -1,0 +1,130 @@
+--- lib/decoding.c
++++ lib/decoding.c
+@@ -2042,9 +2042,7 @@
+       if ((type_field (p2->type) == ASN1_ETYPE_OBJECT_ID) &&
+ 	  (p2->type & CONST_ASSIGN))
+ 	{
+-	  strcpy (name, definitions->name);
+-	  strcat (name, ".");
+-	  strcat (name, p2->name);
++	  snprintf(name, sizeof(name), "%s.%s", definitions->name, p2->name);
+ 
+ 	  len = sizeof (value);
+ 	  result = asn1_read_value (definitions, name, value, &len);
+@@ -2060,9 +2058,7 @@
+ 
+ 	      if (p2)
+ 		{
+-		  strcpy (name, definitions->name);
+-		  strcat (name, ".");
+-		  strcat (name, p2->name);
++	          snprintf(name, sizeof(name), "%s.%s", definitions->name, p2->name);
+ 
+ 		  result = asn1_create_element (definitions, name, &aux);
+ 		  if (result == ASN1_SUCCESS)
+--- lib/element.c
++++ lib/element.c
+@@ -654,7 +654,7 @@
+ 	} else { \
+ 		/* this strcpy is checked */ \
+ 		if (ptr) { \
+-		  _asn1_strcpy (ptr, data); \
++		  memcpy (ptr, data, *len); \
+ 		} \
+ 	}
+ 
+@@ -671,15 +671,18 @@
+ 		} \
+ 	}
+ 
+-#define ADD_STR_VALUE( ptr, ptr_size, data) \
+-        *len += _asn1_strlen(data); \
++#define ADD_STR_VALUE( ptr, ptr_size, data) do { \
++        int olen = *len - 1; \
++        int slen = _asn1_strlen(data) + 1; \
++        *len = olen + slen; \
+         if (ptr_size < (int) *len) { \
+                 (*len)++; \
+                 return ASN1_MEM_ERROR; \
+         } else { \
+                 /* this strcat is checked */ \
+-                if (ptr) _asn1_strcat (ptr, data); \
+-        }
++                if (ptr) memcpy (ptr + olen, data, slen); \
++        } \
++} while (0)
+ 
+ /**
+  * asn1_read_value:
+--- lib/gstr.c
++++ lib/gstr.c
+@@ -28,6 +28,7 @@
+  *
+  * They should be used only with null terminated strings.
+  */
++#if 0
+ void
+ _asn1_str_cat (char *dest, size_t dest_tot_size, const char *src)
+ {
+@@ -72,3 +73,4 @@
+ 	return 0;
+     }
+ }
++#endif
+--- lib/gstr.h
++++ lib/gstr.h
+@@ -19,9 +19,8 @@
+  * 02110-1301, USA
+  */
+ 
+-unsigned int _asn1_str_cpy (char *dest, size_t dest_tot_size,
+-			    const char *src);
+-void _asn1_str_cat (char *dest, size_t dest_tot_size, const char *src);
++#define _asn1_str_cpy(dest, n, src) strlcpy(dest, src, n)
++#define _asn1_str_cat(dest, n, src) strlcat(dest, src, n)
+ 
+ #define Estrcpy(x,y) _asn1_str_cpy(x,ASN1_MAX_ERROR_DESCRIPTION_SIZE,y)
+ #define Estrcat(x,y) _asn1_str_cat(x,ASN1_MAX_ERROR_DESCRIPTION_SIZE,y)
+--- lib/int.h
++++ lib/int.h
+@@ -116,8 +116,6 @@
+ #define _asn1_strtol(n,e,b) strtol((const char *) n, e, b)
+ #define _asn1_strtoul(n,e,b) strtoul((const char *) n, e, b)
+ #define _asn1_strcmp(a,b) strcmp((const char *)a, (const char *)b)
+-#define _asn1_strcpy(a,b) strcpy((char *)a, (const char *)b)
+-#define _asn1_strcat(a,b) strcat((char *)a, (const char *)b)
+ 
+ #define MAX_LOG_SIZE 1024	/* maximum number of characters of a log message */
+ 
+--- lib/parser_aux.c
++++ lib/parser_aux.c
+@@ -936,9 +936,9 @@
+ 	  if (p2 == NULL)
+ 	    {
+ 	      if (p->value)
+-		_asn1_strcpy (_asn1_identifierMissing, p->value);
++		_asn1_str_cpy (_asn1_identifierMissing, sizeof(_asn1_identifierMissing), p->value);
+ 	      else
+-		_asn1_strcpy (_asn1_identifierMissing, "(null)");
++		_asn1_str_cpy (_asn1_identifierMissing, sizeof(_asn1_identifierMissing), "(null)");
+ 	      return ASN1_IDENTIFIER_NOT_FOUND;
+ 	    }
+ 	}
+@@ -951,7 +951,7 @@
+ 	      _asn1_str_cpy (name2, sizeof (name2), node->name);
+ 	      _asn1_str_cat (name2, sizeof (name2), ".");
+ 	      _asn1_str_cat (name2, sizeof (name2), (char *) p2->value);
+-	      _asn1_strcpy (_asn1_identifierMissing, p2->value);
++	      _asn1_str_cpy (_asn1_identifierMissing, sizeof(_asn1_identifierMissing), p2->value);
+ 	      p2 = asn1_find_node (node, name2);
+ 	      if (!p2 || (type_field (p2->type) != ASN1_ETYPE_OBJECT_ID) ||
+ 		  !(p2->type & CONST_ASSIGN))
+@@ -971,7 +971,7 @@
+ 		  _asn1_str_cpy (name2, sizeof (name2), node->name);
+ 		  _asn1_str_cat (name2, sizeof (name2), ".");
+ 		  _asn1_str_cat (name2, sizeof (name2), (char *) p2->value);
+-		  _asn1_strcpy (_asn1_identifierMissing, p2->value);
++		  _asn1_str_cpy (_asn1_identifierMissing, sizeof(_asn1_identifierMissing), p2->value);
+ 		  p2 = asn1_find_node (node, name2);
+ 		  if (!p2 || (type_field (p2->type) != ASN1_ETYPE_OBJECT_ID)
+ 		      || !(p2->type & CONST_ASSIGN))

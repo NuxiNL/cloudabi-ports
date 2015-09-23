@@ -1,0 +1,90 @@
+--- gl/read-file.c
++++ gl/read-file.c
+@@ -134,6 +134,7 @@
+   }
+ }
+ 
++#if 0
+ static char *
+ internal_read_file (const char *filename, size_t *length, const char *mode)
+ {
+@@ -186,3 +187,4 @@
+ {
+   return internal_read_file (filename, length, "rb");
+ }
++#endif
+--- gl/read-file.h
++++ gl/read-file.h
+@@ -26,8 +26,4 @@
+ 
+ extern char *fread_file (FILE * stream, size_t * length);
+ 
+-extern char *read_file (const char *filename, size_t * length);
+-
+-extern char *read_binary_file (const char *filename, size_t * length);
+-
+ #endif /* READ_FILE_H */
+--- lib/ASN1.y
++++ lib/ASN1.y
+@@ -656,6 +656,7 @@
+  *   file there is an identifier whith more than %ASN1_MAX_NAME_SIZE
+  *   characters.
+  **/
++#if 0
+ int
+ asn1_parser2tree (const char *file, asn1_node * definitions,
+                   char *error_desc)
+@@ -851,6 +852,7 @@
+ 
+   return result_parse;
+ }
++#endif
+ 
+ /*************************************************************/
+ /*  Function: _asn1_yyerror                                  */
+--- lib/libtasn1.h
++++ lib/libtasn1.h
+@@ -215,14 +215,6 @@
+   /*  Functions definitions          */
+   /***********************************/
+ 
+-  extern ASN1_API int
+-    asn1_parser2tree (const char *file,
+-		      asn1_node * definitions, char *error_desc);
+-
+-  extern ASN1_API int
+-    asn1_parser2array (const char *inputFileName,
+-		       const char *outputFileName,
+-		       const char *vectorName, char *error_desc);
+ 
+   extern ASN1_API int
+     asn1_array2tree (const asn1_static_node * array,
+--- lib/structure.c
++++ lib/structure.c
+@@ -77,6 +77,7 @@
+ }
+ 
+ 
++#if 0
+ int
+ _asn1_create_static_structure (asn1_node pointer, char *output_file_name,
+ 			       char *vector_name)
+@@ -155,6 +156,7 @@
+ 
+   return ASN1_SUCCESS;
+ }
++#endif
+ 
+ 
+ /**
+--- lib/structure.h
++++ lib/structure.h
+@@ -28,8 +28,6 @@
+ #ifndef _STRUCTURE_H
+ #define _STRUCTURE_H
+ 
+-int _asn1_create_static_structure (asn1_node pointer,
+-				   char *output_file_name, char *vector_name);
+ 
+ asn1_node _asn1_copy_structure3 (asn1_node source_node);
+ 
