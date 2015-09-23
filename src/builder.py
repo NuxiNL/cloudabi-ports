@@ -61,6 +61,14 @@ class FileHandle:
         self._builder.compile(self._path, output, args)
         return FileHandle(self._builder, output)
 
+    def debug_shell(self):
+        self.run([
+            'HOME=' + os.getenv('HOME'),
+            'LC_CTYPE=' + os.getenv('LC_CTYPE'),
+            'TERM=' + os.getenv('TERM'),
+            '/usr/local/bin/bash',
+        ])
+
     def rename(self, dst):
         os.rename(self._path, dst._path)
 
@@ -123,6 +131,11 @@ class BuildHandle:
     def cpu(self):
         return self._builder.get_cpu()
 
+    def executable(self, objects):
+        return FileHandle(
+            self._builder, self._builder.executable(
+                obj._path for obj in objects))
+
     def extract(self, name='%(name)s-%(version)s'):
         return FileHandle(
             self._builder,
@@ -154,6 +167,12 @@ class Builder:
     def get_new_directory(self):
         path = os.path.join(self._builddir, str(self._sequence_number))
         util.make_dir(path)
+        self._sequence_number += 1
+        return path
+
+    def get_new_executable(self):
+        path = os.path.join(self._builddir, 'bin%d' % self._sequence_number)
+        util.make_parent_dir(path)
         self._sequence_number += 1
         return path
 
@@ -259,6 +278,13 @@ class TargetBuilder(Builder):
                 ['-c', '-o', target, source])
         else:
             raise Exception('Unknown file extension: %s' % ext)
+
+    def executable(self, object_files):
+        objs = sorted(object_files)
+        output = self.get_new_executable()
+        print('LD', output)
+        subprocess.check_call([self._tool('cc'), '-o', output] + objs)
+        return output
 
     def get_cpu(self):
         return self._arch.split('-', 1)[0]
