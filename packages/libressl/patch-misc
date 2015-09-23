@@ -1,38 +1,5 @@
 --- crypto/bio/b_sock.c
 +++ crypto/bio/b_sock.c
-@@ -85,6 +85,7 @@
- 	if (inet_pton(AF_INET, str, ip) == 1)
- 		return (1);
- 
-+#if 0
- 	/* do a gethostbyname */
- 	CRYPTO_w_lock(CRYPTO_LOCK_GETHOSTBYNAME);
- 	he = BIO_gethostbyname(str);
-@@ -109,6 +110,10 @@
- 		return 0;
- 	} else
- 		return 1;
-+#endif
-+	BIOerr(BIO_F_BIO_GET_HOST_IP, BIO_R_BAD_HOSTNAME_LOOKUP);
-+	ERR_asprintf_error_data("host=%s", str);
-+	return 0;
- }
- 
- int
-@@ -186,11 +191,13 @@
- 	return (err);
- }
- 
-+#if 0
- struct hostent *
- BIO_gethostbyname(const char *name)
- {
- 	return gethostbyname(name);
- }
-+#endif
- 
- int
- BIO_socket_ioctl(int fd, long type, void *arg)
 @@ -203,6 +210,7 @@
  	return (ret);
  }
@@ -234,14 +201,6 @@
  
  /* WARNING WARNING, this ups the reference count on the read bio of the
   * SSL structure.  This is because the ssl read BIO is now pointed to by
-@@ -640,7 +631,6 @@
- int BIO_dump_indent(BIO *b, const char *bytes, int len, int indent);
- int BIO_dump_fp(FILE *fp, const char *s, int len);
- int BIO_dump_indent_fp(FILE *fp, const char *s, int len, int indent);
--struct hostent *BIO_gethostbyname(const char *name);
- /* We might want a thread-safe interface too:
-  * struct hostent *BIO_gethostbyname_r(const char *name,
-  *     struct hostent *result, void *buffer, size_t buflen);
 @@ -654,7 +644,6 @@
  int BIO_socket_nbio(int fd, int mode);
  int BIO_get_port(const char *str, unsigned short *port_ptr);
