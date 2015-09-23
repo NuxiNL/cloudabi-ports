@@ -56,25 +56,6 @@
  
  		case BIO_CONN_S_BLOCKED_CONNECT:
  			i = BIO_sock_error(b->num);
---- crypto/bio/bss_dgram.c
-+++ crypto/bio/bss_dgram.c
-@@ -291,6 +291,7 @@
- 	bio_dgram_data *data = (bio_dgram_data *)b->ptr;
- 	errno = 0;
- 
-+#if 0
- 	if (data->connected)
- 		ret = write(b->num, in, inl);
- 	else {
-@@ -302,6 +303,8 @@
- 			peerlen = sizeof(data->peer.sa_in6);
- 		ret = sendto(b->num, in, inl, 0, &data->peer.sa, peerlen);
- 	}
-+#endif
-+	ret = write(b->num, in, inl);
- 
- 	BIO_clear_retry_flags(b);
- 	if (ret <= 0) {
 --- crypto/bio/bss_file.c
 +++ crypto/bio/bss_file.c
 @@ -110,6 +110,7 @@
