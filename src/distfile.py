@@ -52,7 +52,8 @@ class Distfile:
     def extract(self, target):
         # Fetch and extract tarball.
         self._fetch()
-        subprocess.check_call(['tar', '-xC', target, '-f', self._pathname])
+        subprocess.check_call([os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar'),
+                               '-xC', target, '-f', self._pathname])
 
         # Remove leading directory names.
         while True:
