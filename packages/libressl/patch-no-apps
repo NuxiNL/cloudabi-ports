@@ -5,7 +5,7 @@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
 -SUBDIRS = crypto ssl tls include apps tests man
-+SUBDIRS = crypto ssl tls include man
++SUBDIRS = crypto ssl tls include tests man
  ACLOCAL_AMFLAGS = -I m4
  pkgconfigdir = $(libdir)/pkgconfig
  pkgconfig_DATA = libcrypto.pc libssl.pc libtls.pc openssl.pc
