@@ -5,7 +5,9 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['--without-ftp', '--without-http'])
+    build = ctx.extract().autoconf([
+        '--without-ftp', '--without-http', '--without-python',
+    ])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES='])
     stage = build.make_install([
         'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=', 'install',
