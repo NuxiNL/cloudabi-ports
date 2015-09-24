@@ -16,11 +16,12 @@ from .builder import BuildHandle, HostBuilder, TargetBuilder
 class HostPackage:
 
     def __init__(self, install_directory, name, version, homepage,
-                 maintainer, lib_depends, distfiles, build_cmd):
+                 maintainer, build_depends, lib_depends, distfiles, build_cmd):
         self._install_directory = install_directory
         self._name = name
         self._version = version
         self._distfiles = distfiles
+        self._build_depends = build_depends
         self._build_cmd = build_cmd
 
         # Compute the set of transitive library dependencies.
@@ -31,12 +32,13 @@ class HostPackage:
 
     def _initialize_buildroot(self):
         # Ensure that all dependencies have been built.
-        for dep in self._lib_depends:
+        deps = self._build_depends | self._lib_depends
+        for dep in deps:
             dep.build()
 
         # Install dependencies into an empty buildroot.
         util.remove_and_make_dir(config.DIR_BUILDROOT)
-        for dep in self._lib_depends:
+        for dep in deps:
             dep.extract()
 
     def build(self):

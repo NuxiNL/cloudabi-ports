@@ -116,10 +116,15 @@ class Repository:
                 package = dict(self._deferred_host_packages.pop(name))
                 if name in self._host_packages:
                     raise Exception('%s is declared multiple times' % name)
+                build_depends = set()
+                if 'build_depends' in package:
+                    build_depends = {get_host_package(dep)
+                                     for dep in package['build_depends']}
+                    del package['build_depends']
                 lib_depends = set()
                 if 'lib_depends' in package:
-                    lib_depends = {
-                        get_host_package(dep) for dep in package['lib_depends']}
+                    lib_depends = {get_host_package(dep)
+                                   for dep in package['lib_depends']}
                     del package['lib_depends']
                 package['version'] = SimpleVersion(package['version'])
                 self._host_packages[name] = HostPackage(
@@ -128,6 +133,7 @@ class Repository:
                         'host',
                         name),
                     distfiles=self._distfiles,
+                    build_depends=build_depends,
                     lib_depends=lib_depends,
                     **package)
             return self._host_packages[name]
