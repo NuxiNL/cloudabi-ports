@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf()
+    build = ctx.extract().autoconf(['--without-x'])
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'man_MANS=', 'install']).install()
 
