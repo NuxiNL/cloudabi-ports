@@ -21,8 +21,13 @@ class HostPackage:
         self._name = name
         self._version = version
         self._distfiles = distfiles
-        self._build_depends = build_depends
         self._build_cmd = build_cmd
+
+        # Compute the set of transitive build dependencies.
+        self._build_depends = set()
+        for dep in build_depends:
+            self._build_depends.add(dep)
+            self._build_depends |= dep._lib_depends
 
         # Compute the set of transitive library dependencies.
         self._lib_depends = set()
