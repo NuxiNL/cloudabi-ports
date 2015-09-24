@@ -200,7 +200,9 @@ class HostBuilder(Builder):
         target = os.path.join(self._install_directory, target)
         for source_file, target_file in util.walk_files_concurrently(
                 source, target):
-            if os.path.relpath(target_file, target) != 'share/info/dir':
+            if os.path.relpath(target_file, target) not in {
+                'share/info/dir', 'lib/charset.alias',
+            }:
                 util.make_parent_dir(target_file)
                 util.copy_file(source_file, target_file, False)
 
