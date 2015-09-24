@@ -211,6 +211,8 @@ class HostBuilder(Builder):
             'CFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
             'CXXFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
             'LDFLAGS=-L' + os.path.join(config.DIR_BUILDROOT, 'lib'),
+            'PATH=%s:%s' % (os.path.join(config.DIR_BUILDROOT, 'bin'),
+                            os.getenv('PATH')),
         ] + command)
 
 
