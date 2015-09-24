@@ -8,6 +8,7 @@ host_package(
     version='3.0.4',
     homepage='https://www.gnu.org/software/bison/',
     maintainer='info@nuxi.nl',
+    lib_depends={'help2man'},
     build_cmd=build_autoconf_automake,
 )
 
