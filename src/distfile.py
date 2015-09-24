@@ -23,6 +23,7 @@ class Distfile:
         self._distdir = distdir
         self._name = name
         self._checksum = checksum
+        # TODO(ed): Should append the directory name to FALLBACK_MIRRORS.
         self._master_sites = master_sites | config.FALLBACK_MIRRORS
         self._patches = patches
         self._pathname = os.path.join(distdir, self._name)
