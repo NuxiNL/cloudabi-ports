@@ -36,6 +36,16 @@ class FileHandle:
                         config.DIR_RESOURCES,
                         'config.sub'),
                     path)
+            elif filename == 'ltmain.sh':
+                # Patch up libtool to archive object files in sorted
+                # order. This has been fixed in the meantime.
+                with open(path, 'r') as fin, open(path + '.new', 'w') as fout:
+                    for l in fin.readlines():
+                        # Add sort to the pipeline.
+                        fout.write(l.replace(
+                            '-print | $NL2SP', '-print | sort | $NL2SP'))
+                shutil.copymode(path, path + '.new')
+                os.rename(path + '.new', path)
             elif filename == 'configure':
                 # Patch up configure scripts to remove constructs that are known
                 # to fail, for example due to functions being missing.
