@@ -1,222 +1,145 @@
 --- src/libsodium/randombytes/salsa20/randombytes_salsa20_random.c
 +++ src/libsodium/randombytes/salsa20/randombytes_salsa20_random.c
-@@ -42,16 +42,12 @@
+@@ -42,12 +42,16 @@
  #define SHA512_MIN_PAD_SIZE (1U + 16U)
  #define COMPILER_ASSERT(X) (void) sizeof(char[(X) ? 1 : -1])
  
--#if defined(__OpenBSD__) || defined(__CloudABI__)
--# define HAVE_SAFE_ARC4RANDOM 1
--#endif
--
++#if defined(__OpenBSD__) || defined(__CloudABI__)
++# define HAVE_SAFE_ARC4RANDOM 1
++#endif
++
  typedef struct Salsa20Random_ {
      unsigned char key[crypto_stream_salsa20_KEYBYTES];
      unsigned char rnd32[16U * SALSA20_RANDOM_BLOCK_SIZE];
      uint64_t      nonce;
      size_t        rnd32_outleft;
--#ifdef HAVE_GETPID
-+#ifndef _MSC_VER
+-#ifndef _MSC_VER
++#ifdef HAVE_GETPID
      pid_t         pid;
  #endif
      int           random_data_source_fd;
-@@ -69,24 +65,27 @@
+@@ -65,27 +69,24 @@
  static uint64_t
  sodium_hrtime(void)
  {
--    uint64_t ts;
-+    struct timeval tv;
-+    uint64_t       ts = (uint64_t) 0U;
-+    int            ret;
+-    struct timeval tv;
+-    uint64_t       ts = (uint64_t) 0U;
+-    int            ret;
++    uint64_t ts;
  
  #ifdef _WIN32
--    {
--        struct _timeb tb;
-+    struct _timeb tb;
-+
+-    struct _timeb tb;
+-
++    {
++        struct _timeb tb;
  # pragma warning(push)
  # pragma warning(disable: 4996)
--        _ftime(&tb);
-+    _ftime(&tb);
+-    _ftime(&tb);
++        _ftime(&tb);
  # pragma warning(pop)
--        ts = ((uint64_t) tb.time) * 1000000U + ((uint64_t) tb.millitm) * 1000U;
--    }
-+    tv.tv_sec = (long) tb.time;
-+    tv.tv_usec = ((int) tb.millitm) * 1000;
-+    ret = 0;
- #else
--    {
--        struct timeval tv;
--        assert(gettimeofday(&tv, NULL) == 0);
--        ts = ((uint64_t) tv.tv_sec) * 1000000U + (uint64_t) tv.tv_usec;
--    }
-+    ret = gettimeofday(&tv, NULL);
- #endif
-+    assert(ret == 0);
-+    if (ret == 0) {
-+        ts = (uint64_t) tv.tv_sec * 1000000U + (uint64_t) tv.tv_usec;
+-    tv.tv_sec = (long) tb.time;
+-    tv.tv_usec = ((int) tb.millitm) * 1000;
+-    ret = 0;
++        ts = ((uint64_t) tb.time) * 1000000U + ((uint64_t) tb.millitm) * 1000U;
 +    }
+ #else
+-    ret = gettimeofday(&tv, NULL);
+-#endif
+-    assert(ret == 0);
+-    if (ret == 0) {
+-        ts = (uint64_t) tv.tv_sec * 1000000U + (uint64_t) tv.tv_usec;
++    {
++        struct timeval tv;
++        assert(gettimeofday(&tv, NULL) == 0);
++        ts = ((uint64_t) tv.tv_sec) * 1000000U + (uint64_t) tv.tv_usec;
+     }
++#endif
      return ts;
  }
  
-@@ -116,16 +115,15 @@
+@@ -115,15 +116,16 @@
  #endif
  
  #ifndef _WIN32
--# ifndef HAVE_SAFE_ARC4RANDOM
++# ifndef HAVE_SAFE_ARC4RANDOM
  static int
  randombytes_salsa20_random_random_dev_open(void)
  {
  /* LCOV_EXCL_START */
      struct stat       st;
      static const char *devices[] = {
--#  ifndef USE_BLOCKING_RANDOM
-+# ifndef USE_BLOCKING_RANDOM
+-# ifndef USE_BLOCKING_RANDOM
++#  ifndef USE_BLOCKING_RANDOM
          "/dev/urandom",
--#  endif
-+# endif
+-# endif
++#  endif
          "/dev/random", NULL
      };
      const char **     device = devices;
-@@ -135,9 +133,9 @@
+@@ -133,9 +135,9 @@
          fd = open(*device, O_RDONLY);
          if (fd != -1) {
              if (fstat(fd, &st) == 0 && S_ISCHR(st.st_mode)) {
--#  if defined(F_SETFD) && defined(FD_CLOEXEC)
-+# if defined(F_SETFD) && defined(FD_CLOEXEC)
+-# if defined(F_SETFD) && defined(FD_CLOEXEC)
++#  if defined(F_SETFD) && defined(FD_CLOEXEC)
                  (void) fcntl(fd, F_SETFD, fcntl(fd, F_GETFD) | FD_CLOEXEC);
--#  endif
-+# endif
+-# endif
++#  endif
                  return fd;
              }
              (void) close(fd);
-@@ -151,9 +149,8 @@
+@@ -149,8 +151,9 @@
      return -1;
  /* LCOV_EXCL_STOP */
  }
--# endif
++# endif
  
--# ifdef SYS_getrandom
-+#ifdef SYS_getrandom
+-#ifdef SYS_getrandom
++# ifdef SYS_getrandom
  static int
  _randombytes_linux_getrandom(void * const buf, const size_t size)
  {
-@@ -187,7 +184,7 @@
+@@ -184,7 +187,7 @@
  
      return 0;
  }
--# endif
-+#endif
+-#endif
++# endif
  
  static void
  randombytes_salsa20_random_init(void)
-@@ -197,11 +194,7 @@
+@@ -194,7 +197,11 @@
      stream.nonce = sodium_hrtime();
      assert(stream.nonce != (uint64_t) 0U);
  
--# ifdef HAVE_SAFE_ARC4RANDOM
--    errno = errno_save;
--# else
--
--#  ifdef SYS_getrandom
-+# ifdef SYS_getrandom
+-# ifdef SYS_getrandom
++# ifdef HAVE_SAFE_ARC4RANDOM
++    errno = errno_save;
++# else
++
++#  ifdef SYS_getrandom
      {
          unsigned char fodder[16];
  
-@@ -212,14 +205,13 @@
+@@ -205,13 +212,14 @@
          }
          stream.getrandom_available = 0;
      }
--#  endif /* SYS_getrandom */
-+# endif
+-# endif
++#  endif /* SYS_getrandom */
  
      if ((stream.random_data_source_fd =
           randombytes_salsa20_random_random_dev_open()) == -1) {
          abort(); /* LCOV_EXCL_LINE */
      }
      errno = errno_save;
--# endif /* HAVE_SAFE_ARC4RANDOM */
++# endif /* HAVE_SAFE_ARC4RANDOM */
  }
  
  #else /* _WIN32 */
-@@ -232,17 +224,6 @@
+@@ -224,6 +232,17 @@
  }
  #endif
- 
--static void
--randombytes_salsa20_random_rekey(const unsigned char * const mix)
--{
--    unsigned char *key = stream.key;
--    size_t         i;
--
--    for (i = (size_t) 0U; i < sizeof stream.key; i++) {
--        key[i] ^= mix[i];
--    }
--}
--
- void
- randombytes_salsa20_random_stir(void)
- {
-@@ -254,6 +235,7 @@
-     unsigned char  m0[crypto_auth_hmacsha512256_BYTES +
-                       2U * SHA512_BLOCK_SIZE - SHA512_MIN_PAD_SIZE];
-     unsigned char *k0 = m0 + crypto_auth_hmacsha512256_BYTES;
-+    size_t         i;
-     size_t         sizeof_k0 = sizeof m0 - crypto_auth_hmacsha512256_BYTES;
- 
-     memset(stream.rnd32, 0, sizeof stream.rnd32);
-@@ -263,10 +245,7 @@
-         stream.initialized = 1;
-     }
- #ifndef _WIN32
--
--# ifdef HAVE_SAFE_ARC4RANDOM
--    arc4random_buf(m0, sizeof m0);
--# elif defined(SYS_getrandom)
-+# ifdef SYS_getrandom
-     if (stream.getrandom_available != 0) {
-         if (randombytes_linux_getrandom(m0, sizeof m0) != 0) {
-             abort(); /* LCOV_EXCL_LINE */
-@@ -283,7 +262,6 @@
-         abort(); /* LCOV_EXCL_LINE */
-     }
- # endif
--
- #else /* _WIN32 */
-     if (! RtlGenRandom((PVOID) m0, (ULONG) sizeof m0)) {
-         abort(); /* LCOV_EXCL_LINE */
-@@ -292,29 +270,40 @@
-     COMPILER_ASSERT(sizeof stream.key == crypto_auth_hmacsha512256_BYTES);
-     crypto_auth_hmacsha512256(stream.key, k0, sizeof_k0, s);
-     COMPILER_ASSERT(sizeof stream.key <= sizeof m0);
--    randombytes_salsa20_random_rekey(m0);
-+    for (i = (size_t) 0U; i < sizeof stream.key; i++) {
-+        stream.key[i] ^= m0[i];
-+    }
-     sodium_memzero(m0, sizeof m0);
--#ifdef HAVE_GETPID
--    stream.pid = getpid();
--#endif
- }
- 
- static void
- randombytes_salsa20_random_stir_if_needed(void)
- {
--#ifdef HAVE_GETPID
-+#ifdef _MSC_VER
-     if (stream.initialized == 0) {
-         randombytes_salsa20_random_stir();
--    } else if (stream.pid != getpid()) {
--        abort();
-     }
- #else
--    if (stream.initialized == 0) {
-+    const pid_t pid = getpid();
-+
-+    if (stream.initialized == 0 || stream.pid != pid) {
-+        stream.pid = pid;
-         randombytes_salsa20_random_stir();
-     }
- #endif
- }
  
 +static void
 +randombytes_salsa20_random_rekey(const unsigned char * const mix)
@@ -229,44 +152,121 @@
 +    }
 +}
 +
+ void
+ randombytes_salsa20_random_stir(void)
+ {
+@@ -235,7 +254,6 @@
+     unsigned char  m0[crypto_auth_hmacsha512256_BYTES +
+                       2U * SHA512_BLOCK_SIZE - SHA512_MIN_PAD_SIZE];
+     unsigned char *k0 = m0 + crypto_auth_hmacsha512256_BYTES;
+-    size_t         i;
+     size_t         sizeof_k0 = sizeof m0 - crypto_auth_hmacsha512256_BYTES;
+ 
+     memset(stream.rnd32, 0, sizeof stream.rnd32);
+@@ -245,7 +263,10 @@
+         stream.initialized = 1;
+     }
+ #ifndef _WIN32
+-# ifdef SYS_getrandom
++
++# ifdef HAVE_SAFE_ARC4RANDOM
++    arc4random_buf(m0, sizeof m0);
++# elif defined(SYS_getrandom)
+     if (stream.getrandom_available != 0) {
+         if (randombytes_linux_getrandom(m0, sizeof m0) != 0) {
+             abort(); /* LCOV_EXCL_LINE */
+@@ -262,6 +283,7 @@
+         abort(); /* LCOV_EXCL_LINE */
+     }
+ # endif
++
+ #else /* _WIN32 */
+     if (! RtlGenRandom((PVOID) m0, (ULONG) sizeof m0)) {
+         abort(); /* LCOV_EXCL_LINE */
+@@ -270,40 +292,29 @@
+     COMPILER_ASSERT(sizeof stream.key == crypto_auth_hmacsha512256_BYTES);
+     crypto_auth_hmacsha512256(stream.key, k0, sizeof_k0, s);
+     COMPILER_ASSERT(sizeof stream.key <= sizeof m0);
+-    for (i = (size_t) 0U; i < sizeof stream.key; i++) {
+-        stream.key[i] ^= m0[i];
+-    }
++    randombytes_salsa20_random_rekey(m0);
+     sodium_memzero(m0, sizeof m0);
++#ifdef HAVE_GETPID
++    stream.pid = getpid();
++#endif
+ }
+ 
+ static void
+ randombytes_salsa20_random_stir_if_needed(void)
+ {
+-#ifdef _MSC_VER
++#ifdef HAVE_GETPID
+     if (stream.initialized == 0) {
+         randombytes_salsa20_random_stir();
++    } else if (stream.pid != getpid()) {
++        abort();
+     }
+ #else
+-    const pid_t pid = getpid();
+-
+-    if (stream.initialized == 0 || stream.pid != pid) {
+-        stream.pid = pid;
++    if (stream.initialized == 0) {
+         randombytes_salsa20_random_stir();
+     }
+ #endif
+ }
+ 
+-static void
+-randombytes_salsa20_random_rekey(const unsigned char * const mix)
+-{
+-    unsigned char *key = stream.key;
+-    size_t         i;
+-
+-    for (i = (size_t) 0U; i < sizeof stream.key; i++) {
+-        key[i] ^= mix[i];
+-    }
+-}
+-
  static uint32_t
  randombytes_salsa20_random_getword(void)
  {
-@@ -353,22 +342,13 @@
+@@ -342,13 +353,22 @@
          close(stream.random_data_source_fd) == 0) {
          stream.random_data_source_fd = -1;
          stream.initialized = 0;
--# ifdef HAVE_GETPID
--        stream.pid = (pid_t) 0;
--# endif
++# ifdef HAVE_GETPID
++        stream.pid = (pid_t) 0;
++# endif
          ret = 0;
      }
--
--# ifdef HAVE_SAFE_ARC4RANDOM
--    ret = 0;
--# endif
--
++
++# ifdef HAVE_SAFE_ARC4RANDOM
++    ret = 0;
++# endif
++
  # ifdef SYS_getrandom
      if (stream.getrandom_available != 0) {
          ret = 0;
      }
  # endif
--
++
  #else /* _WIN32 */
      if (stream.initialized != 0) {
          stream.initialized = 0;
 --- src/libsodium/randombytes/sysrandom/randombytes_sysrandom.c
 +++ src/libsodium/randombytes/sysrandom/randombytes_sysrandom.c
-@@ -33,11 +33,7 @@
+@@ -33,7 +33,11 @@
  # pragma comment(lib, "advapi32.lib")
  #endif
  
--#if defined(__OpenBSD__) || defined(__CloudABI__)
--# define HAVE_SAFE_ARC4RANDOM 1
--#endif
--
--#ifdef HAVE_SAFE_ARC4RANDOM
-+#ifdef __OpenBSD__
+-#ifdef __OpenBSD__
++#if defined(__OpenBSD__) || defined(__CloudABI__)
++# define HAVE_SAFE_ARC4RANDOM 1
++#endif
++
++#ifdef HAVE_SAFE_ARC4RANDOM
  
  uint32_t
  randombytes_sysrandom(void)

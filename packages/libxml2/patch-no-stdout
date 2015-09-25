@@ -117,7 +117,7 @@
  }
 --- xmlIO.c
 +++ xmlIO.c
-@@ -1075,14 +1069,12 @@
+@@ -1075,14 +1075,12 @@
      if (context == NULL)
          return(-1);
      fil = (FILE *) context;

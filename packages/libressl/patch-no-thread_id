@@ -12,7 +12,7 @@
  {
 --- include/openssl/crypto.h
 +++ include/openssl/crypto.h
-@@ -404,7 +404,6 @@
+@@ -390,7 +390,6 @@
  #ifndef OPENSSL_NO_DEPRECATED
  void CRYPTO_set_id_callback(unsigned long (*func)(void));
  unsigned long (*CRYPTO_get_id_callback(void))(void);

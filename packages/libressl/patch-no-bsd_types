@@ -1,6 +1,6 @@
 --- include/compat/sys/types.h
 +++ include/compat/sys/types.h
-@@ -18,11 +18,11 @@
+@@ -22,11 +22,11 @@
  #include <_bsd_types.h>
  #endif
  

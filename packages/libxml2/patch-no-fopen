@@ -74,7 +74,7 @@
   * xmlCatalogCleanup:
 --- debugXML.c
 +++ debugXML.c
-@@ -2494,7 +2477,7 @@
+@@ -2494,7 +2494,7 @@
      return (0);
  }
  
@@ -83,7 +83,7 @@
  /**
   * xmlShellWrite:
   * @ctxt:  the shell context
-@@ -2944,7 +2925,7 @@
+@@ -2944,7 +2944,7 @@
          } else if (!strcmp(command, "relaxng")) {
              xmlShellRNGValidate(ctxt, arg, NULL, NULL);
  #endif
@@ -156,7 +156,7 @@
  static void *
  xmlFileOpen_real (const char *filename) {
      const char *path = filename;
-@@ -937,6 +933,7 @@
+@@ -937,6 +938,7 @@
      if (fd == NULL) xmlIOErr(0, path);
      return((void *) fd);
  }
@@ -164,7 +164,7 @@
  
  /**
   * xmlFileOpen:
-@@ -947,6 +944,7 @@
+@@ -947,6 +949,7 @@
   *
   * Returns a handler or NULL in case or failure
   */
@@ -172,7 +172,7 @@
  void *
  xmlFileOpen (const char *filename) {
      char *unescaped;
-@@ -963,8 +961,9 @@
+@@ -963,8 +966,9 @@
  
      return retval;
  }
@@ -183,7 +183,7 @@
  /**
   * xmlFileOpenW:
   * @filename:  the URI for matching
-@@ -2322,8 +2314,6 @@
+@@ -2322,8 +2326,6 @@
      xmlInitPlatformSpecificIo();
  #endif
  
@@ -192,7 +192,7 @@
  #ifdef HAVE_ZLIB_H
      xmlRegisterInputCallbacks(xmlGzfileMatch, xmlGzfileOpen,
  	                      xmlGzfileRead, xmlGzfileClose);
-@@ -2360,8 +2350,6 @@
+@@ -2360,8 +2362,6 @@
      xmlInitPlatformSpecificIo();
  #endif
  
@@ -201,7 +201,7 @@
  
  #ifdef LIBXML_HTTP_ENABLED
      xmlRegisterOutputCallbacks(xmlIOHTTPMatch, xmlIOHTTPDfltOpenW,
-@@ -3840,11 +3828,6 @@
+@@ -3840,11 +3840,6 @@
          if (cur == dir) dir[1] = 0;
  	else *cur = 0;
  	ret = xmlMemStrdup(dir);

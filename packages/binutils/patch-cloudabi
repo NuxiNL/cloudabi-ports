@@ -1,6 +1,6 @@
 --- bfd/config.bfd
 +++ bfd/config.bfd
-@@ -645,6 +645,10 @@ case "${targ}" in
+@@ -640,6 +640,10 @@
      targ_archs="$targ_archs bfd_arm_arch"
      ;;
  #ifdef BFD64
@@ -13,7 +13,7 @@
      targ_selvecs="i386_mach_o_vec mach_o_le_vec mach_o_be_vec mach_o_fat_vec pef_vec pef_xlib_vec sym_vec"
 --- bfd/configure
 +++ bfd/configure
-@@ -15540,6 +15540,7 @@ do
+@@ -15603,6 +15603,7 @@
      x86_64_elf32_vec)		 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo elf32.lo $elf"; target_size=64 ;;
      x86_64_elf32_nacl_vec)	 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo elf32.lo $elf"; target_size=64 ;;
      x86_64_elf64_vec)		 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo $elf"; target_size=64 ;;
@@ -23,7 +23,7 @@
      x86_64_elf64_sol2_vec)	 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo $elf"; target_size=64 ;;
 --- bfd/configure.ac
 +++ bfd/configure.ac
-@@ -1008,6 +1008,7 @@ do
+@@ -1004,6 +1004,7 @@
      x86_64_elf32_vec)		 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo elf32.lo $elf"; target_size=64 ;;
      x86_64_elf32_nacl_vec)	 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo elf32.lo $elf"; target_size=64 ;;
      x86_64_elf64_vec)		 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo $elf"; target_size=64 ;;
@@ -33,7 +33,7 @@
      x86_64_elf64_sol2_vec)	 tb="$tb elf64-x86-64.lo elf-ifunc.lo elf-nacl.lo elf64.lo $elf"; target_size=64 ;;
 --- bfd/elf64-x86-64.c
 +++ bfd/elf64-x86-64.c
-@@ -5927,6 +5927,21 @@ static const struct bfd_elf_special_section
+@@ -5758,6 +5758,21 @@
  
  #include "elf64-target.h"
  
@@ -57,7 +57,7 @@
  #undef  TARGET_LITTLE_SYM
 --- bfd/targets.c
 +++ bfd/targets.c
-@@ -885,6 +885,7 @@ extern const bfd_target x86_64_coff_vec;
+@@ -878,6 +878,7 @@
  extern const bfd_target x86_64_elf32_vec;
  extern const bfd_target x86_64_elf32_nacl_vec;
  extern const bfd_target x86_64_elf64_vec;
@@ -65,7 +65,7 @@
  extern const bfd_target x86_64_elf64_fbsd_vec;
  extern const bfd_target x86_64_elf64_nacl_vec;
  extern const bfd_target x86_64_elf64_sol2_vec;
-@@ -1402,6 +1403,7 @@ static const bfd_target * const _bfd_target_vector[] =
+@@ -1390,6 +1391,7 @@
  	&x86_64_elf32_vec,
  	&x86_64_elf32_nacl_vec,
  	&x86_64_elf64_vec,
@@ -75,7 +75,7 @@
  	&x86_64_elf64_sol2_vec,
 --- gas/configure.tgt
 +++ gas/configure.tgt
-@@ -470,6 +470,7 @@ case ${generic_target} in
+@@ -464,6 +464,7 @@
    z8k-*-coff | z8k-*-sim)		fmt=coff ;;
  
    *-*-aout | *-*-scout)			fmt=aout ;;
@@ -95,7 +95,7 @@
  #define ELFOSABI_ARM	     97	/* ARM */
 --- ld/Makefile.am
 +++ ld/Makefile.am
-@@ -483,6 +483,7 @@ ALL_64_EMULATION_SOURCES = \
+@@ -477,6 +477,7 @@
  	eelf_k1om.c \
  	eelf_k1om_fbsd.c \
  	eelf_x86_64.c \
@@ -103,7 +103,7 @@
  	eelf_x86_64_fbsd.c \
  	eelf_x86_64_nacl.c \
  	eelf_x86_64_sol2.c \
-@@ -1938,6 +1939,10 @@ eelf_k1om_fbsd.c: $(srcdir)/emulparams/elf_k1om_fbsd.sh \
+@@ -1911,6 +1912,10 @@
  eelf_x86_64.c: $(srcdir)/emulparams/elf_x86_64.sh \
    $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
  
@@ -116,7 +116,7 @@
    $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 --- ld/Makefile.in
 +++ ld/Makefile.in
-@@ -808,6 +808,7 @@ ALL_64_EMULATION_SOURCES = \
+@@ -784,6 +784,7 @@
  	eelf_k1om.c \
  	eelf_k1om_fbsd.c \
  	eelf_x86_64.c \
@@ -124,7 +124,7 @@
  	eelf_x86_64_fbsd.c \
  	eelf_x86_64_nacl.c \
  	eelf_x86_64_sol2.c \
-@@ -1269,6 +1270,7 @@ distclean-compile:
+@@ -1233,6 +1234,7 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_l1om_fbsd.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_s390.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64.Po@am__quote@
@@ -132,7 +132,7 @@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_fbsd.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_nacl.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_x86_64_sol2.Po@am__quote@
-@@ -3429,6 +3431,10 @@ eelf_k1om_fbsd.c: $(srcdir)/emulparams/elf_k1om_fbsd.sh \
+@@ -3352,6 +3354,10 @@
  eelf_x86_64.c: $(srcdir)/emulparams/elf_x86_64.sh \
    $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
  
@@ -145,7 +145,7 @@
    $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 --- ld/configure.tgt
 +++ ld/configure.tgt
-@@ -228,6 +228,7 @@ i[3-7]86-*-rtems*)	targ_emul=elf_i386 ;;
+@@ -225,6 +225,7 @@
  i[3-7]86-*-aros*)	targ_emul=elf_i386 ;;
  i[3-7]86-*-rdos*)	targ_emul=elf_i386 ;;
  x86_64-*-rdos*)		targ_emul=elf64rdos ;;
@@ -153,7 +153,7 @@
  i[3-7]86-*-bsd)		targ_emul=i386bsd ;;
  i[3-7]86-*-bsd386)	targ_emul=i386bsd ;;
  i[3-7]86-*-bsdi*)	targ_emul=i386bsd ;;
---- /dev/null
+--- ld/emulparams/elf_x86_64_cloudabi.sh
 +++ ld/emulparams/elf_x86_64_cloudabi.sh
 @@ -0,0 +1,2 @@
 +. ${srcdir}/emulparams/elf_x86_64.sh
