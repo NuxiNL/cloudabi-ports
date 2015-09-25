@@ -30,10 +30,32 @@ class Distfile:
 
     @staticmethod
     def _apply_patch(patch, target):
-        # Apply the patch
+        # Automatically determine the patchlevel by taking a look at the
+        # first filename in the patch.
+        patchlevel = 0
+        with open(patch, 'rb') as f:
+            for l in f.readlines():
+                if l.startswith(b'--- '):
+                    filename = str(l[4:-1].split(b'\t', 1)[0], encoding='ASCII')
+                    while True:
+                        if os.path.exists(os.path.join(target, filename)):
+                            # Correct patchlevel determined.
+                            break
+                        # Increment patchlevel once more.
+                        s = filename.split('/', 1)
+                        if len(s) < 2:
+                            # File does not seem to exist at all. Don't
+                            # compute the patchlevel for this patch.
+                            patchlevel = 0
+                            break
+                        filename = s[1]
+                        patchlevel += 1
+                    break
+
+        # Apply the patch.
         with open(patch) as f:
             subprocess.check_call(
-                ['patch', '-d', target, '-tsp0'], stdin=f)
+                ['patch', '-d', target, '-tsp%d' % patchlevel], stdin=f)
 
         # Delete .orig files that patch leaves behind.
         for path in util.walk_files(target):
