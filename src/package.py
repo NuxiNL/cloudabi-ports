@@ -109,9 +109,7 @@ class TargetPackage:
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
-                TargetBuilder(
-                    self._install_directory,
-                    self._arch),
+                TargetBuilder(self._install_directory, self._arch),
                 self._name,
                 self._version,
                 self._distfiles))
