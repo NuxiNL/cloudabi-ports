@@ -106,7 +106,7 @@ class Repository:
             exec(f.read(), identifiers, identifiers)
 
     def get_distfiles(self):
-        return self._distfiles
+        return self._distfiles.values()
 
     def get_target_packages(self):
         # Create host packages that haven't been instantiated yet.
