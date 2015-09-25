@@ -184,7 +184,7 @@
  /* #define TEST_ENG_OPENSSL_RC4_P_CIPHER */
 --- crypto/evp/c_all.c
 +++ crypto/evp/c_all.c
-@@ -291,9 +291,11 @@
+@@ -290,9 +290,11 @@
  	OpenSSL_add_all_digests();
  }
  
@@ -207,7 +207,7 @@
  RAND_write_file(const char *file)
  {
 @@ -133,6 +134,7 @@
- 	OPENSSL_cleanse(buf, BUFSIZE);
+ 	explicit_bzero(buf, BUFSIZE);
  	return ret;
  }
 +#endif
@@ -417,7 +417,7 @@
      int (*list_cb)(const char *elem, int len, void *usr), void *arg);
 --- include/openssl/crypto.h
 +++ include/openssl/crypto.h
-@@ -140,7 +140,6 @@
+@@ -141,7 +141,6 @@
  #define SSLEAY_CFLAGS		2
  #define SSLEAY_BUILT_ON		3
  #define SSLEAY_PLATFORM		4
@@ -427,7 +427,7 @@
  typedef struct openssl_item_st {
 --- include/openssl/evp.h
 +++ include/openssl/evp.h
-@@ -816,13 +816,8 @@
+@@ -815,13 +815,8 @@
  #endif
  
  void OPENSSL_add_all_algorithms_noconf(void);
@@ -453,7 +453,7 @@
  int RAND_poll(void);
 --- include/openssl/ssl.h
 +++ include/openssl/ssl.h
-@@ -1570,19 +1570,7 @@
+@@ -1568,19 +1568,7 @@
  int	SSL_use_certificate(SSL *ssl, X509 *x);
  int	SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len);
  
@@ -473,7 +473,7 @@
  
  void	SSL_load_error_strings(void );
  const char *SSL_state_string(const SSL *s);
-@@ -1748,9 +1736,6 @@
+@@ -1742,9 +1730,6 @@
  void SSL_set_shutdown(SSL *ssl,int mode);
  int SSL_get_shutdown(const SSL *ssl);
  int SSL_version(const SSL *ssl);
@@ -524,7 +524,7 @@
  X509 *		X509_REQ_to_X509(X509_REQ *r, int days,EVP_PKEY *pkey);
 --- include/openssl/x509_vfy.h
 +++ include/openssl/x509_vfy.h
-@@ -428,8 +428,6 @@
+@@ -429,8 +429,6 @@
  
  X509_LOOKUP *X509_STORE_add_lookup(X509_STORE *v, X509_LOOKUP_METHOD *m);
  
@@ -533,7 +533,7 @@
  X509_LOOKUP_METHOD *X509_LOOKUP_mem(void);
  
  int X509_STORE_add_cert(X509_STORE *ctx, X509 *x);
-@@ -441,9 +439,6 @@
+@@ -442,9 +440,6 @@
  int X509_LOOKUP_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
  	long argl, char **ret);
  
@@ -543,7 +543,7 @@
  
  
  X509_LOOKUP *X509_LOOKUP_new(X509_LOOKUP_METHOD *method);
-@@ -459,10 +454,7 @@
+@@ -460,10 +455,7 @@
  	int len, X509_OBJECT *ret);
  int X509_LOOKUP_shutdown(X509_LOOKUP *ctx);
  
@@ -575,9 +575,9 @@
  int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
      size_t _len);
  void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
-@@ -93,7 +88,6 @@
-     size_t *_outlen);
- int tls_close(struct tls *_ctx);
+@@ -109,7 +104,6 @@
+ const char * tls_conn_version(struct tls *ctx);
+ const char * tls_conn_cipher(struct tls *ctx);
  
 -uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
  
@@ -585,7 +585,7 @@
  }
 --- ssl/ssl_cert.c
 +++ ssl/ssl_cert.c
-@@ -574,6 +574,7 @@
+@@ -567,6 +567,7 @@
   * \param file the file containing one or more certs.
   * \return a ::STACK containing the certs.
   */
@@ -593,14 +593,14 @@
  STACK_OF(X509_NAME) *
  SSL_load_client_CA_file(const char *file)
  {
-@@ -733,3 +734,4 @@
+@@ -726,3 +727,4 @@
  	}
  	return ret;
  }
 +#endif
 --- ssl/ssl_lib.c
 +++ ssl/ssl_lib.c
-@@ -2903,6 +2903,7 @@
+@@ -2867,6 +2867,7 @@
  	return (ssl->ctx);
  }
  
@@ -608,7 +608,7 @@
  int
  SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)
  {
-@@ -2915,6 +2916,7 @@
+@@ -2879,6 +2880,7 @@
  {
  	return (X509_STORE_load_locations(ctx->cert_store, CAfile, CApath));
  }
@@ -732,7 +732,18 @@
  SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len)
 --- tls/tls.c
 +++ tls/tls.c
-@@ -150,6 +150,7 @@
+@@ -155,9 +155,7 @@
+ 
+ 	if (!required &&
+ 	    ctx->config->cert_mem == NULL &&
+-	    ctx->config->key_mem == NULL &&
+-	    ctx->config->cert_file == NULL &&
+-	    ctx->config->key_file == NULL)
++	    ctx->config->key_mem == NULL)
+ 		return(0);
+ 
+ 	if (ctx->config->cert_mem != NULL) {
+@@ -199,6 +197,7 @@
  		pkey = NULL;
  	}
  
@@ -740,29 +751,27 @@
  	if (ctx->config->cert_file != NULL) {
  		if (SSL_CTX_use_certificate_chain_file(ctx->ssl_ctx,
  		    ctx->config->cert_file) != 1) {
-@@ -164,6 +165,7 @@
+@@ -213,6 +212,7 @@
  			goto err;
  		}
  	}
 +#endif
  
  	if (SSL_CTX_check_private_key(ctx->ssl_ctx) != 1) {
- 		tls_set_error(ctx, "private/public key mismatch");
---- tls/tls_client.c
-+++ tls/tls_client.c
-@@ -211,10 +211,12 @@
- 				    "ssl verify memory setup failure");
- 				goto err;
- 			}
-+#if 0
- 		} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
- 		    ctx->config->ca_file, ctx->config->ca_path) != 1) {
- 			tls_set_error(ctx, "ssl verify setup failure");
+ 		tls_set_errorx(ctx, "private/public key mismatch");
+@@ -284,10 +284,12 @@
+ 			tls_set_errorx(ctx, "ssl verify memory setup failure");
  			goto err;
-+#endif
  		}
- 		if (ctx->config->verify_depth >= 0)
- 			SSL_CTX_set_verify_depth(ctx->ssl_ctx,
++#if 0
+ 	} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
+             ctx->config->ca_file, ctx->config->ca_path) != 1) {
+ 		tls_set_errorx(ctx, "ssl verify setup failure");
+ 		goto err;
++#endif
+ 	}
+ 	if (ctx->config->verify_depth >= 0)
+ 		SSL_CTX_set_verify_depth(ctx->ssl_ctx,
 --- tls/tls_config.c
 +++ tls/tls_config.c
 @@ -68,8 +68,6 @@
@@ -774,7 +783,7 @@
  	if (tls_config_set_dheparams(config, "none") != 0)
  		goto err;
  	if (tls_config_set_ecdhecurve(config, "auto") != 0)
-@@ -97,12 +95,8 @@
+@@ -99,12 +97,8 @@
  
  	tls_config_clear_keys(config);
  
@@ -787,7 +796,7 @@
  	free(config->key_mem);
  
  	free(config);
-@@ -174,6 +168,7 @@
+@@ -176,6 +170,7 @@
  	return (0);
  }
  
@@ -795,7 +804,7 @@
  int
  tls_config_set_ca_file(struct tls_config *config, const char *ca_file)
  {
-@@ -185,6 +180,7 @@
+@@ -187,6 +182,7 @@
  {
  	return set_string(&config->ca_path, ca_path);
  }
@@ -803,7 +812,7 @@
  
  int
  tls_config_set_ca_mem(struct tls_config *config, const uint8_t *ca, size_t len)
-@@ -192,11 +188,13 @@
+@@ -194,11 +190,13 @@
  	return set_mem(&config->ca_mem, &config->ca_len, ca, len);
  }
  
@@ -817,7 +826,7 @@
  
  int
  tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
-@@ -255,11 +253,13 @@
+@@ -257,11 +255,13 @@
  	return (0);
  }
  
@@ -833,7 +842,7 @@
  tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
 --- tls/tls_internal.h
 +++ tls/tls_internal.h
-@@ -29,17 +29,13 @@
+@@ -27,18 +27,14 @@
  #define TLS_CIPHERS_DEFAULT	"TLSv1.2+AEAD+ECDHE:TLSv1.2+AEAD+DHE"
  
  struct tls_config {
@@ -845,6 +854,7 @@
  	char *cert_mem;
  	size_t cert_len;
  	const char *ciphers;
+ 	int ciphers_server;
  	int dheparams;
  	int ecdhecurve;
 -	const char *key_file;
