@@ -8,6 +8,10 @@ def build(ctx):
     build = ctx.extract().autoconf([
         '--disable-lzmadec', '--disable-lzmainfo', '--disable-scripts',
         '--disable-xz', '--disable-xzdec',
+
+        # Work around an issue on FreeBSD, where libmd's SHA256
+        # functions causes checksum failures.
+        'ac_cv_type_SHA256_CTX=no', 'ac_cv_search_SHA256_Init=no',
     ])
     build.make()
     build.make_install().install()
