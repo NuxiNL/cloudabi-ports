@@ -23,6 +23,7 @@ class Distfile:
         self._distdir = distdir
         self._name = name
         self._checksum = checksum
+        # TODO(ed): Should append the directory name to FALLBACK_MIRRORS.
         self._master_sites = master_sites | config.FALLBACK_MIRRORS
         self._patches = patches
         self._pathname = os.path.join(distdir, self._name)
@@ -51,7 +52,8 @@ class Distfile:
     def extract(self, target):
         # Fetch and extract tarball.
         self._fetch()
-        subprocess.check_call(['tar', '-xC', target, '-f', self._pathname])
+        subprocess.check_call([os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar'),
+                               '-xC', target, '-f', self._pathname])
 
         # Remove leading directory names.
         while True:

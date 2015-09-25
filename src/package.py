@@ -104,7 +104,7 @@ class TargetPackage:
         # installed in place.
         self.initialize_buildroot({
             'autoconf', 'binutils', 'bison', 'cmake', 'help2man',
-            'llvm', 'make', 'pkgconf',
+            'libarchive', 'llvm', 'make', 'pkgconf',
         }, self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
