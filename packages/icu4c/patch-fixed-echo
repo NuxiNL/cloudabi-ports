@@ -1,0 +1,20 @@
+--- source/configure
++++ source/configure
+@@ -2593,16 +2593,7 @@
+ # Current autoconf (2.65) gives incorrect echo newline option
+ # for icu-config
+ # This may be removed later - mow (June 17, 2010)
+-ICU_ECHO_C= ICU_ECHO_N= ICU_ECHO_T=
+-case `/bin/sh -c "echo -n x"` in
+--n*)
+-  case `/bin/sh -c "echo 'x\c'"` in
+-  *c*) ICU_ECHO_T=' ';;     # ECHO_T is single tab character.
+-  *)   ICU_ECHO_C='\c';;
+-  esac;;
+-*)
+-  ICU_ECHO_N='-n';;
+-esac
++ICU_ECHO_C='\c' ICU_ECHO_N= ICU_ECHO_T=
+ 
+ 
+ 
