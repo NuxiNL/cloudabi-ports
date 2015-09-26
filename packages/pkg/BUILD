@@ -12,7 +12,7 @@ def build(ctx):
 
 host_package(
     name='pkg',
-    version='1.5.6',
+    version='1.6.0',
     homepage='https://github.com/freebsd/pkg',
     maintainer='info@nuxi.nl',
     lib_depends={'libarchive'},
@@ -20,7 +20,7 @@ host_package(
 )
 
 distfile(
-    name='pkg-1.5.6.tar.xz',
-    checksum='30c772e97e306ad85dcc652e2a9951ad49b0827337066f44dba5d91882ad92b1',
+    name='pkg-1.6.0.tar.xz',
+    checksum='ed8b651abaf613723bbec8363e7d1c4f8edfb487adb689d22880430026ab7912',
     master_sites={'http://files.etoilebsd.net/pkg/'},
 )
