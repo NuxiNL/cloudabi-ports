@@ -5,7 +5,7 @@
   * @stable ICU 3.6
   */
 +#ifdef __CloudABI__
-+    #define UCONFIG_NO_FILE_IO 1
++#   define UCONFIG_NO_FILE_IO 1
 +#endif
  #ifndef UCONFIG_NO_FILE_IO
  #   define UCONFIG_NO_FILE_IO 0
