@@ -1,0 +1,46 @@
+--- source/common/putil.cpp
++++ source/common/putil.cpp
+@@ -180,7 +180,7 @@
+   functions).
+   ---------------------------------------------------------------------------*/
+ 
+-#if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_OS400
++#if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_OS400 || defined(__CloudABI__)
+ #   undef U_POSIX_LOCALE
+ #else
+ #   define U_POSIX_LOCALE    1
+@@ -603,7 +603,7 @@
+ U_CAPI void U_EXPORT2
+ uprv_tzset()
+ {
+-#if defined(U_TZSET)
++#if defined(U_TZSET) && !defined(__CloudABI__)
+     U_TZSET();
+ #else
+     /* no initialization*/
+@@ -621,12 +621,12 @@
+     int32_t tdiff = 0;
+ 
+     time(&t);
+-    uprv_memcpy( &tmrec, localtime(&t), sizeof(tmrec) );
++    localtime_r(&t, &tmrec);
+ #if U_PLATFORM != U_PF_IPHONE
+     UBool dst_checked = (tmrec.tm_isdst != 0); /* daylight savings time is checked*/
+ #endif
+     t1 = mktime(&tmrec);                 /* local time in seconds*/
+-    uprv_memcpy( &tmrec, gmtime(&t), sizeof(tmrec) );
++    gmtime_r(&t, &tmrec);
+     t2 = mktime(&tmrec);                 /* GMT (or UTC) in seconds*/
+     tdiff = t2 - t1;
+ 
+@@ -649,7 +649,9 @@
+ /* Note that U_TZNAME does *not* have to be tzname, but if it is,
+    some platforms need to have it declared here. */
+ 
+-#if defined(U_TZNAME) && (U_PLATFORM == U_PF_IRIX || U_PLATFORM_IS_DARWIN_BASED || (U_PLATFORM == U_PF_CYGWIN && !U_PLATFORM_USES_ONLY_WIN32_API))
++#ifdef __CloudABI__
++static const char *U_TZNAME[] = {"UTC", "UTC"};
++#elif defined(U_TZNAME) && (U_PLATFORM == U_PF_IRIX || U_PLATFORM_IS_DARWIN_BASED || (U_PLATFORM == U_PF_CYGWIN && !U_PLATFORM_USES_ONLY_WIN32_API))
+ /* RS6000 and others reject char **tzname.  */
+ extern U_IMPORT char *U_TZNAME[];
+ #endif

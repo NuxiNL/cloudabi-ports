@@ -1,0 +1,53 @@
+--- source/common/uloc.cpp
++++ source/common/uloc.cpp
+@@ -2212,7 +2212,7 @@
+         /* For machines that decide to change the decimal on you,
+         and try to be too smart with localization.
+         This normally should be just a '.'. */
+-        sprintf(rep, "%+1.1f", 1.0);
++        snprintf(rep, sizeof(rep), "%+1.1f", 1.0);
+         gDecimal = rep[2];
+     }
+ 
+--- source/i18n/choicfmt.cpp
++++ source/i18n/choicfmt.cpp
+@@ -173,7 +173,7 @@
+     char *itrPtr = temp;
+     char *expPtr;
+ 
+-    sprintf(temp, "%.*g", DBL_DIG, value);
++    snprintf(temp, sizeof(temp), "%.*g", DBL_DIG, value);
+ 
+     /* Find and convert the decimal point.
+        Using setlocale on some machines will cause sprintf to use a comma for certain locales.
+--- source/i18n/digitlst.cpp
++++ source/i18n/digitlst.cpp
+@@ -426,7 +426,7 @@
+         // Most commonly is '.'
+         // TODO: caching could fail if the global locale is changed on the fly.
+         char rep[MAX_DIGITS];
+-        sprintf(rep, "%+1.1f", 1.0);
++        snprintf(rep, sizeof(rep), "%+1.1f", 1.0);
+         decimalSeparator = rep[2];
+     }
+ 
+@@ -804,7 +804,7 @@
+             uprv_strcpy(rep,"inf");
+         }
+     } else {
+-        sprintf(rep, "%+1.*e", MAX_DBL_DIGITS - 1, source);
++        snprintf(rep, sizeof(rep), "%+1.*e", MAX_DBL_DIGITS - 1, source);
+     }
+     U_ASSERT(uprv_strlen(rep) < sizeof(rep));
+ 
+--- source/i18n/plurrule.cpp
++++ source/i18n/plurrule.cpp
+@@ -1509,7 +1509,7 @@
+ 
+     // Slow path, convert with sprintf, parse converted output.
+     char  buf[30] = {0};
+-    sprintf(buf, "%1.15e", n);
++    snprintf(buf, sizeof(buf), "%1.15e", n);
+     // formatted number looks like this: 1.234567890123457e-01
+     int exponent = atoi(buf+18);
+     int numFractionDigits = 15;

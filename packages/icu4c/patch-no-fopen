@@ -1,0 +1,60 @@
+--- source/common/unicode/uconfig.h
++++ source/common/unicode/uconfig.h
+@@ -242,6 +242,9 @@
+  *
+  * @stable ICU 3.6
+  */
++#ifdef __CloudABI__
++    #define UCONFIG_NO_FILE_IO 1
++#endif
+ #ifndef UCONFIG_NO_FILE_IO
+ #   define UCONFIG_NO_FILE_IO 0
+ #endif
+--- source/io/ufile.c
++++ source/io/ufile.c
+@@ -128,6 +128,7 @@
+     return finit_owner(f, locale, codepage, TRUE);
+ }
+ 
++#ifndef __CloudABI__
+ U_CAPI UFILE* U_EXPORT2 /* U_CAPI ... U_EXPORT2 added by Peter Kirk 17 Nov 2001 */
+ u_fopen(const char    *filename,
+         const char    *perm,
+@@ -179,6 +180,7 @@
+ #endif
+     return result; /* not a file leak */
+ }
++#endif
+ 
+ U_CAPI UFILE* U_EXPORT2
+ u_fstropen(UChar *stringBuf,
+--- source/io/unicode/ustdio.h
++++ source/io/unicode/ustdio.h
+@@ -237,11 +237,13 @@
+  * @return A new UFILE, or NULL if an error occurred.
+  * @stable ICU 3.0
+  */
++#ifndef __CloudABI__
+ U_STABLE UFILE* U_EXPORT2
+ u_fopen(const char    *filename,
+     const char    *perm,
+     const char    *locale,
+     const char    *codepage);
++#endif
+ 
+ #ifndef U_HIDE_DRAFT_API
+ /**
+@@ -261,11 +263,13 @@
+  * @return A new UFILE, or NULL if an error occurred.
+  * @draft ICU 54
+  */
++#ifndef __CloudABI__
+ U_DRAFT UFILE* U_EXPORT2
+ u_fopen_u(const UChar    *filename,
+     const char    *perm,
+     const char    *locale,
+     const char    *codepage);
++#endif
+ #endif  /* U_HIDE_DRAFT_API */
+ 
+ /**

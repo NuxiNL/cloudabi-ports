@@ -1,0 +1,86 @@
+--- source/io/unicode/ustdio.h
++++ source/io/unicode/ustdio.h
+@@ -483,9 +483,11 @@
+  * @return The number of Unicode characters written to <TT>stdout</TT>
+  * @stable ICU 49
+  */
++#ifndef __CloudABI__
+ U_STABLE int32_t U_EXPORT2
+ u_printf(const char *patternSpecification,
+          ... );
++#endif
+ 
+ /**
+  * Write formatted data to a UFILE.
+@@ -524,17 +526,21 @@
+  * @return The number of Unicode characters written to <TT>stdout</TT>
+  * @stable ICU 49
+  */
++#ifndef __CloudABI__
+ U_STABLE int32_t U_EXPORT2
+ u_printf_u(const UChar *patternSpecification,
+            ... );
++#endif
+ 
+ /**
+  * Get a UFILE for <TT>stdout</TT>.
+  * @return UFILE that writes to <TT>stdout</TT>
+  * @stable ICU 49
+  */
++#ifndef __CloudABI__
+ U_STABLE UFILE * U_EXPORT2
+ u_get_stdout(void);
++#endif
+ 
+ /**
+  * Write formatted data to a UFILE.
+--- source/io/uprintf.cpp
++++ source/io/uprintf.cpp
+@@ -38,6 +38,7 @@
+ 
+ U_NAMESPACE_USE
+ 
++#ifndef __CloudABI__
+ static UFILE *gStdOut = NULL;
+ static UInitOnce gStdOutInitOnce = U_INITONCE_INITIALIZER;
+ 
+@@ -63,6 +64,7 @@
+     umtx_initOnce(gStdOutInitOnce, &u_stdout_init);
+     return gStdOut;
+ }
++#endif
+ 
+ static int32_t U_EXPORT2
+ u_printf_write(void          *context,
+@@ -122,6 +124,7 @@
+     return count;
+ }
+ 
++#ifndef __CloudABI__
+ U_CAPI int32_t U_EXPORT2
+ u_printf(const char *patternSpecification,
+          ...)
+@@ -133,6 +136,7 @@
+     va_end(ap);
+     return count;
+ }
++#endif
+ 
+ U_CAPI int32_t U_EXPORT2 
+ u_fprintf_u(    UFILE        *f,
+@@ -149,6 +153,7 @@
+     return count;
+ }
+ 
++#ifndef __CloudABI__
+ U_CAPI int32_t U_EXPORT2
+ u_printf_u(const UChar *patternSpecification,
+            ...)
+@@ -160,6 +165,7 @@
+     va_end(ap);
+     return count;
+ }
++#endif
+ 
+ U_CAPI int32_t  U_EXPORT2 /* U_CAPI ... U_EXPORT2 added by Peter Kirk 17 Nov 2001 */
+ u_vfprintf(    UFILE        *f,

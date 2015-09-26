@@ -1,0 +1,12 @@
+--- source/i18n/digitlst.h
++++ source/i18n/digitlst.h
+@@ -36,6 +36,9 @@
+ // Decimal digits in a 64-bit int
+ #define INT64_DIGITS 19
+ 
++#include <stdlib.h>
++#undef div
++
+ typedef enum EDigitListValues {
+     MAX_DBL_DIGITS = DBL_DIG,
+     MAX_I64_DIGITS = INT64_DIGITS,
