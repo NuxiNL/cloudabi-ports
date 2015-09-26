@@ -20,8 +20,7 @@ def copy_file(source, target, preserve_attributes):
         if os.path.isabs(destination):
             raise Exception(
                 '%s points to absolute location %s',
-                source,
-                destination)
+                source, destination)
         os.symlink(destination, target)
     elif os.path.isfile(source):
         # Copy regular files.
@@ -126,8 +125,14 @@ def sha256(path):
 def walk_files(path):
     if os.path.isdir(path):
         for root, dirs, files in os.walk(path):
+            # Return all files.
             for f in files:
                 yield os.path.join(root, f)
+            # Return all symbolic links to directories as well.
+            for f in dirs:
+                fullpath = os.path.join(root, f)
+                if os.path.islink(fullpath):
+                    yield fullpath
     elif os.path.exists(path):
         yield path
 

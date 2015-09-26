@@ -23,10 +23,8 @@ def build(ctx):
     build.make()
     stage = build.make_install()
     stage.path('bin/icu-config').unhardcode_paths()
-    # TODO(ed): Add a symbolic link?
-    # stage.path('lib/icu/current').symlink('55.1')
-    stage.path('lib/icu/55.1/Makefile.inc').unhardcode_paths()
-    stage.path('lib/icu/55.1/pkgdata.inc').unhardcode_paths()
+    stage.path('lib/icu/current/Makefile.inc').unhardcode_paths()
+    stage.path('lib/icu/current/pkgdata.inc').unhardcode_paths()
     stage.install()
 
 package(
