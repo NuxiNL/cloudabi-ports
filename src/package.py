@@ -10,7 +10,7 @@ import subprocess
 
 from . import config
 from . import util
-from .builder import BuildHandle, HostBuilder, TargetBuilder
+from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 
 
 class HostPackage:
@@ -56,11 +56,8 @@ class HostPackage:
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
-                HostBuilder(
-                    self._install_directory),
-                self._name,
-                self._version,
-                self._distfiles))
+                HostBuilder(BuildDirectory(), self._install_directory),
+                self._name, self._version, self._distfiles))
 
     def extract(self):
         # Copy files literally.
@@ -109,10 +106,9 @@ class TargetPackage:
         print('BUILD', self._name)
         self._build_cmd(
             BuildHandle(
-                TargetBuilder(self._install_directory, self._arch),
-                self._name,
-                self._version,
-                self._distfiles))
+                TargetBuilder(BuildDirectory(),
+                              self._install_directory, self._arch),
+                self._name, self._version, self._distfiles))
 
     def clean(self):
         util.remove(self._install_directory)

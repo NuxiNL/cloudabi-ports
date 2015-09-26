@@ -24,6 +24,9 @@ class FileHandle:
         self._builder = builder
         self._path = path
 
+    def __str__(self):
+        return self._path
+
     def autoconf(self, args=[], inplace=False):
         for path in util.walk_files(self._path):
             filename = os.path.basename(path)
@@ -61,7 +64,9 @@ class FileHandle:
                 os.rename(path + '.new', path)
 
         # Run the configure script in a separate directory.
-        builddir = self._path if inplace else self._builder.get_new_directory()
+        builddir = (self._path
+                    if inplace
+                    else self._builder._build_directory.get_new_directory())
         self._builder.autoconf(
             builddir, os.path.join(self._path, 'configure'), args)
         return FileHandle(self._builder, builddir)
@@ -79,11 +84,14 @@ class FileHandle:
             '/usr/local/bin/bash',
         ])
 
+    def host(self):
+        return FileHandle(self._builder._host_builder, self._path)
+
     def rename(self, dst):
         os.rename(self._path, dst._path)
 
     def cmake(self, args=[]):
-        builddir = self._builder.get_new_directory()
+        builddir = self._builder._build_directory.get_new_directory()
         self._builder.cmake(builddir, self._path, args)
         return FileHandle(self._builder, builddir)
 
@@ -104,7 +112,7 @@ class FileHandle:
         self.run([self._builder.get_make(), '-j6'] + args)
 
     def make_install(self, args=['install']):
-        stagedir = self._builder.get_new_directory()
+        stagedir = self._builder._build_directory.get_new_directory()
         self.run([self._builder.get_make(), 'DESTDIR=' + stagedir] + args)
         return FileHandle(
             self._builder,
@@ -120,6 +128,7 @@ class FileHandle:
         self._builder.run(self._path, command)
 
     def symlink(self, contents):
+        util.remove(self._path)
         os.symlink(contents, self._path)
 
     def unhardcode_paths(self):
@@ -151,22 +160,18 @@ class BuildHandle:
             self._builder,
             self._distfiles[
                 name % {'name': self._name, 'version': self._version}
-            ].extract(self._builder.get_new_directory())
+            ].extract(self._builder._build_directory.get_new_directory())
         )
 
     def prefix(self):
         return self._builder.get_prefix()
 
 
-class Builder:
+class BuildDirectory:
 
-    def __init__(self, prefix):
+    def __init__(self):
         self._sequence_number = 0
-        self._prefix = prefix
         self._builddir = os.path.join(config.DIR_BUILDROOT, 'build')
-
-    def get_prefix(self):
-        return self._prefix
 
     def get_new_archive(self):
         path = os.path.join(self._builddir, 'lib%d.a' % self._sequence_number)
@@ -187,10 +192,10 @@ class Builder:
         return path
 
 
-class HostBuilder(Builder):
+class HostBuilder:
 
-    def __init__(self, install_directory):
-        super(HostBuilder, self).__init__(config.DIR_BUILDROOT)
+    def __init__(self, build_directory, install_directory):
+        self._build_directory = build_directory
         self._install_directory = install_directory
 
     def autoconf(self, builddir, script, args):
@@ -204,6 +209,9 @@ class HostBuilder(Builder):
     @staticmethod
     def get_make():
         return config.GNU_MAKE
+
+    def get_prefix(self):
+        return config.DIR_BUILDROOT
 
     def install(self, source, target):
         print('INSTALL', source, '->', target)
@@ -220,25 +228,26 @@ class HostBuilder(Builder):
         _chdir(cwd)
         subprocess.check_call([
             'env',
-            'CFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
-            'CXXFLAGS=-O2 -I' + os.path.join(config.DIR_BUILDROOT, 'include'),
-            'LDFLAGS=-L' + os.path.join(config.DIR_BUILDROOT, 'lib'),
-            'PATH=%s:%s' % (os.path.join(config.DIR_BUILDROOT, 'bin'),
+            'CFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
+            'CXXFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
+            'LDFLAGS=-L' + os.path.join(self.get_prefix(), 'lib'),
+            'PATH=%s:%s' % (os.path.join(self.get_prefix(), 'bin'),
                             os.getenv('PATH')),
         ] + command)
 
 
-class TargetBuilder(Builder):
+class TargetBuilder:
 
-    def __init__(self, install_directory, arch):
+    def __init__(self, build_directory, install_directory, arch):
+        self._build_directory = build_directory
+        self._install_directory = install_directory
+        self._arch = arch
+
         # Pick a random prefix directory. That way the build will fail
         # due to nondeterminism in case our piece of software hardcodes
         # the prefix directory.
-        prefixdir = '/' + ''.join(
+        self._prefix = '/' + ''.join(
             random.choice(string.ascii_letters) for i in range(16))
-        super(TargetBuilder, self).__init__(prefixdir)
-        self._install_directory = install_directory
-        self._arch = arch
 
         self._bindir = os.path.join(config.DIR_BUILDROOT, 'bin')
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
@@ -247,12 +256,15 @@ class TargetBuilder(Builder):
             '-Werror=implicit-function-declaration', '-Werror=date-time',
         ]
 
+        # In case we need to build software for the host system.
+        self._host_builder = HostBuilder(build_directory, None)
+
     def _tool(self, name):
         return os.path.join(self._bindir, '%s-%s' % (self._arch, name))
 
     def archive(self, object_files):
         objs = sorted(object_files)
-        output = self.get_new_archive()
+        output = self._build_directory.get_new_archive()
         print('AR', output)
         subprocess.check_call([self._tool('ar'), '-rcs', output] + objs)
         return output
@@ -295,7 +307,7 @@ class TargetBuilder(Builder):
 
     def executable(self, object_files):
         objs = sorted(object_files)
-        output = self.get_new_executable()
+        output = self._build_directory.get_new_executable()
         print('LD', output)
         subprocess.check_call([self._tool('cc'), '-o', output] + objs)
         return output
@@ -306,6 +318,9 @@ class TargetBuilder(Builder):
     @staticmethod
     def get_make():
         return 'make'
+
+    def get_prefix(self):
+        return self._prefix
 
     def _unhardcode(self, source, target):
         with open(source, 'r') as f:
