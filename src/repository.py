@@ -35,7 +35,7 @@ class Repository:
             # Determine canonical name by stripping the file extension.
             distfile = kwargs
             name = distfile['name']
-            for ext in {'.tar.gz', '.tar.bz2', '.tar.xz', '.zip'}:
+            for ext in {'.tar.gz', '.tar.bz2', '.tar.xz', '.tgz', '.zip'}:
                 if distfile['name'].endswith(ext):
                     name = distfile['name'][:-len(ext)]
                     break
