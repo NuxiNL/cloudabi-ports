@@ -13,7 +13,8 @@ def build(ctx):
     # TODO(ed): Implement this further.
     with srcdir.path('project-config.jam').open('w') as f:
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
-    srcdir.debug_shell()
+    with srcdir.diff('/home/edje/foo'):
+        srcdir.debug_shell()
     srcdir.run(['./b2', '-j8', 'toolset=gcc-cloudabi', '--without-python'])
 
 package(

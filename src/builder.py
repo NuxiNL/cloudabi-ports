@@ -18,6 +18,27 @@ def _chdir(path):
     os.chdir(path)
 
 
+class DiffCreator:
+
+    def __init__(self, source_directory, build_directory, filename):
+        self._source_directory = source_directory
+        self._build_directory = build_directory
+        self._filename = filename
+
+    def __enter__(self):
+        # Create a backup of the source directory.
+        self._backup_directory = self._build_directory.get_new_directory()
+        for source_file, backup_file in util.walk_files_concurrently(
+            self._source_directory, self._backup_directory):
+            util.make_parent_dir(backup_file)
+            util.copy_file(source_file, backup_file, False)
+
+    def __exit__(self, type, value, traceback):
+        # Create a diff to store the changes that were made to the original.
+        util.diff(self._backup_directory, self._source_directory,
+                  self._filename)
+
+
 class FileHandle:
 
     def __init__(self, builder, path):
@@ -83,6 +104,9 @@ class FileHandle:
             'TERM=' + os.getenv('TERM'),
             '/usr/local/bin/bash',
         ])
+
+    def diff(self, filename):
+        return DiffCreator(self._path, self._builder._build_directory, filename)
 
     def host(self):
         return FileHandle(self._builder._host_builder, self._path)
