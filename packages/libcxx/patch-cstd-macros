@@ -1,0 +1,21 @@
+--- include/cmath
++++ include/cmath
+@@ -654,6 +654,8 @@
+ 
+ // abs
+ 
++#undef abs
++
+ #if defined(__sun__)
+ using ::abs;
+ #endif
+--- include/cstdio
++++ include/cstdio
+@@ -146,6 +146,7 @@
+ 
+ using ::fclose;
+ using ::fflush;
++#undef setbuf
+ using ::setbuf;
+ using ::setvbuf;
+ using ::fprintf;
