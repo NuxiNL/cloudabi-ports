@@ -503,3 +503,45 @@
  
      
  // This versio, which accepts any options without validation, is disabled,
+--- libs/log/src/init_from_settings.cpp
++++ libs/log/src/init_from_settings.cpp
+@@ -166,6 +166,7 @@
+ }
+ 
+ //! The function extracts the file rotation time point predicate from the parameter
++#if 0
+ template< typename CharT >
+ sinks::file::rotation_at_time_point param_cast_to_rotation_time_point(const char* param_name, std::basic_string< CharT > const& value)
+ {
+@@ -262,6 +263,7 @@
+     else
+         return sinks::file::rotation_at_time_point(hour, minute, second);
+ }
++#endif
+ 
+ //! Base class for default sink factories
+ template< typename CharT >
+@@ -415,6 +417,7 @@
+ };
+ 
+ //! Default text file sink factory
++#if 0
+ template< typename CharT >
+ class default_text_file_sink_factory :
+     public basic_default_sink_factory< CharT >
+@@ -512,6 +515,7 @@
+         return base_type::init_sink(backend, params);
+     }
+ };
++#endif
+ 
+ #ifndef BOOST_LOG_WITHOUT_SYSLOG
+ 
+@@ -733,7 +737,6 @@
+     static void init_instance()
+     {
+         sinks_repository& instance = base_type::get_instance();
+-        instance.m_Factories["TextFile"] = boost::make_shared< default_text_file_sink_factory< char_type > >();
+         instance.m_Factories["Console"] = boost::make_shared< default_console_sink_factory< char_type > >();
+ #ifndef BOOST_LOG_WITHOUT_SYSLOG
+         instance.m_Factories["Syslog"] = boost::make_shared< default_syslog_sink_factory< char_type > >();

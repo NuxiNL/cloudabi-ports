@@ -15,7 +15,10 @@ def build(ctx):
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
     with srcdir.diff('/home/edje/foo'):
         srcdir.debug_shell()
-    srcdir.run(['./b2', '-j8', 'toolset=gcc-cloudabi', '--without-python'])
+    srcdir.run([
+        './b2', '-j8', 'link=static', 'toolset=gcc-cloudabi',
+        '--without-python',
+    ])
 
 package(
     name='boost',
