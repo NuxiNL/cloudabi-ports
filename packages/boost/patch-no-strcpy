@@ -1,0 +1,80 @@
+--- boost/regex/v4/regex_workaround.hpp
++++ boost/regex/v4/regex_workaround.hpp
+@@ -196,9 +196,10 @@
+       const char *strSource 
+    )
+    {
+-      if(std::strlen(strSource)+1 > sizeInBytes)
++      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
++      if(lenSourceWithNull > sizeInBytes)
+          return 1;
+-      std::strcpy(strDestination, strSource);
++      std::memcpy(strDestination, strSource, lenSourceWithNull);
+       return 0;
+    }
+    inline std::size_t strcat_s(
+@@ -207,9 +208,11 @@
+       const char *strSource 
+    )
+    {
+-      if(std::strlen(strSource) + std::strlen(strDestination) + 1 > sizeInBytes)
++      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
++      std::size_t lenDestination = std::strlen(strDestination);
++      if(lenSourceWithNull + lenDestination > sizeInBytes)
+          return 1;
+-      std::strcat(strDestination, strSource);
++      std::memcpy(strDestination + lenDestination, strSource,lenSourceWithNull);
+       return 0;
+    }
+ 
+--- libs/regex/src/wide_posix_api.cpp
++++ libs/regex/src/wide_posix_api.cpp
+@@ -164,11 +164,7 @@
+       {
+          result = std::wcslen(wnames[code]) + 1;
+          if(buf_size >= result)
+-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
+-            ::wcscpy_s(buf, buf_size, wnames[code]);
+-#else
+-            std::wcscpy(buf, wnames[code]);
+-#endif
++            std::wmemcpy(buf, wnames[code], result);
+          return result;
+       }
+       return result;
+@@ -188,13 +184,10 @@
+ #else
+             (std::swprintf)(localbuf, 5, L"%d", i);
+ #endif
+-            if(std::wcslen(localbuf) < buf_size)
+-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
+-               ::wcscpy_s(buf, buf_size, localbuf);
+-#else
+-               std::wcscpy(buf, localbuf);
+-#endif
+-            return std::wcslen(localbuf) + 1;
++            result = std::wcslen(localbuf) + 1;
++            if(buf_size >= result)
++               std::wmemcpy(buf, localbuf, result);
++            return result;
+          }
+       }
+ #if defined(_WIN32_WCE) && !defined(UNDER_CE)
+@@ -202,13 +195,10 @@
+ #else
+       (std::swprintf)(localbuf, 5, L"%d", 0);
+ #endif
+-      if(std::wcslen(localbuf) < buf_size)
+-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
+-         ::wcscpy_s(buf, buf_size, localbuf);
+-#else
+-         std::wcscpy(buf, localbuf);
+-#endif
+-      return std::wcslen(localbuf) + 1;
++      result = std::wcslen(localbuf) + 1;
++      if(buf_size >= result)
++         std::wmemcpy(buf, localbuf, buf_size);
++      return buf_size;
+    }
+ #endif
+    if(code <= (int)REG_E_UNKNOWN)

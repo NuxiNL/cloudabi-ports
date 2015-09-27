@@ -14,14 +14,14 @@ def build(ctx):
     with srcdir.path('project-config.jam').open('w') as f:
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
     srcdir.debug_shell()
-    srcdir.run(['./b2', '-j8', 'toolset=gcc-cloudabi'])
+    srcdir.run(['./b2', '-j8', 'toolset=gcc-cloudabi', '--without-python'])
 
 package(
     name='boost',
     version='1.59.0',
     homepage='http://www.boost.org/',
     maintainer='info@nuxi.nl',
-    lib_depends={'bzip2', 'cxx-runtime', 'icu4c'},
+    lib_depends={'bzip2', 'cxx-runtime', 'icu4c', 'zlib'},
     build_cmd=build,
 )
 

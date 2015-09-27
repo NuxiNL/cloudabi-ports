@@ -1,0 +1,13 @@
+--- boost/config/select_platform_config.hpp
++++ boost/config/select_platform_config.hpp
+@@ -80,6 +80,10 @@
+ #elif defined(__VMS) 
+ // VMS:
+ #  define BOOST_PLATFORM_CONFIG "boost/config/platform/vms.hpp" 
++
++#elif defined(__CloudABI__)
++// Nuxi CloudABI:
++#  define BOOST_PLATFORM_CONFIG "boost/config/platform/cloudabi.hpp"
+ #else
+ 
+ #  if defined(unix) \

@@ -1,0 +1,120 @@
+--- libs/context/src/posix/stack_traits.cpp
++++ libs/context/src/posix/stack_traits.cpp
+@@ -8,7 +8,6 @@
+ 
+ extern "C" {
+ #include <signal.h>
+-#include <sys/resource.h>
+ #include <sys/time.h>
+ #include <unistd.h>
+ }
+@@ -39,6 +38,7 @@
+     * size = ::sysconf( _SC_PAGESIZE);
+ }
+ 
++#if 0
+ void stacksize_limit_( rlimit * limit)
+ {
+     // conforming to POSIX.1-2001
+@@ -50,6 +50,7 @@
+     (void)result;
+ #endif
+ }
++#endif
+ 
+ std::size_t pagesize()
+ {
+@@ -59,6 +60,7 @@
+     return size;
+ }
+ 
++#if 0
+ rlimit stacksize_limit()
+ {
+     static rlimit limit;
+@@ -66,6 +68,7 @@
+     boost::call_once( flag, stacksize_limit_, & limit);
+     return limit;
+ }
++#endif
+ 
+ }
+ 
+@@ -74,7 +77,7 @@
+ 
+ bool
+ stack_traits::is_unbounded() BOOST_NOEXCEPT
+-{ return RLIM_INFINITY == stacksize_limit().rlim_max; }
++{ return true; }
+ 
+ std::size_t
+ stack_traits::page_size() BOOST_NOEXCEPT
+@@ -100,7 +103,7 @@
+ stack_traits::maximum_size() BOOST_NOEXCEPT
+ {
+     BOOST_ASSERT( ! is_unbounded() );
+-    return static_cast< std::size_t >( stacksize_limit().rlim_max);
++    return SIZE_MAX;
+ }
+ 
+ }}
+--- libs/coroutine/src/posix/stack_traits.cpp
++++ libs/coroutine/src/posix/stack_traits.cpp
+@@ -8,7 +8,6 @@
+ 
+ extern "C" {
+ #include <signal.h>
+-#include <sys/resource.h>
+ #include <sys/time.h>
+ #include <unistd.h>
+ }
+@@ -38,6 +37,7 @@
+     * size = ::sysconf( _SC_PAGESIZE);
+ }
+ 
++#if 0
+ void stacksize_limit_( rlimit * limit)
+ {
+     // conforming to POSIX.1-2001
+@@ -48,6 +48,7 @@
+     BOOST_ASSERT( 0 == result);
+ #endif
+ }
++#endif
+ 
+ std::size_t pagesize()
+ {
+@@ -57,6 +58,7 @@
+     return size;
+ }
+ 
++#if 0
+ rlimit stacksize_limit()
+ {
+     static rlimit limit;
+@@ -64,6 +66,7 @@
+     boost::call_once( flag, stacksize_limit_, & limit);
+     return limit;
+ }
++#endif
+ 
+ }
+ 
+@@ -72,7 +75,7 @@
+ 
+ bool
+ stack_traits::is_unbounded() BOOST_NOEXCEPT
+-{ return RLIM_INFINITY == stacksize_limit().rlim_max; }
++{ return true; }
+ 
+ std::size_t
+ stack_traits::page_size() BOOST_NOEXCEPT
+@@ -98,7 +101,7 @@
+ stack_traits::maximum_size() BOOST_NOEXCEPT
+ {
+     BOOST_ASSERT( ! is_unbounded() );
+-    return static_cast< std::size_t >( stacksize_limit().rlim_max);
++    return SIZE_MAX;
+ }
+ 
+ }}

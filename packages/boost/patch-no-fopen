@@ -1,0 +1,505 @@
+--- boost/filesystem/fstream.hpp
++++ boost/filesystem/fstream.hpp
+@@ -111,6 +111,7 @@
+     // use two signatures, rather than one signature with default second
+     // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
+ 
++#if 0
+     explicit basic_ofstream(const path& p)
+       : std::basic_ofstream<charT,traits>(p.BOOST_FILESYSTEM_C_STR, std::ios_base::out) {}
+ 
+@@ -122,6 +123,7 @@
+ 
+     void open(const path& p, std::ios_base::openmode mode)
+       { std::basic_ofstream<charT,traits>::open(p.BOOST_FILESYSTEM_C_STR, mode); }
++#endif
+ 
+     virtual ~basic_ofstream() {}
+   };
+@@ -143,6 +145,7 @@
+     // use two signatures, rather than one signature with default second
+     // argument, to workaround VC++ 7.1 bug (ID VSWhidbey 38416)
+ 
++#if 0
+     explicit basic_fstream(const path& p)
+       : std::basic_fstream<charT,traits>(p.BOOST_FILESYSTEM_C_STR,
+           std::ios_base::in | std::ios_base::out) {}
+@@ -156,6 +159,7 @@
+ 
+     void open(const path& p, std::ios_base::openmode mode)
+       { std::basic_fstream<charT,traits>::open(p.BOOST_FILESYSTEM_C_STR, mode); }
++#endif
+ 
+     virtual ~basic_fstream() {}
+ 
+--- boost/filesystem/operations.hpp
++++ boost/filesystem/operations.hpp
+@@ -309,6 +309,7 @@
+ //                             implementation details                                   //
+ //--------------------------------------------------------------------------------------//
+ 
++#if 0
+   namespace detail
+   {
+     //  We cannot pass a BOOST_SCOPED_ENUM to a compled function because it will result
+@@ -1218,6 +1219,7 @@
+   {
+     BOOST_FILESYSTEM_DECL bool possible_large_file_size_support();
+   }
++#endif
+ 
+   } // namespace filesystem
+ } // namespace boost
+--- boost/iostreams/device/file_descriptor.hpp
++++ boost/iostreams/device/file_descriptor.hpp
+@@ -76,6 +76,7 @@
+                               BOOST_IOS::openmode mode =
+                                   BOOST_IOS::in | BOOST_IOS::out );
+ 
++#if 0
+     // Constructor taking a C-style string
+     explicit file_descriptor( const char* path,
+                               BOOST_IOS::openmode mode =
+@@ -90,6 +91,7 @@
+         init();
+         open(detail::path(path), mode); 
+     }
++#endif
+ 
+     // Copy constructor
+     file_descriptor(const file_descriptor& other);
+@@ -109,6 +111,7 @@
+ #endif
+ 
+     // open overload taking a std::string
++#if 0
+     void open( const std::string& path,
+                BOOST_IOS::openmode mode =
+                    BOOST_IOS::in | BOOST_IOS::out );
+@@ -124,6 +127,7 @@
+                BOOST_IOS::openmode mode =
+                    BOOST_IOS::in | BOOST_IOS::out )
+     { open(detail::path(path), mode); }
++#endif
+ 
+     bool is_open() const;
+     void close();
+@@ -184,6 +188,7 @@
+                                      BOOST_IOS::openmode mode = BOOST_IOS::in );
+ 
+     // Constructor taking a C-style string
++#if 0
+     explicit file_descriptor_source( const char* path,
+                                      BOOST_IOS::openmode mode = BOOST_IOS::in );
+ 
+@@ -192,6 +197,7 @@
+     explicit file_descriptor_source( const Path& path,
+                                      BOOST_IOS::openmode mode = BOOST_IOS::in )
+     { open(detail::path(path), mode); }
++#endif
+ 
+     // Copy constructor
+     file_descriptor_source(const file_descriptor_source& other);
+@@ -211,6 +217,7 @@
+ #endif
+ 
+     // open overload taking a std::string
++#if 0
+     void open(const std::string& path, BOOST_IOS::openmode mode = BOOST_IOS::in);
+ 
+     // open overload taking C-style string
+@@ -223,6 +230,7 @@
+ 
+     // open overload taking a detail::path
+     void open(const detail::path& path, BOOST_IOS::openmode);
++#endif
+ };
+ 
+ class BOOST_IOSTREAMS_DECL file_descriptor_sink : private file_descriptor {
+@@ -270,10 +278,12 @@
+                                    BOOST_IOS::openmode mode = BOOST_IOS::out );
+ 
+     // Constructor taking a Boost.Filesystem path
++#if 0
+     template<typename Path>
+     explicit file_descriptor_sink( const Path& path,
+                                    BOOST_IOS::openmode mode = BOOST_IOS::out )
+     { open(detail::path(path), mode); }
++#endif
+ 
+     // Copy constructor
+     file_descriptor_sink(const file_descriptor_sink& other);
+@@ -293,6 +303,7 @@
+ #endif
+ 
+     // open overload taking a std::string
++#if 0
+     void open( const std::string& path, 
+                BOOST_IOS::openmode mode = BOOST_IOS::out );
+ 
+@@ -309,6 +320,7 @@
+ 
+     // open overload taking a detail::path
+     void open(const detail::path& path, BOOST_IOS::openmode);
++#endif
+ };
+ 
+ } } // End namespaces iostreams, boost.
+--- boost/iostreams/device/mapped_file.hpp
++++ boost/iostreams/device/mapped_file.hpp
+@@ -7,6 +7,8 @@
+ #ifndef BOOST_IOSTREAMS_MAPPED_FILE_HPP_INCLUDED
+ #define BOOST_IOSTREAMS_MAPPED_FILE_HPP_INCLUDED
+ 
++#error "Mapped files not available in this environment"
++
+ #if defined(_MSC_VER) && (_MSC_VER >= 1020)
+ # pragma once
+ #endif
+--- boost/log/sinks/text_file_backend.hpp
++++ boost/log/sinks/text_file_backend.hpp
+@@ -15,6 +15,8 @@
+ #ifndef BOOST_LOG_SINKS_TEXT_FILE_BACKEND_HPP_INCLUDED_
+ #define BOOST_LOG_SINKS_TEXT_FILE_BACKEND_HPP_INCLUDED_
+ 
++#error "Text file backend not supported"
++
+ #include <ios>
+ #include <string>
+ #include <ostream>
+--- boost/log/sinks/text_multifile_backend.hpp
++++ boost/log/sinks/text_multifile_backend.hpp
+@@ -15,6 +15,8 @@
+ #ifndef BOOST_LOG_SINKS_TEXT_MULTIFILE_BACKEND_HPP_INCLUDED_
+ #define BOOST_LOG_SINKS_TEXT_MULTIFILE_BACKEND_HPP_INCLUDED_
+ 
++#error "Text multifile backend not supported"
++
+ #include <ios>
+ #include <string>
+ #include <locale>
+--- boost/log/sinks.hpp
++++ boost/log/sinks.hpp
+@@ -32,8 +32,6 @@
+ #endif // !defined(BOOST_LOG_NO_THREADS)
+ 
+ #include <boost/log/sinks/syslog_backend.hpp>
+-#include <boost/log/sinks/text_file_backend.hpp>
+-#include <boost/log/sinks/text_multifile_backend.hpp>
+ #include <boost/log/sinks/text_ostream_backend.hpp>
+ #ifdef BOOST_WINDOWS
+ #include <boost/log/sinks/debug_output_backend.hpp>
+--- boost/program_options/parsers.hpp
++++ boost/program_options/parsers.hpp
+@@ -190,6 +190,7 @@
+         Read from file with the given name. The character type is
+         passed to the file stream.
+     */
++#if 0
+     template<class charT>
+ #if ! BOOST_WORKAROUND(__ICL, BOOST_TESTED_AT(700))
+     BOOST_PROGRAM_OPTIONS_DECL
+@@ -197,6 +198,7 @@
+     basic_parsed_options<charT>
+     parse_config_file(const char* filename, const options_description&,
+                       bool allow_unregistered = false);
++#endif
+ 
+     /** Controls if the 'collect_unregistered' function should
+         include positional options, or not. */
+--- boost/regex/config.hpp
++++ boost/regex/config.hpp
+@@ -133,7 +133,7 @@
+ 
+ /* disable our own file-iterators and mapfiles if we can't
+  * support them: */
+-#if !defined(BOOST_HAS_DIRENT_H) && !(defined(_WIN32) && !defined(BOOST_REGEX_NO_W32))
++#if 1
+ #  define BOOST_REGEX_NO_FILEITER
+ #endif
+ 
+--- boost/test/impl/test_tools.ipp
++++ boost/test/impl/test_tools.ipp
+@@ -495,6 +495,7 @@
+ 
+ //____________________________________________________________________________//
+ 
++#if 0
+ output_test_stream::output_test_stream( const_string pattern_file_name, bool match_or_save, bool text_or_binary )
+ : m_pimpl( new Impl )
+ {
+@@ -512,6 +513,7 @@
+     m_pimpl->m_match_or_save    = match_or_save;
+     m_pimpl->m_text_or_binary   = text_or_binary;
+ }
++#endif
+ 
+ //____________________________________________________________________________//
+ 
+--- boost/test/tools/output_test_stream.hpp
++++ boost/test/tools/output_test_stream.hpp
+@@ -46,9 +46,6 @@
+     //!           written
+     //!@param[in] text_or_binary if false, opens the stream in binary mode. Otherwise the stream
+     //!           is opened with default flags and the carriage returns are ignored.
+-    explicit        output_test_stream( const_string    pattern_file_name = const_string(),
+-                                        bool            match_or_save     = true,
+-                                        bool            text_or_binary    = true );
+ 
+     // Destructor
+     ~output_test_stream();
+--- boost/timer/timer.hpp
++++ boost/timer/timer.hpp
+@@ -89,9 +89,6 @@
+     //  for format are not provided to avoid order-of-dynamic-initialization issues with a
+     //  std::string.
+ 
+-    explicit auto_cpu_timer(short places = default_places);                          // #1
+-             auto_cpu_timer(short places, const std::string& format);                // #2
+-    explicit auto_cpu_timer(const std::string& format);                              // #3
+              auto_cpu_timer(std::ostream& os, short places,
+                             const std::string& format)                               // #4
+                                    : m_places(places), m_os(&os), m_format(format)
+--- libs/filesystem/src/operations.cpp
++++ libs/filesystem/src/operations.cpp
+@@ -1,3 +1,4 @@
++#if 0
+ //  operations.cpp  --------------------------------------------------------------------//
+ 
+ //  Copyright 2002-2009, 2014 Beman Dawes
+@@ -71,12 +72,11 @@
+ 
+ #   include <sys/types.h>
+ #   include <sys/stat.h>
+-#   if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__ANDROID__) \
+- && !defined(__VXWORKS__)
++#   if 0
+ #     include <sys/statvfs.h>
+ #     define BOOST_STATVFS statvfs
+ #     define BOOST_STATVFS_F_FRSIZE vfs.f_frsize
+-#   else
++#   elif 0
+ #     ifdef __OpenBSD__
+ #       include <sys/param.h>
+ #     elif defined(__ANDROID__)
+@@ -91,7 +91,6 @@
+ #   include <dirent.h>
+ #   include <unistd.h>
+ #   include <fcntl.h>
+-#   include <utime.h>
+ #   include "limits.h"
+ 
+ # else // BOOST_WINDOW_API
+@@ -2265,3 +2264,4 @@
+ }  // namespace detail
+ } // namespace filesystem
+ } // namespace boost
++#endif
+--- libs/iostreams/build/Jamfile.v2
++++ libs/iostreams/build/Jamfile.v2
+@@ -145,7 +145,7 @@
+ }
+ 
+ 
+-local sources = file_descriptor.cpp mapped_file.cpp ;
++local sources = file_descriptor.cpp ;
+ local bz2 = [ create-library bzip2 : libbz2 bz2 : 
+     blocksort bzlib compress crctable decompress huffman randtable :
+     <link>shared:<def-file>$(BZIP2_SOURCE)/libbz2.def ] ;
+--- libs/iostreams/src/file_descriptor.cpp
++++ libs/iostreams/src/file_descriptor.cpp
+@@ -110,6 +110,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ void file_descriptor_impl::open(const detail::path& p, BOOST_IOS::openmode mode)
+ {
+     close_impl(flags_ & close_on_exit, true);
+@@ -232,6 +233,7 @@
+     }
+ #endif // #ifndef BOOST_IOSTREAMS_WINDOWS //----------------------------------//
+ }
++#endif
+ 
+ bool file_descriptor_impl::is_open() const
+ { return handle_ != invalid_handle(); }
+@@ -383,6 +385,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ file_descriptor::file_descriptor( const std::string& path,
+                                   BOOST_IOS::openmode mode )
+     : pimpl_(new impl_type)
+@@ -392,6 +395,7 @@
+                                   BOOST_IOS::openmode mode )
+     : pimpl_(new impl_type)
+ { open(path, mode); }
++#endif
+ 
+ file_descriptor::file_descriptor(const file_descriptor& other) 
+     : pimpl_(other.pimpl_) 
+@@ -421,11 +425,13 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ void file_descriptor::open(const std::string& path, BOOST_IOS::openmode mode)
+ { open(detail::path(path), mode); }
+ 
+ void file_descriptor::open(const char* path, BOOST_IOS::openmode mode)
+ { open(detail::path(path), mode); }
++#endif
+ 
+ bool file_descriptor::is_open() const { return pimpl_->is_open(); }
+ 
+@@ -444,6 +450,7 @@
+ 
+ void file_descriptor::init() { pimpl_.reset(new impl_type); }
+ 
++#if 0
+ void file_descriptor::open(
+     const detail::path& path, 
+     BOOST_IOS::openmode mode, 
+@@ -452,6 +459,7 @@
+     mode |= base;
+     pimpl_->open(path, mode);
+ }
++#endif
+                     
+ //------------------Implementation of file_descriptor_source------------------//
+ 
+@@ -477,6 +485,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ file_descriptor_source::file_descriptor_source(
+     const std::string& path, BOOST_IOS::openmode mode)
+ { open(path, mode); }
+@@ -484,6 +493,7 @@
+ file_descriptor_source::file_descriptor_source(
+     const char* path, BOOST_IOS::openmode mode)
+ { open(path, mode); }
++#endif
+ 
+ file_descriptor_source::file_descriptor_source(
+     const file_descriptor_source& other) 
+@@ -510,6 +520,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ void file_descriptor_source::open(
+     const std::string& path, BOOST_IOS::openmode mode)
+ { open(detail::path(path), mode); }
+@@ -525,6 +536,7 @@
+         boost::throw_exception(BOOST_IOSTREAMS_FAILURE("invalid mode"));
+     file_descriptor::open(path, mode, BOOST_IOS::in); 
+ }
++#endif
+                     
+ //------------------Implementation of file_descriptor_sink--------------------//
+ 
+@@ -550,6 +562,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ file_descriptor_sink::file_descriptor_sink(
+     const std::string& path, BOOST_IOS::openmode mode)
+ { open(path, mode); }
+@@ -557,6 +570,7 @@
+ file_descriptor_sink::file_descriptor_sink(
+     const char* path, BOOST_IOS::openmode mode)
+ { open(path, mode); }
++#endif
+ 
+ file_descriptor_sink::file_descriptor_sink(const file_descriptor_sink& other) 
+     : file_descriptor(static_cast<const file_descriptor&>(other)) 
+@@ -582,6 +596,7 @@
+ 
+ #endif // #ifdef BOOST_IOSTREAMS_WINDOWS //-----------------------------------//
+ 
++#if 0
+ void file_descriptor_sink::open(
+     const std::string& path, BOOST_IOS::openmode mode)
+ { open(detail::path(path), mode); }
+@@ -597,5 +612,6 @@
+         boost::throw_exception(BOOST_IOSTREAMS_FAILURE("invalid mode"));
+     file_descriptor::open(path, mode, BOOST_IOS::out); 
+ }
++#endif
+ 
+ } } // End namespaces iostreams, boost.
+--- libs/locale/src/shared/message.cpp
++++ libs/locale/src/shared/message.cpp
+@@ -40,6 +40,7 @@
+     namespace locale {
+         namespace gnu_gettext {
+             
++#if 0
+             class c_file {
+                 c_file(c_file const &);
+                 void operator=(c_file const &);
+@@ -100,6 +101,7 @@
+                 #endif
+ 
+             };
++#endif
+ 
+             class mo_file {
+             public:
+@@ -627,12 +629,13 @@
+ 
+                     std::auto_ptr<mo_file> mo;
+ 
+-                    if(callback) {
++                    if(true) {
+                         std::vector<char> vfile = callback(file_name,locale_encoding);
+                         if(vfile.empty()) 
+                             return false;
+                         mo.reset(new mo_file(vfile));
+                     }
++#if 0
+                     else {
+                         c_file the_file;
+                         the_file.open(file_name,locale_encoding);
+@@ -640,6 +643,7 @@
+                             return false;
+                         mo.reset(new mo_file(the_file.file));
+                     }
++#endif
+                     
+                     std::string plural = extract(mo->value(0).first,"plural=","\r\n;");
+ 
+--- libs/log/build/Jamfile.v2
++++ libs/log/build/Jamfile.v2
+@@ -227,8 +227,6 @@
+     default_attribute_names.cpp
+     default_sink.cpp
+     text_ostream_backend.cpp
+-    text_file_backend.cpp
+-    text_multifile_backend.cpp
+     syslog_backend.cpp
+     thread_specific.cpp
+     once_block.cpp
+--- libs/program_options/src/parsers.cpp
++++ libs/program_options/src/parsers.cpp
+@@ -140,6 +140,7 @@
+                       bool allow_unregistered);
+ #endif
+ 
++#if 0
+     template<class charT>
+     basic_parsed_options<charT>
+     parse_config_file(const char* filename, 
+@@ -168,6 +169,7 @@
+                       const options_description& desc,
+                       bool allow_unregistered);
+ #endif
++#endif
+ 
+     
+ // This versio, which accepts any options without validation, is disabled,

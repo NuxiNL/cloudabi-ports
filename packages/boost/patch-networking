@@ -1,0 +1,56 @@
+--- boost/asio/detail/socket_types.hpp
++++ boost/asio/detail/socket_types.hpp
+@@ -54,7 +54,7 @@
+ #else
+ # include <sys/ioctl.h>
+ # if !defined(__SYMBIAN32__)
+-#  include <sys/poll.h>
++#  include <poll.h>
+ # endif
+ # include <sys/types.h>
+ # include <sys/stat.h>
+@@ -66,11 +66,11 @@
+ #  include <sys/select.h>
+ # endif
+ # include <sys/socket.h>
++# undef recv
+ # include <sys/uio.h>
+ # include <sys/un.h>
+ # include <netinet/in.h>
+ # if !defined(__SYMBIAN32__)
+-#  include <netinet/tcp.h>
+ # endif
+ # include <arpa/inet.h>
+ # include <netdb.h>
+--- boost/asio/error.hpp
++++ boost/asio/error.hpp
+@@ -168,7 +168,7 @@
+   operation_not_supported = BOOST_ASIO_SOCKET_ERROR(EOPNOTSUPP),
+ 
+   /// Cannot send after transport endpoint shutdown.
+-  shut_down = BOOST_ASIO_SOCKET_ERROR(ESHUTDOWN),
++  shut_down = BOOST_ASIO_SOCKET_ERROR(ETXTBSY),
+ 
+   /// Connection timed out.
+   timed_out = BOOST_ASIO_SOCKET_ERROR(ETIMEDOUT),
+@@ -185,16 +185,16 @@
+ enum netdb_errors
+ {
+   /// Host not found (authoritative).
+-  host_not_found = BOOST_ASIO_NETDB_ERROR(HOST_NOT_FOUND),
++  host_not_found = 1,
+ 
+   /// Host not found (non-authoritative).
+-  host_not_found_try_again = BOOST_ASIO_NETDB_ERROR(TRY_AGAIN),
++  host_not_found_try_again = 2,
+ 
+   /// The query is valid but does not have associated address data.
+-  no_data = BOOST_ASIO_NETDB_ERROR(NO_DATA),
++  no_data = 3,
+ 
+   /// A non-recoverable error occurred.
+-  no_recovery = BOOST_ASIO_NETDB_ERROR(NO_RECOVERY)
++  no_recovery = 4
+ };
+ 
+ enum addrinfo_errors

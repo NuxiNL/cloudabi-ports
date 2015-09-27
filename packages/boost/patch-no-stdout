@@ -1,0 +1,159 @@
+--- boost/proto/debug.hpp
++++ boost/proto/debug.hpp
+@@ -182,7 +182,7 @@
+             /// \param depth The starting indentation depth for this node.
+             ///              Children nodes will be displayed at a starting
+             ///              depth of <tt>depth+4</tt>.
+-            explicit display_expr(std::ostream &sout = std::cout, int depth = 0)
++            explicit display_expr(std::ostream &sout, int depth = 0)
+               : depth_(depth)
+               , sout_(sout)
+             {}
+@@ -216,11 +216,13 @@
+ 
+     /// \overload
+     ///
++#if 0
+     template<typename Expr>
+     void display_expr(Expr const &expr)
+     {
+         functional::display_expr()(expr);
+     }
++#endif
+ 
+     /// \brief Assert at compile time that a particular expression
+     ///        matches the specified grammar.
+--- boost/test/impl/cpp_main.ipp
++++ boost/test/impl/cpp_main.ipp
+@@ -79,16 +79,16 @@
+         if( result == 0 )
+             result = ::boost::exit_success;
+         else if( result != ::boost::exit_success ) {
+-            std::cout << "\n**** error return code: " << result << std::endl;
++            std::cerr << "\n**** error return code: " << result << std::endl;
+             result = ::boost::exit_failure;
+         }
+     }
+     BOOST_TEST_IMPL_CATCH( ::boost::execution_exception, exex ) {
+-        std::cout << "\n**** exception(" << exex.code() << "): " << exex.what() << std::endl;
++        std::cerr << "\n**** exception(" << exex.code() << "): " << exex.what() << std::endl;
+         result = ::boost::exit_exception_failure;
+     }
+     BOOST_TEST_IMPL_CATCH( ::boost::system_error, ex ) {
+-        std::cout << "\n**** failed to initialize execution monitor."
++        std::cerr << "\n**** failed to initialize execution monitor."
+                   << "\n**** expression at fault: " << ex.p_failed_exp
+                   << "\n**** error(" << ex.p_errno << "): " << std::strerror( ex.p_errno ) << std::endl;
+         result = ::boost::exit_exception_failure;
+--- boost/test/impl/unit_test_main.ipp
++++ boost/test/impl/unit_test_main.ipp
+@@ -188,12 +188,14 @@
+     BOOST_TEST_IMPL_TRY {
+         framework::init( init_func, argc, argv );
+ 
++#if 0
+         if( runtime_config::wait_for_debugger() ) {
+             results_reporter::get_stream() << "Press any key to continue..." << std::endl;
+ 
+             std::getchar();
+             results_reporter::get_stream() << "Continuing..." << std::endl;
+         }
++#endif
+ 
+         framework::finalize_setup_phase();
+ 
+--- boost/test/impl/unit_test_parameters.ipp
++++ boost/test/impl/unit_test_parameters.ipp
+@@ -359,7 +359,7 @@
+         s_cla_parser.parse( argc, argv );
+ 
+         if( s_cla_parser["help"] ) {
+-            s_cla_parser.help( std::cout );
++            s_cla_parser.help( std::cerr );
+             BOOST_TEST_IMPL_THROW( framework::nothing_to_test() );
+         }
+ 
+@@ -547,9 +547,6 @@
+     if( sink_name.empty() || sink_name == "stderr" )
+         return &std::cerr;
+ 
+-    if( sink_name == "stdout" )
+-        return &std::cout;
+-
+     static std::ofstream report_file( sink_name.c_str() );
+     return &report_file;
+ }
+@@ -561,9 +558,6 @@
+ {
+     std::string sink_name = retrieve_parameter( LOG_SINK, s_cla_parser, s_empty );
+ 
+-    if( sink_name.empty() || sink_name == "stdout" )
+-        return &std::cout;
+-
+     if( sink_name == "stderr" )
+         return &std::cerr;
+ 
+--- libs/log/src/default_sink.cpp
++++ libs/log/src/default_sink.cpp
+@@ -129,7 +129,7 @@
+ 
+         const decomposed_time_point now = date_time::microsec_clock< decomposed_time_point >::local_time();
+ 
+-        std::printf("[%04u-%02u-%02u %02u:%02u:%02u.%06u] "
++        std::fprintf(stderr, "[%04u-%02u-%02u %02u:%02u:%02u.%06u] "
+ #if !defined(BOOST_LOG_NO_THREADS)
+                     "[%s] "
+ #endif
+@@ -161,7 +161,7 @@
+ 
+         const decomposed_time_point now = date_time::microsec_clock< decomposed_time_point >::local_time();
+ 
+-        std::printf("[%04u-%02u-%02u %02u:%02u:%02u.%06u] "
++        std::fprintf(stderr, "[%04u-%02u-%02u %02u:%02u:%02u.%06u] "
+ #if !defined(BOOST_LOG_NO_THREADS)
+                     "[%s] "
+ #endif
+@@ -214,7 +214,7 @@
+ void default_sink::flush()
+ {
+     BOOST_LOG_EXPR_IF_MT(lock_guard< mutex_type > lock(m_mutex);)
+-    std::fflush(stdout);
++    std::fflush(stderr);
+ }
+ 
+ } // namespace aux
+--- libs/timer/src/auto_timers_construction.cpp
++++ libs/timer/src/auto_timers_construction.cpp
+@@ -33,6 +33,7 @@
+ {
+   namespace timer
+   {
++#if 0
+     auto_cpu_timer::auto_cpu_timer(short places)                                  // #1
+       : m_places(places), m_os(&std::cout), m_format(default_fmt) { start(); }
+ 
+@@ -41,6 +42,7 @@
+ 
+     auto_cpu_timer::auto_cpu_timer(const std::string& format)                     // #3
+       : m_places(default_places), m_os(&std::cout), m_format(format) { start(); }
++#endif
+ 
+   } // namespace timer
+ } // namespace boost
+--- libs/wave/src/cpplexer/re2clex/cpp_re.cpp
++++ libs/wave/src/cpplexer/re2clex/cpp_re.cpp
+@@ -216,13 +216,7 @@
+             uchar *buf = (uchar*) malloc(((s->lim - s->bot) + BOOST_WAVE_BSIZE)*sizeof(uchar));
+             if (buf == 0)
+             {
+-                using namespace std;      // some systems have printf in std
+-                if (0 != s->error_proc) {
+-                    (*s->error_proc)(s, lexing_exception::unexpected_error,
+-                        "Out of memory!");
+-                }
+-                else
+-                    printf("Out of memory!\n");
++                (*s->error_proc)(s, lexing_exception::unexpected_error, "Out of memory!");
+ 
+                 /* get the scanner to stop */
+                 *cursor = 0;

@@ -1,0 +1,36 @@
+--- libs/log/src/process_id.cpp
++++ libs/log/src/process_id.cpp
+@@ -66,12 +66,12 @@
+     {
+         // According to POSIX, pid_t should always be an integer type:
+         // http://pubs.opengroup.org/onlinepubs/009695399/basedefs/sys/types.h.html
+-        return process::id(getpid());
++        return process::id(0);
+     }
+ 
+ } // namespace this_process
+ 
+-enum { pid_size = sizeof(pid_t) };
++enum { pid_size = sizeof(int) };
+ 
+ } // namespace aux
+ 
+--- libs/log/src/process_name.cpp
++++ libs/log/src/process_name.cpp
+@@ -166,6 +166,8 @@
+ //! The function returns the current process name
+ BOOST_LOG_API std::string get_process_name()
+ {
++    return "unknown";
++#if 0
+     if (filesystem::exists("/proc/self/exe"))
+         return filesystem::read_symlink("/proc/self/exe").filename().string();
+ 
+@@ -176,6 +178,7 @@
+         return filesystem::read_symlink("/proc/curproc/exe").filename().string();
+ 
+     return boost::lexical_cast< std::string >(getpid());
++#endif
+ }
+ 
+ } // namespace aux

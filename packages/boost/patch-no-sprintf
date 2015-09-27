@@ -1,0 +1,71 @@
+--- boost/lexical_cast/detail/converter_lexical_streams.hpp
++++ boost/lexical_cast/detail/converter_lexical_streams.hpp
+@@ -281,7 +281,7 @@
+ #if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION)
+                     sprintf_s(begin, CharacterBufferSize,
+ #else
+-                    sprintf(begin, 
++                    snprintf(begin, CharacterBufferSize,
+ #endif
+                     "%.*g", static_cast<int>(boost::detail::lcast_get_precision<float>()), val_as_double);
+                 return finish > start;
+@@ -293,7 +293,7 @@
+ #if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION)
+                     sprintf_s(begin, CharacterBufferSize,
+ #else
+-                    sprintf(begin, 
++                    snprintf(begin, CharacterBufferSize,
+ #endif
+                     "%.*g", static_cast<int>(boost::detail::lcast_get_precision<double>()), val);
+                 return finish > start;
+@@ -306,7 +306,7 @@
+ #if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION)
+                     sprintf_s(begin, CharacterBufferSize,
+ #else
+-                    sprintf(begin, 
++                    snprintf(begin, CharacterBufferSize,
+ #endif
+                     "%.*Lg", static_cast<int>(boost::detail::lcast_get_precision<long double>()), val );
+                 return finish > start;
+--- boost/test/utils/setcolor.hpp
++++ boost/test/utils/setcolor.hpp
+@@ -70,7 +70,7 @@
+                           term_color::_ fg   = term_color::ORIGINAL,
+                           term_color::_ bg   = term_color::ORIGINAL )
+     {
+-        m_command_size = std::sprintf( m_control_command, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40 );
++        m_command_size = std::snprintf( m_control_command, sizeof(m_control_command), "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40 );
+     }
+ 
+     friend std::ostream&
+--- boost/wave/cpplexer/re2clex/cpp_re2c_lexer.hpp
++++ boost/wave/cpplexer/re2clex/cpp_re2c_lexer.hpp
+@@ -318,7 +318,7 @@
+     char buffer[200];           // should be large enough
+     va_list params;
+     va_start(params, msg);
+-    vsprintf(buffer, msg, params);
++    vsnprintf(buffer, sizeof(buffer), msg, params);
+     va_end(params);
+ 
+     BOOST_WAVE_LEXER_THROW_VAR(lexing_exception, errcode, buffer, s->line,
+--- libs/regex/src/posix_api.cpp
++++ libs/regex/src/posix_api.cpp
+@@ -175,7 +175,7 @@
+ #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
+             int r = (::sprintf_s)(localbuf, 5, "%d", i);
+ #else
+-            int r = (std::sprintf)(localbuf, "%d", i);
++            int r = (std::snprintf)(localbuf, sizeof(localbuf), "%d", i);
+ #endif
+             if(r < 0)
+                return 0; // sprintf failed
+@@ -187,7 +187,7 @@
+ #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
+       (::sprintf_s)(localbuf, 5, "%d", 0);
+ #else
+-      (std::sprintf)(localbuf, "%d", 0);
++      (std::snprintf)(localbuf, sizeof(localbuf), "%d", 0);
+ #endif
+       if(std::strlen(localbuf) < buf_size)
+          re_detail::strcpy_s(buf, buf_size, localbuf);

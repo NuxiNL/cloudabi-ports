@@ -1,0 +1,44 @@
+--- libs/filesystem/src/unique_path.cpp
++++ libs/filesystem/src/unique_path.cpp
+@@ -43,7 +43,9 @@
+ 
+ void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* ec)
+ {
+-# ifdef BOOST_POSIX_API
++# if 1
++  arc4random_buf(buf, len);
++# elif defined(BOOST_POSIX_API)
+ 
+   int file = open("/dev/urandom", O_RDONLY);
+   if (file == -1)
+--- libs/random/src/random_device.cpp
++++ libs/random/src/random_device.cpp
+@@ -118,6 +118,28 @@
+   HCRYPTPROV hProv;
+ };
+ 
++#elif 1
++
++namespace {
++const char * const default_token = "";
++}
++
++#include <stdlib.h>
++
++
++class boost::random::random_device::impl
++{
++public:
++  impl(const std::string & token) {}
++  ~impl() {}
++
++  unsigned int next() {
++    unsigned int result;
++    arc4random_buf(&result, sizeof(result));
++    return result;
++  }
++};
++
+ #else
+ 
+ namespace {
