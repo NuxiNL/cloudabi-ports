@@ -122,24 +122,4 @@ class Distfile:
             self._apply_patch(patch, patched_dir)
 
             # Generate a new patch.
-            diff = subprocess.Popen(['diff', '-urN', orig_dir, patched_dir],
-                                    stdout=subprocess.PIPE)
-            minline = bytes('--- %s/' % orig_dir, encoding='ASCII')
-            plusline = bytes('+++ %s/' % patched_dir, encoding='ASCII')
-            with open(patch, 'wb') as f:
-                for l in diff.stdout.readlines():
-                    if l.startswith(b'diff '):
-                        # Omit lines that start with 'diff'. They serve
-                        # no purpose.
-                        pass
-                    elif l.startswith(minline):
-                        # Remove directory name and timestamp.
-                        f.write(b'--- ' + l[len(minline):].split(b'\t', 1)[0] +
-                                b'\n')
-                    elif l.startswith(plusline):
-                        # Remove directory name and timestamp.
-                        f.write(b'+++ ' + l[len(plusline):].split(b'\t', 1)[0] +
-                                b'\n')
-                        pass
-                    else:
-                        f.write(l)
+            util.diff(orig_dir, patched_dir, patch)
