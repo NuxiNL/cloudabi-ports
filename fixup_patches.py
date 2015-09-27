@@ -13,12 +13,11 @@ from src.repository import Repository
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
-DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 DIR_TMP = os.path.join(DIR_ROOT, '_obj/fixup_patches')
 
 # Parse all of the BUILD rules.
 repo = Repository(None)
-for filename in util.walk_files(DIR_REPOSITORY):
+for filename in util.walk_files(sys.argv[1]):
     if os.path.basename(filename) == 'BUILD':
         repo.add_build_file(filename, DIR_DISTFILES)
 
