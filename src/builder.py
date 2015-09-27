@@ -118,6 +118,9 @@ class FileHandle:
             self._builder,
             os.path.join(stagedir, self._builder.get_prefix()[1:]))
 
+    def open(self, mode):
+        return open(self._path, mode)
+
     def path(self, path):
         return FileHandle(self._builder, os.path.join(self._path, path))
 
@@ -149,6 +152,9 @@ class BuildHandle:
 
     def cpu(self):
         return self._builder.get_cpu()
+
+    def cxx(self):
+        return self._builder.get_cxx()
 
     def executable(self, objects):
         return FileHandle(
@@ -314,6 +320,9 @@ class TargetBuilder:
 
     def get_cpu(self):
         return self._arch.split('-', 1)[0]
+
+    def get_cxx(self):
+        return self._tool('c++')
 
     @staticmethod
     def get_make():
