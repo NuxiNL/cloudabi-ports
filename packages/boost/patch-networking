@@ -297,12 +297,7 @@
  # endif
  # include <sys/types.h>
  # include <sys/stat.h>
-@@ -66,11 +66,11 @@
- #  include <sys/select.h>
- # endif
- # include <sys/socket.h>
-+# undef recv
- # include <sys/uio.h>
+@@ -70,7 +70,6 @@
  # include <sys/un.h>
  # include <netinet/in.h>
  # if !defined(__SYMBIAN32__)
@@ -310,7 +305,7 @@
  # endif
  # include <arpa/inet.h>
  # include <netdb.h>
-@@ -294,16 +294,13 @@
+@@ -294,16 +293,13 @@
    struct in_addr imr_interface;
  };
  # else
