@@ -98,6 +98,8 @@ class Distfile:
                 util.make_parent_dir(self._pathname)
                 with util.unsafe_fetch(url) as fin, open(self._pathname, 'wb') as fout:
                     shutil.copyfileobj(fin, fout)
+            except ConnectionResetError as e:
+                print(e)
             except urllib.error.URLError as e:
                 print(e)
         raise Exception('Failed to fetch %s' % self._name)
