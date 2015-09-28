@@ -1,3 +1,16 @@
+--- boost/asio/detail/impl/socket_ops.ipp
++++ boost/asio/detail/impl/socket_ops.ipp
+@@ -2016,8 +2016,8 @@
+         && ((ipv6_address->s6_addr[1] & 0x0f) == 0x02));
+     if ((!is_link_local && !is_multicast_link_local)
+         || if_indextoname(static_cast<unsigned>(scope_id), if_name + 1) == 0)
+-      sprintf(if_name + 1, "%lu", scope_id);
+-    strcat(dest, if_name);
++      snprintf(if_name + 1, IF_NAMESIZE, "%lu", scope_id);
++    strlcat(dest, if_name, length);
+   }
+   return result;
+ #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
 --- boost/lexical_cast/detail/converter_lexical_streams.hpp
 +++ boost/lexical_cast/detail/converter_lexical_streams.hpp
 @@ -281,7 +281,7 @@

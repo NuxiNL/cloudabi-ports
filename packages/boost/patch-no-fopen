@@ -485,24 +485,6 @@
      syslog_backend.cpp
      thread_specific.cpp
      once_block.cpp
---- libs/program_options/src/parsers.cpp
-+++ libs/program_options/src/parsers.cpp
-@@ -140,6 +140,7 @@
-                       bool allow_unregistered);
- #endif
- 
-+#if 0
-     template<class charT>
-     basic_parsed_options<charT>
-     parse_config_file(const char* filename, 
-@@ -168,6 +169,7 @@
-                       const options_description& desc,
-                       bool allow_unregistered);
- #endif
-+#endif
- 
-     
- // This versio, which accepts any options without validation, is disabled,
 --- libs/log/src/init_from_settings.cpp
 +++ libs/log/src/init_from_settings.cpp
 @@ -166,6 +166,7 @@
@@ -545,3 +527,21 @@
          instance.m_Factories["Console"] = boost::make_shared< default_console_sink_factory< char_type > >();
  #ifndef BOOST_LOG_WITHOUT_SYSLOG
          instance.m_Factories["Syslog"] = boost::make_shared< default_syslog_sink_factory< char_type > >();
+--- libs/program_options/src/parsers.cpp
++++ libs/program_options/src/parsers.cpp
+@@ -140,6 +140,7 @@
+                       bool allow_unregistered);
+ #endif
+ 
++#if 0
+     template<class charT>
+     basic_parsed_options<charT>
+     parse_config_file(const char* filename, 
+@@ -168,6 +169,7 @@
+                       const options_description& desc,
+                       bool allow_unregistered);
+ #endif
++#endif
+ 
+     
+ // This versio, which accepts any options without validation, is disabled,

@@ -10,15 +10,14 @@ def build(ctx):
     srcdir.host().run(['./bootstrap.sh', '--with-toolset=cc'])
 
     # Build Boost libraries.
-    # TODO(ed): Implement this further.
     with srcdir.path('project-config.jam').open('w') as f:
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
-    with srcdir.diff('/home/edje/foo'):
-        srcdir.debug_shell()
+    stage = srcdir.path('stage')
     srcdir.run([
         './b2', '-j8', 'link=static', 'toolset=gcc-cloudabi',
-        '--without-python',
+        '--without-python', '--prefix=%s' % stage, 'install',
     ])
+    stage.install()
 
 package(
     name='boost',

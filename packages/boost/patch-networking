@@ -1,3 +1,291 @@
+--- boost/asio/detail/impl/socket_ops.ipp
++++ boost/asio/detail/impl/socket_ops.ipp
+@@ -269,12 +269,14 @@
+ 
+ #endif // defined(BOOST_ASIO_HAS_IOCP)
+ 
++#if 0
+ template <typename SockLenType>
+ inline int call_bind(SockLenType msghdr::*,
+     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
+ {
+   return ::bind(s, addr, (SockLenType)addrlen);
+ }
++#endif
+ 
+ int bind(socket_type s, const socket_addr_type* addr,
+     std::size_t addrlen, boost::system::error_code& ec)
+@@ -302,6 +304,7 @@
+     // We don't want the destructor to block, so set the socket to linger in
+     // the background. If the user doesn't like this behaviour then they need
+     // to explicitly close the socket.
++#if 0
+     if (destruction && (state & user_set_linger))
+     {
+       ::linger opt;
+@@ -311,6 +314,7 @@
+       socket_ops::setsockopt(s, state, SOL_SOCKET,
+           SO_LINGER, &opt, sizeof(opt), ignored_ec);
+     }
++#endif
+ 
+     clear_last_error();
+ #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+@@ -333,7 +337,7 @@
+       ioctl_arg_type arg = 0;
+       ::ioctlsocket(s, FIONBIO, &arg);
+ #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+-# if defined(__SYMBIAN32__)
++# if 1
+       int flags = ::fcntl(s, F_GETFL, 0);
+       if (flags >= 0)
+         ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
+@@ -371,7 +375,7 @@
+ #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+   ioctl_arg_type arg = (value ? 1 : 0);
+   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
+-#elif defined(__SYMBIAN32__)
++#elif 1
+   int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
+   if (result >= 0)
+   {
+@@ -424,7 +428,7 @@
+ #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+   ioctl_arg_type arg = (value ? 1 : 0);
+   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
+-#elif defined(__SYMBIAN32__)
++#elif 1
+   int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
+   if (result >= 0)
+   {
+@@ -465,12 +469,14 @@
+   return result;
+ }
+ 
++#if 0
+ template <typename SockLenType>
+ inline int call_connect(SockLenType msghdr::*,
+     socket_type s, const socket_addr_type* addr, std::size_t addrlen)
+ {
+   return ::connect(s, addr, (SockLenType)addrlen);
+ }
++#endif
+ 
+ int connect(socket_type s, const socket_addr_type* addr,
+     std::size_t addrlen, boost::system::error_code& ec)
+@@ -628,6 +634,7 @@
+ #endif
+ }
+ 
++#if 0
+ bool sockatmark(socket_type s, boost::system::error_code& ec)
+ {
+   if (s == invalid_socket)
+@@ -657,6 +664,7 @@
+ 
+   return ec ? false : value != 0;
+ }
++#endif
+ 
+ size_t available(socket_type s, boost::system::error_code& ec)
+ {
+@@ -1419,6 +1427,7 @@
+ #endif
+ }
+ 
++#if 0
+ template <typename SockLenType>
+ inline int call_setsockopt(SockLenType msghdr::*,
+     socket_type s, int level, int optname,
+@@ -1504,6 +1513,7 @@
+   return result;
+ #endif // defined(__BORLANDC__)
+ }
++#endif
+ 
+ template <typename SockLenType>
+ inline int call_getsockopt(SockLenType msghdr::*,
+@@ -1722,6 +1732,7 @@
+     // the correct state. This ensures that the underlying socket is put into
+     // the state that has been requested by the user. If the ioctl syscall was
+     // successful then we need to update the flags to match.
++#if 0
+     if (cmd == static_cast<int>(FIONBIO))
+     {
+       if (*arg)
+@@ -1736,6 +1747,7 @@
+         state &= ~(user_set_non_blocking | internal_non_blocking);
+       }
+     }
++#endif
+   }
+ 
+   return result;
+@@ -2276,6 +2288,7 @@
+ #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
+ }
+ 
++#if 0
+ int gethostname(char* name, int namelen, boost::system::error_code& ec)
+ {
+   clear_last_error();
+@@ -2317,6 +2330,7 @@
+   return result;
+ #endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
+ }
++#endif
+ 
+ #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+ 
+--- boost/asio/detail/io_control.hpp
++++ boost/asio/detail/io_control.hpp
+@@ -27,6 +27,7 @@
+ namespace io_control {
+ 
+ // IO control command for non-blocking I/O.
++#if 0
+ class non_blocking_io
+ {
+ public:
+@@ -75,6 +76,7 @@
+ private:
+   detail::ioctl_arg_type value_;
+ };
++#endif
+ 
+ // I/O control command for getting number of bytes available.
+ class bytes_readable
+--- boost/asio/detail/posix_signal_blocker.hpp
++++ boost/asio/detail/posix_signal_blocker.hpp
+@@ -34,6 +34,11 @@
+   : private noncopyable
+ {
+ public:
++  posix_signal_blocker() {}
++  ~posix_signal_blocker() {}
++  void block() {}
++  void unblock() {}
++#if 0
+   // Constructor blocks all signals for the calling thread.
+   posix_signal_blocker()
+     : blocked_(false)
+@@ -74,6 +79,7 @@
+ 
+   // The previous signal mask.
+   sigset_t old_mask_;
++#endif
+ };
+ 
+ } // namespace detail
+--- boost/asio/detail/reactive_socket_service.hpp
++++ boost/asio/detail/reactive_socket_service.hpp
+@@ -329,8 +329,7 @@
+           &impl, "async_receive_from"));
+ 
+     start_op(impl,
+-        (flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation, true, false);
+     p.v = p.p = 0;
+   }
+@@ -358,8 +357,7 @@
+     sender_endpoint = endpoint_type();
+ 
+     start_op(impl,
+-        (flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation, false, false);
+     p.v = p.p = 0;
+   }
+--- boost/asio/detail/reactive_socket_service_base.hpp
++++ boost/asio/detail/reactive_socket_service_base.hpp
+@@ -285,10 +285,9 @@
+     BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
+ 
+     start_op(impl,
+-        (flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation,
+-        (flags & socket_base::message_out_of_band) == 0,
++        true,
+         ((impl.state_ & socket_ops::stream_oriented)
+           && buffer_sequence_adapter<boost::asio::mutable_buffer,
+             MutableBufferSequence>::all_empty(buffers)));
+@@ -314,8 +313,7 @@
+           &impl, "async_receive(null_buffers)"));
+ 
+     start_op(impl,
+-        (flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation, false, false);
+     p.v = p.p = 0;
+   }
+@@ -371,10 +369,9 @@
+           &impl, "async_receive_with_flags"));
+ 
+     start_op(impl,
+-        (in_flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation,
+-        (in_flags & socket_base::message_out_of_band) == 0, false);
++        true, false);
+     p.v = p.p = 0;
+   }
+ 
+@@ -402,8 +399,7 @@
+     out_flags = 0;
+ 
+     start_op(impl,
+-        (in_flags & socket_base::message_out_of_band)
+-          ? reactor::except_op : reactor::read_op,
++        reactor::read_op,
+         p.p, is_continuation, false, false);
+     p.v = p.p = 0;
+   }
+--- boost/asio/detail/socket_ops.hpp
++++ boost/asio/detail/socket_ops.hpp
+@@ -121,8 +121,6 @@
+ BOOST_ASIO_DECL int socketpair(int af, int type, int protocol,
+     socket_type sv[2], boost::system::error_code& ec);
+ 
+-BOOST_ASIO_DECL bool sockatmark(socket_type s, boost::system::error_code& ec);
+-
+ BOOST_ASIO_DECL size_t available(socket_type s, boost::system::error_code& ec);
+ 
+ BOOST_ASIO_DECL int listen(socket_type s,
+@@ -280,9 +278,6 @@
+ BOOST_ASIO_DECL int inet_pton(int af, const char* src, void* dest,
+     unsigned long* scope_id, boost::system::error_code& ec);
+ 
+-BOOST_ASIO_DECL int gethostname(char* name,
+-    int namelen, boost::system::error_code& ec);
+-
+ #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
+ 
+ BOOST_ASIO_DECL boost::system::error_code getaddrinfo(const char* host,
+--- boost/asio/detail/socket_option.hpp
++++ boost/asio/detail/socket_option.hpp
+@@ -212,6 +212,7 @@
+ };
+ 
+ // Helper template for implementing linger options.
++#if 0
+ template <int Level, int Name>
+ class linger
+ {
+@@ -307,6 +308,7 @@
+ private:
+   detail::linger_type value_;
+ };
++#endif
+ 
+ } // namespace socket_option
+ } // namespace detail
 --- boost/asio/detail/socket_types.hpp
 +++ boost/asio/detail/socket_types.hpp
 @@ -54,7 +54,7 @@
@@ -22,6 +310,23 @@
  # endif
  # include <arpa/inet.h>
  # include <netdb.h>
+@@ -294,16 +294,13 @@
+   struct in_addr imr_interface;
+ };
+ # else
+-typedef ip_mreq in4_mreq_type;
+ # endif
+ typedef sockaddr_in sockaddr_in4_type;
+ typedef in6_addr in6_addr_type;
+-typedef ipv6_mreq in6_mreq_type;
+ typedef sockaddr_in6 sockaddr_in6_type;
+ typedef sockaddr_storage sockaddr_storage_type;
+ typedef sockaddr_un sockaddr_un_type;
+ typedef addrinfo addrinfo_type;
+-typedef ::linger linger_type;
+ typedef int ioctl_arg_type;
+ typedef uint32_t u_long_type;
+ typedef uint16_t u_short_type;
 --- boost/asio/error.hpp
 +++ boost/asio/error.hpp
 @@ -168,7 +168,7 @@
@@ -54,3 +359,165 @@
  };
  
  enum addrinfo_errors
+--- boost/asio/impl/src.hpp
++++ boost/asio/impl/src.hpp
+@@ -66,7 +66,6 @@
+ #include <boost/asio/ip/impl/address.ipp>
+ #include <boost/asio/ip/impl/address_v4.ipp>
+ #include <boost/asio/ip/impl/address_v6.ipp>
+-#include <boost/asio/ip/impl/host_name.ipp>
+ #include <boost/asio/ip/detail/impl/endpoint.ipp>
+ #include <boost/asio/local/detail/impl/endpoint.ipp>
+ 
+--- boost/asio/ip/host_name.hpp
++++ boost/asio/ip/host_name.hpp
+@@ -11,6 +11,8 @@
+ #ifndef BOOST_ASIO_IP_HOST_NAME_HPP
+ #define BOOST_ASIO_IP_HOST_NAME_HPP
+ 
++#error "System hostname not available"
++
+ #if defined(_MSC_VER) && (_MSC_VER >= 1200)
+ # pragma once
+ #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+--- boost/asio/socket_base.hpp
++++ boost/asio/socket_base.hpp
+@@ -69,10 +69,6 @@
+   BOOST_ASIO_STATIC_CONSTANT(int,
+       message_peek = BOOST_ASIO_OS_DEF(MSG_PEEK));
+   BOOST_ASIO_STATIC_CONSTANT(int,
+-      message_out_of_band = BOOST_ASIO_OS_DEF(MSG_OOB));
+-  BOOST_ASIO_STATIC_CONSTANT(int,
+-      message_do_not_route = BOOST_ASIO_OS_DEF(MSG_DONTROUTE));
+-  BOOST_ASIO_STATIC_CONSTANT(int,
+       message_end_of_record = BOOST_ASIO_OS_DEF(MSG_EOR));
+ #endif
+ 
+@@ -104,10 +100,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined broadcast;
+-#else
+-  typedef boost::asio::detail::socket_option::boolean<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_BROADCAST)>
+-      broadcast;
+ #endif
+ 
+   /// Socket option to enable socket-level debugging.
+@@ -138,9 +130,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined debug;
+-#else
+-  typedef boost::asio::detail::socket_option::boolean<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_DEBUG)> debug;
+ #endif
+ 
+   /// Socket option to prevent routing, use local interfaces only.
+@@ -171,10 +160,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined do_not_route;
+-#else
+-  typedef boost::asio::detail::socket_option::boolean<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_DONTROUTE)>
+-      do_not_route;
+ #endif
+ 
+   /// Socket option to send keep-alives.
+@@ -205,9 +190,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined keep_alive;
+-#else
+-  typedef boost::asio::detail::socket_option::boolean<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_KEEPALIVE)> keep_alive;
+ #endif
+ 
+   /// Socket option for the send buffer size of a socket.
+@@ -238,10 +220,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined send_buffer_size;
+-#else
+-  typedef boost::asio::detail::socket_option::integer<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_SNDBUF)>
+-      send_buffer_size;
+ #endif
+ 
+   /// Socket option for the send low watermark.
+@@ -272,10 +250,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined send_low_watermark;
+-#else
+-  typedef boost::asio::detail::socket_option::integer<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_SNDLOWAT)>
+-      send_low_watermark;
+ #endif
+ 
+   /// Socket option for the receive buffer size of a socket.
+@@ -306,10 +280,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined receive_buffer_size;
+-#else
+-  typedef boost::asio::detail::socket_option::integer<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_RCVBUF)>
+-      receive_buffer_size;
+ #endif
+ 
+   /// Socket option for the receive low watermark.
+@@ -340,10 +310,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined receive_low_watermark;
+-#else
+-  typedef boost::asio::detail::socket_option::integer<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_RCVLOWAT)>
+-      receive_low_watermark;
+ #endif
+ 
+   /// Socket option to allow the socket to be bound to an address that is
+@@ -375,10 +341,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined reuse_address;
+-#else
+-  typedef boost::asio::detail::socket_option::boolean<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_REUSEADDR)>
+-      reuse_address;
+ #endif
+ 
+   /// Socket option to specify whether the socket lingers on close if unsent
+@@ -411,10 +373,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined linger;
+-#else
+-  typedef boost::asio::detail::socket_option::linger<
+-    BOOST_ASIO_OS_DEF(SOL_SOCKET), BOOST_ASIO_OS_DEF(SO_LINGER)>
+-      linger;
+ #endif
+ 
+   /// Socket option to report aborted connections on accept.
+@@ -472,8 +430,6 @@
+    */
+ #if defined(GENERATING_DOCUMENTATION)
+   typedef implementation_defined non_blocking_io;
+-#else
+-  typedef boost::asio::detail::io_control::non_blocking_io non_blocking_io;
+ #endif
+ 
+   /// IO control command to get the amount of data that can be read without
+--- boost/log/detail/config.hpp
++++ boost/log/detail/config.hpp
+@@ -103,7 +103,7 @@
+ #   define BOOST_LOG_NO_CXX11_CODECVT_FACETS
+ #endif
+ 
+-#if defined(__CYGWIN__)
++#if 1
+     // Boost.ASIO is broken on Cygwin
+ #   define BOOST_LOG_NO_ASIO
+ #endif
