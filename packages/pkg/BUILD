@@ -3,20 +3,13 @@
 # This file is distrbuted under a 2-clause BSD license.
 # See the LICENSE file for details.
 
-
-def build(ctx):
-    # Only install the statically linked executable.
-    build = ctx.extract().autoconf()
-    build.make()
-    build.make_install().path('sbin/pkg-static').install('sbin/pkg')
-
 host_package(
     name='pkg',
     version='1.6.0',
     homepage='https://github.com/freebsd/pkg',
     maintainer='info@nuxi.nl',
     lib_depends={'libarchive'},
-    build_cmd=build,
+    build_cmd=build_autoconf_automake,
 )
 
 distfile(
