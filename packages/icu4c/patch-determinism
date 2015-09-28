@@ -1,3 +1,32 @@
+--- source/config/Makefile.inc.in
++++ source/config/Makefile.inc.in
+@@ -208,7 +208,7 @@
+ MKINSTALLDIRS = $(SHELL) $(pkgdatadir)/mkinstalldirs
+ RANLIB = @RANLIB@
+ RMV = rm -rf
+-SHELL = @SHELL@
++SHELL = /bin/sh
+ SHLIB.c=      $(CC) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared
+ SHLIB.cc=     $(CXX) $(DEFS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared
+ U_IS_BIG_ENDIAN = @U_IS_BIG_ENDIAN@
+--- source/configure
++++ source/configure
+@@ -2594,15 +2594,6 @@
+ # for icu-config
+ # This may be removed later - mow (June 17, 2010)
+ ICU_ECHO_C= ICU_ECHO_N= ICU_ECHO_T=
+-case `/bin/sh -c "echo -n x"` in
+--n*)
+-  case `/bin/sh -c "echo 'x\c'"` in
+-  *c*) ICU_ECHO_T=' ';;     # ECHO_T is single tab character.
+-  *)   ICU_ECHO_C='\c';;
+-  esac;;
+-*)
+-  ICU_ECHO_N='-n';;
+-esac
+ 
+ 
+ 
 --- source/Makefile.in
 +++ source/Makefile.in
 @@ -335,7 +335,6 @@
