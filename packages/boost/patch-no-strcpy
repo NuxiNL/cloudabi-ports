@@ -73,7 +73,7 @@
 -      return std::wcslen(localbuf) + 1;
 +      result = std::wcslen(localbuf) + 1;
 +      if(buf_size >= result)
-+         std::wmemcpy(buf, localbuf, buf_size);
++         std::wmemcpy(buf, localbuf, result);
 +      return buf_size;
     }
  #endif
