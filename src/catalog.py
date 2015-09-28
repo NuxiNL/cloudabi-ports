@@ -399,9 +399,10 @@ class NetBSDCatalog(Catalog):
 
         self._sanitize_permissions(installdir)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
-        self._run_tar([
-            '-cJf', output,
-            '-C', installdir,
-            '+CONTENTS', '+COMMENT', '+DESC', '+BUILD_INFO',
-        ] + [os.path.relpath(path, installdir) for path in files])
+        listing = os.path.join(config.DIR_BUILDROOT, 'listing')
+        with open(listing, 'w') as f:
+            f.write('+CONTENTS\n+COMMENT\n+DESC\n+BUILD_INFO\n')
+            for path in files:
+                f.write(os.path.relpath(path, installdir) + '\n')
+        self._run_tar(['-cJf', output, '-C', installdir, '-T', listing])
         return output
