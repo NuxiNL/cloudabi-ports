@@ -1,0 +1,157 @@
+--- src/estream.c
++++ src/estream.c
+@@ -1426,6 +1426,7 @@
+ /* Implementation of file I/O.  */
+ 
+ /* Create function for objects identified by a file name.  */
++#if 0
+ static int
+ func_file_create (void **cookie, int *filedes,
+                   const char *path, unsigned int modeflags, unsigned int cmode)
+@@ -1468,6 +1469,7 @@
+ 
+   return err;
+ }
++#endif
+ 
+ 
+ 
+@@ -2739,6 +2741,7 @@
+ 
+ /* API.  */
+ 
++#if 0
+ estream_t
+ _gpgrt_fopen (const char *_GPGRT__RESTRICT path,
+               const char *_GPGRT__RESTRICT mode)
+@@ -2782,6 +2785,7 @@
+ 
+   return stream;
+ }
++#endif
+ 
+ 
+ 
+@@ -3180,11 +3184,13 @@
+       if (!stream)
+         {
+           /* Second try is to use the standard C streams.  */
++#if 0
+           if (!fd)
+             stream = do_fpopen (stdin, "r", 1, 1);
+           else if (fd == 1)
+             stream = do_fpopen (stdout, "a", 1, 1);
+           else
++#endif
+             stream = do_fpopen (stderr, "a", 1, 1);
+         }
+ 
+@@ -3215,6 +3221,7 @@
+ 
+ /* Note: A "samethread" keyword given in "mode" is ignored and the
+    value used by STREAM is used instead. */
++#if 0
+ estream_t
+ _gpgrt_freopen (const char *_GPGRT__RESTRICT path,
+                 const char *_GPGRT__RESTRICT mode,
+@@ -3282,6 +3289,7 @@
+ 
+   return stream;
+ }
++#endif
+ 
+ 
+ int
+--- src/gpg-error.h.in
++++ src/gpg-error.h.in
+@@ -525,8 +525,6 @@
+ #define ES_SYSHD_HANDLE GPGRT_SYSHD_HANDLE
+ #endif
+ 
+-gpgrt_stream_t gpgrt_fopen (const char *_GPGRT__RESTRICT path,
+-                            const char *_GPGRT__RESTRICT mode);
+ gpgrt_stream_t gpgrt_mopen (void *_GPGRT__RESTRICT data,
+                             size_t data_n, size_t data_len,
+                             unsigned int grow,
+@@ -544,9 +542,6 @@
+ gpgrt_stream_t gpgrt_sysopen_nc (gpgrt_syshd_t *syshd, const char *mode);
+ gpgrt_stream_t gpgrt_fpopen    (FILE *fp, const char *mode);
+ gpgrt_stream_t gpgrt_fpopen_nc (FILE *fp, const char *mode);
+-gpgrt_stream_t gpgrt_freopen (const char *_GPGRT__RESTRICT path,
+-                              const char *_GPGRT__RESTRICT mode,
+-                              gpgrt_stream_t _GPGRT__RESTRICT stream);
+ gpgrt_stream_t gpgrt_fopencookie (void *_GPGRT__RESTRICT cookie,
+                                   const char *_GPGRT__RESTRICT mode,
+                                   gpgrt_cookie_io_functions_t functions);
+--- src/gpgrt-int.h
++++ src/gpgrt-int.h
+@@ -54,8 +54,6 @@
+ int _gpgrt_es_init (void);
+ void _gpgrt_set_syscall_clamp (void (*pre)(void), void (*post)(void));
+ 
+-gpgrt_stream_t _gpgrt_fopen (const char *_GPGRT__RESTRICT path,
+-                             const char *_GPGRT__RESTRICT mode);
+ gpgrt_stream_t _gpgrt_mopen (void *_GPGRT__RESTRICT data,
+                              size_t data_n, size_t data_len,
+                              unsigned int grow,
+@@ -73,9 +71,6 @@
+ gpgrt_stream_t _gpgrt_sysopen_nc (gpgrt_syshd_t *syshd, const char *mode);
+ gpgrt_stream_t _gpgrt_fpopen    (FILE *fp, const char *mode);
+ gpgrt_stream_t _gpgrt_fpopen_nc (FILE *fp, const char *mode);
+-gpgrt_stream_t _gpgrt_freopen (const char *_GPGRT__RESTRICT path,
+-                               const char *_GPGRT__RESTRICT mode,
+-                               gpgrt_stream_t _GPGRT__RESTRICT stream);
+ gpgrt_stream_t _gpgrt_fopencookie (void *_GPGRT__RESTRICT cookie,
+                                    const char *_GPGRT__RESTRICT mode,
+                                    gpgrt_cookie_io_functions_t functions);
+--- src/visibility.c
++++ src/visibility.c
+@@ -141,12 +141,14 @@
+ 
+ 
+ 
++#if 0
+ estream_t
+ gpgrt_fopen (const char *_GPGRT__RESTRICT path,
+              const char *_GPGRT__RESTRICT mode)
+ {
+   return _gpgrt_fopen (path, mode);
+ }
++#endif
+ 
+ estream_t
+ gpgrt_mopen (void *_GPGRT__RESTRICT data, size_t data_n, size_t data_len,
+@@ -208,6 +210,7 @@
+   return _gpgrt_fpopen_nc (fp, mode);
+ }
+ 
++#if 0
+ estream_t
+ gpgrt_freopen (const char *_GPGRT__RESTRICT path,
+                const char *_GPGRT__RESTRICT mode,
+@@ -215,6 +218,7 @@
+ {
+   return _gpgrt_freopen (path, mode, stream);
+ }
++#endif
+ 
+ estream_t
+ gpgrt_fopencookie (void *_GPGRT__RESTRICT cookie,
+--- src/visibility.h
++++ src/visibility.h
+@@ -63,7 +63,6 @@
+ MARK_VISIBLE (gpgrt_yield)
+ MARK_VISIBLE (gpgrt_lock_trylock)
+ 
+-MARK_VISIBLE (gpgrt_fopen)
+ MARK_VISIBLE (gpgrt_mopen)
+ MARK_VISIBLE (gpgrt_fopenmem)
+ MARK_VISIBLE (gpgrt_fopenmem_init)
+@@ -73,7 +72,6 @@
+ MARK_VISIBLE (gpgrt_sysopen_nc)
+ MARK_VISIBLE (gpgrt_fpopen)
+ MARK_VISIBLE (gpgrt_fpopen_nc)
+-MARK_VISIBLE (gpgrt_freopen)
+ MARK_VISIBLE (gpgrt_fopencookie)
+ MARK_VISIBLE (gpgrt_fclose)
+ MARK_VISIBLE (gpgrt_fclose_snatch)

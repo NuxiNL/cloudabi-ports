@@ -1,0 +1,10 @@
+--- src/estream.c
++++ src/estream.c
+@@ -68,7 +68,6 @@
+ #endif
+ 
+ #include <sys/types.h>
+-#include <sys/file.h>
+ #include <sys/stat.h>
+ #include <stdio.h>
+ #include <stdlib.h>
