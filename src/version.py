@@ -80,6 +80,14 @@ class FullVersion:
             version += 'nb%d' % self._revision
         return version
 
+    def get_openbsd_version(self):
+        version = str(self._version)
+        if self._revision:
+            version += 'p%d' % self._revision
+        if self._epoch:
+            version += 'v%d' % self._epoch
+        return version
+
     @staticmethod
     def parse_debian(string):
         epoch = 0
