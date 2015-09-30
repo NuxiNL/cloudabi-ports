@@ -406,3 +406,74 @@ class NetBSDCatalog(Catalog):
                 f.write(os.path.relpath(path, installdir) + '\n')
         self._run_tar(['-cJf', output, '-C', installdir, '-T', listing])
         return output
+
+
+class OpenBSDCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(OpenBSDCatalog, self).__init__(old_path, new_path)
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s-%s.tgz' % (package.get_openbsd_name(),
+                              version.get_openbsd_version())
+
+    def lookup_latest_version(self, package):
+        # TODO(ed): Implement repository scanning.
+        return FullVersion()
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        # The package needs to be installed in /usr/local/<arch> on the
+        # OpenBSD system.
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        arch = package.get_arch()
+        prefix = os.path.join('/usr/local', arch)
+        package.extract(installdir, prefix)
+        files = sorted(util.walk_files(installdir))
+
+        # Package contents list.
+        util.make_dir(installdir)
+        with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
+            f.write(
+                '@name %s-%s\n'
+                '@cwd /usr/local/%s\n' % (
+                    package.get_openbsd_name(), version.get_openbsd_version(),
+                    arch))
+            # TODO(ed): Encode dependencies.
+            for path in files:
+                # TODO(ed): Add SHA checksum.
+                f.write(
+                    '%s\n'
+                    '@size %d\n' % (
+                        os.path.relpath(path, installdir) + '\n',
+                        os.lstat(path).st_size))
+
+        # Package description.
+        with open(os.path.join(installdir, '+DESC'), 'w') as f:
+            f.write(
+                '%(name)s for %(arch)s\n'
+                '\n'
+                'Maintainer: %(maintainer)s\n'
+                '\n'
+                'WWW:\n'
+                '%(homepage)s\n' % {
+                    'arch': package.get_arch(),
+                    'name': package.get_name(),
+                    'maintainer': package.get_maintainer(),
+                    'homepage': package.get_homepage(),
+                }
+            )
+
+        self._sanitize_permissions(installdir)
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+        listing = os.path.join(config.DIR_BUILDROOT, 'listing')
+        with open(listing, 'w') as f:
+            f.write('+CONTENTS\n+DESC\n')
+            for path in files:
+                f.write(os.path.relpath(path, installdir) + '\n')
+        self._run_tar(['-czf', output, '-C', installdir, '-T', listing])
+        return output

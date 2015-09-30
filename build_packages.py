@@ -9,7 +9,7 @@ import sys
 
 from src import config
 from src import util
-from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog
+from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.repository import Repository
 from src.version import FullVersion
 
@@ -20,6 +20,7 @@ DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
 DIR_PACKAGES_DEBIAN = os.path.join(DIR_ROOT, '_obj/packages/debian')
 DIR_PACKAGES_FREEBSD = os.path.join(DIR_ROOT, '_obj/packages/freebsd')
 DIR_PACKAGES_NETBSD = os.path.join(DIR_ROOT, '_obj/packages/netbsd')
+DIR_PACKAGES_OPENBSD = os.path.join(DIR_ROOT, '_obj/packages/openbsd')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 
 # Parse all of the BUILD rules.
@@ -33,6 +34,7 @@ catalogs = {
     DebianCatalog(None, DIR_PACKAGES_DEBIAN),
     FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),
+    OpenBSDCatalog(None, DIR_PACKAGES_OPENBSD),
 }
 
 
