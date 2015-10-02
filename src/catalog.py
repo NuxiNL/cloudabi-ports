@@ -358,7 +358,7 @@ class NetBSDCatalog(Catalog):
 
         # Package contents list.
         util.make_dir(installdir)
-        with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
+        with open(os.path.join(installdir, 'contents'), 'w') as f:
             f.write(
                 '@cwd /usr/pkg/%s\n'
                 '@name %s-%s\n' % (
@@ -437,13 +437,13 @@ class OpenBSDCatalog(Catalog):
         files = sorted(util.walk_files(installdir))
 
         # Package contents list.
-        util.make_dir(installdir)
-        with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
+        contents = os.path.join(config.DIR_BUILDROOT, '+CONTENTS')
+        with open(contents, 'w') as f:
             f.write(
                 '@name %s-%s\n'
-                '@cwd /usr/local/%s\n' % (
+                '@cwd %s\n' % (
                     package.get_openbsd_name(), version.get_openbsd_version(),
-                    arch))
+                    prefix))
             # TODO(ed): Encode dependencies.
             written_dirs = set()
             for path in files:
@@ -456,16 +456,25 @@ class OpenBSDCatalog(Catalog):
                         f.write(fullpath + '\n')
                         written_dirs.add(fullpath)
 
-                # Write entry for file. Add checksum for regular files.
-                f.write(
-                    '%s\n'
-                    '@size %d\n' % (relpath, os.lstat(path).st_size))
-                if not os.path.islink(path):
-                    f.write('@sha %s\n' % (str(base64.b64encode(
-                        util.sha256(path).digest()), encoding='ASCII')))
+                if os.path.islink(path):
+                    # Write entry for symbolic link.
+                    f.write(
+                        '%s\n'
+                        '@symlink %s\n' % (relpath, os.readlink(path)))
+                else:
+                    # Write entry for regular file.
+                    f.write(
+                        '%s\n'
+                        '@sha %s\n'
+                        '@size %d\n' % (
+                            relpath,
+                            str(base64.b64encode(
+                                util.sha256(path).digest()), encoding='ASCII'),
+                            os.lstat(path).st_size))
 
         # Package description.
-        with open(os.path.join(installdir, '+DESC'), 'w') as f:
+        desc = os.path.join(config.DIR_BUILDROOT, 'desc')
+        with open(desc, 'w') as f:
             f.write(
                 '%(name)s for %(arch)s\n'
                 '\n'
@@ -480,12 +489,25 @@ class OpenBSDCatalog(Catalog):
                 }
             )
 
-        self._sanitize_permissions(installdir)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
         with open(listing, 'w') as f:
-            f.write('+CONTENTS\n+DESC\n')
+            f.write('#mtree\n')
+            f.write(
+                '+CONTENTS type=file mode=0666 uname=root gname=wheel contents=%s\n' %
+                contents)
+            f.write(
+                '+DESC type=file mode=0666 uname=root gname=wheel contents=%s\n' %
+                desc)
             for path in files:
-                f.write(os.path.relpath(path, installdir) + '\n')
-        self._run_tar(['-czf', output, '-C', installdir, '-T', listing])
+                relpath = os.path.relpath(path, installdir)
+                if os.path.islink(path):
+                    f.write(
+                        '%s type=link mode=0555 uname=root gname=wheel link=%s\n' %
+                        (relpath, os.readlink(path)))
+                else:
+                    f.write(
+                        '%s type=file mode=0%o uname=root gname=wheel contents=%s\n' %
+                        (relpath, self._get_suggested_mode(path), path))
+        self._run_tar(['-czf', output, '-C', installdir, '@' + listing])
         return output
