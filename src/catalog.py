@@ -3,6 +3,7 @@
 # This file is distrbuted under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import base64
 import collections
 import lzma
 import os
@@ -133,7 +134,7 @@ class DebianCatalog(Catalog):
                 'SHA256: %s\n' % (
                     filename,
                     os.path.getsize(path),
-                    util.sha256(path),
+                    util.sha256(path).hexdigest(),
                 ))
 
             f.write('\n')
@@ -151,8 +152,8 @@ class DebianCatalog(Catalog):
             util.make_parent_dir(index_arch)
             os.link(index, index_arch)
             os.link(index + '.xz', index_arch + '.xz')
-        checksum = util.sha256(index)
-        checksum_xz = util.sha256(index + '.xz')
+        checksum = util.sha256(index).hexdigest()
+        checksum_xz = util.sha256(index + '.xz').hexdigest()
         size = os.path.getsize(index)
         size_xz = os.path.getsize(index + '.xz')
         os.unlink(index)
@@ -449,8 +450,11 @@ class OpenBSDCatalog(Catalog):
                 f.write(
                     '%s\n'
                     '@size %d\n' % (
-                        os.path.relpath(path, installdir) + '\n',
+                        os.path.relpath(path, installdir),
                         os.lstat(path).st_size))
+                if not os.path.islink(path):
+                    f.write('@sha %s\n' % (str(base64.b64encode(
+                        util.sha256(path).digest()), encoding='ASCII')))
 
         # Package description.
         with open(os.path.join(installdir, '+DESC'), 'w') as f:

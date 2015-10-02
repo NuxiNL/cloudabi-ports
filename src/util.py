@@ -142,7 +142,7 @@ def sha256(path):
         while True:
             data = f.read(16384)
             if not data:
-                return checksum.hexdigest()
+                return checksum
             checksum.update(data)
 
 

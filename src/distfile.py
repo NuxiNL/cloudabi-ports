@@ -86,7 +86,7 @@ class Distfile:
             print('CHECKSUM', self._pathname)
             # Validate the existing file on disk.
             try:
-                if util.sha256(self._pathname) == self._checksum:
+                if util.sha256(self._pathname).hexdigest() == self._checksum:
                     return
             except FileNotFoundError as e:
                 print(e)
