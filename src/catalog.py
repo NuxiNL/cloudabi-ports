@@ -445,13 +445,21 @@ class OpenBSDCatalog(Catalog):
                     package.get_openbsd_name(), version.get_openbsd_version(),
                     arch))
             # TODO(ed): Encode dependencies.
+            written_dirs = set()
             for path in files:
-                # TODO(ed): Add SHA checksum.
+                # Write entry for parent directories.
+                relpath = os.path.relpath(path, installdir)
+                fullpath = ''
+                for component in os.path.dirname(relpath).split('/'):
+                    fullpath += component + '/'
+                    if fullpath not in written_dirs:
+                        f.write(fullpath + '\n')
+                        written_dirs.add(fullpath)
+
+                # Write entry for file. Add checksum for regular files.
                 f.write(
                     '%s\n'
-                    '@size %d\n' % (
-                        os.path.relpath(path, installdir),
-                        os.lstat(path).st_size))
+                    '@size %d\n' % (relpath, os.lstat(path).st_size))
                 if not os.path.islink(path):
                     f.write('@sha %s\n' % (str(base64.b64encode(
                         util.sha256(path).digest()), encoding='ASCII')))
