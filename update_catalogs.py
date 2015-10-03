@@ -7,7 +7,7 @@
 import os
 
 from src import util
-from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog
+from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.catalog_set import CatalogSet
 from src.repository import Repository
 
@@ -21,6 +21,7 @@ DIR_TMP = '/usr/local/www/nuxi.nl/repo.tmp'
 DIR_DEBIAN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/debian'
 DIR_FREEBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/freebsd'
 DIR_NETBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/netbsd'
+DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/openbsd'
 
 # Location of the catalog signing keys.
 DEBIAN_PRIVATE_KEY = '31344B15'
@@ -44,9 +45,13 @@ freebsd_path = os.path.join(DIR_TMP, 'freebsd')
 freebsd_catalog = FreeBSDCatalog(DIR_FREEBSD_CATALOG, freebsd_path)
 netbsd_path = os.path.join(DIR_TMP, 'netbsd')
 netbsd_catalog = NetBSDCatalog(DIR_NETBSD_CATALOG, netbsd_path)
+openbsd_path = os.path.join(DIR_TMP, 'openbsd')
+openbsd_catalog = OpenBSDCatalog(DIR_OPENBSD_CATALOG, openbsd_path)
 
 # Build all packages.
-catalog_set = CatalogSet({debian_catalog, freebsd_catalog, netbsd_catalog})
+catalog_set = CatalogSet({
+    debian_catalog, freebsd_catalog, netbsd_catalog, openbsd_catalog,
+})
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
 
@@ -60,6 +65,8 @@ os.rename(DIR_FREEBSD_CATALOG, os.path.join(DIR_TMP, 'freebsd.old'))
 os.rename(freebsd_path, DIR_FREEBSD_CATALOG)
 os.rename(DIR_NETBSD_CATALOG, os.path.join(DIR_TMP, 'netbsd.old'))
 os.rename(netbsd_path, DIR_NETBSD_CATALOG)
+os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))
+os.rename(openbsd_path, DIR_OPENBSD_CATALOG)
 
 # Zap the temporary directory.
 util.remove(DIR_TMP)
