@@ -358,7 +358,7 @@ class NetBSDCatalog(Catalog):
 
         # Package contents list.
         util.make_dir(installdir)
-        with open(os.path.join(installdir, 'contents'), 'w') as f:
+        with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
             f.write(
                 '@cwd /usr/pkg/%s\n'
                 '@name %s-%s\n' % (
@@ -437,7 +437,7 @@ class OpenBSDCatalog(Catalog):
         files = sorted(util.walk_files(installdir))
 
         # Package contents list.
-        contents = os.path.join(config.DIR_BUILDROOT, '+CONTENTS')
+        contents = os.path.join(config.DIR_BUILDROOT, 'contents')
         with open(contents, 'w') as f:
             f.write(
                 '@name %s-%s\n'
@@ -494,20 +494,23 @@ class OpenBSDCatalog(Catalog):
         with open(listing, 'w') as f:
             f.write('#mtree\n')
             f.write(
-                '+CONTENTS type=file mode=0666 uname=root gname=wheel contents=%s\n' %
+                '+CONTENTS type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n' %
                 contents)
             f.write(
-                '+DESC type=file mode=0666 uname=root gname=wheel contents=%s\n' %
+                '+DESC type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n' %
                 desc)
             for path in files:
                 relpath = os.path.relpath(path, installdir)
                 if os.path.islink(path):
                     f.write(
-                        '%s type=link mode=0555 uname=root gname=wheel link=%s\n' %
+                        '%s type=link mode=0555 uname=root gname=wheel time=0 link=%s\n' %
                         (relpath, os.readlink(path)))
                 else:
                     f.write(
-                        '%s type=file mode=0%o uname=root gname=wheel contents=%s\n' %
+                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n' %
                         (relpath, self._get_suggested_mode(path), path))
-        self._run_tar(['-czf', output, '-C', installdir, '@' + listing])
+        self._run_tar([
+            '--options', 'gzip:!timestamp', '-czf', output, '-C', installdir,
+            '@' + listing,
+        ])
         return output
