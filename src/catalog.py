@@ -492,6 +492,7 @@ class OpenBSDCatalog(Catalog):
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
         with open(listing, 'w') as f:
+            # Leading files in tarball.
             f.write('#mtree\n')
             f.write(
                 '+CONTENTS type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n' %
@@ -502,10 +503,12 @@ class OpenBSDCatalog(Catalog):
             for path in files:
                 relpath = os.path.relpath(path, installdir)
                 if os.path.islink(path):
+                    # Symbolic links need to use 0o555 on OpenBSD.
                     f.write(
                         '%s type=link mode=0555 uname=root gname=wheel time=0 link=%s\n' %
                         (relpath, os.readlink(path)))
                 else:
+                    # Regular files.
                     f.write(
                         '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n' %
                         (relpath, self._get_suggested_mode(path), path))
