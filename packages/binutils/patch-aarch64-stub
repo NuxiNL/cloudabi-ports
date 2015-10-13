@@ -1,0 +1,26 @@
+--- bfd/config.bfd
++++ bfd/config.bfd
+@@ -177,6 +177,11 @@
+     targ_selvecs="aarch64_elf64_le_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_be_vec arm_elf32_le_vec"
+     want64=true
+     ;;
++  aarch64-*-cloudabi*)
++    targ_defvec=aarch64_elf64_le_vec
++    targ_selvecs="aarch64_elf64_be_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_le_vec arm_elf32_be_vec"
++    want64=true
++    ;;
+   aarch64-*-linux*)
+     targ_defvec=aarch64_elf64_le_vec
+     targ_selvecs="aarch64_elf64_be_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_le_vec arm_elf32_be_vec"
+--- ld/configure.tgt
++++ ld/configure.tgt
+@@ -52,6 +52,9 @@
+ aarch64_be-*-linux*)	targ_emul=aarch64linuxb
+ 			targ_extra_libpath="aarch64linux aarch64linux32 aarch64linux32b armelfb_linux_eabi armelf_linux_eabi"
+ 			targ_extra_emuls="aarch64elfb aarch64elf aarch64elf32 aarch64elf32b armelfb armelf $targ_extra_libpath" ;;
++aarch64-*-cloudabi*)	targ_emul=aarch64linux
++			targ_extra_libpath="aarch64linuxb aarch64linux32 aarch64linux32b armelfb_linux_eabi armelf_linux_eabi"
++			targ_extra_emuls="aarch64elf aarch64elf32 aarch64elf32b aarch64elfb armelf armelfb $targ_extra_libpath" ;;
+ aarch64-*-linux*)	targ_emul=aarch64linux
+ 			targ_extra_libpath="aarch64linuxb aarch64linux32 aarch64linux32b armelfb_linux_eabi armelf_linux_eabi"
+ 			targ_extra_emuls="aarch64elf aarch64elf32 aarch64elf32b aarch64elfb armelf armelfb $targ_extra_libpath" ;;
