@@ -6,7 +6,10 @@
 
 def build(ctx):
     build = ctx.extract().autoconf([
-        'ax_cv_c_float_words_bigendian=' + {'x86_64': 'no'}[ctx.cpu()],
+        'ax_cv_c_float_words_bigendian=' + {
+            'aarch64': 'no',
+            'x86_64': 'no',
+        }[ctx.cpu()],
         '--enable-xlib=no',
     ])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
