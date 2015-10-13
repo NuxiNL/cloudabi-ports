@@ -5,7 +5,9 @@
 
 
 def build(ctx):
-    build = ctx.extract('%(name)s-1.2rc3').autoconf(['--disable-examples'])
+    build = ctx.extract('%(name)s-1.2rc3').autoconf([
+        '--disable-examples', '--disable-neon',
+    ])
     build.make()
     build.make_install().install()
 
