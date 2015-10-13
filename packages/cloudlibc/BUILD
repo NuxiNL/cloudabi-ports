@@ -21,6 +21,6 @@ package(
 
 distfile(
     name='cloudlibc-0.8.tar.xz',
-    checksum='560b71cfdd644366d85d3313ed8ac12dc33092e6997b3c016032769eb786d96a',
+    checksum='d296d779fe8ef8d46210f9cc67406250251a69d839c85d4b764ec6d5f948a06f',
     master_sites={'https://nuxi.nl/distfiles/cloudlibc/'},
 )
