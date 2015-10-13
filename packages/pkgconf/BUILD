@@ -11,10 +11,9 @@ def build(ctx):
     # <arch>-pkg-config. Each copy will use its own library and include
     # directory. Autoconf is smart enough to automatically detect the
     # right copy, based on the host type.
-    root = ctx.extract()
     for arch in ARCHITECTURES:
         prefix = os.path.join(ctx.prefix(), arch)
-        build = root.autoconf([
+        build = ctx.extract().autoconf([
             '--with-pkg-config-dir=' + os.path.join(prefix, 'lib/pkgconfig'),
             '--with-system-libdir=' + os.path.join(prefix, 'lib'),
             '--with-system-includedir=' + os.path.join(prefix, 'include'),
