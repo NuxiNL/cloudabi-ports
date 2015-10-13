@@ -1,0 +1,20 @@
+--- libs/context/src/asm/jump_arm64_aapcs_elf_gas.S
++++ libs/context/src/asm/jump_arm64_aapcs_elf_gas.S
+@@ -51,7 +51,6 @@
+  *                                                     *
+  *******************************************************/
+ 
+-.cpu    generic+fp+simd
+ .text
+ .align  2
+ .global jump_fcontext
+--- libs/context/src/asm/make_arm64_aapcs_elf_gas.S
++++ libs/context/src/asm/make_arm64_aapcs_elf_gas.S
+@@ -51,7 +51,6 @@
+  *                                                     *
+  *******************************************************/
+ 
+-.cpu    generic+fp+simd
+ .text
+ .align  2
+ .global make_fcontext
