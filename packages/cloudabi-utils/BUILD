@@ -20,7 +20,7 @@ package(
 )
 
 distfile(
-    name='cloudabi-utils-0.5.tar.xz',
-    checksum='3d777f5c669a91f987151346f6ce8887f30865360ede4a844fa945d4877b2168',
+    name='cloudabi-utils-0.9.tar.xz',
+    checksum='cc88d8e38bc4b58e912ed26ae219018a17aabea19220e66190b4e8fae079b839',
     master_sites={'https://nuxi.nl/distfiles/cloudabi-utils/'},
 )
