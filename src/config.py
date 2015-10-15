@@ -23,3 +23,7 @@ FALLBACK_MIRRORS = {'https://nuxi.nl/distfiles/third_party/'}
 
 # Name of the GNU Make executable.
 GNU_MAKE = 'gmake' if platform.system() == 'FreeBSD' else 'make'
+
+# Name of the Perl executable.
+PERL = ('/usr/local/bin/perl' if platform.system() == 'FreeBSD' else
+        '/usr/bin/perl')

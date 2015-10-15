@@ -405,6 +405,7 @@ class TargetBuilder:
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
             'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
+            'PERL=' + config.PERL,
             'PKG_CONFIG=' + self._tool('pkg-config'),
             'RANLIB=' + self._tool('ranlib'),
             'STRIP=' + self._tool('strip'),
