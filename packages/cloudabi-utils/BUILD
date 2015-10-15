@@ -12,7 +12,7 @@ def build(ctx):
 
 package(
     name='cloudabi-utils',
-    version='0.5',
+    version='0.9',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
