@@ -267,30 +267,7 @@
  //  operations.cpp  --------------------------------------------------------------------//
  
  //  Copyright 2002-2009, 2014 Beman Dawes
-@@ -71,12 +72,11 @@
- 
- #   include <sys/types.h>
- #   include <sys/stat.h>
--#   if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__ANDROID__) \
-- && !defined(__VXWORKS__)
-+#   if 0
- #     include <sys/statvfs.h>
- #     define BOOST_STATVFS statvfs
- #     define BOOST_STATVFS_F_FRSIZE vfs.f_frsize
--#   else
-+#   elif 0
- #     ifdef __OpenBSD__
- #       include <sys/param.h>
- #     elif defined(__ANDROID__)
-@@ -91,7 +91,6 @@
- #   include <dirent.h>
- #   include <unistd.h>
- #   include <fcntl.h>
--#   include <utime.h>
- #   include "limits.h"
- 
- # else // BOOST_WINDOW_API
-@@ -2265,3 +2264,4 @@
+@@ -2265,3 +2266,4 @@
  }  // namespace detail
  } // namespace filesystem
  } // namespace boost
