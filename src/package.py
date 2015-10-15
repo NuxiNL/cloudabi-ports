@@ -57,7 +57,7 @@ class HostPackage:
         self._build_cmd(
             BuildHandle(
                 HostBuilder(BuildDirectory(), self._install_directory),
-                self._name, self._version, self._distfiles))
+                self._name, self._version, self._distfiles, None))
 
     def extract(self):
         # Copy files literally.
@@ -71,7 +71,7 @@ class TargetPackage:
 
     def __init__(self, install_directory, arch, name, version, homepage,
                  maintainer, host_packages, lib_depends, build_cmd,
-                 distfiles):
+                 distfiles, resource_directory):
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
@@ -81,6 +81,7 @@ class TargetPackage:
         self._host_packages = host_packages
         self._build_cmd = build_cmd
         self._distfiles = distfiles
+        self._resource_directory = resource_directory
 
         # Compute the set of transitive library dependencies.
         self._lib_depends = set()
@@ -108,7 +109,8 @@ class TargetPackage:
             BuildHandle(
                 TargetBuilder(BuildDirectory(),
                               self._install_directory, self._arch),
-                self._name, self._version, self._distfiles))
+                self._name, self._version, self._distfiles,
+                self._resource_directory))
 
     def clean(self):
         util.remove(self._install_directory)

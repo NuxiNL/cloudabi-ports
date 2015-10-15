@@ -164,11 +164,12 @@ class FileHandle:
 
 class BuildHandle:
 
-    def __init__(self, builder, name, version, distfiles):
+    def __init__(self, builder, name, version, distfiles, resource_directory):
         self._builder = builder
         self._name = name
         self._version = version
         self._distfiles = distfiles
+        self._resource_directory = resource_directory
 
     def archive(self, objects):
         return FileHandle(self._builder,
@@ -195,6 +196,13 @@ class BuildHandle:
 
     def prefix(self):
         return self._builder.get_prefix()
+
+    def resource(self, name):
+        source = os.path.join(self._resource_directory, name)
+        target = os.path.join(config.DIR_BUILDROOT, 'build', name)
+        util.make_parent_dir(target)
+        util.copy_file(source, target, False)
+        return FileHandle(self._builder, target)
 
 
 class BuildDirectory:

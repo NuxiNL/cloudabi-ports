@@ -67,6 +67,7 @@ class Repository:
 
         def op_package(**kwargs):
             package = kwargs
+            package['resource_directory'] = os.path.dirname(path)
             name = package['name']
             for arch in config.ARCHITECTURES:
                 if (name, arch) in self._deferred_target_packages:
