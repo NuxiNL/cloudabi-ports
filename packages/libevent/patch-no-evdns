@@ -1,0 +1,33 @@
+--- evdns.c
++++ evdns.c
+@@ -1,3 +1,4 @@
++#if 0
+ /* Copyright 2006-2007 Niels Provos
+  * Copyright 2007-2012 Nick Mathewson and Niels Provos
+  *
+@@ -4673,3 +4674,4 @@
+ 		evdns_cancel_request(data->evdns_base, data->ipv6_request.r);
+ 	EVDNS_UNLOCK(data->evdns_base);
+ }
++#endif
+--- include/event2/dns.h
++++ include/event2/dns.h
+@@ -1,3 +1,4 @@
++#error "evdns not supported in this environment"
+ /*
+  * Copyright (c) 2006-2007 Niels Provos <provos@citi.umich.edu>
+  * Copyright (c) 2007-2012 Niels Provos and Nick Mathewson
+--- include/event2/dns_compat.h
++++ include/event2/dns_compat.h
+@@ -1,3 +1,4 @@
++#error "evdns not supported in this environment"
+ /*
+  * Copyright (c) 2006-2007 Niels Provos <provos@citi.umich.edu>
+  * Copyright (c) 2007-2012 Niels Provos and Nick Mathewson
+--- include/event2/dns_struct.h
++++ include/event2/dns_struct.h
+@@ -1,3 +1,4 @@
++#error "evdns not supported in this environment"
+ /*
+  * Copyright (c) 2000-2007 Niels Provos <provos@citi.umich.edu>
+  * Copyright (c) 2007-2012 Niels Provos and Nick Mathewson

@@ -1,0 +1,94 @@
+--- event-internal.h
++++ event-internal.h
+@@ -341,10 +341,6 @@
+ #define N_ACTIVE_CALLBACKS(base)					\
+ 	((base)->event_count_active + (base)->defer_queue.active_count)
+ 
+-int _evsig_set_handler(struct event_base *base, int evsignal,
+-			  void (*fn)(int));
+-int _evsig_restore_handler(struct event_base *base, int evsignal);
+-
+ 
+ void event_active_nolock(struct event *ev, int res, short count);
+ 
+--- signal.c
++++ signal.c
+@@ -206,6 +206,7 @@
+ 
+ /* Helper: set the signal handler for evsignal to handler in base, so that
+  * we can restore the original handler when we clear the current one. */
++#if 0
+ int
+ _evsig_set_handler(struct event_base *base,
+     int evsignal, void (__cdecl *handler)(int))
+@@ -271,10 +272,13 @@
+ 
+ 	return (0);
+ }
++#endif
+ 
+ static int
+ evsig_add(struct event_base *base, evutil_socket_t evsignal, short old, short events, void *p)
+ {
++	return -1;
++#if 0
+ 	struct evsig_info *sig = &base->sig;
+ 	(void)p;
+ 
+@@ -316,8 +320,10 @@
+ 	--sig->ev_n_signals_added;
+ 	EVSIGBASE_UNLOCK();
+ 	return (-1);
++#endif
+ }
+ 
++#if 0
+ int
+ _evsig_restore_handler(struct event_base *base, int evsignal)
+ {
+@@ -348,10 +354,13 @@
+ 
+ 	return ret;
+ }
++#endif
+ 
+ static int
+ evsig_del(struct event_base *base, evutil_socket_t evsignal, short old, short events, void *p)
+ {
++	return -1;
++#if 0
+ 	EVUTIL_ASSERT(evsignal >= 0 && evsignal < NSIG);
+ 
+ 	event_debug(("%s: "EV_SOCK_FMT": restoring signal handler",
+@@ -363,8 +372,10 @@
+ 	EVSIGBASE_UNLOCK();
+ 
+ 	return (_evsig_restore_handler(base, (int)evsignal));
++#endif
+ }
+ 
++#if 0
+ static void __cdecl
+ evsig_handler(int sig)
+ {
+@@ -393,6 +404,7 @@
+ 	EVUTIL_SET_SOCKET_ERROR(socket_errno);
+ #endif
+ }
++#endif
+ 
+ void
+ evsig_dealloc(struct event_base *base)
+@@ -406,10 +418,12 @@
+ 	 * ev_signal_added == 0, so unassign is required */
+ 	event_debug_unassign(&base->sig.ev_signal);
+ 
++#if 0
+ 	for (i = 0; i < NSIG; ++i) {
+ 		if (i < base->sig.sh_old_max && base->sig.sh_old[i] != NULL)
+ 			_evsig_restore_handler(base, i);
+ 	}
++#endif
+ 	EVSIGBASE_LOCK();
+ 	if (base == evsig_base) {
+ 		evsig_base = NULL;

@@ -1,0 +1,91 @@
+--- evutil.c
++++ evutil.c
+@@ -521,11 +521,9 @@
+ }
+ 
+ #if (EVUTIL_AI_PASSIVE|EVUTIL_AI_CANONNAME|EVUTIL_AI_NUMERICHOST| \
+-     EVUTIL_AI_NUMERICSERV|EVUTIL_AI_V4MAPPED|EVUTIL_AI_ALL| \
+-     EVUTIL_AI_ADDRCONFIG) != \
++     EVUTIL_AI_NUMERICSERV|EVUTIL_AI_V4MAPPED|EVUTIL_AI_ALL) != \
+     (EVUTIL_AI_PASSIVE^EVUTIL_AI_CANONNAME^EVUTIL_AI_NUMERICHOST^ \
+-     EVUTIL_AI_NUMERICSERV^EVUTIL_AI_V4MAPPED^EVUTIL_AI_ALL^ \
+-     EVUTIL_AI_ADDRCONFIG)
++     EVUTIL_AI_NUMERICSERV^EVUTIL_AI_V4MAPPED^EVUTIL_AI_ALL)
+ #error "Some of our EVUTIL_AI_* flags seem to overlap with system AI_* flags"
+ #endif
+ 
+@@ -547,6 +545,7 @@
+ 
+ /* Test whether we have an ipv4 interface and an ipv6 interface.  Return 0 if
+  * the test seemed successful. */
++#if 0
+ static int
+ evutil_check_interfaces(int force_recheck)
+ {
+@@ -632,6 +631,7 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
+ /* Internal addrinfo flag.  This one is set when we allocate the addrinfo from
+  * inside libevent.  Otherwise, the built-in getaddrinfo() function allocated
+@@ -942,9 +942,6 @@
+ #ifndef AI_NUMERICSERV
+     EVUTIL_AI_NUMERICSERV |
+ #endif
+-#ifndef AI_ADDRCONFIG
+-    EVUTIL_AI_ADDRCONFIG |
+-#endif
+ #ifndef AI_ALL
+     EVUTIL_AI_ALL |
+ #endif
+@@ -1045,6 +1042,7 @@
+  * hints->ai_family is PF_UNSPEC, then revise the value of hints->ai_family so
+  * that we'll only get addresses we could maybe connect to.
+  */
++#if 0
+ void
+ evutil_adjust_hints_for_addrconfig(struct evutil_addrinfo *hints)
+ {
+@@ -1060,6 +1058,7 @@
+ 		hints->ai_family = PF_INET6;
+ 	}
+ }
++#endif
+ 
+ #ifdef USE_NATIVE_GETADDRINFO
+ static int need_numeric_port_hack_=0;
+@@ -1198,7 +1197,7 @@
+ 		hints.ai_family = PF_UNSPEC;
+ 	}
+ 
+-#ifndef AI_ADDRCONFIG
++#if 0
+ 	/* Not every system has AI_ADDRCONFIG, so fake it. */
+ 	if (hints.ai_family == PF_UNSPEC &&
+ 	    (hints.ai_flags & EVUTIL_AI_ADDRCONFIG)) {
+--- include/event2/util.h
++++ include/event2/util.h
+@@ -619,11 +619,6 @@
+ #else
+ #define EVUTIL_AI_ALL 0x20000
+ #endif
+-#ifdef AI_ADDRCONFIG
+-#define EVUTIL_AI_ADDRCONFIG AI_ADDRCONFIG
+-#else
+-#define EVUTIL_AI_ADDRCONFIG 0x40000
+-#endif
+ /**@}*/
+ 
+ struct evutil_addrinfo;
+--- util-internal.h
++++ util-internal.h
+@@ -246,7 +246,6 @@
+     ev_socklen_t socklen, const struct evutil_addrinfo *hints);
+ struct evutil_addrinfo *evutil_addrinfo_append(struct evutil_addrinfo *first,
+     struct evutil_addrinfo *append);
+-void evutil_adjust_hints_for_addrconfig(struct evutil_addrinfo *hints);
+ int evutil_getaddrinfo_common(const char *nodename, const char *servname,
+     struct evutil_addrinfo *hints, struct evutil_addrinfo **res, int *portnum);
+ 

@@ -1,0 +1,339 @@
+--- bufferevent_sock.c
++++ bufferevent_sock.c
+@@ -349,6 +349,7 @@
+ 	return bufev;
+ }
+ 
++#if 0
+ int
+ bufferevent_socket_connect(struct bufferevent *bev,
+     struct sockaddr *sa, int socklen)
+@@ -505,6 +506,7 @@
+ 		return -1;
+ 	}
+ }
++#endif
+ 
+ int
+ bufferevent_socket_get_dns_error(struct bufferevent *bev)
+--- evutil.c
++++ evutil.c
+@@ -88,6 +88,7 @@
+ #define mode_t int
+ #endif
+ 
++#if 0
+ int
+ evutil_open_closeonexec(const char *pathname, int flags, unsigned mode)
+ {
+@@ -111,6 +112,7 @@
+ 
+ 	return fd;
+ }
++#endif
+ 
+ /**
+    Read the contents of 'filename' into a newly allocated NUL-terminated
+@@ -122,6 +124,7 @@
+ 
+    Used internally only; may go away in a future version.
+  */
++#if 0
+ int
+ evutil_read_file(const char *filename, char **content_out, size_t *len_out,
+     int is_binary)
+@@ -178,6 +181,7 @@
+ 	*content_out = mem;
+ 	return 0;
+ }
++#endif
+ 
+ int
+ evutil_socketpair(int family, int type, int protocol, evutil_socket_t fd[2])
+@@ -189,6 +193,7 @@
+ #endif
+ }
+ 
++#if 0
+ int
+ evutil_ersatz_socketpair(int family, int type, int protocol,
+     evutil_socket_t fd[2])
+@@ -290,6 +295,7 @@
+ 	return -1;
+ #undef ERR
+ }
++#endif
+ 
+ int
+ evutil_make_socket_nonblocking(evutil_socket_t fd)
+@@ -318,6 +324,7 @@
+ 	return 0;
+ }
+ 
++#if 0
+ int
+ evutil_make_listen_socket_reuseable(evutil_socket_t sock)
+ {
+@@ -332,6 +339,7 @@
+ 	return 0;
+ #endif
+ }
++#endif
+ 
+ int
+ evutil_make_socket_closeonexec(evutil_socket_t fd)
+@@ -464,6 +472,7 @@
+ 
+ /* XXX we should use an enum here. */
+ /* 2 for connection refused, 1 for connected, 0 for not yet, -1 for error. */
++#if 0
+ int
+ evutil_socket_connect(evutil_socket_t *fd_ptr, struct sockaddr *sa, int socklen)
+ {
+@@ -496,6 +505,7 @@
+ 	}
+ 	return -1;
+ }
++#endif
+ 
+ /* Check whether a socket on which we called connect() is done
+    connecting. Return 1 for connected, 0 for not yet, -1 for error.  In the
+--- http-internal.h
++++ http-internal.h
+@@ -175,7 +175,6 @@
+ void evhttp_connection_reset(struct evhttp_connection *);
+ 
+ /* connects if necessary */
+-int evhttp_connection_connect(struct evhttp_connection *);
+ 
+ /* notifies the current request that it failed; resets connection */
+ void evhttp_connection_fail(struct evhttp_connection *,
+--- http.c
++++ http.c
+@@ -167,8 +167,6 @@
+ 
+ extern int debug;
+ 
+-static evutil_socket_t bind_socket_ai(struct evutil_addrinfo *, int reuse);
+-static evutil_socket_t bind_socket(const char *, ev_uint16_t, int reuse);
+ static void name_from_addr(struct sockaddr *, ev_socklen_t, char **, char **);
+ static int evhttp_associate_new_request_with_connection(
+ 	struct evhttp_connection *evcon);
+@@ -740,8 +738,10 @@
+ 	evhttp_connection_reset(evcon);
+ 
+ 	/* We are trying the next request that was queued on us */
++#if 0
+ 	if (TAILQ_FIRST(&evcon->requests) != NULL)
+ 		evhttp_connection_connect(evcon);
++#endif
+ 
+ 	/* inform the user */
+ 	if (cb != NULL)
+@@ -794,9 +794,7 @@
+ 			 * We have more requests; reset the connection
+ 			 * and deal with the next request.
+ 			 */
+-			if (!evhttp_connected(evcon))
+-				evhttp_connection_connect(evcon);
+-			else
++			if (evhttp_connected(evcon))
+ 				evhttp_request_dispatch(evcon);
+ 		} else if (!need_close) {
+ 			/*
+@@ -1275,7 +1273,6 @@
+ 	struct evhttp_connection *evcon = arg;
+ 
+ 	evcon->state = EVCON_DISCONNECTED;
+-	evhttp_connection_connect(evcon);
+ }
+ 
+ static void
+@@ -2178,6 +2175,7 @@
+ 	*port = evcon->port;
+ }
+ 
++#if 0
+ int
+ evhttp_connection_connect(struct evhttp_connection *evcon)
+ {
+@@ -2228,6 +2226,7 @@
+ 
+ 	return (0);
+ }
++#endif
+ 
+ /*
+  * Starts an HTTP request on the provided evhttp_connection object.
+@@ -2265,6 +2264,8 @@
+ 
+ 	/* If the connection object is not connected; make it so */
+ 	if (!evhttp_connected(evcon)) {
++		return -1;
++#if 0
+ 		int res = evhttp_connection_connect(evcon);
+ 	       /* evhttp_connection_fail(), which is called through
+ 		* evhttp_connection_connect(), assumes that req lies in
+@@ -2274,6 +2275,7 @@
+ 		       TAILQ_REMOVE(&evcon->requests, req, next);
+ 
+ 		return res;
++#endif
+ 	}
+ 
+ 	/*
+@@ -3083,6 +3085,7 @@
+ 	evhttp_get_request(http, nfd, peer_sa, peer_socklen);
+ }
+ 
++#if 0
+ int
+ evhttp_bind_socket(struct evhttp *http, const char *address, ev_uint16_t port)
+ {
+@@ -3118,6 +3121,7 @@
+ 
+ 	return (NULL);
+ }
++#endif
+ 
+ int
+ evhttp_accept_socket(struct evhttp *http, evutil_socket_t fd)
+@@ -3235,6 +3239,7 @@
+  * Start a web server on the specified address and port.
+  */
+ 
++#if 0
+ struct evhttp *
+ evhttp_start(const char *address, unsigned short port)
+ {
+@@ -3250,6 +3255,7 @@
+ 
+ 	return (http);
+ }
++#endif
+ 
+ void
+ evhttp_free(struct evhttp* http)
+@@ -3817,6 +3823,7 @@
+ 
+ /* Create a non-blocking socket and bind it */
+ /* todo: rename this function */
++#if 0
+ static evutil_socket_t
+ bind_socket_ai(struct evutil_addrinfo *ai, int reuse)
+ {
+@@ -3909,6 +3916,7 @@
+ 
+ 	return (fd);
+ }
++#endif
+ 
+ struct evhttp_uri {
+ 	unsigned flags;
+--- include/event2/bufferevent.h
++++ include/event2/bufferevent.h
+@@ -202,7 +202,6 @@
+    @param socklen The length of the address
+    @return 0 on success, -1 on failure.
+  */
+-int bufferevent_socket_connect(struct bufferevent *, struct sockaddr *, int);
+ 
+ struct evdns_base;
+ /**
+@@ -231,8 +230,6 @@
+    may block while it waits for a DNS response.	 This is probably not
+    what you want.
+  */
+-int bufferevent_socket_connect_hostname(struct bufferevent *,
+-    struct evdns_base *, int, const char *, int);
+ 
+ /**
+    Return the error code for the last failed DNS lookup attempt made by
+--- include/event2/http.h
++++ include/event2/http.h
+@@ -91,7 +91,6 @@
+  * @return 0 on success, -1 on failure.
+  * @see evhttp_accept_socket()
+  */
+-int evhttp_bind_socket(struct evhttp *http, const char *address, ev_uint16_t port);
+ 
+ /**
+  * Like evhttp_bind_socket(), but returns a handle for referencing the socket.
+@@ -104,7 +103,6 @@
+  * @return Handle for the socket on success, NULL on failure.
+  * @see evhttp_bind_socket(), evhttp_del_accept_socket()
+  */
+-struct evhttp_bound_socket *evhttp_bind_socket_with_handle(struct evhttp *http, const char *address, ev_uint16_t port);
+ 
+ /**
+  * Makes an HTTP server accept connections on the specified socket.
+--- include/event2/http_compat.h
++++ include/event2/http_compat.h
+@@ -58,7 +58,6 @@
+  * @param port the port number on which the HTTP server should listen
+  * @return an struct evhttp object
+  */
+-struct evhttp *evhttp_start(const char *address, unsigned short port);
+ 
+ /**
+  * A connection object that can be used to for making HTTP requests.  The
+--- include/event2/listener.h
++++ include/event2/listener.h
+@@ -105,9 +105,6 @@
+    @param addr The address to listen for connections on.
+    @param socklen The length of the address.
+  */
+-struct evconnlistener *evconnlistener_new_bind(struct event_base *base,
+-    evconnlistener_cb cb, void *ptr, unsigned flags, int backlog,
+-    const struct sockaddr *sa, int socklen);
+ /**
+    Disable and deallocate an evconnlistener.
+  */
+--- include/event2/util.h
++++ include/event2/util.h
+@@ -304,7 +304,6 @@
+     @param sock The socket to make reusable
+     @return 0 on success, -1 on failure
+  */
+-int evutil_make_listen_socket_reuseable(evutil_socket_t sock);
+ 
+ /** Do platform-specific operations as needed to close a socket upon a
+     successful execution of one of the exec*() functions.
+--- listener.c
++++ listener.c
+@@ -197,6 +197,7 @@
+ 	return &lev->base;
+ }
+ 
++#if 0
+ struct evconnlistener *
+ evconnlistener_new_bind(struct event_base *base, evconnlistener_cb cb,
+     void *ptr, unsigned flags, int backlog, const struct sockaddr *sa,
+@@ -252,6 +253,7 @@
+ 
+ 	return listener;
+ }
++#endif
+ 
+ void
+ evconnlistener_free(struct evconnlistener *lev)
+--- util-internal.h
++++ util-internal.h
+@@ -164,17 +164,8 @@
+ /* As open(pathname, flags, mode), except that the file is always opened with
+  * the close-on-exec flag set. (And the mode argument is mandatory.)
+  */
+-int evutil_open_closeonexec(const char *pathname, int flags, unsigned mode);
+-
+-int evutil_read_file(const char *filename, char **content_out, size_t *len_out,
+-    int is_binary);
+-
+-int evutil_socket_connect(evutil_socket_t *fd_ptr, struct sockaddr *sa, int socklen);
+-
+ int evutil_socket_finished_connecting(evutil_socket_t fd);
+ 
+-int evutil_ersatz_socketpair(int, int , int, evutil_socket_t[]);
+-
+ int evutil_resolve(int family, const char *hostname, struct sockaddr *sa,
+     ev_socklen_t *socklen, int port);
+ 

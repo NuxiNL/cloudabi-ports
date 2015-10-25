@@ -1,0 +1,103 @@
+--- kqueue.c
++++ kqueue.c
+@@ -73,14 +73,11 @@
+ 	struct kevent *events;
+ 	int events_size;
+ 	int kq;
+-	pid_t pid;
+ };
+ 
+ static void kqop_free(struct kqop *kqop);
+ 
+ static void *kq_init(struct event_base *);
+-static int kq_sig_add(struct event_base *, int, short, short, void *);
+-static int kq_sig_del(struct event_base *, int, short, short, void *);
+ static int kq_dispatch(struct event_base *, struct timeval *);
+ static void kq_dealloc(struct event_base *);
+ 
+@@ -96,6 +93,7 @@
+ 	EVENT_CHANGELIST_FDINFO_SIZE
+ };
+ 
++#if 0
+ static const struct eventop kqsigops = {
+ 	"kqueue_signal",
+ 	NULL,
+@@ -107,6 +105,7 @@
+ 	0,
+ 	0
+ };
++#endif
+ 
+ static void *
+ kq_init(struct event_base *base)
+@@ -126,8 +125,6 @@
+ 
+ 	kqueueop->kq = kq;
+ 
+-	kqueueop->pid = getpid();
+-
+ 	/* Initialize fields */
+ 	kqueueop->changes = mm_calloc(NEVENT, sizeof(struct kevent));
+ 	if (kqueueop->changes == NULL)
+@@ -155,7 +152,7 @@
+ 		goto err;
+ 	}
+ 
+-	base->evsigsel = &kqsigops;
++	evsig_init(base);
+ 
+ 	return (kqueueop);
+ err:
+@@ -262,7 +259,8 @@
+ 	int i, n_changes, res;
+ 
+ 	if (tv != NULL) {
+-		TIMEVAL_TO_TIMESPEC(tv, &ts);
++		ts.tv_sec = tv->tv_sec;
++		ts.tv_nsec = tv->tv_usec * 1000;
+ 		ts_p = &ts;
+ 	}
+ 
+@@ -372,18 +370,12 @@
+ 			which |= EV_READ;
+ 		} else if (events[i].filter == EVFILT_WRITE) {
+ 			which |= EV_WRITE;
+-		} else if (events[i].filter == EVFILT_SIGNAL) {
+-			which |= EV_SIGNAL;
+ 		}
+ 
+ 		if (!which)
+ 			continue;
+ 
+-		if (events[i].filter == EVFILT_SIGNAL) {
+-			evmap_signal_active(base, events[i].ident, 1);
+-		} else {
+-			evmap_io_active(base, events[i].ident, which | EV_ET);
+-		}
++		evmap_io_active(base, events[i].ident, which | EV_ET);
+ 	}
+ 
+ 	if (res == kqop->events_size) {
+@@ -402,7 +394,7 @@
+ 		mm_free(kqop->changes);
+ 	if (kqop->events)
+ 		mm_free(kqop->events);
+-	if (kqop->kq >= 0 && kqop->pid == getpid())
++	if (kqop->kq >= 0)
+ 		close(kqop->kq);
+ 	memset(kqop, 0, sizeof(struct kqop));
+ 	mm_free(kqop);
+@@ -417,6 +409,7 @@
+ }
+ 
+ /* signal handling */
++#if 0
+ static int
+ kq_sig_add(struct event_base *base, int nsignal, short old, short events, void *p)
+ {
+@@ -473,3 +466,4 @@
+ 
+ 	return (0);
+ }
++#endif

@@ -1,0 +1,35 @@
+--- buffer.c
++++ buffer.c
+@@ -183,7 +183,7 @@
+ 	/* this way we can manipulate the buffer to different addresses,
+ 	 * which is required for mmap for example.
+ 	 */
+-	chain->buffer = EVBUFFER_CHAIN_EXTRA(u_char, chain);
++	chain->buffer = EVBUFFER_CHAIN_EXTRA(unsigned char, chain);
+ 
+ 	return (chain);
+ }
+@@ -2749,7 +2749,7 @@
+ 	if (!chain)
+ 		return (-1);
+ 	chain->flags |= EVBUFFER_REFERENCE | EVBUFFER_IMMUTABLE;
+-	chain->buffer = (u_char *)data;
++	chain->buffer = (unsigned char *)data;
+ 	chain->buffer_len = datlen;
+ 	chain->off = datlen;
+ 
+--- http-internal.h
++++ http-internal.h
+@@ -70,10 +70,10 @@
+ 	struct event retry_ev;		/* for retrying connects */
+ 
+ 	char *bind_address;		/* address to use for binding the src */
+-	u_short bind_port;		/* local port for binding the src */
++	unsigned short bind_port;	/* local port for binding the src */
+ 
+ 	char *address;			/* address to connect to */
+-	u_short port;
++	unsigned short port;
+ 
+ 	size_t max_headers_size;
+ 	ev_uint64_t max_body_size;

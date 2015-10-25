@@ -1,0 +1,11 @@
+--- Makefile.in
++++ Makefile.in
+@@ -537,7 +537,7 @@
+ @INSTALL_LIBEVENT_TRUE@lib_LTLIBRARIES = $(LIBEVENT_LIBS_LA)
+ @INSTALL_LIBEVENT_TRUE@pkgconfig_DATA = $(LIBEVENT_PKGCONFIG)
+ @INSTALL_LIBEVENT_FALSE@noinst_LTLIBRARIES = $(LIBEVENT_LIBS_LA)
+-SUBDIRS = . include sample test
++SUBDIRS = . include
+ @BUILD_WIN32_FALSE@SYS_LIBS = 
+ @BUILD_WIN32_TRUE@SYS_LIBS = -lws2_32 -lshell32 -ladvapi32
+ @BUILD_WIN32_FALSE@SYS_SRC = $(am__append_5) $(am__append_6) \
