@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='uriparser',
-    version='0.8.2',
+    version='0.8.4',
     homepage='http://uriparser.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,7 +19,7 @@ package(
 )
 
 distfile(
-    name='uriparser-0.8.2.tar.bz2',
-    checksum='6d6e66b0615f65e9e2391933dab7e45eca0947160f10c6b47bc50feda93e508f',
-    master_sites=sites_sourceforge('uriparser/Sources/0.8.2'),
+    name='uriparser-0.8.4.tar.bz2',
+    checksum='ce7ccda4136974889231e8426a785e7578e66a6283009cfd13f1b24a5e657b23',
+    master_sites=sites_sourceforge('uriparser/Sources/0.8.4'),
 )
