@@ -1,0 +1,526 @@
+--- src/bdd.h
++++ src/bdd.h
+@@ -242,7 +242,6 @@
+ extern void     bdd_stats(bddStat *);
+ extern void     bdd_cachestats(bddCacheStat *);
+ extern void     bdd_fprintstat(FILE *);
+-extern void     bdd_printstat(void);
+ extern void     bdd_default_gbchandler(int, bddGbcStat *);
+ extern void     bdd_default_errhandler(int);
+ extern const char *bdd_errstring(int);
+@@ -313,18 +312,11 @@
+    
+ /* In file "bddio.c" */
+ 
+-extern void     bdd_printall(void);
+ extern void     bdd_fprintall(FILE *);
+ extern void     bdd_fprinttable(FILE *, BDD);
+-extern void     bdd_printtable(BDD);
+ extern void     bdd_fprintset(FILE *, BDD);
+-extern void     bdd_printset(BDD);
+-extern int      bdd_fnprintdot(char *, BDD);
+ extern void     bdd_fprintdot(FILE *, BDD);
+-extern void     bdd_printdot(BDD);
+-extern int      bdd_fnsave(char *, BDD);
+ extern int      bdd_save(FILE *, BDD);
+-extern int      bdd_fnload(char *, BDD *);
+ extern int      bdd_load(FILE *ifile, BDD *);
+ 
+ /* In file reorder.c */
+@@ -347,9 +339,7 @@
+ extern int      bdd_getreorder_method(void);
+ extern void     bdd_enable_reorder(void);
+ extern void     bdd_disable_reorder(void);
+-extern int      bdd_reorder_verbose(int);
+ extern void     bdd_setvarorder(int *);
+-extern void     bdd_printorder(void);
+ extern void     bdd_fprintorder(FILE *);
+ 
+ #ifdef CPLUSPLUS
+@@ -508,16 +498,11 @@
+    friend double   bdd_pathcount(const bdd &);
+    
+    friend void   bdd_fprinttable(FILE *, const bdd &);
+-   friend void   bdd_printtable(const bdd &);
+    friend void   bdd_fprintset(FILE *, const bdd &);
+-   friend void   bdd_printset(const bdd &);
+-   friend void   bdd_printdot(const bdd &);
+    friend int    bdd_fnprintdot(char*, const bdd &);
+    friend void   bdd_fprintdot(FILE*, const bdd &);
+    friend std::ostream &operator<<(std::ostream &, const bdd &);
+-   friend int    bdd_fnsave(char*, const bdd &);
+    friend int    bdd_save(FILE*, const bdd &);
+-   friend int    bdd_fnload(char*, bdd &);
+    friend int    bdd_load(FILE*, bdd &);
+    
+    friend bdd    fdd_ithvarpp(int, int);
+@@ -526,7 +511,6 @@
+    friend int    fdd_scanvar(const bdd &, int);
+    friend int*   fdd_scanallvar(const bdd &);
+    friend bdd    fdd_equalspp(int, int);
+-   friend void   fdd_printset(const bdd &);
+    friend void   fdd_fprintset(FILE*, const bdd &);
+    friend bdd    fdd_makesetpp(int*, int);
+    friend int    fdd_scanset(const bdd &, int *&, int &);
+@@ -694,33 +678,15 @@
+ inline void bdd_fprinttable(FILE *file, const bdd &r)
+ { bdd_fprinttable(file, r.root); }
+ 
+-inline void bdd_printtable(const bdd &r)
+-{ bdd_printtable(r.root); }
+-
+ inline void bdd_fprintset(FILE *file, const bdd &r)
+ { bdd_fprintset(file, r.root); }
+ 
+-inline void bdd_printset(const bdd &r)
+-{ bdd_printset(r.root); }
+-
+-inline void bdd_printdot(const bdd &r)
+-{ bdd_printdot(r.root); }
+-
+ inline void bdd_fprintdot(FILE* ofile, const bdd &r)
+ { bdd_fprintdot(ofile, r.root); }
+ 
+-inline int bdd_fnprintdot(char* fname, const bdd &r)
+-{ return bdd_fnprintdot(fname, r.root); }
+-
+-inline int bdd_fnsave(char *fname, const bdd &r)
+-{ return bdd_fnsave(fname, r.root); }
+-
+ inline int bdd_save(FILE *ofile, const bdd &r)
+ { return bdd_save(ofile, r.root); }
+ 
+-inline int bdd_fnload(char *fname, bdd &r)
+-{ int lr,e; e=bdd_fnload(fname, &lr); r=bdd(lr); return e; }
+-
+ inline int bdd_load(FILE *ifile, bdd &r)
+ { int lr,e; e=bdd_load(ifile, &lr); r=bdd(lr); return e; }
+ 
+--- src/bddio.c
++++ src/bddio.c
+@@ -116,10 +116,6 @@
+ 	   is the position in the current variable order. *}
+ ALSO    {* bdd\_printtable, bdd\_printset, bdd\_printdot *}
+ */
+-void bdd_printall(void)
+-{
+-   bdd_fprintall(stdout);
+-}
+ 
+ 
+ void bdd_fprintall(FILE *ofile)
+@@ -160,10 +156,6 @@
+ 	   is the position in the current variable order. *}
+ ALSO    {* bdd\_printall, bdd\_printset, bdd\_printdot *}
+ */
+-void bdd_printtable(BDD r)
+-{
+-   bdd_fprinttable(stdout, r);
+-}
+ 
+ 
+ void bdd_fprinttable(FILE *ofile, BDD r)
+@@ -223,10 +215,6 @@
+ 	   {\tt bdd\_file\_hook} or {\tt bdd\_strm\_hook}. *}
+ ALSO    {* bdd\_printall, bdd\_printtable, bdd\_printdot, bdd\_file\_hook, bdd\_strm\_hook *}
+ */
+-void bdd_printset(BDD r)
+-{
+-   bdd_fprintset(stdout, r);
+-}
+ 
+ 
+ void bdd_fprintset(FILE *ofile, BDD r)
+@@ -309,12 +297,9 @@
+ 	   destroyed and then closed again. *}
+ ALSO    {* bdd\_printall, bdd\_printtable, bdd\_printset *}
+ */
+-void bdd_printdot(BDD r)
+-{
+-   bdd_fprintdot(stdout, r);
+-}
+ 
+ 
++#if 0
+ int bdd_fnprintdot(char *fname, BDD r)
+ {
+    FILE *ofile = fopen(fname, "w");
+@@ -324,6 +309,7 @@
+    fclose(ofile);
+    return 0;
+ }
++#endif
+ 
+ 
+ void bdd_fprintdot(FILE* ofile, BDD r)
+@@ -378,6 +364,7 @@
+ ALSO    {* bdd\_load *}
+ RETURN  {* Zero on succes, otherwise an error code from {\tt bdd.h}. *}
+ */
++#if 0
+ int bdd_fnsave(char *fname, BDD r)
+ {
+    FILE *ofile;
+@@ -390,6 +377,7 @@
+    fclose(ofile);
+    return ok;
+ }
++#endif
+ 
+ 
+ int bdd_save(FILE *ofile, BDD r)
+@@ -472,6 +460,7 @@
+ ALSO    {* bdd\_save *}
+ RETURN  {* Zero on succes, otherwise an error code from {\tt bdd.h}. *}
+ */
++#if 0
+ int bdd_fnload(char *fname, BDD *root)
+ {
+    FILE *ifile;
+@@ -484,6 +473,7 @@
+    fclose(ifile);
+    return ok;
+ }
++#endif
+ 
+ 
+ int bdd_load(FILE *ifile, BDD *root)
+--- src/fdd.c
++++ src/fdd.c
+@@ -694,11 +694,13 @@
+ 	   identifier in a readable form. *}
+ ALSO    {* bdd\_printset, fdd\_file\_hook, fdd\_strm\_hook *}
+ */
++#if 0
+ void fdd_printset(BDD r)
+ {
+    CHECKn(r);
+    fdd_fprintset(stdout, r);
+ }
++#endif
+ 
+ 
+ void fdd_fprintset(FILE *ofile, BDD r)
+@@ -764,7 +766,7 @@
+ 	       filehandler(ofile, n);
+ 	    else
+ 	       fprintf(ofile, "%d", n);
+-	    printf(":");
++	    fprintf(ofile, ":");
+ 
+ 	    var = domain[n].ivar;
+ 	    
+--- src/fdd.h
++++ src/fdd.h
+@@ -64,7 +64,6 @@
+ #ifdef CPLUSPLUS
+ extern bddstrmhandler fdd_strm_hook(bddstrmhandler);
+ #endif
+-extern void fdd_printset(BDD);
+ extern void fdd_fprintset(FILE*, BDD);
+ extern int  fdd_scanset(BDD, int**, int*);
+ extern BDD  fdd_makeset(int*, int);
+@@ -102,9 +101,6 @@
+ inline bdd fdd_equalspp(int left, int right)
+ { return fdd_equals(left, right); }
+ 
+-inline void fdd_printset(const bdd &r)
+-{ fdd_printset(r.root); }
+-
+ inline void fdd_fprintset(FILE* ofile, const bdd &r)
+ { fdd_fprintset(ofile, r.root); }
+ 
+--- src/imatrix.c
++++ src/imatrix.c
+@@ -107,10 +107,6 @@
+ }
+ 
+ 
+-void imatrixPrint(imatrix *mtx)
+-{
+-   imatrixFPrint(mtx, stdout);
+-}
+ 
+ 
+ void imatrixSet(imatrix *mtx, int a, int b)
+--- src/imatrix.h
++++ src/imatrix.h
+@@ -47,7 +47,6 @@
+ extern imatrix* imatrixNew(int);
+ extern void     imatrixDelete(imatrix*);
+ extern void     imatrixFPrint(imatrix*,FILE *);
+-extern void     imatrixPrint(imatrix*);
+ extern void     imatrixSet(imatrix*,int,int);
+ extern void     imatrixClr(imatrix*,int,int);
+ extern int      imatrixDepends(imatrix*,int,int);
+--- src/kernel.c
++++ src/kernel.c
+@@ -771,10 +771,6 @@
+ }
+ 
+ 
+-void bdd_printstat(void)
+-{
+-   bdd_fprintstat(stdout);
+-}
+ 
+ 
+ /*************************************************************************
+@@ -990,9 +986,9 @@
+ {
+    if (!pre)
+    {
+-      printf("Garbage collection #%d: %d nodes / %d free",
++      fprintf(stderr, "Garbage collection #%d: %d nodes / %d free",
+ 	     s->num, s->nodes, s->freenodes);
+-      printf(" / %.1fs / %.1fs total\n",
++      fprintf(stderr, " / %.1fs / %.1fs total\n",
+ 	     (float)s->time/(float)(CLOCKS_PER_SEC),
+ 	     (float)s->sumtime/(float)CLOCKS_PER_SEC);
+    }
+--- src/reorder.c
++++ src/reorder.c
+@@ -92,7 +92,6 @@
+ static imatrix *iactmtx;
+ 
+    /* Reordering information for the user */
+-static int verbose;
+ static bddinthandler reorder_handler;
+ static bddfilehandler reorder_filehandler;
+ static bddsizehandler reorder_nodenum;
+@@ -144,7 +143,6 @@
+    
+    bdd_clrvarblocks();
+    bdd_reorder_hook(bdd_default_reohandler);
+-   bdd_reorder_verbose(0);
+    bdd_autoreorder_times(BDD_REORDER_NONE, 0);
+    reorder_nodenum = bdd_getnodenum;
+    usednum_before = usednum_after = 0;
+@@ -173,9 +171,6 @@
+    if (t == NULL)
+       return t;
+ 
+-   if (verbose > 1)
+-      printf("Win2 start: %d nodes\n", reorder_nodenum());
+-   fflush(stdout);
+ 
+    while (this->next != NULL)
+    {
+@@ -191,16 +186,8 @@
+       if (first == this)
+ 	 first = this->prev;
+ 
+-      if (verbose > 1)
+-      {
+-	 printf(".");
+-	 fflush(stdout);
+-      }
+    }
+    
+-   if (verbose > 1)
+-      printf("\nWin2 end: %d nodes\n", reorder_nodenum());
+-   fflush(stdout);
+ 
+    return first;
+ }
+@@ -215,8 +202,6 @@
+    if (t == NULL)
+       return t;
+    
+-   if (verbose > 1)
+-      printf("Win2ite start: %d nodes\n", reorder_nodenum());
+ 
+    do
+    {
+@@ -237,15 +222,8 @@
+ 	 else
+ 	 if (first == this)
+ 	    first = this->prev;
+-	 if (verbose > 1)
+-	 {
+-	    printf(".");
+-	    fflush(stdout);
+-	 }
+       }
+ 
+-      if (verbose > 1)
+-	 printf(" %d nodes\n", reorder_nodenum());
+       c++;
+    }
+    while (reorder_nodenum() != lastsize);
+@@ -398,24 +376,13 @@
+    if (t == NULL)
+       return t;
+ 
+-   if (verbose > 1)
+-      printf("Win3 start: %d nodes\n", reorder_nodenum());
+-   fflush(stdout);
+ 
+    while (this->next != NULL)
+    {
+       this = reorder_swapwin3(this, &first);
+       
+-      if (verbose > 1)
+-      {
+-	 printf(".");
+-	 fflush(stdout);
+-      }
+    }
+    
+-   if (verbose > 1)
+-      printf("\nWin3 end: %d nodes\n", reorder_nodenum());
+-   fflush(stdout);
+ 
+    return first;
+ }
+@@ -429,8 +396,6 @@
+    if (t == NULL)
+       return t;
+    
+-   if (verbose > 1)
+-      printf("Win3ite start: %d nodes\n", reorder_nodenum());
+ 
+    do
+    {
+@@ -441,20 +406,11 @@
+       {
+ 	 this = reorder_swapwin3(this, &first);
+ 
+-	 if (verbose > 1)
+-	 {
+-	    printf(".");
+-	    fflush(stdout);
+-	 }
+       }
+ 
+-      if (verbose > 1)
+-	 printf(" %d nodes\n", reorder_nodenum());
+    }
+    while (reorder_nodenum() != lastsize);
+ 
+-   if (verbose > 1)
+-      printf("Win3ite end: %d nodes\n", reorder_nodenum());
+    
+    return first;
+ }
+@@ -496,11 +452,6 @@
+ 	    blockdown(blk->prev);
+ 	    bestpos--;
+ 	    
+-	    if (verbose > 1)
+-	    {
+-	       printf("-");
+-	       fflush(stdout);
+-	    }
+ 	    
+ 	    if (reorder_nodenum() < best)
+ 	    {
+@@ -524,11 +475,6 @@
+ 	    blockdown(blk);
+ 	    bestpos++;
+ 	    
+-	    if (verbose > 1)
+-	    {
+-	       printf("+");
+-	       fflush(stdout);
+-	    }
+ 	    
+ 	    if (reorder_nodenum() < best)
+ 	    {
+@@ -544,11 +490,6 @@
+ 	 }
+       }
+ 	 
+-      if (reorder_nodenum() > maxAllowed  &&  verbose > 1)
+-      {
+-	 printf("!");
+-	 fflush(stdout);
+-      }
+ 
+       dirIsUp = !dirIsUp;
+    }
+@@ -580,26 +521,10 @@
+ 
+    for (n=0 ; n<num ; n++)
+    {
+-      long c2, c1 = clock();
+    
+-      if (verbose > 1)
+-      {
+-	 printf("Sift ");
+-	 if (reorder_filehandler)
+-	    reorder_filehandler(stdout, seq[n]->id);
+-	 else
+-	    printf("%d", seq[n]->id);
+-	 printf(": ");
+-      }
+ 
+       reorder_sift_bestpos(seq[n], num/2);
+ 
+-      if (verbose > 1)
+-	 printf("\n> %d nodes", reorder_nodenum());
+-
+-      c2 = clock();
+-      if (verbose > 1)
+-	 printf(" (%.1f sec)\n", (float)(c2-c1)/CLOCKS_PER_SEC);
+    }
+ 
+       /* Find first block */
+@@ -686,8 +611,6 @@
+    
+    do
+    {
+-      if (verbose > 1)
+-	 printf("Reorder %d\n", c++);
+       
+       lastsize = reorder_nodenum();
+       first = reorder_sift(first);
+@@ -728,8 +651,6 @@
+ 
+    free(seq);
+ 
+-   if (verbose)
+-      printf("Random order: %d nodes\n", reorder_nodenum());
+    return this;
+ }
+ 
+@@ -1566,6 +1487,7 @@
+ 
+ void bdd_default_reohandler(int prestate)
+ {
++#if 0
+    static long c1;
+ 
+    if (verbose > 0)
+@@ -1582,6 +1504,7 @@
+ 		usednum_before, usednum_after, (float)(c2-c1)/CLOCKS_PER_SEC);
+       }
+    }
++#endif
+ }
+ 
+ 
+@@ -2041,12 +1964,6 @@
+ RETURN  {* The old verbose level *}
+ ALSO    {* bdd\_reorder *}
+ */
+-int bdd_reorder_verbose(int v)
+-{
+-   int tmp = verbose;
+-   verbose = v;
+-   return tmp;
+-}
+ 
+ 
+ /*
+@@ -2227,10 +2144,6 @@
+ 	   *}
+ ALSO    {* bdd\_reorder, bdd\_addvarblock *}
+ */
+-void bdd_printorder(void)
+-{
+-   bdd_fprintorder(stdout);
+-}
+ 
+ 
+ /*
