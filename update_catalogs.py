@@ -59,14 +59,14 @@ debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
 
 # Finish up and put the new catalogs in place.
-#os.rename(DIR_DEBIAN_CATALOG, os.path.join(DIR_TMP, 'debian.old'))
-#os.rename(debian_path, DIR_DEBIAN_CATALOG)
-#os.rename(DIR_FREEBSD_CATALOG, os.path.join(DIR_TMP, 'freebsd.old'))
-#os.rename(freebsd_path, DIR_FREEBSD_CATALOG)
-#os.rename(DIR_NETBSD_CATALOG, os.path.join(DIR_TMP, 'netbsd.old'))
-#os.rename(netbsd_path, DIR_NETBSD_CATALOG)
-#os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))
-#os.rename(openbsd_path, DIR_OPENBSD_CATALOG)
+os.rename(DIR_DEBIAN_CATALOG, os.path.join(DIR_TMP, 'debian.old'))
+os.rename(debian_path, DIR_DEBIAN_CATALOG)
+os.rename(DIR_FREEBSD_CATALOG, os.path.join(DIR_TMP, 'freebsd.old'))
+os.rename(freebsd_path, DIR_FREEBSD_CATALOG)
+os.rename(DIR_NETBSD_CATALOG, os.path.join(DIR_TMP, 'netbsd.old'))
+os.rename(netbsd_path, DIR_NETBSD_CATALOG)
+os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))
+os.rename(openbsd_path, DIR_OPENBSD_CATALOG)
 
 # Zap the temporary directory.
 util.remove(DIR_TMP)
