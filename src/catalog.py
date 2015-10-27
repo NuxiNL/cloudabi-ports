@@ -261,72 +261,92 @@ class FreeBSDCatalog(Catalog):
         return self._existing[package.get_freebsd_name()]
 
     def package(self, package, version):
-        # Install just a copy of FreeBSD's pkg(8) into the buildroot,
-        # which we can call into to create the package.
         package.build()
-        package.initialize_buildroot({'pkg'})
+        package.initialize_buildroot({'libarchive'})
         print('PKG', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
         arch = package.get_arch()
         prefix = os.path.join('/usr/local', arch)
-        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
-        filesdir = os.path.join(installdir, prefix[1:])
-        package.extract(filesdir, prefix)
+        package.extract(installdir, prefix)
+        files = sorted(util.walk_files(installdir))
 
-        # Create a manifest file.
-        util.make_dir(installdir)
-        with open(os.path.join(installdir, '+MANIFEST'), 'w') as f:
-            # Preamble.
-            f.write(
-                'name: %(freebsd_name)s\n'
-                'version: \"%(version)s\"\n'
-                'origin: devel/%(arch)s-%(name)s\n'
-                'comment: %(name)s for %(arch)s\n'
-                'www: %(homepage)s\n'
-                'maintainer: %(maintainer)s\n'
-                'prefix: /usr/local\n'
-                'desc: %(name)s for %(arch)s\n'
-                'abi: *\n'
-                'arch: *\n' % {
-                    'arch': arch,
-                    'freebsd_name': package.get_freebsd_name(),
-                    'homepage': package.get_homepage(),
-                    'maintainer': package.get_maintainer(),
-                    'name': package.get_name(),
-                    'version': version.get_freebsd_version(),
-                })
+        # Create the compact manifest.
+        base_manifest = (
+            '{"name":"%(freebsd_name)s",'
+            '"origin":"devel/%(freebsd_name)s",'
+            '"version":"%(version)s",'
+            '"comment":"%(name)s for %(arch)s",'
+            '"maintainer":"%(maintainer)s",'
+            '"www":"%(homepage)s",'
+            '"abi":"*",'
+            '"arch":"*",'
+            '"prefix":"/usr/local",'
+            '"flatsize":%(flatsize)d,'
+            '"desc":"%(name)s for %(arch)s"' % {
+                'arch': arch,
+                'flatsize': sum(os.lstat(path).st_size for path in files),
+                'freebsd_name': package.get_freebsd_name(),
+                'homepage': package.get_homepage(),
+                'maintainer': package.get_maintainer(),
+                'name': package.get_name(),
+                'version': version.get_freebsd_version(),
+            })
+        deps = package.get_lib_depends()
+        if deps:
+            base_manifest += ',"deps":{%s}' % ','.join(
+                '\"%s\":{"origin":"devel/%s","version":"0"}' % (dep, dep)
+                for dep in sorted(pkg.get_freebsd_name() for pkg in deps)
+            )
+        compact_manifest = os.path.join(config.DIR_BUILDROOT,
+                                        '+COMPACT_MANIFEST')
+        with open(compact_manifest, 'w') as f:
+            f.write(base_manifest)
+            f.write('}')
 
-            # Dependencies.
-            f.write('deps: {\n')
-            for dep in sorted(pkg.get_freebsd_name()
-                              for pkg in package.get_lib_depends()):
-                f.write(
-                    '  \"%s\": {origin: devel/%s, version: 0}\n' %
-                    (dep, dep))
-            f.write('}\n')
-
-            # Create entry for every file.
-            f.write('files: {\n')
-            for path in sorted(util.walk_files(filesdir)):
-                f.write(
-                    '  \"/%s\": { perm: 0%o }' % (
-                        os.path.relpath(path, installdir),
-                        self._get_suggested_mode(path)))
-            f.write('}\n')
+        # Create the fill manifest.
+        if files:
+            manifest = os.path.join(config.DIR_BUILDROOT, '+MANIFEST')
+            with open(manifest, 'w') as f:
+                f.write(base_manifest)
+                f.write(',"files":{')
+                f.write(','.join(
+                    '"%s":"1$%s"' % (
+                        os.path.join(prefix, os.path.relpath(path, installdir)),
+                        util.sha256(path).hexdigest())
+                    for path in files))
+                f.write('}}')
+        else:
+            manifest = compact_manifest
 
         # Create the package.
-        subprocess.check_call([
-            os.path.join(config.DIR_BUILDROOT, 'sbin/pkg'),
-            'create',
-            '-r', installdir,
-            '-m', installdir,
-            '-o', config.DIR_BUILDROOT,
-        ])
-        return os.path.join(
-            config.DIR_BUILDROOT,
-            self._get_filename(package, version))
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
+        listing = os.path.join(config.DIR_BUILDROOT, 'listing')
+        with open(listing, 'w') as f:
+            # Leading files in tarball.
+            f.write('#mtree\n')
+            f.write(
+                '+COMPACT_MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n' %
+                compact_manifest)
+            f.write(
+                '+MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n' %
+                manifest)
+            for path in files:
+                fullpath = os.path.join(prefix, os.path.relpath(path, installdir))
+                if os.path.islink(path):
+                    # Symbolic links.
+                    f.write(
+                        '%s type=link mode=0777 uname=root gname=wheel time=0 link=%s\n' %
+                        (fullpath, os.readlink(path)))
+                else:
+                    # Regular files.
+                    f.write(
+                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n' %
+                        (fullpath, self._get_suggested_mode(path), path))
+        self._run_tar(['-cJf', output, '-C', installdir, '@' + listing])
+        return output
 
 
 class NetBSDCatalog(Catalog):
