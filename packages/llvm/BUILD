@@ -13,11 +13,16 @@ def build(ctx):
     build.make()
     stage = build.make_install()
 
-    # Create symbolic links for Clang, so that it can act as a cross compiler.
+    # Create symbolic links for various LLVM and Clang utilities, so
+    # that it can act as a cross compiler.
     bindir = stage.path('bin')
     for arch in ARCHITECTURES:
-        bindir.path(arch + '-cc').symlink('clang')
+        bindir.path(arch + '-ar').symlink('llvm-ar')
         bindir.path(arch + '-c++').symlink('clang++')
+        bindir.path(arch + '-cc').symlink('clang')
+        bindir.path(arch + '-nm').symlink('llvm-nm')
+        bindir.path(arch + '-objdump').symlink('llvm-objdump')
+        bindir.path(arch + '-ranlib').symlink('llvm-ranlib')
 
     # Only install the parts of LLVM that we actually use.
     bindir.install('bin')
@@ -35,10 +40,14 @@ distfile(
     name='cfe-3.7.0.src.tar.xz',
     checksum='4ed740c5a91df1c90a4118c5154851d6a475f39a91346bdf268c1c29c13aa1cc',
     master_sites={'http://llvm.org/releases/3.7.0/'},
+    patches={
+        'aarch64',
+        'implicit-library-functions',
+    },
 )
 distfile(
     name='llvm-3.7.0.src.tar.xz',
     checksum='ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153',
     master_sites={'http://llvm.org/releases/3.7.0/'},
-    patches=set(),
+    patches={'prefer-ranlib'},
 )

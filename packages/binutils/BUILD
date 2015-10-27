@@ -14,13 +14,14 @@ def build(ctx):
             '--disable-werror',
             '--enable-deterministic-archives'])
         build.make()
-        stage = build.make_install()
 
-        # Remove extraneous '<arch>/bin' directory. We shouldn't keep
-        # binaries from the host system in this directory.
-        stage.path(arch).path('bin').remove()
-        stage.path('share/info').remove()
-        stage.install()
+        # Only install the linker and strip.
+        stage = build.make_install()
+        for bin in {'ld', 'strip'}:
+            filename = 'bin/%s-%s' % (arch, bin)
+            stage.path(filename).install(filename)
+        filename = '%s/lib/ldscripts' % arch
+        stage.path(filename).install(filename)
 
 host_package(
     name='binutils',
