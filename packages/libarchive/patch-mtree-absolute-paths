@@ -1,0 +1,12 @@
+--- libarchive/archive_read_support_format_mtree.c
++++ libarchive/archive_read_support_format_mtree.c
+@@ -966,7 +966,8 @@
+ 				break;
+ 			r = process_global_unset(a, &global, p);
+ 		} else
+-			break;
++			r = process_add_entry(a, mtree, &global, p, len,
++			    &last_entry, is_form_d);
+ 
+ 		if (r != ARCHIVE_OK) {
+ 			free_options(global);
