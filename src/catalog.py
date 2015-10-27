@@ -184,7 +184,7 @@ class DebianCatalog(Catalog):
 
     def package(self, package, version):
         package.build()
-        package.initialize_buildroot({'binutils', 'libarchive'})
+        package.initialize_buildroot({'libarchive', 'llvm'})
         print('PKG', self._get_filename(package, version))
 
         rootdir = config.DIR_BUILDROOT
@@ -219,8 +219,7 @@ class DebianCatalog(Catalog):
 
         path = os.path.join(rootdir, 'output.txz')
         subprocess.check_call([
-            os.path.join(rootdir, 'bin/x86_64-unknown-cloudabi-ar'),
-            '-rc', path,
+            os.path.join(rootdir, 'bin/llvm-ar'), 'rc', path,
             debian_binary, controldir + '.tar.xz', datadir + '.tar.xz',
         ])
         return path
