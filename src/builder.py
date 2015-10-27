@@ -304,7 +304,7 @@ class TargetBuilder:
         objs = sorted(object_files)
         output = self._build_directory.get_new_archive()
         print('AR', output)
-        subprocess.check_call([self._tool('ar'), '-rcs', output] + objs)
+        subprocess.check_call([self._tool('ar'), 'rcs', output] + objs)
         return output
 
     def autoconf(self, builddir, script, args):
