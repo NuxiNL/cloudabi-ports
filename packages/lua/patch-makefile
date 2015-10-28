@@ -1,0 +1,34 @@
+--- Makefile
++++ Makefile
+@@ -59,10 +59,8 @@
+ 
+ install: dummy
+ 	cd src && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
+-	cd src && $(INSTALL_EXEC) $(TO_BIN) $(INSTALL_BIN)
+ 	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
+ 	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
+-	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+ 
+ uninstall:
+ 	cd src && cd $(INSTALL_BIN) && $(RM) $(TO_BIN)
+--- src/Makefile
++++ src/Makefile
+@@ -6,8 +6,7 @@
+ # Your platform. See PLATS for possible values.
+ PLAT= none
+ 
+-CC= gcc -std=gnu99
+-CFLAGS= -O2 -Wall -Wextra -DLUA_COMPAT_5_2 $(SYSCFLAGS) $(MYCFLAGS)
++CFLAGS+= -DLUA_COMPAT_5_2 $(SYSCFLAGS)
+ LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
+ LIBS= -lm $(SYSLIBS) $(MYLIBS)
+ 
+@@ -49,7 +48,7 @@
+ # Targets start here.
+ default: $(PLAT)
+ 
+-all:	$(ALL_T)
++all:	$(LUA_A)
+ 
+ o:	$(ALL_O)
+ 
