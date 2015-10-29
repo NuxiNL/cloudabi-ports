@@ -13,7 +13,7 @@
  	cd src && cd $(INSTALL_BIN) && $(RM) $(TO_BIN)
 --- src/Makefile
 +++ src/Makefile
-@@ -6,8 +6,7 @@
+@@ -6,13 +6,10 @@
  # Your platform. See PLATS for possible values.
  PLAT= none
  
@@ -23,7 +23,12 @@
  LDFLAGS= $(SYSLDFLAGS) $(MYLDFLAGS)
  LIBS= -lm $(SYSLIBS) $(MYLIBS)
  
-@@ -49,7 +48,7 @@
+-AR= ar rcu
+-RANLIB= ranlib
+ RM= rm -f
+ 
+ SYSCFLAGS=
+@@ -49,14 +46,14 @@
  # Targets start here.
  default: $(PLAT)
  
@@ -32,3 +37,11 @@
  
  o:	$(ALL_O)
  
+ a:	$(ALL_A)
+ 
+ $(LUA_A): $(BASE_O)
+-	$(AR) $@ $(BASE_O)
++	$(AR) rcu $@ $(BASE_O)
+ 	$(RANLIB) $@
+ 
+ $(LUA_T): $(LUA_O) $(LUA_A)
