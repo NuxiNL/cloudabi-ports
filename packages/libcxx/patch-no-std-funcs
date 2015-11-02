@@ -41,15 +41,7 @@
  using ::strncmp;
 --- include/cwchar
 +++ include/cwchar
-@@ -135,7 +135,6 @@
- using ::fgetws;
- using ::fputwc;
- using ::fputws;
--using ::fwide;
- using ::getwc;
- using ::putwc;
- using ::ungetwc;
-@@ -152,10 +151,7 @@
+@@ -152,10 +152,7 @@
  #ifndef _LIBCPP_HAS_NO_LONG_LONG
  using ::wcstoull;
  #endif // _LIBCPP_HAS_NO_LONG_LONG
@@ -60,7 +52,7 @@
  using ::wcscmp;
  using ::wcscoll;
  using ::wcsncmp;
-@@ -199,7 +195,6 @@
+@@ -199,7 +196,6 @@
  using ::wcsftime;
  using ::btowc;
  using ::wctob;
