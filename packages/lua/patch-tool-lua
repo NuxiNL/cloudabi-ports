@@ -80,7 +80,7 @@
  
  
  /*
-@@ -571,23 +579,13 @@
+@@ -571,36 +579,52 @@
    }
    luaL_openlibs(L);  /* open standard libraries */
    createargtable(L, argv, argc, script);  /* create table 'arg' */
@@ -106,8 +106,28 @@
    }
    lua_pushboolean(L, 1);  /* signal no errors */
    return 1;
-@@ -595,6 +593,10 @@
+ }
  
++static int luaB_print (lua_State *L) {
++  int n = lua_gettop(L);  /* number of arguments */
++  int i;
++  lua_getglobal(L, "tostring");
++  for (i=1; i<=n; i++) {
++    const char *s;
++    size_t l;
++    lua_pushvalue(L, -1);  /* function to be called */
++    lua_pushvalue(L, i);   /* value to print */
++    lua_call(L, 1, 1);
++    s = lua_tolstring(L, -1, &l);  /* get result */
++    if (s == NULL)
++      return luaL_error(L, "'tostring' must return a string to 'print'");
++    if (i>1) lua_writestring("\t", 1);
++    lua_writestring(s, l);
++    lua_pop(L, 1);  /* pop result */
++  }
++  lua_writeline();
++  return 0;
++}
  
  int main (int argc, char **argv) {
 +  stdin = fdopen(0, "r");
@@ -117,3 +137,11 @@
    int status, result;
    lua_State *L = luaL_newstate();  /* create state */
    if (L == NULL) {
+     l_message(argv[0], "cannot create state: not enough memory");
+     return EXIT_FAILURE;
+   }
++  lua_pushcfunction(L, luaB_print);
++  lua_setglobal(L, "print");
+   lua_pushcfunction(L, &pmain);  /* to call 'pmain' in protected mode */
+   lua_pushinteger(L, argc);  /* 1st argument */
+   lua_pushlightuserdata(L, argv); /* 2nd argument */
