@@ -1,0 +1,119 @@
+--- src/lua.c
++++ src/lua.c
+@@ -8,6 +8,7 @@
+ 
+ #include "lprefix.h"
+ 
++#include <sys/stat.h>
+ 
+ #include <signal.h>
+ #include <stdio.h>
+@@ -119,10 +120,12 @@
+ ** this function only sets a hook that, when called, will stop the
+ ** interpreter.
+ */
++#if 0
+ static void laction (int i) {
+   signal(i, SIG_DFL); /* if another SIGINT happens, terminate process */
+   lua_sethook(globalL, lstop, LUA_MASKCALL | LUA_MASKRET | LUA_MASKCOUNT, 1);
+ }
++#endif
+ 
+ 
+ static void print_usage (const char *badoption) {
+@@ -199,13 +202,12 @@
+   lua_pushcfunction(L, msghandler);  /* push message handler */
+   lua_insert(L, base);  /* put it under function and args */
+   globalL = L;  /* to be available to 'laction' */
+-  signal(SIGINT, laction);  /* set C-signal handler */
+   status = lua_pcall(L, narg, nres, base);
+-  signal(SIGINT, SIG_DFL); /* reset C-signal handler */
+   lua_remove(L, base);  /* remove message handler from the stack */
+   return status;
+ }
+ 
++static FILE *stdin, *stdout;
+ 
+ static void print_version (void) {
+   lua_writestring(LUA_COPYRIGHT, strlen(LUA_COPYRIGHT));
+@@ -240,9 +242,11 @@
+ }
+ 
+ 
++#if 0
+ static int dofile (lua_State *L, const char *name) {
+   return dochunk(L, luaL_loadfile(L, name));
+ }
++#endif
+ 
+ 
+ static int dostring (lua_State *L, const char *s, const char *name) {
+@@ -436,6 +440,7 @@
+ }
+ 
+ 
++#if 0
+ static int handle_script (lua_State *L, char **argv) {
+   int status;
+   const char *fname = argv[0];
+@@ -448,6 +453,7 @@
+   }
+   return report(L, status);
+ }
++#endif
+ 
+ 
+ 
+@@ -533,6 +539,7 @@
+ }
+ 
+ 
++#if 0
+ static int handle_luainit (lua_State *L) {
+   const char *name = "=" LUA_INITVARVERSION;
+   const char *init = getenv(name + 1);
+@@ -546,6 +553,7 @@
+   else
+     return dostring(L, init, name);
+ }
++#endif
+ 
+ 
+ /*
+@@ -571,23 +579,13 @@
+   }
+   luaL_openlibs(L);  /* open standard libraries */
+   createargtable(L, argv, argc, script);  /* create table 'arg' */
+-  if (!(args & has_E)) {  /* no option '-E'? */
+-    if (handle_luainit(L) != LUA_OK)  /* run LUA_INIT */
+-      return 0;  /* error running LUA_INIT */
+-  }
+   if (!runargs(L, argv, script))  /* execute arguments -e and -l */
+     return 0;  /* something failed */
+-  if (script < argc &&  /* execute main script (if there is one) */
+-      handle_script(L, argv + script) != LUA_OK)
+-    return 0;
+   if (args & has_i)  /* -i option? */
+     doREPL(L);  /* do read-eval-print loop */
+   else if (script == argc && !(args & (has_e | has_v))) {  /* no arguments? */
+-    if (lua_stdin_is_tty()) {  /* running in interactive mode? */
+-      print_version();
+-      doREPL(L);  /* do read-eval-print loop */
+-    }
+-    else dofile(L, NULL);  /* executes stdin as a file */
++    print_version();
++    doREPL(L);  /* do read-eval-print loop */
+   }
+   lua_pushboolean(L, 1);  /* signal no errors */
+   return 1;
+@@ -595,6 +593,10 @@
+ 
+ 
+ int main (int argc, char **argv) {
++  stdin = fdopen(0, "r");
++  stdout = fdopen(1, "w");
++  FILE *fp2 = fdopen(2, "w");
++  fswap(stderr, fp2);
+   int status, result;
+   lua_State *L = luaL_newstate();  /* create state */
+   if (L == NULL) {

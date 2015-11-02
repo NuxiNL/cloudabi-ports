@@ -1,16 +1,27 @@
 --- Makefile
 +++ Makefile
-@@ -59,10 +59,8 @@
+@@ -14,7 +14,7 @@
+ INSTALL_BIN= $(INSTALL_TOP)/bin
+ INSTALL_INC= $(INSTALL_TOP)/include
+ INSTALL_LIB= $(INSTALL_TOP)/lib
+-INSTALL_MAN= $(INSTALL_TOP)/man/man1
++INSTALL_MAN= $(INSTALL_TOP)/share/man/man1
+ INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
+ INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
  
- install: dummy
- 	cd src && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
--	cd src && $(INSTALL_EXEC) $(TO_BIN) $(INSTALL_BIN)
- 	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
- 	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
--	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+@@ -39,10 +39,10 @@
+ PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
  
- uninstall:
- 	cd src && cd $(INSTALL_BIN) && $(RM) $(TO_BIN)
+ # What to install.
+-TO_BIN= lua luac
++TO_BIN= lua
+ TO_INC= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
+ TO_LIB= liblua.a
+-TO_MAN= lua.1 luac.1
++TO_MAN= lua.1
+ 
+ # Lua version and release.
+ V= 5.3
 --- src/Makefile
 +++ src/Makefile
 @@ -6,13 +6,10 @@
@@ -28,15 +39,21 @@
  RM= rm -f
  
  SYSCFLAGS=
-@@ -49,14 +46,14 @@
+@@ -39,11 +36,8 @@
+ LUA_T=	lua
+ LUA_O=	lua.o
+ 
+-LUAC_T=	luac
+-LUAC_O=	luac.o
+-
+-ALL_O= $(BASE_O) $(LUA_O) $(LUAC_O)
+-ALL_T= $(LUA_A) $(LUA_T) $(LUAC_T)
++ALL_O= $(BASE_O) $(LUA_O)
++ALL_T= $(LUA_A) $(LUA_T)
+ ALL_A= $(LUA_A)
+ 
  # Targets start here.
- default: $(PLAT)
- 
--all:	$(ALL_T)
-+all:	$(LUA_A)
- 
- o:	$(ALL_O)
- 
+@@ -56,7 +50,7 @@
  a:	$(ALL_A)
  
  $(LUA_A): $(BASE_O)
