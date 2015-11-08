@@ -46,6 +46,8 @@ class Repository:
                 distfile['patches'] = (name[6:]
                                        for name in os.listdir(dirname)
                                        if name.startswith('patch-'))
+            if 'unsafe_string_sources' not in distfile:
+                distfile['unsafe_string_sources'] = frozenset()
 
             # Turn patch filenames into full paths.
             distfile['patches'] = {os.path.join(dirname, 'patch-' + patch)

@@ -15,7 +15,8 @@ from . import util
 
 class Distfile:
 
-    def __init__(self, distdir, name, checksum, master_sites, patches):
+    def __init__(self, distdir, name, checksum, master_sites, patches,
+                 unsafe_string_sources):
         for patch in patches:
             if not os.path.isfile(patch):
                 raise Exception('Patch %s does not exist' % patch)
@@ -26,6 +27,7 @@ class Distfile:
         # TODO(ed): Should append the directory name to FALLBACK_MIRRORS.
         self._master_sites = master_sites | config.FALLBACK_MIRRORS
         self._patches = patches
+        self._unsafe_string_sources = unsafe_string_sources
         self._pathname = os.path.join(distdir, self._name)
 
     @staticmethod
@@ -106,8 +108,17 @@ class Distfile:
 
     def extract(self, target):
         target = self._extract_unpatched(target)
+        # Apply patches.
         for patch in self._patches:
             self._apply_patch(patch, target)
+        # Add markers to sources that depend on unsafe string sources.
+        for filename in self._unsafe_string_sources:
+          path = os.path.join(target, filename)
+          with open(path, 'rb') as fin, open(path + '.new', 'wb') as fout:
+            fout.write(bytes('#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS\n',
+                             encoding='ASCII'))
+            fout.write(fin.read())
+            os.rename(path + '.new', path)
         return target
 
     def fixup_patches(self, tmpdir):
