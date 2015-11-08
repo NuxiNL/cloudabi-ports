@@ -1,0 +1,125 @@
+--- src/include/_/cdefs.h
++++ src/include/_/cdefs.h
+@@ -52,6 +52,7 @@
+ 
+ #define __offsetof(type, member) __builtin_offsetof(type, member)
+ 
++#define __extname(x) __asm__(x)
+ #define __malloc_like __attribute__((__malloc__))
+ #define __pure2 __attribute__((__const__))
+ #define __pure __attribute__((__pure__))
+--- src/include/stdio.h
++++ src/include/stdio.h
+@@ -193,13 +193,16 @@
+ #define setbuf(stream, buf) __setbuf(stream, buf)
+ #endif
+ 
+-#ifdef _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
++#endif
++
++#if !defined(_STDIO_H_UNSAFE_) && defined(_CLOUDLIBC_UNSAFE_STRING_FUNCTIONS)
++#define _STDIO_H_UNSAFE_
++
+ __BEGIN_DECLS
+-#define sprintf(s, ...) __sprintf(s, __VA_ARGS__)
+-int sprintf(char *__restrict, const char *__restrict, ...);
+-#define vsprintf(s, format, ap) __vsprintf(s, format, ap)
+-int vsprintf(char *__restrict, const char *__restrict, va_list);
++int sprintf(char *__restrict, const char *__restrict, ...)
++    __extname("__sprintf");
++int vsprintf(char *__restrict, const char *__restrict, va_list)
++    __extname("__vsprintf");
+ __END_DECLS
+-#endif
+ 
+ #endif
+--- src/include/string.h
++++ src/include/string.h
+@@ -91,17 +91,17 @@
+ size_t strxfrm_l(char *__restrict, const char *__restrict, size_t, locale_t);
+ __END_DECLS
+ 
+-#ifdef _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
++#endif
++
++#if !defined(_STRING_H_UNSAFE_) && defined(_CLOUDLIBC_UNSAFE_STRING_FUNCTIONS)
++#define _STRING_H_UNSAFE_
++
+ __BEGIN_DECLS
+-#define stpcpy(s1, s2) __stpcpy(s1, s2)
+-char *stpcpy(char *__restrict, const char *__restrict);
+-#define strcat(s1, s2) __strcat(s1, s2)
+-char *strcat(char *__restrict, const char *__restrict);
+-#define strcpy(s1, s2) __strcpy(s1, s2)
+-char *strcpy(char *__restrict, const char *__restrict);
+-#define strncat(s1, s2, n) __strncat(s1, s2, n)
+-char *strncat(char *__restrict, const char *__restrict, size_t);
++char *stpcpy(char *__restrict, const char *__restrict) __extname("__stpcpy");
++char *strcat(char *__restrict, const char *__restrict) __extname("__strcat");
++char *strcpy(char *__restrict, const char *__restrict) __extname("__strcpy");
++char *strncat(char *__restrict, const char *__restrict, size_t)
++    __extname("__strncat");
+ __END_DECLS
+-#endif
+ 
+ #endif
+--- src/include/wchar.h
++++ src/include/wchar.h
+@@ -232,17 +232,20 @@
+ wchar_t *wmemset(wchar_t *, wchar_t, size_t);
+ __END_DECLS
+ 
+-#ifdef _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
++#endif
++
++#if !defined(_WCHAR_H_UNSAFE_) && defined(_CLOUDLIBC_UNSAFE_STRING_FUNCTIONS)
++#define _WCHAR_H_UNSAFE_
++
+ __BEGIN_DECLS
+-#define wcpcpy(ws1, ws2) __wcpcpy(ws1, ws2)
+-wchar_t *wcpcpy(wchar_t *__restrict, const wchar_t *__restrict);
+-#define wcscat(ws1, ws2) __wcscat(ws1, ws2)
+-wchar_t *wcscat(wchar_t *__restrict, const wchar_t *__restrict);
+-#define wcscpy(ws1, ws2) __wcscpy(ws1, ws2)
+-wchar_t *wcscpy(wchar_t *__restrict, const wchar_t *__restrict);
+-#define wcsncat(ws1, ws2, n) __wcsncat(ws1, ws2, n)
+-wchar_t *wcsncat(wchar_t *__restrict, const wchar_t *__restrict, size_t);
++wchar_t *wcpcpy(wchar_t *__restrict, const wchar_t *__restrict)
++    __extname("__wcpcpy");
++wchar_t *wcscat(wchar_t *__restrict, const wchar_t *__restrict)
++    __extname("__wcscat");
++wchar_t *wcscpy(wchar_t *__restrict, const wchar_t *__restrict)
++    __extname("__wcscpy");
++wchar_t *wcsncat(wchar_t *__restrict, const wchar_t *__restrict, size_t)
++    __extname("__wcsncat");
+ __END_DECLS
+-#endif
+ 
+ #endif
+--- src/libc/string/strcpy_test.c
++++ src/libc/string/strcpy_test.c
+@@ -3,8 +3,8 @@
+ // This file is distrbuted under a 2-clause BSD license.
+ // See the LICENSE file for details.
+ 
++#include <string.h>
+ #define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
+-
+ #include <string.h>
+ #include <testing.h>
+ 
+--- src/libc/wchar/wcscpy_test.c
++++ src/libc/wchar/wcscpy_test.c
+@@ -3,10 +3,10 @@
+ // This file is distrbuted under a 2-clause BSD license.
+ // See the LICENSE file for details.
+ 
+-#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
+-
+ #include <testing.h>
+ #include <wchar.h>
++#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
++#include <wchar.h>
+ 
+ TEST(wcscpy, example) {
+   wchar_t buf[10] = L"AAAAAAAAAA";
