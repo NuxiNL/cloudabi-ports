@@ -23,4 +23,8 @@ distfile(
     name='lua-5.3.1.tar.gz',
     checksum='072767aad6cc2e62044a66e8562f51770d941e972dc1e4068ba719cd8bffac17',
     master_sites={'http://www.lua.org/ftp/'},
+    unsafe_string_sources={
+        'src/lobject.c',
+        'src/lstrlib.c',
+    },
 )

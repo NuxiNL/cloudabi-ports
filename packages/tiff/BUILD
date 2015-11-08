@@ -24,5 +24,13 @@ distfile(
     checksum='e25eaa83ed7fab43ddd278b9b14d91a406a4b674cedc776adb95535f897f309c',
     master_sites={
         'ftp://ftp.remotesensing.org/pub/libtiff/',
-        'http://download.osgeo.org/libtiff/'},
+        'http://download.osgeo.org/libtiff/',
+    },
+    unsafe_string_sources={
+        'libtiff/tif_codec.c',
+        'libtiff/tif_getimage.c',
+        'libtiff/tif_compress.c',
+        'libtiff/tif_extension.c',
+        'libtiff/tif_open.c',
+    },
 )

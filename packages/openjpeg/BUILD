@@ -24,4 +24,5 @@ distfile(
     name='openjpeg/version.2.1.tar.gz',
     checksum='4afc996cd5e0d16360d71c58216950bcb4ce29a3272360eb29cadb1c8bce4efc',
     master_sites={'https://github.com/uclouvain/openjpeg/archive/'},
+    unsafe_string_sources={'src/lib/openjp2/j2k.c'},
 )

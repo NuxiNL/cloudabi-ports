@@ -40,4 +40,11 @@ distfile(
     name='icu4c-55_1-src.tgz',
     checksum='e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b',
     master_sites={'http://download.icu-project.org/files/icu4c/55.1/'},
+    unsafe_string_sources={
+        'source/common/uloc.cpp',
+        'source/i18n/choicfmt.cpp',
+        'source/i18n/digitlst.cpp',
+        'source/i18n/plurrule.cpp',
+        'source/i18n/decNumber.c',
+    },
 )

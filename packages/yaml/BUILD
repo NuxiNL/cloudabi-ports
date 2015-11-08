@@ -22,4 +22,5 @@ distfile(
     name='yaml-0.1.6.tar.gz',
     checksum='7da6971b4bd08a986dd2a61353bc422362bd0edcc67d7ebaac68c95f74182749',
     master_sites={'http://pyyaml.org/download/libyaml/'},
+    unsafe_string_sources={'src/dumper.c'},
 )

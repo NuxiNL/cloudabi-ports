@@ -26,4 +26,8 @@ distfile(
     name='libgpg-error-1.20.tar.bz2',
     checksum='3266895ce3419a7fb093e63e95e2ee3056c481a9bc0d6df694cfd26f74e72522',
     master_sites={'https://www.gnupg.org/ftp/gcrypt/libgpg-error/'},
+    unsafe_string_sources={
+        'src/estream.c',
+        'src/estream-printf.c',
+    },
 )

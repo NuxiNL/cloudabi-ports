@@ -24,4 +24,5 @@ distfile(
     name='picosat-960.tar.gz',
     checksum='edb3184a04766933b092713d0ae5782e4a3da31498629f8bb2b31234a563e817',
     master_sites={'http://fmv.jku.at/picosat/'},
+    unsafe_string_sources={'picosat.c'},
 )

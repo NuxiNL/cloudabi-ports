@@ -19,26 +19,6 @@
  #define uprv_strchr(s, c) U_STANDARD_CPP_NAMESPACE strchr(s, c)
  #define uprv_strstr(s, c) U_STANDARD_CPP_NAMESPACE strstr(s, c)
  #define uprv_strrchr(s, c) U_STANDARD_CPP_NAMESPACE strrchr(s, c)
---- source/i18n/decNumber.c
-+++ source/i18n/decNumber.c
-@@ -3668,15 +3668,14 @@
-     }
-   if (dn->bits&DECSPECIAL) {       /* Is a special value  */
-     if (decNumberIsInfinite(dn)) {
--      strcpy(c,   "Inf");
--      strcpy(c+3, "inity");
-+      memcpy(c, "Infinity", 9);
-       return;}
-     /* a NaN  */
-     if (dn->bits&DECSNAN) {        /* signalling NaN  */
-       *c='s';
-       c++;
-       }
--    strcpy(c, "NaN");
-+    memcpy(c, "NaN", 4);
-     c+=3;                          /* step past  */
-     /* if not a clean non-zero coefficient, that's all there is in a  */
-     /* NaN string  */
 --- source/i18n/ucol_sit.cpp
 +++ source/i18n/ucol_sit.cpp
 @@ -373,7 +373,7 @@

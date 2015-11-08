@@ -25,4 +25,5 @@ distfile(
         'https://gmplib.org/download/gmp/',
         'https://ftp.gnu.org/gnu/gmp/',
     },
+    unsafe_string_sources={'printf/sprintffuns.c'},
 )

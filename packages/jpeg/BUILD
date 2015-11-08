@@ -22,4 +22,5 @@ distfile(
     name='jpegsrc.v9a.tar.gz',
     checksum='3a753ea48d917945dd54a2d97de388aa06ca2eb1066cbfdc6652036349fe05a7',
     master_sites={'http://www.ijg.org/files/'},
+    unsafe_string_sources={'jerror.c'},
 )

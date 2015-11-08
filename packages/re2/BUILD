@@ -22,4 +22,5 @@ distfile(
     name='re2/2015-08-01.tar.gz',
     checksum='0fd7388097dcc7b26a8fc7c4e704e2831d264015818fa3f13665f36d40afabf8',
     master_sites={'https://github.com/google/re2/archive/'},
+    unsafe_string_sources={'util/strutil.cc'},
 )
