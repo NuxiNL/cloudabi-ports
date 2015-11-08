@@ -24,4 +24,5 @@ distfile(
     name='freetype-2.6.tar.bz2',
     checksum='8469fb8124764f85029cc8247c31e132a2c5e51084ddce2a44ea32ee4ae8347e',
     master_sites=sites_sourceforge('freetype/freetype2/2.6'),
+    unsafe_string_sources={'include/config/ftstdlib.h'},
 )
