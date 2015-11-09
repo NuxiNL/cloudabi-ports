@@ -9,15 +9,6 @@
  #   undef U_POSIX_LOCALE
  #else
  #   define U_POSIX_LOCALE    1
-@@ -603,7 +603,7 @@
- U_CAPI void U_EXPORT2
- uprv_tzset()
- {
--#if defined(U_TZSET)
-+#if defined(U_TZSET) && !defined(__CloudABI__)
-     U_TZSET();
- #else
-     /* no initialization*/
 @@ -621,12 +621,12 @@
      int32_t tdiff = 0;
  
@@ -33,14 +24,3 @@
      t2 = mktime(&tmrec);                 /* GMT (or UTC) in seconds*/
      tdiff = t2 - t1;
  
-@@ -649,7 +649,9 @@
- /* Note that U_TZNAME does *not* have to be tzname, but if it is,
-    some platforms need to have it declared here. */
- 
--#if defined(U_TZNAME) && (U_PLATFORM == U_PF_IRIX || U_PLATFORM_IS_DARWIN_BASED || (U_PLATFORM == U_PF_CYGWIN && !U_PLATFORM_USES_ONLY_WIN32_API))
-+#ifdef __CloudABI__
-+static const char *U_TZNAME[] = {"UTC", "UTC"};
-+#elif defined(U_TZNAME) && (U_PLATFORM == U_PF_IRIX || U_PLATFORM_IS_DARWIN_BASED || (U_PLATFORM == U_PF_CYGWIN && !U_PLATFORM_USES_ONLY_WIN32_API))
- /* RS6000 and others reject char **tzname.  */
- extern U_IMPORT char *U_TZNAME[];
- #endif
