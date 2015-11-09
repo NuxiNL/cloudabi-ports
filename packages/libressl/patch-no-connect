@@ -20,7 +20,7 @@
  			i = BIO_sock_error(b->num);
 --- include/tls.h
 +++ include/tls.h
-@@ -89,11 +89,8 @@
+@@ -91,11 +91,8 @@
  int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read,
      int _fd_write);
  int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket);
@@ -39,10 +39,10 @@
  }
  
 +#if 0
- static int
- tls_connect_host(struct tls *ctx, const char *host, const char *port,
-     int af, int flag)
-@@ -155,6 +156,7 @@
+ int
+ tls_connect(struct tls *ctx, const char *host, const char *port)
+ {
+@@ -157,6 +158,7 @@
  
  	return (rv);
  }

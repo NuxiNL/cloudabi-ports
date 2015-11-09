@@ -453,7 +453,7 @@
  int RAND_poll(void);
 --- include/openssl/ssl.h
 +++ include/openssl/ssl.h
-@@ -1568,19 +1568,7 @@
+@@ -1567,19 +1567,7 @@
  int	SSL_use_certificate(SSL *ssl, X509 *x);
  int	SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len);
  
@@ -473,7 +473,7 @@
  
  void	SSL_load_error_strings(void );
  const char *SSL_state_string(const SSL *s);
-@@ -1742,9 +1730,6 @@
+@@ -1741,9 +1729,6 @@
  void SSL_set_shutdown(SSL *ssl,int mode);
  int SSL_get_shutdown(const SSL *ssl);
  int SSL_version(const SSL *ssl);
@@ -556,7 +556,7 @@
  	CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func);
 --- include/tls.h
 +++ include/tls.h
-@@ -49,18 +49,13 @@
+@@ -51,18 +51,13 @@
  struct tls_config *tls_config_new(void);
  void tls_config_free(struct tls_config *_config);
  
@@ -575,7 +575,7 @@
  int tls_config_set_key_mem(struct tls_config *_config, const uint8_t *_key,
      size_t _len);
  void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
-@@ -109,7 +104,6 @@
+@@ -114,7 +109,6 @@
  const char * tls_conn_version(struct tls *ctx);
  const char * tls_conn_cipher(struct tls *ctx);
  
@@ -600,7 +600,7 @@
 +#endif
 --- ssl/ssl_lib.c
 +++ ssl/ssl_lib.c
-@@ -2867,6 +2867,7 @@
+@@ -2860,6 +2860,7 @@
  	return (ssl->ctx);
  }
  
@@ -608,7 +608,7 @@
  int
  SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)
  {
-@@ -2879,6 +2880,7 @@
+@@ -2872,6 +2873,7 @@
  {
  	return (X509_STORE_load_locations(ctx->cert_store, CAfile, CApath));
  }
@@ -765,7 +765,7 @@
  		}
 +#if 0
  	} else if (SSL_CTX_load_verify_locations(ctx->ssl_ctx,
-             ctx->config->ca_file, ctx->config->ca_path) != 1) {
+ 	    ctx->config->ca_file, ctx->config->ca_path) != 1) {
  		tls_set_errorx(ctx, "ssl verify setup failure");
  		goto err;
 +#endif
@@ -842,8 +842,8 @@
  tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
 --- tls/tls_internal.h
 +++ tls/tls_internal.h
-@@ -27,18 +27,14 @@
- #define TLS_CIPHERS_DEFAULT	"TLSv1.2+AEAD+ECDHE:TLSv1.2+AEAD+DHE"
+@@ -35,18 +35,14 @@
+ };
  
  struct tls_config {
 -	const char *ca_file;
