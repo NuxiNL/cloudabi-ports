@@ -28,19 +28,20 @@
  #endif
 --- src/libc/time/tzname.c
 +++ src/libc/time/tzname.c
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,10 @@
 +// Copyright (c) 2015 Nuxi, https://nuxi.nl/
 +//
 +// This file is distrbuted under a 2-clause BSD license.
 +// See the LICENSE file for details.
 +
-+#include <time.h>
-+
-+// The global timezone in this environment is always UTC.
-+char *tzname[2] = {(char *)"UTC", (char *) "UTC"};
++// The global timezone in this environment is always UTC. Don't include
++// <time.h> and redeclare the tzname array as const, to ensure its
++// contents are never overwritten.
++extern const char *const tzname[];
++const char *const tzname[2] = {"UTC", "UTC"};
 --- src/libc/time/tzset.c
 +++ src/libc/time/tzset.c
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,10 @@
 +// Copyright (c) 2015 Nuxi, https://nuxi.nl/
 +//
 +// This file is distrbuted under a 2-clause BSD license.
@@ -49,7 +50,5 @@
 +#include <time.h>
 +
 +void tzset(void) {
-+  // Reset the contents of tzname to their default values.
-+  tzname[0] = (char *)"UTC";
-+  tzname[1] = (char *)"UTC";
++  // Nothing to do.
 +}
