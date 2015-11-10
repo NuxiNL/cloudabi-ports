@@ -1,0 +1,27 @@
+--- src/include/time.h
++++ src/include/time.h
+@@ -35,6 +35,8 @@
+ //   Adds sub-second precision to strftime()/strptime().
+ // - nanosleep() and clock_nanosleep():
+ //   Last argument is optional, as calls can never be interrupted.
++// - timegm():
++//   mktime() for UTC. Present on many other systems.
+ //
+ // Features missing:
+ // - clock_getcpuclockid():
+@@ -133,6 +135,7 @@
+ char *strptime_l(const char *__restrict, const char *__restrict,
+                  struct tm *__restrict, locale_t);
+ time_t time(time_t *);
++time_t timegm(struct tm *);
+ int timespec_get(struct timespec *, int);
+ __END_DECLS
+ 
+--- src/libc/time/mktime.c
++++ src/libc/time/mktime.c
+@@ -26,3 +26,5 @@
+   }
+   return result.tv_sec;
+ }
++
++__strong_reference(mktime, timegm);
