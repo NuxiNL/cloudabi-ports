@@ -1,6 +1,6 @@
 --- png.h
 +++ png.h
-@@ -3084,8 +3084,6 @@
+@@ -2957,8 +2957,6 @@
   * the png_controlp field 'opaque' to NULL (or, safer, memset the whole thing.)
   */
  #ifdef PNG_STDIO_SUPPORTED
@@ -9,7 +9,7 @@
     /* The named file is opened for read and the image header is filled in
      * from the PNG header in the file.
      */
-@@ -3158,10 +3156,6 @@
+@@ -3031,10 +3029,6 @@
   *    values do not correspond to the colors in sRGB.
   * colormap_entries: set to the number of entries in the color-map (0 to 256)
   */
