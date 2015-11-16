@@ -128,6 +128,7 @@ class Distfile:
         util.remove(tmpdir)
         orig_dir = self._extract_unpatched(os.path.join(tmpdir, 'orig'))
         for patch in self._patches:
+            print('FIXUP', patch)
             # Apply individual patches to the code.
             patched_dir = os.path.join(tmpdir, 'patched')
             util.remove(patched_dir)
