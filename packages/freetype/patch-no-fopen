@@ -1,5 +1,5 @@
---- include/internal/ftstream.h
-+++ include/internal/ftstream.h
+--- include/freetype/internal/ftstream.h
++++ include/freetype/internal/ftstream.h
 @@ -318,7 +318,7 @@
  #define FT_READ_ULONG_LE( var )   FT_READ_MACRO( FT_Stream_ReadULongLE, FT_ULong, var )
  

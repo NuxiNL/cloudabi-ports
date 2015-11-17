@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='taglib',
-    version='1.9.1',
+    version='1.10',
     homepage='https://taglib.github.io/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime', 'zlib'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='taglib-1.9.1.tar.gz',
-    checksum='72d371cd1419a87ae200447a53bff2be219283071e80fd12337928cc967dc71a',
+    name='taglib-1.10.tar.gz',
+    checksum='24c32d50042cb0ddf162eb263f8ac75c5a158e12bf32ed534c1d5c71ee369baa',
     master_sites={'https://taglib.github.io/releases/'},
 )

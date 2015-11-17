@@ -1,6 +1,6 @@
 --- configure
 +++ configure
-@@ -16170,7 +16170,7 @@
+@@ -16356,7 +16356,7 @@
      void operator()(T a, T b)
      {
        T c = a + b;
@@ -9,7 +9,7 @@
      }
    };
  
-@@ -16231,7 +16231,7 @@
+@@ -16417,7 +16417,7 @@
      void operator()(T a, T b)
      {
        T c = a + b;
@@ -18,7 +18,7 @@
      }
    };
  
-@@ -16339,7 +16339,7 @@
+@@ -16525,7 +16525,7 @@
        using std::bidirectional_iterator_tag;
        using std::string;
        using std::istream;

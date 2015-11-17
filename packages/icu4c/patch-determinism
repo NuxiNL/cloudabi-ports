@@ -1,13 +1,3 @@
---- source/Makefile.in
-+++ source/Makefile.in
-@@ -335,7 +335,6 @@
- 	LC_ALL=C sed -f $(top_srcdir)/config/make2sh.sed < $(top_builddir)/config/Makefile.inc | grep -v '#M#' | uniq >> $@
- 	LC_ALL=C sed -f $(top_srcdir)/config/make2sh.sed < @platform_make_fragment@ | grep -v '#M#' | uniq >> $@
- 	cat $(top_srcdir)/config/icu-config-bottom >> $@
--	echo "# Rebuilt on "`date` >> $@
- 	chmod u-w $@
- 
- config.status: $(srcdir)/configure $(srcdir)/common/unicode/uvernum.h
 --- source/config/Makefile.inc.in
 +++ source/config/Makefile.inc.in
 @@ -208,7 +208,7 @@
@@ -21,7 +11,7 @@
  U_IS_BIG_ENDIAN = @U_IS_BIG_ENDIAN@
 --- source/configure
 +++ source/configure
-@@ -2594,15 +2594,6 @@
+@@ -2613,15 +2613,6 @@
  # for icu-config
  # This may be removed later - mow (June 17, 2010)
  ICU_ECHO_C= ICU_ECHO_N= ICU_ECHO_T=

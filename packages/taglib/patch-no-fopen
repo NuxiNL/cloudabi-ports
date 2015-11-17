@@ -34,7 +34,7 @@
   * Frees and closes the file.
 --- taglib/CMakeLists.txt
 +++ taglib/CMakeLists.txt
-@@ -46,7 +46,6 @@
+@@ -48,7 +48,6 @@
    toolkit/tbytevectorstream.h
    toolkit/tiostream.h
    toolkit/tfile.h
@@ -42,7 +42,7 @@
    toolkit/tmap.h
    toolkit/tmap.tcc
    toolkit/tpropertymap.h
-@@ -288,7 +287,6 @@
+@@ -298,7 +297,6 @@
    toolkit/tbytevectorstream.cpp
    toolkit/tiostream.cpp
    toolkit/tfile.cpp
@@ -52,21 +52,21 @@
    toolkit/trefcounter.cpp
 --- taglib/ape/apefile.cpp
 +++ taglib/ape/apefile.cpp
-@@ -86,14 +86,6 @@
+@@ -97,14 +97,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--APE::File::File(FileName file, bool readProperties,
--                Properties::ReadStyle propertiesStyle) : TagLib::File(file)
+-APE::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- APE::File::File(IOStream *stream, bool readProperties,
-                 Properties::ReadStyle propertiesStyle) : TagLib::File(stream)
- {
+ APE::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/ape/apefile.h
 +++ taglib/ape/apefile.h
 @@ -89,8 +89,6 @@
@@ -80,28 +80,28 @@
         * Constructs an APE file from \a stream.  If \a readProperties is true the
 --- taglib/asf/asffile.cpp
 +++ taglib/asf/asffile.cpp
-@@ -366,14 +366,6 @@
+@@ -477,14 +477,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--ASF::File::File(FileName file, bool readProperties, Properties::ReadStyle propertiesStyle)
--  : TagLib::File(file)
+-ASF::File::File(FileName file, bool, Properties::ReadStyle) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read();
 -}
 -
- ASF::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle propertiesStyle)
-   : TagLib::File(stream)
- {
+ ASF::File::File(IOStream *stream, bool, Properties::ReadStyle) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/asf/asffile.h
 +++ taglib/asf/asffile.h
 @@ -54,8 +54,6 @@
         * \a propertiesStyle are ignored.  The audio properties are always
         * read.
         */
--      File(FileName file, bool readProperties = true, 
+-      File(FileName file, bool readProperties = true,
 -           Properties::ReadStyle propertiesStyle = Properties::Average);
  
        /*!
@@ -157,7 +157,7 @@
 -                     audioPropertiesStyle = AudioProperties::Average);
  
      /*!
-      * Contruct a FileRef using \a file.  The FileRef now takes ownership of the
+      * Construct a FileRef using \a file.  The FileRef now takes ownership of the
 @@ -248,9 +240,6 @@
       *
       * \deprecated
@@ -170,32 +170,41 @@
    private:
 --- taglib/flac/flacfile.cpp
 +++ taglib/flac/flacfile.cpp
-@@ -104,25 +104,6 @@
+@@ -101,6 +101,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--FLAC::File::File(FileName file, bool readProperties,
--                 Properties::ReadStyle propertiesStyle) :
--  TagLib::File(file)
--{
--  d = new FilePrivate;
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
--FLAC::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
--                 bool readProperties, Properties::ReadStyle propertiesStyle) :
--  TagLib::File(file)
--{
--  d = new FilePrivate;
--  d->ID3v2FrameFactory = frameFactory;
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
++#if 0
+ FLAC::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(file),
+   d(new FilePrivate())
+@@ -119,6 +120,26 @@
+     read(readProperties);
+ }
+ 
++FLAC::File::File(FileName file, bool readProperties,
++                 Properties::ReadStyle propertiesStyle) :
++  TagLib::File(file)
++{
++  d = new FilePrivate;
++  if(isOpen())
++    read(readProperties, propertiesStyle);
++}
++
++FLAC::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
++                 bool readProperties, Properties::ReadStyle propertiesStyle) :
++  TagLib::File(file)
++{
++  d = new FilePrivate;
++  d->ID3v2FrameFactory = frameFactory;
++  if(isOpen())
++    read(readProperties, propertiesStyle);
++}
++#endif
++
  FLAC::File::File(IOStream *stream, ID3v2::FrameFactory *frameFactory,
-                  bool readProperties, Properties::ReadStyle propertiesStyle) :
-   TagLib::File(stream)
+                  bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
 --- taglib/flac/flacfile.h
 +++ taglib/flac/flacfile.h
 @@ -75,8 +75,6 @@
@@ -206,7 +215,7 @@
 -           Properties::ReadStyle propertiesStyle = Properties::Average);
  
        /*!
-        * Constructs an APE file from \a file.  If \a readProperties is true the
+        * Constructs an FLAC file from \a file.  If \a readProperties is true the
 @@ -88,9 +86,6 @@
         * \note In the current implementation, \a propertiesStyle is ignored.
         */
@@ -302,49 +311,49 @@
        void writeString(const String &s, ulong size, char padding = 0);
 --- taglib/mp4/mp4file.cpp
 +++ taglib/mp4/mp4file.cpp
-@@ -60,14 +60,6 @@
+@@ -69,14 +69,6 @@
    MP4::Properties *properties;
  };
  
--MP4::File::File(FileName file, bool readProperties, AudioProperties::ReadStyle audioPropertiesStyle)
--    : TagLib::File(file)
+-MP4::File::File(FileName file, bool readProperties, AudioProperties::ReadStyle) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, audioPropertiesStyle);
+-    read(readProperties);
 -}
 -
- MP4::File::File(IOStream *stream, bool readProperties, AudioProperties::ReadStyle audioPropertiesStyle)
-     : TagLib::File(stream)
- {
+ MP4::File::File(IOStream *stream, bool readProperties, AudioProperties::ReadStyle) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/mp4/mp4file.h
 +++ taglib/mp4/mp4file.h
 @@ -54,8 +54,6 @@
         *
         * \note In the current implementation, \a propertiesStyle is ignored.
         */
--      File(FileName file, bool readProperties = true, 
+-      File(FileName file, bool readProperties = true,
 -           Properties::ReadStyle audioPropertiesStyle = Properties::Average);
  
        /*!
         * Constructs an MP4 file from \a stream.  If \a readProperties is true the
 --- taglib/mpc/mpcfile.cpp
 +++ taglib/mpc/mpcfile.cpp
-@@ -90,14 +90,6 @@
+@@ -88,14 +88,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--MPC::File::File(FileName file, bool readProperties,
--                Properties::ReadStyle propertiesStyle) : TagLib::File(file)
+-MPC::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- MPC::File::File(IOStream *stream, bool readProperties,
-                 Properties::ReadStyle propertiesStyle) : TagLib::File(stream)
- {
+ MPC::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/mpc/mpcfile.h
 +++ taglib/mpc/mpcfile.h
 @@ -89,8 +89,6 @@
@@ -358,32 +367,41 @@
         * Constructs an MPC file from \a stream.  If \a readProperties is true the
 --- taglib/mpeg/mpegfile.cpp
 +++ taglib/mpeg/mpegfile.cpp
-@@ -95,25 +95,6 @@
+@@ -111,6 +111,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--MPEG::File::File(FileName file, bool readProperties,
--                 Properties::ReadStyle propertiesStyle) : TagLib::File(file)
--{
--  d = new FilePrivate;
--
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
--MPEG::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
--                 bool readProperties, Properties::ReadStyle propertiesStyle) :
--  TagLib::File(file)
--{
--  d = new FilePrivate(frameFactory);
--
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
++#if 0
+ MPEG::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(file),
+   d(new FilePrivate())
+@@ -128,6 +129,26 @@
+     read(readProperties);
+ }
+ 
++MPEG::File::File(FileName file, bool readProperties,
++                 Properties::ReadStyle propertiesStyle) : TagLib::File(file)
++{
++  d = new FilePrivate;
++
++  if(isOpen())
++    read(readProperties, propertiesStyle);
++}
++
++MPEG::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
++                 bool readProperties, Properties::ReadStyle propertiesStyle) :
++  TagLib::File(file)
++{
++  d = new FilePrivate(frameFactory);
++
++  if(isOpen())
++    read(readProperties, propertiesStyle);
++}
++#endif
++
  MPEG::File::File(IOStream *stream, ID3v2::FrameFactory *frameFactory,
-                  bool readProperties, Properties::ReadStyle propertiesStyle) :
-   TagLib::File(stream)
+                  bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
 --- taglib/mpeg/mpegfile.h
 +++ taglib/mpeg/mpegfile.h
 @@ -79,8 +79,6 @@
@@ -432,7 +450,7 @@
 -           Properties::ReadStyle propertiesStyle = Properties::Average);
  
        /*!
-        * Constructs an Ogg/FLAC file from \a stream.  If \a readProperties is true 
+        * Constructs an Ogg/FLAC file from \a stream.  If \a readProperties is true
 --- taglib/ogg/oggfile.cpp
 +++ taglib/ogg/oggfile.cpp
 @@ -208,11 +208,6 @@
@@ -459,19 +477,19 @@
         * Constructs an Ogg file from \a stream.
 --- taglib/ogg/opus/opusfile.cpp
 +++ taglib/ogg/opus/opusfile.cpp
-@@ -59,14 +59,6 @@
+@@ -57,14 +57,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--Opus::File::File(FileName file, bool readProperties, Properties::ReadStyle propertiesStyle) :
+-Opus::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
 -  Ogg::File(file),
 -  d(new FilePrivate())
 -{
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- Opus::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle propertiesStyle) :
+ Opus::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
    Ogg::File(stream),
    d(new FilePrivate())
 --- taglib/ogg/opus/opusfile.h
@@ -487,21 +505,21 @@
           * Constructs an Opus file from \a stream.  If \a readProperties is true the
 --- taglib/ogg/speex/speexfile.cpp
 +++ taglib/ogg/speex/speexfile.cpp
-@@ -59,14 +59,6 @@
+@@ -57,14 +57,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--Speex::File::File(FileName file, bool readProperties,
--                   Properties::ReadStyle propertiesStyle) : Ogg::File(file)
+-Speex::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  Ogg::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- Speex::File::File(IOStream *stream, bool readProperties,
-                    Properties::ReadStyle propertiesStyle) : Ogg::File(stream)
- {
+ Speex::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   Ogg::File(stream),
+   d(new FilePrivate())
 --- taglib/ogg/speex/speexfile.h
 +++ taglib/ogg/speex/speexfile.h
 @@ -61,8 +61,6 @@
@@ -519,17 +537,17 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--Vorbis::File::File(FileName file, bool readProperties,
--                   Properties::ReadStyle propertiesStyle) : Ogg::File(file)
+-Vorbis::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  Ogg::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- Vorbis::File::File(IOStream *stream, bool readProperties,
-                    Properties::ReadStyle propertiesStyle) : Ogg::File(stream)
- {
+ Vorbis::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   Ogg::File(stream),
+   d(new FilePrivate())
 --- taglib/ogg/vorbis/vorbisfile.h
 +++ taglib/ogg/vorbis/vorbisfile.h
 @@ -68,8 +68,6 @@
@@ -547,17 +565,17 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--RIFF::AIFF::File::File(FileName file, bool readProperties,
--                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+-RIFF::AIFF::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  RIFF::File(file, BigEndian),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- RIFF::AIFF::File::File(IOStream *stream, bool readProperties,
-                        Properties::ReadStyle propertiesStyle) : RIFF::File(stream, BigEndian)
- {
+ RIFF::AIFF::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   RIFF::File(stream, BigEndian),
+   d(new FilePrivate())
 --- taglib/riff/aiff/aifffile.h
 +++ taglib/riff/aiff/aifffile.h
 @@ -63,8 +63,6 @@
@@ -603,17 +621,17 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--RIFF::WAV::File::File(FileName file, bool readProperties,
--                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, LittleEndian)
+-RIFF::WAV::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  RIFF::File(file, LittleEndian),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- RIFF::WAV::File::File(IOStream *stream, bool readProperties,
-                        Properties::ReadStyle propertiesStyle) : RIFF::File(stream, LittleEndian)
- {
+ RIFF::WAV::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   RIFF::File(stream, LittleEndian),
+   d(new FilePrivate())
 --- taglib/riff/wav/wavfile.h
 +++ taglib/riff/wav/wavfile.h
 @@ -75,8 +75,6 @@
@@ -689,7 +707,7 @@
  #include "tstring.h"
  #include "tdebug.h"
  #include "tpropertymap.h"
-@@ -96,12 +95,6 @@
+@@ -87,12 +86,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -702,7 +720,7 @@
  File::File(IOStream *stream)
  {
    d = new FilePrivate(stream, false);
-@@ -114,11 +107,6 @@
+@@ -105,11 +98,6 @@
    delete d;
  }
  
@@ -714,7 +732,7 @@
  PropertyMap File::properties() const
  {
    // ugly workaround until this method is virtual
-@@ -457,6 +445,7 @@
+@@ -454,6 +442,7 @@
    return d->stream->length();
  }
  
@@ -722,7 +740,7 @@
  bool File::isReadable(const char *file)
  {
  
-@@ -486,6 +475,7 @@
+@@ -483,6 +472,7 @@
  #endif
  
  }
@@ -790,30 +808,22 @@
       * Reads a block of size \a length at the current get pointer.
 --- taglib/trueaudio/trueaudiofile.cpp
 +++ taglib/trueaudio/trueaudiofile.cpp
-@@ -84,23 +84,6 @@
+@@ -84,6 +84,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--TrueAudio::File::File(FileName file, bool readProperties,
--                 Properties::ReadStyle propertiesStyle) : TagLib::File(file)
--{
--  d = new FilePrivate;
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
--TrueAudio::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
--                 bool readProperties, Properties::ReadStyle propertiesStyle) :
--  TagLib::File(file)
--{
--  d = new FilePrivate(frameFactory);
--  if(isOpen())
--    read(readProperties, propertiesStyle);
--}
--
- TrueAudio::File::File(IOStream *stream, bool readProperties,
-                  Properties::ReadStyle propertiesStyle) : TagLib::File(stream)
- {
++#if 0
+ TrueAudio::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(file),
+   d(new FilePrivate())
+@@ -100,6 +101,7 @@
+   if(isOpen())
+     read(readProperties);
+ }
++#endif
+ 
+ TrueAudio::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
 --- taglib/trueaudio/trueaudiofile.h
 +++ taglib/trueaudio/trueaudiofile.h
 @@ -84,8 +84,6 @@
@@ -824,7 +834,7 @@
 -           Properties::ReadStyle propertiesStyle = Properties::Average);
  
        /*!
-        * Constructs a TrueAudio file from \a file.  If \a readProperties is true 
+        * Constructs a TrueAudio file from \a file.  If \a readProperties is true
 @@ -96,9 +94,6 @@
         *
         * \note In the current implementation, \a propertiesStyle is ignored.
@@ -841,17 +851,17 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
--WavPack::File::File(FileName file, bool readProperties,
--                Properties::ReadStyle propertiesStyle) : TagLib::File(file)
+-WavPack::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -  if(isOpen())
--    read(readProperties, propertiesStyle);
+-    read(readProperties);
 -}
 -
- WavPack::File::File(IOStream *stream, bool readProperties,
-                 Properties::ReadStyle propertiesStyle) : TagLib::File(stream)
- {
+ WavPack::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/wavpack/wavpackfile.h
 +++ taglib/wavpack/wavpackfile.h
 @@ -84,8 +84,6 @@

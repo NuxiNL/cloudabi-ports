@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='xz',
-    version='5.2.1',
+    version='5.2.2',
     homepage='http://tukaani.org/xz/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -27,14 +27,14 @@ package(
 
 host_package(
     name='xz',
-    version='5.2.1',
+    version='5.2.2',
     homepage='http://tukaani.org/xz/',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='xz-5.2.1.tar.xz',
-    checksum='6ecdd4d80b12001497df0741d6037f918d270fa0f9a1ab4e2664bf4157ae323c',
+    name='xz-5.2.2.tar.xz',
+    checksum='f341b1906ebcdde291dd619399ae944600edc9193619dd0c0110a5f05bfcc89e',
     master_sites={'http://tukaani.org/xz/'},
 )

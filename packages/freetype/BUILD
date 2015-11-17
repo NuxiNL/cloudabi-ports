@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='freetype',
-    version='2.6',
+    version='2.6.1',
     homepage='http://www.freetype.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'bzip2', 'c-runtime', 'libpng', 'zlib'},
@@ -21,8 +21,8 @@ package(
 )
 
 distfile(
-    name='freetype-2.6.tar.bz2',
-    checksum='8469fb8124764f85029cc8247c31e132a2c5e51084ddce2a44ea32ee4ae8347e',
-    master_sites=sites_sourceforge('freetype/freetype2/2.6'),
-    unsafe_string_sources={'include/config/ftstdlib.h'},
+    name='freetype-2.6.1.tar.bz2',
+    checksum='2f6e9a7de3ae8e85bdd2fe237e27d868d3ba7a27495e65906455c27722dd1a17',
+    master_sites=sites_sourceforge('freetype/freetype2/2.6.1'),
+    unsafe_string_sources={'include/freetype/config/ftstdlib.h'},
 )

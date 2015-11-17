@@ -6,7 +6,7 @@
 
 def build(ctx):
     # The Linux configuration works all right in our case.
-    srcdir = ctx.extract('%(name)s-55_1-src').path('source')
+    srcdir = ctx.extract('%(name)s-56_1-src').path('source')
     srcdir.path('config/mh-unknown').symlink('mh-linux')
 
     # Build a copy of ICU for the host system.
@@ -29,7 +29,7 @@ def build(ctx):
 
 package(
     name='icu4c',
-    version='55.1',
+    version='56.1',
     homepage='http://site.icu-project.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -37,9 +37,9 @@ package(
 )
 
 distfile(
-    name='icu4c-55_1-src.tgz',
-    checksum='e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b',
-    master_sites={'http://download.icu-project.org/files/icu4c/55.1/'},
+    name='icu4c-56_1-src.tgz',
+    checksum='3a64e9105c734dcf631c0b3ed60404531bce6c0f5a64bfe1a6402a4cc2314816',
+    master_sites={'http://download.icu-project.org/files/icu4c/56.1/'},
     unsafe_string_sources={
         'source/common/cstring.h',
         'source/i18n/decNumber.c',

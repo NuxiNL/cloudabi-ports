@@ -19,7 +19,7 @@ def build(ctx):
 
 package(
     name='cairo',
-    version='1.14.2',
+    version='1.14.4',
     homepage='http://cairographics.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libpng', 'pixman'},
@@ -27,8 +27,8 @@ package(
 )
 
 distfile(
-    name='cairo-1.14.2.tar.xz',
-    checksum='c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb',
+    name='cairo-1.14.4.tar.xz',
+    checksum='f6ec9c7c844db9ec011f0d66b57ef590c45adf55393d1fc249003512522ee716',
     master_sites={'http://cairographics.org/releases/'},
     unsafe_string_sources={
         'src/cairo-cff-subset.c',

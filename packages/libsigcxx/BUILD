@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libsigcxx',
-    version='2.4.1',
+    version='2.6.2',
     homepage='http://libsigc.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -23,7 +23,7 @@ package(
 )
 
 distfile(
-    name='libsigc++-2.4.1.tar.xz',
-    checksum='540443492a68e77e30db8d425f3c0b1299c825bf974d9bfc31ae7efafedc19ec',
-    master_sites={'http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.4/'},
+    name='libsigc++-2.6.2.tar.xz',
+    checksum='fdace7134c31de792c17570f9049ca0657909b28c4c70ec4882f91a03de54437',
+    master_sites={'http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.6/'},
 )

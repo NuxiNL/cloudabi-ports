@@ -1,6 +1,6 @@
 --- source/io/unicode/ustdio.h
 +++ source/io/unicode/ustdio.h
-@@ -483,9 +483,11 @@
+@@ -481,9 +481,11 @@
   * @return The number of Unicode characters written to <TT>stdout</TT>
   * @stable ICU 49
   */
@@ -12,7 +12,7 @@
  
  /**
   * Write formatted data to a UFILE.
-@@ -524,17 +526,21 @@
+@@ -522,17 +524,21 @@
   * @return The number of Unicode characters written to <TT>stdout</TT>
   * @stable ICU 49
   */

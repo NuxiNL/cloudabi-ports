@@ -261,7 +261,7 @@
  cairo_image_surface_create_from_png_stream (cairo_read_func_t	read_func,
 --- util/cairo-script/cairo-script-file.c
 +++ util/cairo-script/cairo-script-file.c
-@@ -47,6 +47,7 @@
+@@ -49,6 +49,7 @@
  
  #define OWN_STREAM 0x1
  
@@ -269,7 +269,7 @@
  csi_status_t
  csi_file_new (csi_t *ctx,
  	      csi_object_t *obj,
-@@ -82,6 +83,7 @@
+@@ -84,6 +85,7 @@
      obj->datum.file = file;
      return CAIRO_STATUS_SUCCESS;
  }
@@ -279,7 +279,7 @@
  csi_file_new_for_stream (csi_t *ctx,
 --- util/cairo-script/cairo-script-interpreter.c
 +++ util/cairo-script/cairo-script-interpreter.c
-@@ -543,6 +543,7 @@
+@@ -544,6 +544,7 @@
      ctx->hooks = *hooks;
  }
  
@@ -287,7 +287,7 @@
  cairo_status_t
  cairo_script_interpreter_run (csi_t *ctx, const char *filename)
  {
-@@ -564,6 +565,7 @@
+@@ -565,6 +566,7 @@
  
      return ctx->status;
  }
@@ -309,7 +309,7 @@
  cairo_script_interpreter_feed_stream (cairo_script_interpreter_t *ctx,
 --- util/cairo-script/cairo-script-operators.c
 +++ util/cairo-script/cairo-script-operators.c
-@@ -6286,6 +6286,7 @@
+@@ -6288,6 +6288,7 @@
      return CSI_STATUS_SUCCESS;
  }
  
@@ -317,7 +317,7 @@
  static csi_status_t
  _write_to_png (csi_t *ctx)
  {
-@@ -6350,6 +6351,7 @@
+@@ -6352,6 +6353,7 @@
      pop (1);
      return CSI_STATUS_SUCCESS;
  }
@@ -325,7 +325,7 @@
  
  static csi_status_t
  _xor (csi_t *ctx)
-@@ -6649,8 +6651,6 @@
+@@ -6651,8 +6653,6 @@
      { "user-to-device", NULL },
      { "user-to-device-distance", NULL },
      { "where", NULL },

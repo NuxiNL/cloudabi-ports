@@ -5,7 +5,7 @@
 
 package(
     name='libwebp',
-    version='0.4.3',
+    version='0.4.4',
     homepage='https://developers.google.com/speed/webp/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -13,7 +13,7 @@ package(
 )
 
 distfile(
-    name='libwebp-0.4.3.tar.gz',
-    checksum='efbe0d58fda936f2ed99d0b837ed7087d064d6838931f282c4618d2a3f7390c4',
+    name='libwebp-0.4.4.tar.gz',
+    checksum='c65d34edb57338e331ba4d622227a2b3179444cfca17d02c34f1ead63f603e86',
     master_sites={'http://downloads.webmproject.org/releases/webp/'},
 )

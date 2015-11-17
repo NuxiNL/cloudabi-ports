@@ -12,7 +12,7 @@ def build(ctx):
 
 package(
     name='tiff',
-    version='4.0.5',
+    version='4.0.6',
     homepage='http://www.remotesensing.org/libtiff/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -20,8 +20,8 @@ package(
 )
 
 distfile(
-    name='tiff-4.0.5.tar.gz',
-    checksum='e25eaa83ed7fab43ddd278b9b14d91a406a4b674cedc776adb95535f897f309c',
+    name='tiff-4.0.6.tar.gz',
+    checksum='4d57a50907b510e3049a4bba0d7888930fdfc16ce49f1bf693e5b6247370d68c',
     master_sites={
         'ftp://ftp.remotesensing.org/pub/libtiff/',
         'http://download.osgeo.org/libtiff/',

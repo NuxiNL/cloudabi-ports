@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='pixman',
-    version='0.32.6',
+    version='0.32.8',
     homepage='http://www.pixman.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='pixman-0.32.6.tar.gz',
-    checksum='3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904',
+    name='pixman-0.32.8.tar.gz',
+    checksum='575ade17c40b47d391b02b4c0c63531c897b31e70046c96749514b7d8800d65d',
     master_sites={'http://cairographics.org/releases/'},
 )
