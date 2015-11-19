@@ -1,0 +1,56 @@
+--- libexif/exif-data.c
++++ libexif/exif-data.c
+@@ -987,6 +987,7 @@
+ 		  "Saved %i byte(s) EXIF data.", *ds);
+ }
+ 
++#if 0
+ ExifData *
+ exif_data_new_from_file (const char *path)
+ {
+@@ -1000,6 +1001,7 @@
+ 
+ 	return (edata);
+ }
++#endif
+ 
+ void
+ exif_data_ref (ExifData *data)
+--- libexif/exif-data.h
++++ libexif/exif-data.h
+@@ -81,7 +81,6 @@
+  * \param[in] path filename including path
+  * \return allocated #ExifData, or NULL on error
+  */
+-ExifData *exif_data_new_from_file (const char *path);
+ 
+ /*! Allocate a new #ExifData and load EXIF data from a memory buffer.
+  *
+--- libexif/exif-loader.c
++++ libexif/exif-loader.c
+@@ -103,6 +103,7 @@
+ 	return NULL;
+ }
+ 
++#if 0
+ void
+ exif_loader_write_file (ExifLoader *l, const char *path)
+ {
+@@ -128,6 +129,7 @@
+ 	}
+ 	fclose (f);
+ }
++#endif
+ 
+ static unsigned int
+ exif_loader_copy (ExifLoader *eld, unsigned char *buf, unsigned int len)
+--- libexif/exif-loader.h
++++ libexif/exif-loader.h
+@@ -66,7 +66,6 @@
+  * \param[in] loader loader to write to
+  * \param[in] fname path to the file to read
+  */
+-void        exif_loader_write_file (ExifLoader *loader, const char *fname);
+ 
+ /*! Load a buffer into the #ExifLoader from a memory buffer.
+  * The relevant data is copied in raw form into the #ExifLoader.

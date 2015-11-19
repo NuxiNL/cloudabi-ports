@@ -1,0 +1,84 @@
+--- libexif/exif-content.c
++++ libexif/exif-content.c
+@@ -110,6 +110,7 @@
+ 	exif_mem_unref (mem);
+ }
+ 
++#if 0
+ void
+ exif_content_dump (ExifContent *content, unsigned int indent)
+ {
+@@ -128,6 +129,7 @@
+ 	for (i = 0; i < content->count; i++)
+ 		exif_entry_dump (content->entries[i], indent + 1);
+ }
++#endif
+ 
+ void
+ exif_content_add_entry (ExifContent *c, ExifEntry *entry)
+--- libexif/exif-content.h
++++ libexif/exif-content.h
+@@ -129,7 +129,6 @@
+  * \param[in] content IFD data
+  * \param[in] indent how many levels deep to indent the data
+  */
+-void exif_content_dump  (ExifContent *content, unsigned int indent);
+ 
+ /*! Set the log message object for this IFD.
+  *
+--- libexif/exif-data.c
++++ libexif/exif-data.c
+@@ -1058,6 +1058,7 @@
+ 	exif_mem_unref (mem);
+ }
+ 
++#if 0
+ void
+ exif_data_dump (ExifData *data)
+ {
+@@ -1084,6 +1085,7 @@
+ 		}
+ 	}
+ }
++#endif
+ 
+ ExifByteOrder
+ exif_data_get_byte_order (ExifData *data)
+--- libexif/exif-data.h
++++ libexif/exif-data.h
+@@ -229,7 +229,6 @@
+  *
+  * \param[in] data EXIF data
+  */
+-void exif_data_dump (ExifData *data);
+ 
+ /*! Set the log message object for all IFDs.
+  *
+--- libexif/exif-entry.c
++++ libexif/exif-entry.c
+@@ -588,6 +588,7 @@
+ 	}
+ }
+ 
++#if 0
+ void
+ exif_entry_dump (ExifEntry *e, unsigned int indent)
+ {
+@@ -610,6 +611,7 @@
+ 	printf ("%s  Size: %i\n", buf, e->size);
+ 	printf ("%s  Value: %s\n", buf, exif_entry_get_value (e, value, sizeof(value)));
+ }
++#endif
+ 
+ /*! Check if a string consists entirely of a single, repeated character.
+  * Up to first n bytes are checked.
+--- libexif/exif-entry.h
++++ libexif/exif-entry.h
+@@ -169,7 +169,6 @@
+  * \param[in] entry EXIF tag data
+  * \param[in] indent how many levels deep to indent the data
+  */
+-void        exif_entry_dump      (ExifEntry *entry, unsigned int indent);
+ 
+ /*! Return the IFD number of the given #ExifEntry
+  *
