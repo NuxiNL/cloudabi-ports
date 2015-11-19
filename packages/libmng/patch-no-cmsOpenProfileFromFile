@@ -1,0 +1,60 @@
+--- libmng.h
++++ libmng.h
+@@ -1005,14 +1005,10 @@
+ #if defined(MNG_SUPPORT_DISPLAY)
+ MNG_EXT mng_retcode MNG_DECL mng_set_srgb            (mng_handle        hHandle,
+                                                       mng_bool          bIssRGB);
+-MNG_EXT mng_retcode MNG_DECL mng_set_outputprofile   (mng_handle        hHandle,
+-                                                      mng_pchar         zFilename);
+ MNG_EXT mng_retcode MNG_DECL mng_set_outputprofile2  (mng_handle        hHandle,
+                                                       mng_uint32        iProfilesize,
+                                                       mng_ptr           pProfile);
+ MNG_EXT mng_retcode MNG_DECL mng_set_outputsrgb      (mng_handle        hHandle);
+-MNG_EXT mng_retcode MNG_DECL mng_set_srgbprofile     (mng_handle        hHandle,
+-                                                      mng_pchar         zFilename);
+ MNG_EXT mng_retcode MNG_DECL mng_set_srgbprofile2    (mng_handle        hHandle,
+                                                       mng_uint32        iProfilesize,
+                                                       mng_ptr           pProfile);
+--- libmng_cms.c
++++ libmng_cms.c
+@@ -112,10 +112,6 @@
+ 
+ /* ************************************************************************** */
+ 
+-mng_cmsprof mnglcms_createfileprofile (mng_pchar zFilename)
+-{
+-  return cmsOpenProfileFromFile (zFilename, "r");
+-}
+ 
+ /* ************************************************************************** */
+ 
+--- libmng_cms.h
++++ libmng_cms.h
+@@ -47,7 +47,6 @@
+ 
+ #ifdef MNG_INCLUDE_LCMS
+ void        mnglcms_initlibrary       (void);
+-mng_cmsprof mnglcms_createfileprofile (mng_pchar    zFilename);
+ mng_cmsprof mnglcms_creatememprofile  (mng_uint32   iProfilesize,
+                                        mng_ptr      pProfile );
+ mng_cmsprof mnglcms_createsrgbprofile (void);
+--- libmng_prop_xs.c
++++ libmng_prop_xs.c
+@@ -468,7 +468,7 @@
+ 
+ /* ************************************************************************** */
+ 
+-#ifdef MNG_SUPPORT_DISPLAY
++#if 0
+ #ifndef MNG_SKIPCHUNK_iCCP
+ mng_retcode MNG_DECL mng_set_outputprofile (mng_handle hHandle,
+                                             mng_pchar  zFilename)
+@@ -578,7 +578,7 @@
+ 
+ /* ************************************************************************** */
+ 
+-#ifdef MNG_SUPPORT_DISPLAY
++#if 0
+ mng_retcode MNG_DECL mng_set_srgbprofile (mng_handle hHandle,
+                                           mng_pchar  zFilename)
+ {
