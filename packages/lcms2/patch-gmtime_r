@@ -1,0 +1,11 @@
+--- src/cmsio0.c
++++ src/cmsio0.c
+@@ -477,7 +477,7 @@
+     Icc ->Version =  0x02100000;
+ 
+     // Set creation date/time
+-    memmove(&Icc ->Created, gmtime(&now), sizeof(Icc ->Created));
++    gmtime_r(&now, &Icc ->Created);
+ 
+     // Create a mutex if the user provided proper plugin. NULL otherwise
+     Icc ->UsrMutex = _cmsCreateMutex(ContextID);

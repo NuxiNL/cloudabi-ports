@@ -1,0 +1,12 @@
+--- src/cmsps2.c
++++ src/cmsps2.c
+@@ -365,7 +365,8 @@
+     _cmsIOPrintf(m, "%% %s\n", Title);
+     _cmsIOPrintf(m, "%% Source: %s\n", RemoveCR(DescASCII));
+     _cmsIOPrintf(m, "%%         %s\n", RemoveCR(CopyrightASCII));
+-    _cmsIOPrintf(m, "%% Created: %s", ctime(&timer)); // ctime appends a \n!!!
++    char ctimebuf[26];
++    _cmsIOPrintf(m, "%% Created: %s", ctime_r(&timer, ctimebuf)); // ctime appends a \n!!!
+     _cmsIOPrintf(m, "%%\n");
+     _cmsIOPrintf(m, "%%%%BeginResource\n");
+ 

@@ -1,0 +1,10 @@
+--- include/lcms2_plugin.h
++++ include/lcms2_plugin.h
+@@ -50,7 +50,6 @@
+ #include <stdlib.h>
+ #include <math.h>
+ #include <stdarg.h>
+-#include <memory.h>
+ #include <string.h>
+ 
+ 

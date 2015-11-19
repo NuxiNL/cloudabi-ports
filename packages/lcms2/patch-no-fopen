@@ -1,0 +1,246 @@
+--- include/lcms2.h
++++ include/lcms2.h
+@@ -1508,7 +1508,6 @@
+ 
+ typedef struct _cms_io_handler cmsIOHANDLER;
+ 
+-CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const char* FileName, const char* AccessMode);
+ CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream);
+ CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromMem(cmsContext ContextID, void *Buffer, cmsUInt32Number size, const char* AccessMode);
+ CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromNULL(cmsContext ContextID);
+@@ -1521,8 +1520,6 @@
+ 
+ // Profile high level funtions ------------------------------------------------------------------------------------------
+ 
+-CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromFile(const char *ICCProfile, const char *sAccess);
+-CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromFileTHR(cmsContext ContextID, const char *ICCProfile, const char *sAccess);
+ CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromStream(FILE* ICCProfile, const char* sAccess);
+ CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromStreamTHR(cmsContext ContextID, FILE* ICCProfile, const char* sAccess);
+ CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromMem(const void * MemPtr, cmsUInt32Number dwSize);
+@@ -1531,7 +1528,6 @@
+ CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromIOhandler2THR(cmsContext ContextID, cmsIOHANDLER* io, cmsBool write);
+ CMSAPI cmsBool          CMSEXPORT cmsCloseProfile(cmsHPROFILE hProfile);
+ 
+-CMSAPI cmsBool          CMSEXPORT cmsSaveProfileToFile(cmsHPROFILE hProfile, const char* FileName);
+ CMSAPI cmsBool          CMSEXPORT cmsSaveProfileToStream(cmsHPROFILE hProfile, FILE* Stream);
+ CMSAPI cmsBool          CMSEXPORT cmsSaveProfileToMem(cmsHPROFILE hProfile, void *MemPtr, cmsUInt32Number* BytesNeeded);
+ CMSAPI cmsUInt32Number  CMSEXPORT cmsSaveProfileToIOhandler(cmsHPROFILE hProfile, cmsIOHANDLER* io);
+@@ -1792,11 +1788,9 @@
+ CMSAPI cmsInt32Number   CMSEXPORT cmsIT8SetTable(cmsHANDLE hIT8, cmsUInt32Number nTable);
+ 
+ // Persistence
+-CMSAPI cmsHANDLE        CMSEXPORT cmsIT8LoadFromFile(cmsContext ContextID, const char* cFileName);
+ CMSAPI cmsHANDLE        CMSEXPORT cmsIT8LoadFromMem(cmsContext ContextID, void *Ptr, cmsUInt32Number len);
+ // CMSAPI cmsHANDLE        CMSEXPORT cmsIT8LoadFromIOhandler(cmsContext ContextID, cmsIOHANDLER* io);
+ 
+-CMSAPI cmsBool          CMSEXPORT cmsIT8SaveToFile(cmsHANDLE hIT8, const char* cFileName);
+ CMSAPI cmsBool          CMSEXPORT cmsIT8SaveToMem(cmsHANDLE hIT8, void *MemPtr, cmsUInt32Number* BytesNeeded);
+ 
+ // Properties
+--- include/lcms2_plugin.h
++++ include/lcms2_plugin.h
+@@ -116,7 +116,6 @@
+     cmsContext        ContextID;
+     cmsUInt32Number   UsedSpace;
+     cmsUInt32Number   ReportedSize;
+-    char              PhysicalFile[cmsMAX_PATH];
+ 
+     cmsUInt32Number   (* Read)(struct _cms_io_handler* iohandler, void *Buffer,
+                                                                   cmsUInt32Number size,
+--- src/cmscgats.c
++++ src/cmscgats.c
+@@ -66,7 +66,6 @@
+         SEND_DATA_FORMAT,
+         SKEYWORD,
+         SDATA_FORMAT_ID,
+-        SINCLUDE
+ 
+     } SYMBOL;
+ 
+@@ -201,9 +200,6 @@
+ // The keyword->symbol translation table. Sorting is required.
+ static const KEYWORD TabKeys[] = {
+ 
+-        {"$INCLUDE",               SINCLUDE},   // This is an extension!
+-        {".INCLUDE",               SINCLUDE},   // This is an extension!
+-
+         {"BEGIN_DATA",             SBEGIN_DATA },
+         {"BEGIN_DATA_FORMAT",      SBEGIN_DATA_FORMAT },
+         {"DATA_FORMAT_IDENTIFIER", SDATA_FORMAT_ID},
+@@ -896,6 +892,7 @@
+ 
+     // Handle the include special token
+ 
++#if 0
+     if (it8 -> sy == SINCLUDE) {
+ 
+                 FILECTX* FileNest;
+@@ -935,6 +932,7 @@
+                 it8 ->ch = ' ';
+                 InSymbol(it8);
+     }
++#endif
+ 
+ }
+ 
+@@ -1753,6 +1751,7 @@
+ 
+ 
+ // Saves whole file
++#if 0
+ cmsBool CMSEXPORT cmsIT8SaveToFile(cmsHANDLE hIT8, const char* cFileName)
+ {
+     SAVESTREAM sd;
+@@ -1776,6 +1775,7 @@
+ 
+     return TRUE;
+ }
++#endif
+ 
+ 
+ // Saves to memory
+@@ -2262,6 +2262,7 @@
+ }
+ 
+ 
++#if 0
+ static
+ cmsBool IsMyFile(const char* FileName)
+ {
+@@ -2284,6 +2285,7 @@
+ 
+    return IsMyBlock(Ptr, Size);
+ }
++#endif
+ 
+ // ---------------------------------------------------------- Exported routines
+ 
+@@ -2330,6 +2332,7 @@
+ }
+ 
+ 
++#if 0
+ cmsHANDLE  CMSEXPORT cmsIT8LoadFromFile(cmsContext ContextID, const char* cFileName)
+ {
+ 
+@@ -2376,6 +2379,7 @@
+     return hIT8;
+ 
+ }
++#endif
+ 
+ int CMSEXPORT cmsIT8EnumDataFormat(cmsHANDLE hIT8, char ***SampleNames)
+ {
+--- src/cmsio0.c
++++ src/cmsio0.c
+@@ -114,7 +114,6 @@
+     iohandler ->stream  = (void*) fm;
+     iohandler ->UsedSpace = 0;
+     iohandler ->ReportedSize = 0;
+-    iohandler ->PhysicalFile[0] = 0;
+ 
+     iohandler ->Read    = NULLRead;
+     iohandler ->Seek    = NULLSeek;
+@@ -292,7 +291,6 @@
+     iohandler ->ContextID = ContextID;
+     iohandler ->stream  = (void*) fm;
+     iohandler ->UsedSpace = 0;
+-    iohandler ->PhysicalFile[0] = 0;
+ 
+     iohandler ->Read    = MemoryRead;
+     iohandler ->Seek    = MemorySeek;
+@@ -364,6 +362,7 @@
+ }
+ 
+ // Create a iohandler for disk based files.
++#if 0
+ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const char* FileName, const char* AccessMode)
+ {
+     cmsIOHANDLER* iohandler = NULL;
+@@ -419,6 +418,7 @@
+ 
+     return iohandler;
+ }
++#endif
+ 
+ // Create a iohandler for stream based files
+ cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream)
+@@ -432,7 +432,6 @@
+     iohandler -> stream = (void*) Stream;
+     iohandler -> UsedSpace = 0;
+     iohandler -> ReportedSize = (cmsUInt32Number) cmsfilelength(Stream);
+-    iohandler -> PhysicalFile[0] = 0;
+ 
+     iohandler ->Read    = FileRead;
+     iohandler ->Seek    = FileSeek;
+@@ -1036,7 +1035,6 @@
+     NewIcc ->IOhandler = io;
+     if (write) {
+ 
+-        NewIcc -> IsWrite = TRUE;
+         return hEmpty;
+     }
+ 
+@@ -1050,6 +1048,7 @@
+ 
+ 
+ // Create profile from disk file
++#if 0
+ cmsHPROFILE CMSEXPORT cmsOpenProfileFromFileTHR(cmsContext ContextID, const char *lpFileName, const char *sAccess)
+ {
+     _cmsICCPROFILE* NewIcc;
+@@ -1082,6 +1081,7 @@
+ {
+     return cmsOpenProfileFromFileTHR(NULL, ICCProfile, sAccess);
+ }
++#endif
+ 
+ 
+ cmsHPROFILE  CMSEXPORT cmsOpenProfileFromStreamTHR(cmsContext ContextID, FILE* ICCProfile, const char *sAccess)
+@@ -1098,7 +1098,6 @@
+ 
+     if (*sAccess == 'w') {
+ 
+-        NewIcc -> IsWrite = TRUE;
+         return hEmpty;
+     }
+ 
+@@ -1337,6 +1336,7 @@
+ 
+ 
+ // Low-level save to disk.
++#if 0
+ cmsBool  CMSEXPORT cmsSaveProfileToFile(cmsHPROFILE hProfile, const char* FileName)
+ {
+     cmsContext ContextID = cmsGetProfileContextID(hProfile);
+@@ -1353,6 +1353,7 @@
+     }
+     return rc;
+ }
++#endif
+ 
+ // Same as anterior, but for streams
+ cmsBool CMSEXPORT cmsSaveProfileToStream(cmsHPROFILE hProfile, FILE* Stream)
+@@ -1407,12 +1408,6 @@
+ 
+     if (!Icc) return FALSE;
+ 
+-    // Was open in write mode?
+-    if (Icc ->IsWrite) {
+-
+-        Icc ->IsWrite = FALSE;      // Assure no further writting
+-        rc &= cmsSaveProfileToFile(hProfile, Icc ->IOhandler->PhysicalFile);
+-    }
+ 
+     for (i=0; i < Icc -> TagCount; i++) {
+ 
+--- src/lcms2_internal.h
++++ src/lcms2_internal.h
+@@ -740,7 +740,6 @@
+                                                                  // depending on profile version, so we keep track of the
+                                                                  // type handler for each tag in the list.
+     // Special
+-    cmsBool                  IsWrite;
+ 
+     // Keep a mutex for cmsReadTag -- Note that this only works if the user includes a mutex plugin
+     void *                   UsrMutex;
