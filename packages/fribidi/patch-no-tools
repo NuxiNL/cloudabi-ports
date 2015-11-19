@@ -1,0 +1,11 @@
+--- Makefile.in
++++ Makefile.in
+@@ -376,7 +376,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ ACLOCAL_AMFLAGS = -I m4
+-SUBDIRS = gen.tab charset lib bin doc test
++SUBDIRS = gen.tab charset lib doc test
+ EXTRA_DIST = bootstrap ChangeLog.old
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = @PACKAGE@.pc
