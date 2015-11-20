@@ -1,0 +1,168 @@
+--- source/common/common.cpp
++++ source/common/common.cpp
+@@ -170,6 +170,7 @@
+ 
+ char* x265_slurp_file(const char *filename)
+ {
++#if 0
+     if (!filename)
+         return NULL;
+ 
+@@ -213,6 +214,8 @@
+ 
+ error:
+     fclose(fh);
++#endif
++    x265_log(NULL, X265_LOG_ERROR, "filesystem access not supported\n");
+     return NULL;
+ }
+ 
+--- source/common/param.cpp
++++ source/common/param.cpp
+@@ -1483,6 +1483,7 @@
+ 
+ bool parseLambdaFile(x265_param* param)
+ {
++#if 0
+     if (!param->rc.lambdaFileName)
+         return false;
+ 
+@@ -1549,6 +1550,9 @@
+ 
+     fclose(lfn);
+     return false;
++#endif
++    x265_log(param, X265_LOG_ERROR, "filesystem access not supported\n");
++    return true;
+ }
+ 
+ }
+--- source/common/scalinglist.cpp
++++ source/common/scalinglist.cpp
+@@ -237,6 +237,7 @@
+ 
+ bool ScalingList::parseScalingList(const char* filename)
+ {
++#if 0
+     FILE *fp = fopen(filename, "r");
+     if (!fp)
+     {
+@@ -313,6 +314,9 @@
+     m_bDataPresent = !checkDefaultScalingList();
+ 
+     return false;
++#endif
++    x265_log(NULL, X265_LOG_ERROR, "filesystem access not supported\n");
++    return true;
+ }
+ 
+ /** set quantized matrix coefficient for encode */
+--- source/encoder/api.cpp
++++ source/encoder/api.cpp
+@@ -338,6 +338,7 @@
+ 
+ static int g_recursion /* = 0 */;
+ 
++#if 0
+ const x265_api* x265_api_get(int bitDepth)
+ {
+     if (bitDepth && bitDepth != X265_DEPTH)
+@@ -511,5 +512,6 @@
+ 
+     return &libapi;
+ }
++#endif
+ 
+ } /* end namespace or extern "C" */
+--- source/encoder/encoder.cpp
++++ source/encoder/encoder.cpp
+@@ -240,6 +240,7 @@
+ 
+     if (m_param->analysisMode)
+     {
++#if 0
+         const char* name = m_param->analysisFileName;
+         if (!name)
+             name = defaultAnalysisFileName;
+@@ -250,6 +251,9 @@
+             x265_log(NULL, X265_LOG_ERROR, "Analysis load/save: failed to open file %s\n", name);
+             m_aborted = true;
+         }
++#endif
++        x265_log(NULL, X265_LOG_ERROR, "filesystem access not supported\n");
++        m_aborted = true;
+     }
+ 
+     m_bZeroLatency = !m_param->bframes && !m_param->lookaheadDepth && m_param->frameNumThreads == 1;
+--- source/encoder/ratecontrol.cpp
++++ source/encoder/ratecontrol.cpp
+@@ -390,6 +390,7 @@
+                 return false;
+             if (m_param->rc.cuTree)
+             {
++#if 0
+                 char *tmpFile = strcatFilename(fileName, ".cutree");
+                 if (!tmpFile)
+                     return false;
+@@ -400,6 +401,9 @@
+                     x265_log(m_param, X265_LOG_ERROR, "can't open stats file %s\n", tmpFile);
+                     return false;
+                 }
++#endif
++                x265_log(m_param, X265_LOG_ERROR, "filesystem access not supported\n");
++                return false;
+             }
+ 
+             /* check whether 1st pass options were compatible with current options */
+@@ -555,6 +559,7 @@
+          * and move it to the real name only when it's complete */
+         if (m_param->rc.bStatWrite)
+         {
++#if 0
+             char *p, *statFileTmpname;
+             statFileTmpname = strcatFilename(fileName, ".temp");
+             if (!statFileTmpname)
+@@ -583,6 +588,9 @@
+                     return false;
+                 }
+             }
++#endif
++            x265_log(m_param, X265_LOG_ERROR, "filesystem access not supported\n");
++            return false;
+         }
+         if (m_param->rc.cuTree)
+         {
+@@ -2381,6 +2389,7 @@
+     if (!fileName)
+         fileName = s_defaultStatFileName;
+ 
++#if 0
+     if (m_statFileOut)
+     {
+         fclose(m_statFileOut);
+@@ -2418,6 +2427,7 @@
+         X265_FREE(tmpFileName);
+         X265_FREE(newFileName);
+     }
++#endif
+ 
+     if (m_cutreeStatFileIn)
+         fclose(m_cutreeStatFileIn);
+--- source/x265.h
++++ source/x265.h
+@@ -1416,7 +1416,6 @@
+  *     8bit:  libx265_main.so
+  *     10bit: libx265_main10.so
+  *   Obviously the shared library file extension is platform specific */
+-const x265_api* x265_api_get(int bitDepth);
+ 
+ /* x265_api_query:
+  *   Retrieve the programming interface for a linked x265 library, like
+@@ -1439,7 +1438,6 @@
+  *   application dereferences a x265_param pointer, then it must check that
+  *   api->sizeof_param matches the sizeof(x265_param) that your application
+  *   compiled with. */
+-const x265_api* x265_api_query(int bitDepth, int apiVersion, int* err);
+ 
+ #define X265_API_QUERY_ERR_NONE           0 /* returned API pointer is non-NULL */
+ #define X265_API_QUERY_ERR_VER_REFUSED    1 /* incompatible version skew        */

@@ -1,0 +1,11 @@
+--- source/common/common.h
++++ source/common/common.h
+@@ -36,7 +36,7 @@
+ #include <ctime>
+ 
+ #include <stdint.h>
+-#include <memory.h>
++#include <strings.h>
+ #include <assert.h>
+ 
+ #include "x265.h"
