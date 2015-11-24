@@ -10,8 +10,9 @@ def build(ctx):
         '--enable-jit', '--enable-pcre2-16', '--enable-pcre2-32',
     ])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    stage = build.make_install(
-        ['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install'])
+    stage = build.make_install([
+        'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install',
+    ])
     stage.path('bin/pcre2-config').unhardcode_paths()
     stage.install()
 
