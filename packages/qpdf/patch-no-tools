@@ -1,0 +1,31 @@
+--- Makefile
++++ Makefile
+@@ -30,7 +30,7 @@
+ # install to install in a separate location.  This is useful for
+ # packagers.
+ 
+-BUILD_ITEMS := manual libqpdf zlib-flate libtests qpdf examples
++BUILD_ITEMS := manual libqpdf
+ OUTPUT_DIR = build
+ ALL_TARGETS =
+ 
+--- make/libtool.mk
++++ make/libtool.mk
+@@ -116,17 +116,9 @@
+ 		libqpdf/$(OUTPUT_DIR)/libqpdf.la \
+ 		$(DESTDIR)$(libdir)/libqpdf.la
+ 	$(LIBTOOL) --finish $(DESTDIR)$(libdir)
+-	$(LIBTOOL) --mode=install ./install-sh \
+-		qpdf/$(OUTPUT_DIR)/qpdf \
+-		$(DESTDIR)$(bindir)/qpdf
+-	$(LIBTOOL) --mode=install ./install-sh \
+-		zlib-flate/$(OUTPUT_DIR)/zlib-flate \
+-		$(DESTDIR)$(bindir)/zlib-flate
+-	cp qpdf/fix-qdf $(DESTDIR)$(bindir)
+ 	cp include/qpdf/*.h $(DESTDIR)$(includedir)/qpdf
+ 	cp include/qpdf/*.hh $(DESTDIR)$(includedir)/qpdf
+ 	cp doc/stylesheet.css $(DESTDIR)$(docdir)
+ 	cp doc/qpdf-manual.html $(DESTDIR)$(docdir)
+ 	cp doc/qpdf-manual.pdf $(DESTDIR)$(docdir)
+-	cp doc/*.1 $(DESTDIR)$(mandir)/man1
+ 	cp libqpdf.pc $(DESTDIR)$(libdir)/pkgconfig

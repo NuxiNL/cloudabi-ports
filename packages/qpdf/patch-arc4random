@@ -1,0 +1,33 @@
+--- libqpdf/QUtil.cc
++++ libqpdf/QUtil.cc
+@@ -450,9 +450,11 @@
+ void
+ QUtil::srandom(unsigned int seed)
+ {
++#if 0
+ #ifdef HAVE_RANDOM
+     ::srandom(seed);
+ #else
+     srand(seed);
+ #endif
++#endif
+ }
+--- libqpdf/SecureRandomDataProvider.cc
++++ libqpdf/SecureRandomDataProvider.cc
+@@ -10,6 +10,7 @@
+ #  include <Wincrypt.h>
+ # endif
+ #endif
++#include <stdlib.h>
+ 
+ SecureRandomDataProvider::SecureRandomDataProvider()
+ {
+@@ -120,7 +121,7 @@
+ 
+ #else
+ 
+-#  error "Don't know how to generate secure random numbers on this platform.  See random number generation in the top-level README"
++    arc4random_buf(data, len);
+ 
+ #endif
+ }

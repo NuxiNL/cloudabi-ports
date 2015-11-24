@@ -1,0 +1,10 @@
+--- make/libtool.mk
++++ make/libtool.mk
+@@ -1,7 +1,6 @@
+ # --- Required interface definitions ---
+ 
+ # LIBTOOL needs bash
+-SHELL=/bin/bash
+ 
+ OBJ=o
+ LOBJ=lo
