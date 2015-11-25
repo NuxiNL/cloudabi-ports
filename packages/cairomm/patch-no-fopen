@@ -1,0 +1,145 @@
+--- cairomm/script.cc
++++ cairomm/script.cc
+@@ -54,12 +54,14 @@
+   cairo_script_write_comment(m_cobject, comment.data(), comment.length());
+ }
+ 
++#if 0
+ RefPtr<Script> Script::create(const std::string& filename)
+ {
+   auto cobject = cairo_script_create(filename.c_str());
+   check_status_and_throw_exception(cairo_device_status(cobject));
+   return RefPtr<Script>(new Script(cobject, true /* has reference */));
+ }
++#endif
+ 
+ static cairo_user_data_key_t USER_DATA_KEY_DEVICE_WRITE_FUNC = {0};
+ 
+--- cairomm/script.h
++++ cairomm/script.h
+@@ -115,7 +115,6 @@
+    *
+    * @since 1.12
+    */
+-  static RefPtr<Script> create(const std::string& filename);
+ 
+   /**
+    * Creates a output device for emitting the script, used when creating the
+--- cairomm/surface.cc
++++ cairomm/surface.cc
+@@ -214,11 +214,13 @@
+ 
+ 
+ #ifdef CAIRO_HAS_PNG_FUNCTIONS
++#if 0
+ void Surface::write_to_png(const std::string& filename)
+ {
+   auto status = cairo_surface_write_to_png(cobj(), filename.c_str());
+   check_status_and_throw_exception(status);
+ }
++#endif
+ 
+ void Surface::write_to_png_stream(const SlotWriteFunc& write_func)
+ {
+@@ -310,12 +312,14 @@
+ 
+ #ifdef CAIRO_HAS_PNG_FUNCTIONS
+ 
++#if 0
+ RefPtr<ImageSurface> ImageSurface::create_from_png(std::string filename)
+ {
+   auto cobject = cairo_image_surface_create_from_png(filename.c_str());
+   check_status_and_throw_exception(cairo_surface_status(cobject));
+   return RefPtr<ImageSurface>(new ImageSurface(cobject, true /* has reference */));
+ }
++#endif
+ 
+ RefPtr<ImageSurface> ImageSurface::create_from_png_stream(const SlotReadFunc& read_func)
+ {
+@@ -393,12 +397,14 @@
+   // surface is destroyed in base class
+ }
+ 
++#if 0
+ RefPtr<PdfSurface> PdfSurface::create(std::string filename, double width_in_points, double height_in_points)
+ {
+   auto cobject = cairo_pdf_surface_create(filename.c_str(), width_in_points, height_in_points);
+   check_status_and_throw_exception(cairo_surface_status(cobject));
+   return RefPtr<PdfSurface>(new PdfSurface(cobject, true /* has reference */));
+ }
++#endif
+ 
+ RefPtr<PdfSurface> PdfSurface::create(cairo_write_func_t write_func, void *closure, double width_in_points, double height_in_points)
+ {
+@@ -468,12 +474,14 @@
+   // surface is destroyed in base class
+ }
+ 
++#if 0
+ RefPtr<PsSurface> PsSurface::create(std::string filename, double width_in_points, double height_in_points)
+ {
+   auto cobject = cairo_ps_surface_create(filename.c_str(), width_in_points, height_in_points);
+   check_status_and_throw_exception(cairo_surface_status(cobject));
+   return RefPtr<PsSurface>(new PsSurface(cobject, true /* has reference */));
+ }
++#endif
+ 
+ RefPtr<PsSurface> PsSurface::create_for_stream(const SlotWriteFunc& write_func, double
+                                                width_in_points, double height_in_points)
+@@ -576,12 +584,14 @@
+   // surface is destroyed in base class
+ }
+ 
++#if 0
+ RefPtr<SvgSurface> SvgSurface::create(std::string filename, double width_in_points, double height_in_points)
+ {
+   auto cobject = cairo_svg_surface_create(filename.c_str(), width_in_points, height_in_points);
+   check_status_and_throw_exception(cairo_surface_status(cobject));
+   return RefPtr<SvgSurface>(new SvgSurface(cobject, true /* has reference */));
+ }
++#endif
+ 
+ RefPtr<SvgSurface> SvgSurface::create_for_stream(const SlotWriteFunc& write_func,
+                                                  double width_in_points,
+--- cairomm/surface.h
++++ cairomm/surface.h
+@@ -332,7 +332,6 @@
+    *
+    * @param filename	the name of a file to write to
+    */
+-  void write_to_png(const std::string& filename);
+ 
+   /** Writes the Surface to the write function.
+    *
+@@ -563,7 +562,6 @@
+    * @return	a RefPtr to the new cairo_surface_t initialized with the
+    * contents of the PNG image file.
+    */
+-  static RefPtr<ImageSurface> create_from_png(std::string filename);
+ 
+   /** Creates a new image surface from PNG data read incrementally via the
+    * read_func function.
+@@ -625,7 +623,6 @@
+    * @param height_in_points   The height of the PDF document in points
+    * @since 1.2
+    */
+-  static RefPtr<PdfSurface> create(std::string filename, double width_in_points, double height_in_points);
+ 
+   /** Creates a PdfSurface with a specified dimensions that will be written to
+    * the given write function instead of saved directly to disk
+@@ -727,7 +724,6 @@
+    * @param width_in_points   The width of the PostScript document in points
+    * @param height_in_points   The height of the PostScript document in points
+    */
+-  static RefPtr<PsSurface> create(std::string filename, double width_in_points, double height_in_points);
+ 
+   /** Creates a PsSurface with a specified dimensions that will be written to
+    * the given write function instead of saved directly to disk
+@@ -883,7 +879,6 @@
+    * @param width_in_points   The width of the SVG document in points
+    * @param height_in_points   The height of the SVG document in points
+    */
+-  static RefPtr<SvgSurface> create(std::string filename, double width_in_points, double height_in_points);
+ 
+   /** Creates a SvgSurface with a specified dimensions that will be written to
+    * the given write function instead of saved directly to disk
