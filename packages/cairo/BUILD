@@ -10,6 +10,7 @@ def build(ctx):
             'aarch64': 'no',
             'x86_64': 'no',
         }[ctx.cpu()],
+        'ac_cv_func_mmap=no',
         '--enable-xlib=no',
     ])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
@@ -22,7 +23,7 @@ package(
     version='1.14.4',
     homepage='http://cairographics.org/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c-runtime', 'libpng', 'pixman'},
+    lib_depends={'c-runtime', 'freetype', 'libpng', 'pixman'},
     build_cmd=build,
 )
 
