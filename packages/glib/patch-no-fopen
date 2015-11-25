@@ -1,0 +1,340 @@
+--- glib/gbookmarkfile.c
++++ glib/gbookmarkfile.c
+@@ -1780,6 +1780,7 @@
+  *
+  * Since: 2.12
+  */
++#if 0
+ gboolean
+ g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
+ 				     const gchar    *file,
+@@ -1842,6 +1843,7 @@
+ 
+   return found_file;
+ }
++#endif
+ 
+ 
+ /**
+@@ -1891,6 +1893,7 @@
+  *
+  * Since: 2.12
+  */
++#if 0
+ gboolean
+ g_bookmark_file_to_file (GBookmarkFile  *bookmark,
+ 			 const gchar    *filename,
+@@ -1928,6 +1931,7 @@
+   
+   return retval;
+ }
++#endif
+ 
+ static BookmarkItem *
+ g_bookmark_file_lookup_item (GBookmarkFile *bookmark,
+--- glib/gbookmarkfile.h
++++ glib/gbookmarkfile.h
+@@ -92,18 +92,9 @@
+ 						    gsize           length,
+ 						    GError        **error);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean       g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
+-						    const gchar    *file,
+-						    gchar         **full_path,
+-						    GError        **error);
+-GLIB_AVAILABLE_IN_ALL
+ gchar *        g_bookmark_file_to_data             (GBookmarkFile  *bookmark,
+ 						    gsize          *length,
+ 						    GError        **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_ALL
+-gboolean       g_bookmark_file_to_file             (GBookmarkFile  *bookmark,
+-						    const gchar    *filename,
+-						    GError        **error);
+ 
+ GLIB_AVAILABLE_IN_ALL
+ void           g_bookmark_file_set_title           (GBookmarkFile  *bookmark,
+--- glib/gcharset.c
++++ glib/gcharset.c
+@@ -234,6 +234,7 @@
+ static void
+ read_aliases (gchar *file)
+ {
++#if 0
+   FILE *fp;
+   char buf[256];
+ 
+@@ -281,6 +282,7 @@
+       }
+     }
+   fclose (fp);
++#endif
+ }
+ 
+ #endif
+--- glib/giochannel.h
++++ glib/giochannel.h
+@@ -287,10 +287,6 @@
+ 					   gint64        offset,
+ 					   GSeekType     type,
+ 					   GError      **error);
+-GLIB_AVAILABLE_IN_ALL
+-GIOChannel* g_io_channel_new_file         (const gchar  *filename,
+-					   const gchar  *mode,
+-					   GError      **error);
+ 
+ /* Error handling */
+ 
+--- glib/giounix.c
++++ glib/giounix.c
+@@ -441,6 +441,7 @@
+   return flags;
+ }
+ 
++#if 0
+ GIOChannel *
+ g_io_channel_new_file (const gchar *filename,
+                        const gchar *mode,
+@@ -578,6 +579,7 @@
+   ((GIOUnixChannel *) channel)->fd = fid;
+   return channel;
+ }
++#endif
+ 
+ /**
+  * g_io_channel_unix_new:
+--- glib/gkeyfile.c
++++ glib/gkeyfile.c
+@@ -486,10 +486,6 @@
+   gchar *value;
+ };
+ 
+-static gint                  find_file_in_data_dirs            (const gchar            *file,
+-								const gchar           **data_dirs,
+-								gchar                 **output_file,
+-								GError                **error);
+ static gboolean              g_key_file_load_from_fd           (GKeyFile               *key_file,
+ 								gint                    fd,
+ 								GKeyFileFlags           flags,
+@@ -671,6 +667,7 @@
+  * returns the file descriptor to the open file.  It also
+  * outputs the absolute path of the file in output_file.
+  */
++#if 0
+ static gint
+ find_file_in_data_dirs (const gchar   *file,
+                         const gchar  **dirs,
+@@ -745,6 +742,7 @@
+ 
+   return fd;
+ }
++#endif
+ 
+ static gboolean
+ g_key_file_load_from_fd (GKeyFile       *key_file,
+@@ -836,6 +834,7 @@
+  *
+  * Since: 2.6
+  **/
++#if 0
+ gboolean
+ g_key_file_load_from_file (GKeyFile       *key_file,
+ 			   const gchar    *file,
+@@ -869,6 +868,7 @@
+ 
+   return TRUE;
+ }
++#endif
+ 
+ /**
+  * g_key_file_load_from_data:
+@@ -946,6 +946,7 @@
+  *
+  * Since: 2.14
+  **/
++#if 0
+ gboolean
+ g_key_file_load_from_dirs (GKeyFile       *key_file,
+                            const gchar    *file,
+@@ -1057,6 +1058,7 @@
+ 
+   return found_file;
+ }
++#endif
+ 
+ /**
+  * g_key_file_ref: (skip)
+@@ -4411,6 +4413,7 @@
+  *
+  * Since: 2.40
+  */
++#if 0
+ gboolean
+ g_key_file_save_to_file (GKeyFile     *key_file,
+                          const gchar  *filename,
+@@ -4432,3 +4435,4 @@
+ 
+   return success;
+ }
++#endif
+--- glib/gkeyfile.h
++++ glib/gkeyfile.h
+@@ -66,37 +66,15 @@
+ void      g_key_file_set_list_separator     (GKeyFile             *key_file,
+ 					     gchar                 separator);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean  g_key_file_load_from_file         (GKeyFile             *key_file,
+-					     const gchar          *file,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+ gboolean  g_key_file_load_from_data         (GKeyFile             *key_file,
+ 					     const gchar          *data,
+ 					     gsize                 length,
+ 					     GKeyFileFlags         flags,
+ 					     GError              **error);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean g_key_file_load_from_dirs          (GKeyFile             *key_file,
+-					     const gchar	  *file,
+-					     const gchar	 **search_dirs,
+-					     gchar		 **full_path,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+-gboolean g_key_file_load_from_data_dirs     (GKeyFile             *key_file,
+-					     const gchar          *file,
+-					     gchar               **full_path,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+ gchar    *g_key_file_to_data                (GKeyFile             *key_file,
+ 					     gsize                *length,
+ 					     GError              **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_2_40
+-gboolean  g_key_file_save_to_file           (GKeyFile             *key_file,
+-                                             const gchar          *filename,
+-                                             GError              **error);
+ GLIB_AVAILABLE_IN_ALL
+ gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
+ GLIB_AVAILABLE_IN_ALL
+--- glib/gmappedfile.c
++++ glib/gmappedfile.c
+@@ -238,6 +238,7 @@
+  *
+  * Since: 2.8
+  */
++#if 0
+ GMappedFile *
+ g_mapped_file_new (const gchar  *filename,
+ 		   gboolean      writable,
+@@ -271,6 +272,7 @@
+ 
+   return file;
+ }
++#endif
+ 
+ 
+ /**
+--- glib/gmappedfile.h
++++ glib/gmappedfile.h
+@@ -32,10 +32,6 @@
+ typedef struct _GMappedFile GMappedFile;
+ 
+ GLIB_AVAILABLE_IN_ALL
+-GMappedFile *g_mapped_file_new          (const gchar  *filename,
+-				         gboolean      writable,
+-				         GError      **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_ALL
+ GMappedFile *g_mapped_file_new_from_fd  (gint          fd,
+ 					 gboolean      writable,
+ 					 GError      **error) G_GNUC_MALLOC;
+--- glib/gstdio.c
++++ glib/gstdio.c
+@@ -38,7 +38,6 @@
+ #include <io.h>
+ #include <sys/utime.h>
+ #else
+-#include <utime.h>
+ #include <errno.h>
+ #endif
+ 
+@@ -78,6 +77,7 @@
+  * 
+  * Since: 2.8
+  */
++#if 0
+ int
+ g_access (const gchar *filename,
+ 	  int          mode)
+@@ -831,6 +831,7 @@
+   return utime (filename, utb);
+ #endif
+ }
++#endif
+ 
+ /**
+  * g_close:
+--- glib/gstdio.h
++++ glib/gstdio.h
+@@ -51,6 +51,7 @@
+ 
+ #endif
+ 
++#if 0
+ #if defined(G_OS_UNIX) && !defined(G_STDIO_NO_WRAP_ON_UNIX)
+ 
+ /* Just pass on to the system functions, so there's no potential for data
+@@ -161,6 +162,7 @@
+ 		 struct utimbuf *utb);
+ 
+ #endif /* G_OS_UNIX */
++#endif
+ 
+ GLIB_AVAILABLE_IN_2_36
+ gboolean g_close (gint       fd,
+--- glib/gtimezone.c
++++ glib/gtimezone.c
+@@ -393,6 +393,7 @@
+ }
+ 
+ #ifdef G_OS_UNIX
++#if 0
+ static GBytes*
+ zone_info_unix (const gchar *identifier)
+ {
+@@ -435,6 +436,7 @@
+   g_free (filename);
+   return zoneinfo;
+ }
++#endif
+ 
+ static void
+ init_zone_from_iana_info (GTimeZone *gtz, GBytes *zoneinfo)
+@@ -1384,6 +1386,7 @@
+       g_free (rules);
+     }
+ 
++#if 0
+   if (tz->t_info == NULL)
+     {
+ #ifdef G_OS_UNIX
+@@ -1430,6 +1433,7 @@
+         }
+ #endif
+     }
++#endif
+ 
+   if (tz->t_info != NULL)
+     {
+--- glib/libcharset/localcharset.c
++++ glib/libcharset/localcharset.c
+@@ -111,7 +111,9 @@
+   cp = charset_aliases;
+   if (cp == NULL)
+     {
+-#if !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
++#ifdef __CloudABI__
++      cp = "";
++#elif !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
+       FILE *fp;
+       const char *dir;
+       const char *base = "charset.alias";

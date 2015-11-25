@@ -1,0 +1,11 @@
+--- glib/gutils.c
++++ glib/gutils.c
+@@ -2340,7 +2340,7 @@
+    * https://code.google.com/p/android-developer-preview/issues/detail?id=168
+    */
+   return issetugid ();
+-#elif defined(G_OS_UNIX)
++#elif 0
+   uid_t ruid, euid, suid; /* Real, effective and saved user ID's */
+   gid_t rgid, egid, sgid; /* Real, effective and saved group ID's */
+ 

@@ -1,0 +1,56 @@
+--- glib/ggettext.c
++++ glib/ggettext.c
+@@ -95,6 +95,7 @@
+ static void
+ ensure_gettext_initialized (void)
+ {
++#if 0
+   static gsize initialised;
+ 
+   if (g_once_init_enter (&initialised))
+@@ -111,6 +112,7 @@
+ #    endif
+       g_once_init_leave (&initialised, TRUE);
+     }
++#endif
+ }
+ 
+ /**
+@@ -312,7 +314,7 @@
+     {
+       gboolean should_translate = TRUE;
+ 
+-      const char *default_domain     = textdomain (NULL);
++      const char *default_domain     = NULL;
+       const char *translator_comment = gettext ("");
+ #ifndef G_OS_WIN32
+       const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
+@@ -418,6 +420,7 @@
+  *
+  * Since: 2.26
+  */
++#if 0
+ const gchar *
+ g_dcgettext (const gchar *domain,
+              const gchar *msgid,
+@@ -428,6 +431,7 @@
+ 
+   return dcgettext (domain, msgid, category);
+ }
++#endif
+ 
+ /**
+  * g_dngettext:
+--- glib/ggettext.h
++++ glib/ggettext.h
+@@ -41,10 +41,6 @@
+ const gchar *g_dgettext      (const gchar *domain,
+                               const gchar *msgid) G_GNUC_FORMAT(2);
+ GLIB_AVAILABLE_IN_ALL
+-const gchar *g_dcgettext     (const gchar *domain,
+-                              const gchar *msgid,
+-                              gint         category) G_GNUC_FORMAT(2);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar *g_dngettext     (const gchar *domain,
+                               const gchar *msgid,
+                               const gchar *msgid_plural,

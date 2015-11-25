@@ -66,79 +66,6 @@
 +#endif
  
  #endif /* !G_OS_WIN32 */
---- glib/gbookmarkfile.c
-+++ glib/gbookmarkfile.c
-@@ -1780,6 +1780,7 @@
-  *
-  * Since: 2.12
-  */
-+#if 0
- gboolean
- g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
- 				     const gchar    *file,
-@@ -1842,6 +1843,7 @@
- 
-   return found_file;
- }
-+#endif
- 
- 
- /**
-@@ -1891,6 +1893,7 @@
-  *
-  * Since: 2.12
-  */
-+#if 0
- gboolean
- g_bookmark_file_to_file (GBookmarkFile  *bookmark,
- 			 const gchar    *filename,
-@@ -1928,6 +1931,7 @@
-   
-   return retval;
- }
-+#endif
- 
- static BookmarkItem *
- g_bookmark_file_lookup_item (GBookmarkFile *bookmark,
---- glib/gbookmarkfile.h
-+++ glib/gbookmarkfile.h
-@@ -92,18 +92,9 @@
- 						    gsize           length,
- 						    GError        **error);
- GLIB_AVAILABLE_IN_ALL
--gboolean       g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
--						    const gchar    *file,
--						    gchar         **full_path,
--						    GError        **error);
--GLIB_AVAILABLE_IN_ALL
- gchar *        g_bookmark_file_to_data             (GBookmarkFile  *bookmark,
- 						    gsize          *length,
- 						    GError        **error) G_GNUC_MALLOC;
--GLIB_AVAILABLE_IN_ALL
--gboolean       g_bookmark_file_to_file             (GBookmarkFile  *bookmark,
--						    const gchar    *filename,
--						    GError        **error);
- 
- GLIB_AVAILABLE_IN_ALL
- void           g_bookmark_file_set_title           (GBookmarkFile  *bookmark,
---- glib/gcharset.c
-+++ glib/gcharset.c
-@@ -234,6 +234,7 @@
- static void
- read_aliases (gchar *file)
- {
-+#if 0
-   FILE *fp;
-   char buf[256];
- 
-@@ -281,6 +282,7 @@
-       }
-     }
-   fclose (fp);
-+#endif
- }
- 
- #endif
 --- glib/gfileutils.c
 +++ glib/gfileutils.c
 @@ -205,6 +205,7 @@
@@ -320,207 +247,6 @@
  gchar *g_path_get_basename (const gchar *file_name) G_GNUC_MALLOC;
  GLIB_AVAILABLE_IN_ALL
  gchar *g_path_get_dirname  (const gchar *file_name) G_GNUC_MALLOC;
---- glib/ggettext.c
-+++ glib/ggettext.c
-@@ -95,6 +95,7 @@
- static void
- ensure_gettext_initialized (void)
- {
-+#if 0
-   static gsize initialised;
- 
-   if (g_once_init_enter (&initialised))
-@@ -111,6 +112,7 @@
- #    endif
-       g_once_init_leave (&initialised, TRUE);
-     }
-+#endif
- }
- 
- /**
-@@ -312,7 +314,7 @@
-     {
-       gboolean should_translate = TRUE;
- 
--      const char *default_domain     = textdomain (NULL);
-+      const char *default_domain     = NULL;
-       const char *translator_comment = gettext ("");
- #ifndef G_OS_WIN32
-       const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
-@@ -418,6 +420,7 @@
-  *
-  * Since: 2.26
-  */
-+#if 0
- const gchar *
- g_dcgettext (const gchar *domain,
-              const gchar *msgid,
-@@ -428,6 +431,7 @@
- 
-   return dcgettext (domain, msgid, category);
- }
-+#endif
- 
- /**
-  * g_dngettext:
---- glib/ggettext.h
-+++ glib/ggettext.h
-@@ -41,10 +41,6 @@
- const gchar *g_dgettext      (const gchar *domain,
-                               const gchar *msgid) G_GNUC_FORMAT(2);
- GLIB_AVAILABLE_IN_ALL
--const gchar *g_dcgettext     (const gchar *domain,
--                              const gchar *msgid,
--                              gint         category) G_GNUC_FORMAT(2);
--GLIB_AVAILABLE_IN_ALL
- const gchar *g_dngettext     (const gchar *domain,
-                               const gchar *msgid,
-                               const gchar *msgid_plural,
---- glib/giochannel.h
-+++ glib/giochannel.h
-@@ -287,10 +287,6 @@
- 					   gint64        offset,
- 					   GSeekType     type,
- 					   GError      **error);
--GLIB_AVAILABLE_IN_ALL
--GIOChannel* g_io_channel_new_file         (const gchar  *filename,
--					   const gchar  *mode,
--					   GError      **error);
- 
- /* Error handling */
- 
---- glib/giounix.c
-+++ glib/giounix.c
-@@ -441,6 +441,7 @@
-   return flags;
- }
- 
-+#if 0
- GIOChannel *
- g_io_channel_new_file (const gchar *filename,
-                        const gchar *mode,
-@@ -578,6 +579,7 @@
-   ((GIOUnixChannel *) channel)->fd = fid;
-   return channel;
- }
-+#endif
- 
- /**
-  * g_io_channel_unix_new:
---- glib/gkeyfile.c
-+++ glib/gkeyfile.c
-@@ -486,10 +486,6 @@
-   gchar *value;
- };
- 
--static gint                  find_file_in_data_dirs            (const gchar            *file,
--								const gchar           **data_dirs,
--								gchar                 **output_file,
--								GError                **error);
- static gboolean              g_key_file_load_from_fd           (GKeyFile               *key_file,
- 								gint                    fd,
- 								GKeyFileFlags           flags,
-@@ -671,6 +667,7 @@
-  * returns the file descriptor to the open file.  It also
-  * outputs the absolute path of the file in output_file.
-  */
-+#if 0
- static gint
- find_file_in_data_dirs (const gchar   *file,
-                         const gchar  **dirs,
-@@ -745,6 +742,7 @@
- 
-   return fd;
- }
-+#endif
- 
- static gboolean
- g_key_file_load_from_fd (GKeyFile       *key_file,
-@@ -836,6 +834,7 @@
-  *
-  * Since: 2.6
-  **/
-+#if 0
- gboolean
- g_key_file_load_from_file (GKeyFile       *key_file,
- 			   const gchar    *file,
-@@ -869,6 +868,7 @@
- 
-   return TRUE;
- }
-+#endif
- 
- /**
-  * g_key_file_load_from_data:
-@@ -946,6 +946,7 @@
-  *
-  * Since: 2.14
-  **/
-+#if 0
- gboolean
- g_key_file_load_from_dirs (GKeyFile       *key_file,
-                            const gchar    *file,
-@@ -1057,6 +1058,7 @@
- 
-   return found_file;
- }
-+#endif
- 
- /**
-  * g_key_file_ref: (skip)
-@@ -4411,6 +4413,7 @@
-  *
-  * Since: 2.40
-  */
-+#if 0
- gboolean
- g_key_file_save_to_file (GKeyFile     *key_file,
-                          const gchar  *filename,
-@@ -4432,3 +4435,4 @@
- 
-   return success;
- }
-+#endif
---- glib/gkeyfile.h
-+++ glib/gkeyfile.h
-@@ -66,37 +66,15 @@
- void      g_key_file_set_list_separator     (GKeyFile             *key_file,
- 					     gchar                 separator);
- GLIB_AVAILABLE_IN_ALL
--gboolean  g_key_file_load_from_file         (GKeyFile             *key_file,
--					     const gchar          *file,
--					     GKeyFileFlags         flags,
--					     GError              **error);
--GLIB_AVAILABLE_IN_ALL
- gboolean  g_key_file_load_from_data         (GKeyFile             *key_file,
- 					     const gchar          *data,
- 					     gsize                 length,
- 					     GKeyFileFlags         flags,
- 					     GError              **error);
- GLIB_AVAILABLE_IN_ALL
--gboolean g_key_file_load_from_dirs          (GKeyFile             *key_file,
--					     const gchar	  *file,
--					     const gchar	 **search_dirs,
--					     gchar		 **full_path,
--					     GKeyFileFlags         flags,
--					     GError              **error);
--GLIB_AVAILABLE_IN_ALL
--gboolean g_key_file_load_from_data_dirs     (GKeyFile             *key_file,
--					     const gchar          *file,
--					     gchar               **full_path,
--					     GKeyFileFlags         flags,
--					     GError              **error);
--GLIB_AVAILABLE_IN_ALL
- gchar    *g_key_file_to_data                (GKeyFile             *key_file,
- 					     gsize                *length,
- 					     GError              **error) G_GNUC_MALLOC;
--GLIB_AVAILABLE_IN_2_40
--gboolean  g_key_file_save_to_file           (GKeyFile             *key_file,
--                                             const gchar          *filename,
--                                             GError              **error);
- GLIB_AVAILABLE_IN_ALL
- gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
- GLIB_AVAILABLE_IN_ALL
 --- glib/glib-unix.c
 +++ glib/glib-unix.c
 @@ -212,6 +212,7 @@
@@ -721,185 +447,6 @@
  GLIB_VAR GSourceFuncs g_unix_fd_source_funcs;
  #endif
  
---- glib/gmappedfile.c
-+++ glib/gmappedfile.c
-@@ -238,6 +238,7 @@
-  *
-  * Since: 2.8
-  */
-+#if 0
- GMappedFile *
- g_mapped_file_new (const gchar  *filename,
- 		   gboolean      writable,
-@@ -271,6 +272,7 @@
- 
-   return file;
- }
-+#endif
- 
- 
- /**
---- glib/gmappedfile.h
-+++ glib/gmappedfile.h
-@@ -32,10 +32,6 @@
- typedef struct _GMappedFile GMappedFile;
- 
- GLIB_AVAILABLE_IN_ALL
--GMappedFile *g_mapped_file_new          (const gchar  *filename,
--				         gboolean      writable,
--				         GError      **error) G_GNUC_MALLOC;
--GLIB_AVAILABLE_IN_ALL
- GMappedFile *g_mapped_file_new_from_fd  (gint          fd,
- 					 gboolean      writable,
- 					 GError      **error) G_GNUC_MALLOC;
---- glib/gmessages.c
-+++ glib/gmessages.c
-@@ -1536,6 +1536,7 @@
-  * use g_log(), or the convenience functions g_message(), g_warning()
-  * and g_error().
-  */
-+#if 0
- void
- g_print (const gchar *format,
-          ...)
-@@ -1573,6 +1574,7 @@
-     }
-   g_free (string);
- }
-+#endif
- 
- /**
-  * g_set_printerr_handler:
---- glib/gmessages.h
-+++ glib/gmessages.h
-@@ -262,9 +262,6 @@
-  */
- typedef void    (*GPrintFunc)           (const gchar    *string);
- GLIB_AVAILABLE_IN_ALL
--void            g_print                 (const gchar    *format,
--                                         ...) G_GNUC_PRINTF (1, 2);
--GLIB_AVAILABLE_IN_ALL
- GPrintFunc      g_set_print_handler     (GPrintFunc      func);
- GLIB_AVAILABLE_IN_ALL
- void            g_printerr              (const gchar    *format,
---- glib/gnulib/printf.c
-+++ glib/gnulib/printf.c
-@@ -32,6 +32,7 @@
- #include "vasnprintf.h"
- #include "printf.h"
- 
-+#if 0
- int _g_gnulib_printf (char const *format, ...)
- {
-   va_list args;
-@@ -43,6 +44,7 @@
- 
-   return retval;
- }
-+#endif
- 
- int _g_gnulib_fprintf (FILE *file, char const *format, ...)
- {
-@@ -80,10 +82,12 @@
-   return retval;
- }
- 
-+#if 0
- int _g_gnulib_vprintf (char const *format, va_list args)         
- {
-   return _g_gnulib_vfprintf (stdout, format, args);
- }
-+#endif
- 
- int _g_gnulib_vfprintf (FILE *file, char const *format, va_list args)
- {
---- glib/gnulib/printf.h
-+++ glib/gnulib/printf.h
-@@ -20,8 +20,6 @@
- #include <stdarg.h>
- #include <stdio.h>
- 
--int _g_gnulib_printf    (char const *format, 
--			 ...);
- int _g_gnulib_fprintf   (FILE        *file,
- 			 char const *format, 
- 			 ...);
-@@ -32,8 +30,6 @@
- 			 size_t       n,
- 			 char const *format, 
- 			 ...);
--int _g_gnulib_vprintf   (char const *format,
--			 va_list      args);            
- int _g_gnulib_vfprintf  (FILE        *file,
- 			 char const *format,
- 			 va_list      args);
---- glib/goption.c
-+++ glib/goption.c
-@@ -1088,7 +1088,7 @@
-   gchar *help;
- 
-   help = g_option_context_get_help (context, main_help, group);
--  g_print ("%s", help);
-+  g_printerr ("%s", help);
-   g_free (help);
- 
-   exit (0);
---- glib/gprintf.c
-+++ glib/gprintf.c
-@@ -42,6 +42,7 @@
-  *
-  * Since: 2.2
-  **/
-+#if 0
- gint
- g_printf (gchar const *format,
- 	  ...)
-@@ -55,6 +56,7 @@
-   
-   return retval;
- }
-+#endif
- 
- /**
-  * g_fprintf:
-@@ -180,6 +182,7 @@
-  *
-  * Since: 2.2
-  **/
-+#if 0
- gint
- g_vprintf (gchar const *format,
- 	   va_list      args)
-@@ -188,6 +191,7 @@
- 
-   return _g_vprintf (format, args);
- }
-+#endif
- 
- /**
-  * g_vfprintf:
---- glib/gprintf.h
-+++ glib/gprintf.h
-@@ -25,9 +25,6 @@
- G_BEGIN_DECLS
- 
- GLIB_AVAILABLE_IN_ALL
--gint                  g_printf    (gchar const *format,
--                                   ...) G_GNUC_PRINTF (1, 2);
--GLIB_AVAILABLE_IN_ALL
- gint                  g_fprintf   (FILE        *file,
- 				   gchar const *format,
- 				   ...) G_GNUC_PRINTF (2, 3);
-@@ -37,9 +34,6 @@
- 				   ...) G_GNUC_PRINTF (2, 3);
- 
- GLIB_AVAILABLE_IN_ALL
--gint                  g_vprintf   (gchar const *format,
--                                   va_list      args) G_GNUC_PRINTF(1, 0);
--GLIB_AVAILABLE_IN_ALL
- gint                  g_vfprintf  (FILE        *file,
- 				   gchar const *format,
- 				   va_list      args) G_GNUC_PRINTF(2, 0);
 --- glib/gspawn.c
 +++ glib/gspawn.c
 @@ -1,3 +1,4 @@
@@ -919,144 +466,6 @@
  /* gspawn.h - Process launching
   *
   *  Copyright 2000 Red Hat, Inc.
---- glib/gstdio.c
-+++ glib/gstdio.c
-@@ -38,7 +38,6 @@
- #include <io.h>
- #include <sys/utime.h>
- #else
--#include <utime.h>
- #include <errno.h>
- #endif
- 
-@@ -78,6 +77,7 @@
-  * 
-  * Since: 2.8
-  */
-+#if 0
- int
- g_access (const gchar *filename,
- 	  int          mode)
-@@ -831,6 +831,7 @@
-   return utime (filename, utb);
- #endif
- }
-+#endif
- 
- /**
-  * g_close:
---- glib/gstdio.h
-+++ glib/gstdio.h
-@@ -51,6 +51,7 @@
- 
- #endif
- 
-+#if 0
- #if defined(G_OS_UNIX) && !defined(G_STDIO_NO_WRAP_ON_UNIX)
- 
- /* Just pass on to the system functions, so there's no potential for data
-@@ -73,19 +74,6 @@
- #define g_utime   utime
- #endif
- 
--GLIB_AVAILABLE_IN_ALL
--int g_access (const gchar *filename,
--	      int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_chdir  (const gchar *path);
--
--GLIB_AVAILABLE_IN_ALL
--int g_unlink (const gchar *filename);
--
--GLIB_AVAILABLE_IN_ALL
--int g_rmdir  (const gchar *filename);
--
- #else /* ! G_OS_UNIX */
- 
- /* Wrappers for C library functions that take pathname arguments. On
-@@ -98,69 +86,8 @@
-  * API.
-  */
- 
--GLIB_AVAILABLE_IN_ALL
--int g_access    (const gchar *filename,
--		 int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_chmod     (const gchar *filename,
--		 int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_open      (const gchar *filename,
--                 int          flags,
--                 int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_creat     (const gchar *filename,
--                 int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_rename    (const gchar *oldfilename,
--                 const gchar *newfilename);
--
--GLIB_AVAILABLE_IN_ALL
--int g_mkdir     (const gchar *filename,
--                 int          mode);
--
--GLIB_AVAILABLE_IN_ALL
--int g_chdir     (const gchar *path);
--
--GLIB_AVAILABLE_IN_ALL
--int g_stat      (const gchar *filename,
--                 GStatBuf    *buf);
--
--GLIB_AVAILABLE_IN_ALL
--int g_lstat     (const gchar *filename,
--                 GStatBuf    *buf);
--
--GLIB_AVAILABLE_IN_ALL
--int g_unlink    (const gchar *filename);
--
--GLIB_AVAILABLE_IN_ALL
--int g_remove    (const gchar *filename);
--
--GLIB_AVAILABLE_IN_ALL
--int g_rmdir     (const gchar *filename);
--
--GLIB_AVAILABLE_IN_ALL
--FILE *g_fopen   (const gchar *filename,
--                 const gchar *mode);
--
--GLIB_AVAILABLE_IN_ALL
--FILE *g_freopen (const gchar *filename,
--                 const gchar *mode,
--                 FILE        *stream);
--
--struct utimbuf;			/* Don't need the real definition of struct utimbuf when just
--				 * including this header.
--				 */
--
--GLIB_AVAILABLE_IN_ALL
--int g_utime     (const gchar    *filename,
--		 struct utimbuf *utb);
--
- #endif /* G_OS_UNIX */
-+#endif
- 
- GLIB_AVAILABLE_IN_2_36
- gboolean g_close (gint       fd,
---- glib/gstrfuncs.c
-+++ glib/gstrfuncs.c
-@@ -1291,7 +1291,7 @@
-         {
-           msg = g_locale_to_utf8 (msg, -1, NULL, NULL, &error);
-           if (error)
--            g_print ("%s\n", error->message);
-+            g_printerr ("%s\n", error->message);
-         }
- 
-       g_hash_table_insert (errors, GINT_TO_POINTER (errnum), (char *) msg);
 --- glib/gtester.c
 +++ glib/gtester.c
 @@ -24,7 +24,6 @@
@@ -1085,15 +494,7 @@
  #include "glib-private.h"
  
  
-@@ -805,6 +803,7 @@
-     {
-     case G_TEST_LOG_START_BINARY:
-       if (test_tap_log)
-+#define g_print g_printerr
-         g_print ("# random seed: %s\n", string2);
-       else if (g_test_verbose())
-         g_print ("GTest: random seed: %s\n", string2);
-@@ -910,7 +909,6 @@
+@@ -910,7 +908,6 @@
    guint i, e;
  
    test_argv0 = argv[0];
@@ -1101,16 +502,7 @@
  
    /* parse known args */
    for (i = 1; i < argc; i++)
-@@ -1064,7 +1062,7 @@
-                strcmp ("-h", argv[i]) == 0 ||
-                strcmp ("--help", argv[i]) == 0)
-         {
--          printf ("Usage:\n"
-+          fprintf (stderr, "Usage:\n"
-                   "  %s [OPTION...]\n\n"
-                   "Help Options:\n"
-                   "  -h, --help                     Show help options\n\n"
-@@ -2611,7 +2609,7 @@
+@@ -2611,7 +2608,7 @@
  {
    WaitForChildData *data = user_data;
  
@@ -1119,7 +511,7 @@
    if (WIFEXITED (status)) /* normal exit */
      data->child_status = WEXITSTATUS (status); /* 0..255 */
    else if (WIFSIGNALED (status) && WTERMSIG (status) == SIGALRM)
-@@ -2632,11 +2630,13 @@
+@@ -2632,11 +2629,13 @@
  {
    WaitForChildData *data = user_data;
  
@@ -1133,16 +525,7 @@
  
    return FALSE;
  }
-@@ -2669,7 +2669,7 @@
-     {
-       g_string_append_len (data->stdout_str, buf, nread);
-       if (data->echo_stdout)
--        echo_file = stdout;
-+        echo_file = stderr;
-     }
-   else
-     {
-@@ -2691,6 +2691,7 @@
+@@ -2691,6 +2690,7 @@
    return TRUE;
  }
  
@@ -1150,7 +533,7 @@
  static void
  wait_for_child (GPid pid,
                  int stdout_fd, gboolean echo_stdout,
-@@ -2755,6 +2756,7 @@
+@@ -2755,6 +2755,7 @@
    g_clear_pointer (&data.stdout_io, g_io_channel_unref);
    g_clear_pointer (&data.stderr_io, g_io_channel_unref);
  }
@@ -1158,7 +541,7 @@
  
  /**
   * g_test_trap_fork:
-@@ -2802,7 +2804,7 @@
+@@ -2802,7 +2803,7 @@
  g_test_trap_fork (guint64        usec_timeout,
                    GTestTrapFlags test_trap_flags)
  {
@@ -1167,7 +550,7 @@
    int stdout_pipe[2] = { -1, -1 };
    int stderr_pipe[2] = { -1, -1 };
  
-@@ -2927,6 +2929,8 @@
+@@ -2927,6 +2928,8 @@
                          guint64               usec_timeout,
                          GTestSubprocessFlags  test_flags)
  {
@@ -1176,7 +559,7 @@
    GError *error = NULL;
    GPtrArray *argv;
    GSpawnFlags flags;
-@@ -2988,6 +2992,7 @@
+@@ -2988,6 +2991,7 @@
                    stdout_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDOUT),
                    stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
                    usec_timeout);
@@ -1184,40 +567,6 @@
  }
  
  /**
---- glib/gtimezone.c
-+++ glib/gtimezone.c
-@@ -393,6 +393,7 @@
- }
- 
- #ifdef G_OS_UNIX
-+#if 0
- static GBytes*
- zone_info_unix (const gchar *identifier)
- {
-@@ -435,6 +436,7 @@
-   g_free (filename);
-   return zoneinfo;
- }
-+#endif
- 
- static void
- init_zone_from_iana_info (GTimeZone *gtz, GBytes *zoneinfo)
-@@ -1384,6 +1386,7 @@
-       g_free (rules);
-     }
- 
-+#if 0
-   if (tz->t_info == NULL)
-     {
- #ifdef G_OS_UNIX
-@@ -1430,6 +1433,7 @@
-         }
- #endif
-     }
-+#endif
- 
-   if (tz->t_info != NULL)
-     {
 --- glib/gutils.c
 +++ glib/gutils.c
 @@ -39,7 +39,6 @@
@@ -1340,15 +689,6 @@
  
  /**
   * g_nullify_pointer:
-@@ -2340,7 +2353,7 @@
-    * https://code.google.com/p/android-developer-preview/issues/detail?id=168
-    */
-   return issetugid ();
--#elif defined(G_OS_UNIX)
-+#elif 0
-   uid_t ruid, euid, suid; /* Real, effective and saved user ID's */
-   gid_t rgid, egid, sgid; /* Real, effective and saved group ID's */
- 
 --- glib/gutils.h
 +++ glib/gutils.h
 @@ -83,16 +83,8 @@
@@ -1413,19 +753,6 @@
  
  /* Bit tests
   */
---- glib/libcharset/localcharset.c
-+++ glib/libcharset/localcharset.c
-@@ -111,7 +111,9 @@
-   cp = charset_aliases;
-   if (cp == NULL)
-     {
--#if !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
-+#ifdef __CloudABI__
-+      cp = "";
-+#elif !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
-       FILE *fp;
-       const char *dir;
-       const char *base = "charset.alias";
 --- gmodule/gmodule.c
 +++ gmodule/gmodule.c
 @@ -336,6 +336,7 @@
@@ -1510,23 +837,3 @@
                 source->source_funcs == &g_unix_signal_funcs ||
  #endif
                 source->source_funcs == &g_timeout_funcs)
---- tests/gobject/performance-threaded.c
-+++ tests/gobject/performance-threaded.c
-@@ -281,6 +281,7 @@
-     }
-   avg = avg / array->len * 1000;
- 
-+#define g_print g_printerr
-   g_print ("  %u runs, min/avg/max = %.3f/%.3f/%.3f ms\n", array->len, min, avg, max);
- }
- 
---- tests/gobject/performance.c
-+++ tests/gobject/performance.c
-@@ -68,6 +68,7 @@
-   double elapsed, min_elapsed, max_elapsed, avg_elapsed, factor;
-   GTimer *timer;
- 
-+#define g_print g_printerr
-   g_print ("Running test %s\n", test->name);
- 
-   /* Set up test */

@@ -1,0 +1,207 @@
+--- glib/gmessages.c
++++ glib/gmessages.c
+@@ -1536,6 +1536,7 @@
+  * use g_log(), or the convenience functions g_message(), g_warning()
+  * and g_error().
+  */
++#if 0
+ void
+ g_print (const gchar *format,
+          ...)
+@@ -1573,6 +1574,7 @@
+     }
+   g_free (string);
+ }
++#endif
+ 
+ /**
+  * g_set_printerr_handler:
+--- glib/gmessages.h
++++ glib/gmessages.h
+@@ -262,9 +262,6 @@
+  */
+ typedef void    (*GPrintFunc)           (const gchar    *string);
+ GLIB_AVAILABLE_IN_ALL
+-void            g_print                 (const gchar    *format,
+-                                         ...) G_GNUC_PRINTF (1, 2);
+-GLIB_AVAILABLE_IN_ALL
+ GPrintFunc      g_set_print_handler     (GPrintFunc      func);
+ GLIB_AVAILABLE_IN_ALL
+ void            g_printerr              (const gchar    *format,
+--- glib/gnulib/printf.c
++++ glib/gnulib/printf.c
+@@ -32,6 +32,7 @@
+ #include "vasnprintf.h"
+ #include "printf.h"
+ 
++#if 0
+ int _g_gnulib_printf (char const *format, ...)
+ {
+   va_list args;
+@@ -43,6 +44,7 @@
+ 
+   return retval;
+ }
++#endif
+ 
+ int _g_gnulib_fprintf (FILE *file, char const *format, ...)
+ {
+@@ -80,10 +82,12 @@
+   return retval;
+ }
+ 
++#if 0
+ int _g_gnulib_vprintf (char const *format, va_list args)         
+ {
+   return _g_gnulib_vfprintf (stdout, format, args);
+ }
++#endif
+ 
+ int _g_gnulib_vfprintf (FILE *file, char const *format, va_list args)
+ {
+--- glib/gnulib/printf.h
++++ glib/gnulib/printf.h
+@@ -20,8 +20,6 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ 
+-int _g_gnulib_printf    (char const *format, 
+-			 ...);
+ int _g_gnulib_fprintf   (FILE        *file,
+ 			 char const *format, 
+ 			 ...);
+@@ -32,8 +30,6 @@
+ 			 size_t       n,
+ 			 char const *format, 
+ 			 ...);
+-int _g_gnulib_vprintf   (char const *format,
+-			 va_list      args);            
+ int _g_gnulib_vfprintf  (FILE        *file,
+ 			 char const *format,
+ 			 va_list      args);
+--- glib/goption.c
++++ glib/goption.c
+@@ -1088,7 +1088,7 @@
+   gchar *help;
+ 
+   help = g_option_context_get_help (context, main_help, group);
+-  g_print ("%s", help);
++  g_printerr ("%s", help);
+   g_free (help);
+ 
+   exit (0);
+--- glib/gprintf.c
++++ glib/gprintf.c
+@@ -42,6 +42,7 @@
+  *
+  * Since: 2.2
+  **/
++#if 0
+ gint
+ g_printf (gchar const *format,
+ 	  ...)
+@@ -55,6 +56,7 @@
+   
+   return retval;
+ }
++#endif
+ 
+ /**
+  * g_fprintf:
+@@ -180,6 +182,7 @@
+  *
+  * Since: 2.2
+  **/
++#if 0
+ gint
+ g_vprintf (gchar const *format,
+ 	   va_list      args)
+@@ -188,6 +191,7 @@
+ 
+   return _g_vprintf (format, args);
+ }
++#endif
+ 
+ /**
+  * g_vfprintf:
+--- glib/gprintf.h
++++ glib/gprintf.h
+@@ -25,9 +25,6 @@
+ G_BEGIN_DECLS
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gint                  g_printf    (gchar const *format,
+-                                   ...) G_GNUC_PRINTF (1, 2);
+-GLIB_AVAILABLE_IN_ALL
+ gint                  g_fprintf   (FILE        *file,
+ 				   gchar const *format,
+ 				   ...) G_GNUC_PRINTF (2, 3);
+@@ -37,9 +34,6 @@
+ 				   ...) G_GNUC_PRINTF (2, 3);
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gint                  g_vprintf   (gchar const *format,
+-                                   va_list      args) G_GNUC_PRINTF(1, 0);
+-GLIB_AVAILABLE_IN_ALL
+ gint                  g_vfprintf  (FILE        *file,
+ 				   gchar const *format,
+ 				   va_list      args) G_GNUC_PRINTF(2, 0);
+--- glib/gstrfuncs.c
++++ glib/gstrfuncs.c
+@@ -1291,7 +1291,7 @@
+         {
+           msg = g_locale_to_utf8 (msg, -1, NULL, NULL, &error);
+           if (error)
+-            g_print ("%s\n", error->message);
++            g_printerr ("%s\n", error->message);
+         }
+ 
+       g_hash_table_insert (errors, GINT_TO_POINTER (errnum), (char *) msg);
+--- glib/gtestutils.c
++++ glib/gtestutils.c
+@@ -805,6 +805,7 @@
+     {
+     case G_TEST_LOG_START_BINARY:
+       if (test_tap_log)
++#define g_print g_printerr
+         g_print ("# random seed: %s\n", string2);
+       else if (g_test_verbose())
+         g_print ("GTest: random seed: %s\n", string2);
+@@ -1064,7 +1065,7 @@
+                strcmp ("-h", argv[i]) == 0 ||
+                strcmp ("--help", argv[i]) == 0)
+         {
+-          printf ("Usage:\n"
++          fprintf (stderr, "Usage:\n"
+                   "  %s [OPTION...]\n\n"
+                   "Help Options:\n"
+                   "  -h, --help                     Show help options\n\n"
+@@ -2669,7 +2670,7 @@
+     {
+       g_string_append_len (data->stdout_str, buf, nread);
+       if (data->echo_stdout)
+-        echo_file = stdout;
++        echo_file = stderr;
+     }
+   else
+     {
+--- tests/gobject/performance-threaded.c
++++ tests/gobject/performance-threaded.c
+@@ -281,6 +281,7 @@
+     }
+   avg = avg / array->len * 1000;
+ 
++#define g_print g_printerr
+   g_print ("  %u runs, min/avg/max = %.3f/%.3f/%.3f ms\n", array->len, min, avg, max);
+ }
+ 
+--- tests/gobject/performance.c
++++ tests/gobject/performance.c
+@@ -68,6 +68,7 @@
+   double elapsed, min_elapsed, max_elapsed, avg_elapsed, factor;
+   GTimer *timer;
+ 
++#define g_print g_printerr
+   g_print ("Running test %s\n", test->name);
+ 
+   /* Set up test */
