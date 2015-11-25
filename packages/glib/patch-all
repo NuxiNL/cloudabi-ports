@@ -139,48 +139,6 @@
  }
  
  #endif
---- glib/gdate.c
-+++ glib/gdate.c
-@@ -979,7 +979,7 @@
- g_date_prepare_to_parse (const gchar      *str, 
-                          GDateParseTokens *pt)
- {
--  const gchar *locale = setlocale (LC_TIME, NULL);
-+  const gchar *locale = "C";
-   gboolean recompute_localeinfo = FALSE;
-   GDate d;
-   
---- glib/gdir.c
-+++ glib/gdir.c
-@@ -82,6 +82,7 @@
-  *
-  * Since: 2.38
-  */
-+#if 0
- GDir *
- g_dir_open_with_errno (const gchar *path,
-                        guint        flags)
-@@ -158,6 +159,7 @@
- 
-   return dir;
- }
-+#endif
- 
- #if defined (G_OS_WIN32) && !defined (_WIN64)
- 
---- glib/gdir.h
-+++ glib/gdir.h
-@@ -37,10 +37,6 @@
- typedef struct _GDir GDir;
- 
- GLIB_AVAILABLE_IN_ALL
--GDir    *                g_dir_open           (const gchar  *path,
--					       guint         flags,
--					       GError      **error);
--GLIB_AVAILABLE_IN_ALL
- const gchar *            g_dir_read_name      (GDir         *dir);
- GLIB_AVAILABLE_IN_ALL
- void                     g_dir_rewind         (GDir         *dir);
 --- glib/gfileutils.c
 +++ glib/gfileutils.c
 @@ -205,6 +205,7 @@
@@ -380,7 +338,7 @@
  }
  
  /**
-@@ -312,10 +314,10 @@
+@@ -312,7 +314,7 @@
      {
        gboolean should_translate = TRUE;
  
@@ -388,11 +346,7 @@
 +      const char *default_domain     = NULL;
        const char *translator_comment = gettext ("");
  #ifndef G_OS_WIN32
--      const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
-+      const char *translate_locale   = "C";
- #else
-       const char *translate_locale   = g_win32_getlocale ();
- #endif
+       const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
 @@ -418,6 +420,7 @@
   *
   * Since: 2.26
@@ -567,35 +521,6 @@
  GLIB_AVAILABLE_IN_ALL
  gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
  GLIB_AVAILABLE_IN_ALL
---- glib/glib-private.c
-+++ glib/glib-private.c
-@@ -43,7 +43,6 @@
-     g_check_setuid,
-     g_main_context_new_with_next_id,
- 
--    g_dir_open_with_errno,
-     g_dir_new_from_dirp
-   };
- 
---- glib/glib-private.h
-+++ glib/glib-private.h
-@@ -37,7 +37,6 @@
- gchar *_glib_get_locale_dir    (void);
- #endif
- 
--GDir * g_dir_open_with_errno (const gchar *path, guint flags);
- GDir * g_dir_new_from_dirp (gpointer dirp);
- 
- #define GLIB_PRIVATE_CALL(symbol) (glib__private__()->symbol)
-@@ -57,8 +56,6 @@
-   gboolean              (* g_check_setuid)              (void);
-   GMainContext *        (* g_main_context_new_with_next_id) (guint next_id);
- 
--  GDir *                (* g_dir_open_with_errno)       (const gchar *path,
--                                                         guint        flags);
-   GDir *                (* g_dir_new_from_dirp)         (gpointer dirp);
- 
-   /* Add other private functions here, initialize them in glib-private.c */
 --- glib/glib-unix.c
 +++ glib/glib-unix.c
 @@ -212,6 +212,7 @@
@@ -829,45 +754,6 @@
  					 GError      **error) G_GNUC_MALLOC;
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1279,7 +1279,7 @@
- 			 gpointer       unused_data)
- {
-   gchar level_prefix[STRING_BUFFER_SIZE];
--#ifndef G_OS_WIN32
-+#if 0
-   gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
- #endif
-   int fd;
-@@ -1295,7 +1295,7 @@
-   if (!message)
-     message = "(NULL) message";
- 
--#ifndef G_OS_WIN32
-+#if 0
-   format_unsigned (pid_string, getpid (), 10);
- #endif
- 
-@@ -1304,7 +1304,7 @@
-   else
-     write_string (fd, "\n** ");
- 
--#ifndef G_OS_WIN32
-+#if 0
-   write_string (fd, "(process:");
-   write_string (fd, pid_string);
-   write_string (fd, "): ");
-@@ -1451,9 +1451,9 @@
-       const gchar *prg_name = g_get_prgname ();
-       
-       if (!prg_name)
--	g_string_append_printf (gstring, "(process:%lu): ", (gulong)getpid ());
-+	g_string_append_printf (gstring, "(process): ");
-       else
--	g_string_append_printf (gstring, "(%s:%lu): ", prg_name, (gulong)getpid ());
-+	g_string_append_printf (gstring, "(%s): ", prg_name);
-     }
- 
-   if (log_domain)
 @@ -1536,6 +1536,7 @@
   * use g_log(), or the convenience functions g_message(), g_warning()
   * and g_error().
@@ -1014,17 +900,6 @@
  gint                  g_vfprintf  (FILE        *file,
  				   gchar const *format,
  				   va_list      args) G_GNUC_PRINTF(2, 0);
---- glib/gslice.c
-+++ glib/gslice.c
-@@ -1431,7 +1431,7 @@
-   /* at least, put out "MEMORY-ERROR", in case we segfault during the rest of the function */
-   fputs ("\n***MEMORY-ERROR***: ", stderr);
-   pname = g_get_prgname();
--  fprintf (stderr, "%s[%ld]: GSlice: ", pname ? pname : "", (long)getpid());
-+  fprintf (stderr, "%s: GSlice: ", pname ? pname : "");
-   va_start (args, format);
-   vfprintf (stderr, format, args);
-   va_end (args);
 --- glib/gspawn.c
 +++ glib/gspawn.c
 @@ -1,3 +1,4 @@
@@ -1343,28 +1218,6 @@
  
    if (tz->t_info != NULL)
      {
---- glib/gtranslit.c
-+++ glib/gtranslit.c
-@@ -290,7 +290,7 @@
-     {
-       const gchar *locale;
- 
--      locale = setlocale (LC_CTYPE, NULL);
-+      locale = "C";
-       item_id = lookup_item_id_for_locale (locale);
-       done = TRUE;
-     }
---- glib/guniprop.c
-+++ glib/guniprop.c
-@@ -697,7 +697,7 @@
-   locale[1] = tem[1];
-   g_free (tem);
- #else
--  const char *locale = setlocale (LC_CTYPE, NULL);
-+  const char *locale = "C";
- 
-   if (locale == NULL)
-     return LOCALE_NORMAL;
 --- glib/gutils.c
 +++ glib/gutils.c
 @@ -39,7 +39,6 @@
@@ -1625,15 +1478,7 @@
  			(flags & G_MODULE_BIND_LOCAL) != 0);
 --- gobject/gsourceclosure.c
 +++ gobject/gsourceclosure.c
-@@ -39,7 +39,6 @@
-       static const GFlagsValue values[] = {
- 	{ G_IO_IN,   "G_IO_IN",   "in" },
- 	{ G_IO_OUT,  "G_IO_OUT",  "out" },
--	{ G_IO_PRI,  "G_IO_PRI",  "pri" },
- 	{ G_IO_ERR,  "G_IO_ERR",  "err" },
- 	{ G_IO_HUP,  "G_IO_HUP",  "hup" },
- 	{ G_IO_NVAL, "G_IO_NVAL", "nval" },
-@@ -201,12 +200,12 @@
+@@ -201,12 +201,12 @@
          closure_callback = (GSourceFunc)io_watch_closure_callback;
        else if (source->source_funcs == &g_child_watch_funcs)
          closure_callback = (GSourceFunc)g_child_watch_closure_callback;
@@ -1648,7 +1493,7 @@
                 source->source_funcs == &g_unix_signal_funcs ||
  #endif
                 source->source_funcs == &g_idle_funcs)
-@@ -251,7 +250,6 @@
+@@ -251,7 +251,6 @@
    if (!source->source_funcs->closure_callback &&
  #ifdef G_OS_UNIX
        source->source_funcs != &g_unix_fd_source_funcs &&
@@ -1656,7 +1501,7 @@
  #endif
        source->source_funcs != &g_child_watch_funcs &&
        source->source_funcs != &g_io_watch_funcs &&
-@@ -274,7 +272,7 @@
+@@ -274,7 +273,7 @@
        if (marshal)
  	g_closure_set_marshal (closure, marshal);
        else if (source->source_funcs == &g_idle_funcs ||

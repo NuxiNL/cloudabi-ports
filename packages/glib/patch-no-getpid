@@ -1,0 +1,52 @@
+--- glib/gmessages.c
++++ glib/gmessages.c
+@@ -1279,7 +1279,7 @@
+ 			 gpointer       unused_data)
+ {
+   gchar level_prefix[STRING_BUFFER_SIZE];
+-#ifndef G_OS_WIN32
++#if 0
+   gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
+ #endif
+   int fd;
+@@ -1295,7 +1295,7 @@
+   if (!message)
+     message = "(NULL) message";
+ 
+-#ifndef G_OS_WIN32
++#if 0
+   format_unsigned (pid_string, getpid (), 10);
+ #endif
+ 
+@@ -1304,7 +1304,7 @@
+   else
+     write_string (fd, "\n** ");
+ 
+-#ifndef G_OS_WIN32
++#if 0
+   write_string (fd, "(process:");
+   write_string (fd, pid_string);
+   write_string (fd, "): ");
+@@ -1451,9 +1451,9 @@
+       const gchar *prg_name = g_get_prgname ();
+       
+       if (!prg_name)
+-	g_string_append_printf (gstring, "(process:%lu): ", (gulong)getpid ());
++	g_string_append_printf (gstring, "(process): ");
+       else
+-	g_string_append_printf (gstring, "(%s:%lu): ", prg_name, (gulong)getpid ());
++	g_string_append_printf (gstring, "(%s): ", prg_name);
+     }
+ 
+   if (log_domain)
+--- glib/gslice.c
++++ glib/gslice.c
+@@ -1431,7 +1431,7 @@
+   /* at least, put out "MEMORY-ERROR", in case we segfault during the rest of the function */
+   fputs ("\n***MEMORY-ERROR***: ", stderr);
+   pname = g_get_prgname();
+-  fprintf (stderr, "%s[%ld]: GSlice: ", pname ? pname : "", (long)getpid());
++  fprintf (stderr, "%s: GSlice: ", pname ? pname : "");
+   va_start (args, format);
+   vfprintf (stderr, format, args);
+   va_end (args);

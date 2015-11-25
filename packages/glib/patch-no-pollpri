@@ -8,3 +8,13 @@
    G_IO_ERR	GLIB_SYSDEF_POLLERR,
    G_IO_HUP	GLIB_SYSDEF_POLLHUP,
    G_IO_NVAL	GLIB_SYSDEF_POLLNVAL
+--- gobject/gsourceclosure.c
++++ gobject/gsourceclosure.c
+@@ -39,7 +39,6 @@
+       static const GFlagsValue values[] = {
+ 	{ G_IO_IN,   "G_IO_IN",   "in" },
+ 	{ G_IO_OUT,  "G_IO_OUT",  "out" },
+-	{ G_IO_PRI,  "G_IO_PRI",  "pri" },
+ 	{ G_IO_ERR,  "G_IO_ERR",  "err" },
+ 	{ G_IO_HUP,  "G_IO_HUP",  "hup" },
+ 	{ G_IO_NVAL, "G_IO_NVAL", "nval" },
