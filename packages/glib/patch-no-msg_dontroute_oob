@@ -4,11 +4,11 @@
  typedef enum /*< flags >*/
  {
    G_SOCKET_MSG_NONE,
-+#ifndef __CloudABI__)
++#ifndef __CloudABI__
    G_SOCKET_MSG_OOB = GLIB_SYSDEF_MSG_OOB,
 +#endif
    G_SOCKET_MSG_PEEK = GLIB_SYSDEF_MSG_PEEK,
-+#ifndef __CloudABI__)
++#ifndef __CloudABI__
    G_SOCKET_MSG_DONTROUTE = GLIB_SYSDEF_MSG_DONTROUTE
 +#endif
  } GSocketMsgFlags;
