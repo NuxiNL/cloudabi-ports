@@ -5,7 +5,7 @@
  {
    gchar level_prefix[STRING_BUFFER_SIZE];
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
    gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
  #endif
    int fd;
@@ -14,7 +14,7 @@
      message = "(NULL) message";
  
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
    format_unsigned (pid_string, getpid (), 10);
  #endif
  
@@ -23,7 +23,7 @@
      write_string (fd, "\n** ");
  
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
    write_string (fd, "(process:");
    write_string (fd, pid_string);
    write_string (fd, "): ");

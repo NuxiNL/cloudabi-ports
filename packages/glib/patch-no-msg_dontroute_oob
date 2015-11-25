@@ -1,12 +1,16 @@
 --- gio/gioenums.h
 +++ gio/gioenums.h
-@@ -844,9 +844,7 @@
+@@ -844,9 +844,13 @@
  typedef enum /*< flags >*/
  {
    G_SOCKET_MSG_NONE,
--  G_SOCKET_MSG_OOB = GLIB_SYSDEF_MSG_OOB,
++#ifndef __CloudABI__)
+   G_SOCKET_MSG_OOB = GLIB_SYSDEF_MSG_OOB,
++#endif
    G_SOCKET_MSG_PEEK = GLIB_SYSDEF_MSG_PEEK,
--  G_SOCKET_MSG_DONTROUTE = GLIB_SYSDEF_MSG_DONTROUTE
++#ifndef __CloudABI__)
+   G_SOCKET_MSG_DONTROUTE = GLIB_SYSDEF_MSG_DONTROUTE
++#endif
  } GSocketMsgFlags;
  
  /**

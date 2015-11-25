@@ -13,20 +13,21 @@
  
  
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
  static void stack_trace (char **args);
  #endif
  
-@@ -141,6 +140,8 @@
+@@ -141,6 +140,9 @@
  void
  g_on_error_query (const gchar *prg_name)
  {
++#ifdef __CloudABI__
 +  abort();
-+#if 0
++#else
  #ifndef G_OS_WIN32
    static const gchar * const query1 = "[E]xit, [H]alt";
    static const gchar * const query2 = ", show [S]tack trace";
-@@ -205,6 +206,7 @@
+@@ -205,6 +207,7 @@
                MB_OK|MB_ICONERROR);
    _exit(0);
  #endif
@@ -34,16 +35,17 @@
  }
  
  /**
-@@ -223,6 +225,8 @@
+@@ -223,6 +226,9 @@
  void
  g_on_error_stack_trace (const gchar *prg_name)
  {
++#ifdef __CloudABI__
 +  abort();
-+#if 0
++#else
  #if defined(G_OS_UNIX)
    pid_t pid;
    gchar buf[16];
-@@ -256,6 +260,7 @@
+@@ -256,6 +262,7 @@
    else
      abort ();
  #endif
@@ -51,15 +53,15 @@
  }
  
  #ifndef G_OS_WIN32
-@@ -268,6 +273,7 @@
+@@ -268,6 +275,7 @@
    stack_trace_done = TRUE;
  }
  
-+#if 0
++#ifndef __CloudABI__
  static void
  stack_trace (char **args)
  {
-@@ -373,5 +379,6 @@
+@@ -373,5 +381,6 @@
    close (out_fd[1]);
    _exit (0);
  }
@@ -72,7 +74,7 @@
   *
   * Since: 2.8
   */
-+#if 0
++#ifndef __CloudABI__
  int
  g_mkdir_with_parents (const gchar *pathname,
  		      int          mode)
@@ -88,7 +90,7 @@
   *
   * Returns: whether a test was %TRUE
   **/
-+#if 0
++#ifndef __CloudABI__
  gboolean
  g_file_test (const gchar *filename,
               GFileTest    test)
@@ -104,7 +106,7 @@
    return FALSE;
  }
  
-+#if 0
++#ifndef __CloudABI__
  #ifndef G_OS_WIN32
  
  static gboolean
@@ -120,7 +122,7 @@
   * they appear compatible, they may be vararg functions and calling
   * varargs functions through a non-varargs type is undefined.
   */
-+#if 0
++#ifndef __CloudABI__
  static gint
  wrap_g_mkdir (const gchar *filename,
                int          flags G_GNUC_UNUSED,
@@ -136,7 +138,7 @@
   *     where there is a difference. The file handle should be closed with
   *     close(). In case of errors, -1 is returned and @error will be set.
   */
-+#if 0
++#ifndef __CloudABI__
  gint
  g_file_open_tmp (const gchar  *tmpl,
                   gchar       **name_used,
@@ -152,7 +154,7 @@
   *
   * Since: 2.30
   */
-+#if 0
++#ifndef __CloudABI__
  gchar *
  g_dir_make_tmp (const gchar  *tmpl,
                  GError      **error)
@@ -168,7 +170,7 @@
   *
   * Returns: the current directory
   */
-+#if 0
++#ifndef __CloudABI__
  gchar *
  g_get_current_dir (void)
  {
@@ -270,7 +272,7 @@
 --- glib/gspawn.c
 +++ glib/gspawn.c
 @@ -1,3 +1,4 @@
-+#if 0
++#ifndef __CloudABI__
  /* gspawn.c - Process launching
   *
   *  Copyright 2000 Red Hat, Inc.
@@ -327,7 +329,7 @@
    WaitForChildData *data = user_data;
  
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
    if (WIFEXITED (status)) /* normal exit */
      data->child_status = WEXITSTATUS (status); /* 0..255 */
    else if (WIFSIGNALED (status) && WTERMSIG (status) == SIGALRM)
@@ -335,7 +337,7 @@
  {
    WaitForChildData *data = user_data;
  
-+#if 0
++#ifndef __CloudABI__
  #ifdef G_OS_WIN32
    TerminateProcess (data->pid, G_TEST_STATUS_TIMED_OUT);
  #else
@@ -349,7 +351,7 @@
    return TRUE;
  }
  
-+#if 0
++#ifndef __CloudABI__
  static void
  wait_for_child (GPid pid,
                  int stdout_fd, gboolean echo_stdout,
@@ -366,20 +368,21 @@
                    GTestTrapFlags test_trap_flags)
  {
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
    int stdout_pipe[2] = { -1, -1 };
    int stderr_pipe[2] = { -1, -1 };
  
-@@ -2927,6 +2928,8 @@
+@@ -2927,6 +2928,9 @@
                          guint64               usec_timeout,
                          GTestSubprocessFlags  test_flags)
  {
++#ifdef __CloudABI__
 +  g_error ("g_test_trap_subprocess: not implemented");
-+#if 0
++#else
    GError *error = NULL;
    GPtrArray *argv;
    GSpawnFlags flags;
-@@ -2988,6 +2991,7 @@
+@@ -2988,6 +2992,7 @@
                    stdout_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDOUT),
                    stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
                    usec_timeout);
@@ -401,7 +404,7 @@
   *
   * Returns: a newly-allocated string with the absolute path, or %NULL
   **/
-+#if 0
++#ifndef __CloudABI__
  #ifdef G_OS_WIN32
  static gchar *
  inner_find_program_in_path (const gchar *program)
@@ -417,7 +420,7 @@
    gchar *home_dir;
  } UserDatabaseEntry;
  
-+#if 0
++#ifndef __CloudABI__
  static  gchar   *g_user_data_dir = NULL;
  static  gchar  **g_system_data_dirs = NULL;
  static  gchar   *g_user_cache_dir = NULL;
@@ -433,7 +436,7 @@
  #endif
  
  /* HOLDS: g_utils_global_lock */
-+#if 0
++#ifndef __CloudABI__
  static UserDatabaseEntry *
  g_get_user_database_entry (void)
  {
@@ -449,7 +452,7 @@
   *
   * Returns: the current user's home directory
   */
-+#if 0
++#ifndef __CloudABI__
  const gchar *
  g_get_home_dir (void)
  {
@@ -465,7 +468,7 @@
   *
   * Since: 2.8
   */
-+#if 0
++#ifndef __CloudABI__
  const gchar *
  g_get_host_name (void)
  {
@@ -481,7 +484,7 @@
   *               or freed.
   * Since: 2.6
   **/
-+#if 0
++#ifndef __CloudABI__
  const gchar *
  g_get_user_data_dir (void)
  {
@@ -497,7 +500,7 @@
   *               not be modified or freed.
   * Since: 2.6
   **/
-+#if 0
++#ifndef __CloudABI__
  const gchar * const * 
  g_get_system_data_dirs (void)
  {
@@ -579,7 +582,7 @@
    return TRUE;
  }
  
-+#if 0
++#ifndef __CloudABI__
  static gchar*
  parse_libtool_archive (const gchar* libtool_name)
  {
@@ -595,7 +598,7 @@
        return module;
      }
  
-+#if 0
++#ifndef __CloudABI__
    /* check whether we have a readable file right away */
    if (g_file_test (file_name, G_FILE_TEST_IS_REGULAR))
      name = g_strdup (file_name);
@@ -611,7 +614,7 @@
    if (name)
      {
        /* if it's a libtool archive, figure library file to load */
-+#if 0
++#ifndef __CloudABI__
        if (str_check_suffix (name, ".la")) /* libtool archive? */
  	{
  	  gchar *real_name = parse_libtool_archive (name);

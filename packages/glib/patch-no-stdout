@@ -4,7 +4,7 @@
   * use g_log(), or the convenience functions g_message(), g_warning()
   * and g_error().
   */
-+#if 0
++#ifndef __CloudABI__
  void
  g_print (const gchar *format,
           ...)
@@ -18,23 +18,25 @@
   * g_set_printerr_handler:
 --- glib/gmessages.h
 +++ glib/gmessages.h
-@@ -262,9 +262,6 @@
+@@ -261,9 +261,11 @@
+  * These are called with the complete formatted string to output.
   */
  typedef void    (*GPrintFunc)           (const gchar    *string);
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--void            g_print                 (const gchar    *format,
--                                         ...) G_GNUC_PRINTF (1, 2);
--GLIB_AVAILABLE_IN_ALL
+ void            g_print                 (const gchar    *format,
+                                          ...) G_GNUC_PRINTF (1, 2);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  GPrintFunc      g_set_print_handler     (GPrintFunc      func);
  GLIB_AVAILABLE_IN_ALL
- void            g_printerr              (const gchar    *format,
 --- glib/gnulib/printf.c
 +++ glib/gnulib/printf.c
 @@ -32,6 +32,7 @@
  #include "vasnprintf.h"
  #include "printf.h"
  
-+#if 0
++#ifndef __CloudABI__
  int _g_gnulib_printf (char const *format, ...)
  {
    va_list args;
@@ -50,7 +52,7 @@
    return retval;
  }
  
-+#if 0
++#ifndef __CloudABI__
  int _g_gnulib_vprintf (char const *format, va_list args)         
  {
    return _g_gnulib_vfprintf (stdout, format, args);
@@ -61,21 +63,25 @@
  {
 --- glib/gnulib/printf.h
 +++ glib/gnulib/printf.h
-@@ -20,8 +20,6 @@
+@@ -20,8 +20,10 @@
  #include <stdarg.h>
  #include <stdio.h>
  
--int _g_gnulib_printf    (char const *format, 
--			 ...);
++#ifndef __CloudABI__
+ int _g_gnulib_printf    (char const *format, 
+ 			 ...);
++#endif
  int _g_gnulib_fprintf   (FILE        *file,
  			 char const *format, 
  			 ...);
-@@ -32,8 +30,6 @@
+@@ -32,8 +34,10 @@
  			 size_t       n,
  			 char const *format, 
  			 ...);
--int _g_gnulib_vprintf   (char const *format,
--			 va_list      args);            
++#ifndef __CloudABI__
+ int _g_gnulib_vprintf   (char const *format,
+ 			 va_list      args);            
++#endif
  int _g_gnulib_vfprintf  (FILE        *file,
  			 char const *format,
  			 va_list      args);
@@ -96,7 +102,7 @@
   *
   * Since: 2.2
   **/
-+#if 0
++#ifndef __CloudABI__
  gint
  g_printf (gchar const *format,
  	  ...)
@@ -112,7 +118,7 @@
   *
   * Since: 2.2
   **/
-+#if 0
++#ifndef __CloudABI__
  gint
  g_vprintf (gchar const *format,
  	   va_list      args)
@@ -126,26 +132,30 @@
   * g_vfprintf:
 --- glib/gprintf.h
 +++ glib/gprintf.h
-@@ -25,9 +25,6 @@
+@@ -24,9 +24,11 @@
+ 
  G_BEGIN_DECLS
  
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--gint                  g_printf    (gchar const *format,
--                                   ...) G_GNUC_PRINTF (1, 2);
--GLIB_AVAILABLE_IN_ALL
+ gint                  g_printf    (gchar const *format,
+                                    ...) G_GNUC_PRINTF (1, 2);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  gint                  g_fprintf   (FILE        *file,
  				   gchar const *format,
- 				   ...) G_GNUC_PRINTF (2, 3);
-@@ -37,9 +34,6 @@
+@@ -36,9 +38,11 @@
+ 				   gchar const *format,
  				   ...) G_GNUC_PRINTF (2, 3);
  
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--gint                  g_vprintf   (gchar const *format,
--                                   va_list      args) G_GNUC_PRINTF(1, 0);
--GLIB_AVAILABLE_IN_ALL
+ gint                  g_vprintf   (gchar const *format,
+                                    va_list      args) G_GNUC_PRINTF(1, 0);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  gint                  g_vfprintf  (FILE        *file,
  				   gchar const *format,
- 				   va_list      args) G_GNUC_PRINTF(2, 0);
 --- glib/gstrfuncs.c
 +++ glib/gstrfuncs.c
 @@ -1291,7 +1291,7 @@

@@ -4,7 +4,7 @@
   *
   * Since: 2.4
   */
-+#if 0
++#ifndef __CloudABI__
  gboolean
  g_setenv (const gchar *variable,
            const gchar *value,
@@ -18,14 +18,16 @@
  #define environ (*_NSGetEnviron())
 --- glib/genviron.h
 +++ glib/genviron.h
-@@ -36,10 +36,6 @@
+@@ -35,10 +35,12 @@
+ 
  GLIB_AVAILABLE_IN_ALL
  const gchar * g_getenv           (const gchar  *variable);
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--gboolean      g_setenv           (const gchar  *variable,
--                                  const gchar  *value,
--                                  gboolean      overwrite);
--GLIB_AVAILABLE_IN_ALL
+ gboolean      g_setenv           (const gchar  *variable,
+                                   const gchar  *value,
+                                   gboolean      overwrite);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  void          g_unsetenv         (const gchar  *variable);
  GLIB_AVAILABLE_IN_ALL
- gchar **      g_listenv          (void);

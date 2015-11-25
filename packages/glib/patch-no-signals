@@ -4,7 +4,7 @@
   *
   * Since: 2.30
   */
-+#if 0
++#ifndef __CloudABI__
  GSource *
  g_unix_signal_source_new (int signum)
  {
@@ -18,35 +18,31 @@
  {
 --- glib/glib-unix.h
 +++ glib/glib-unix.h
-@@ -66,20 +66,8 @@
+@@ -66,6 +66,7 @@
                                      gboolean   nonblock,
                                      GError   **error);
  
--GLIB_AVAILABLE_IN_2_30
--GSource *g_unix_signal_source_new  (gint signum);
++#ifndef __CloudABI__
+ GLIB_AVAILABLE_IN_2_30
+ GSource *g_unix_signal_source_new  (gint signum);
  
--GLIB_AVAILABLE_IN_2_30
--guint    g_unix_signal_add_full    (gint           priority,
--                                    gint           signum,
--                                    GSourceFunc    handler,
--                                    gpointer       user_data,
--                                    GDestroyNotify notify);
--
--GLIB_AVAILABLE_IN_2_30
--guint    g_unix_signal_add         (gint        signum,
--                                    GSourceFunc handler,
--                                    gpointer    user_data);
-+
+@@ -80,6 +81,7 @@
+ guint    g_unix_signal_add         (gint        signum,
+                                     GSourceFunc handler,
+                                     gpointer    user_data);
++#endif
  
  /**
   * GUnixFDSourceFunc:
 --- glib/gmain-internal.h
 +++ glib/gmain-internal.h
-@@ -26,7 +26,6 @@
+@@ -26,7 +26,9 @@
  
  G_BEGIN_DECLS
  
--GSource *_g_main_create_unix_signal_watch (int signum);
++#ifndef __CloudABI__
+ GSource *_g_main_create_unix_signal_watch (int signum);
++#endif
  
  G_END_DECLS
  
@@ -57,7 +53,7 @@
  static GMainContext *default_main_context;
  
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
  
  
  /* UNIX signals work by marking one of these variables then waking the
@@ -65,7 +61,7 @@
    G_UNLOCK(main_context_list);
  }
  
-+#if 0
++#ifndef __CloudABI__
  static void
  dispatch_unix_signals_unlocked (void)
  {
@@ -81,7 +77,7 @@
    return again;
  }
  
-+#if 0
++#ifndef __CloudABI__
  static void
  ref_unix_signal_handler_unlocked (int signum)
  {
@@ -98,7 +94,7 @@
  }
  
 -#ifndef G_OS_WIN32
-+#if 0
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
  
  static void
  g_unix_signal_handler (int signum)
@@ -106,7 +102,7 @@
   *
   * Since: 2.4
   **/
-+#if 0
++#ifndef __CloudABI__
  GSource *
  g_child_watch_source_new (GPid pid)
  {
@@ -123,7 +119,7 @@
        g_main_context_iteration (glib_worker_context, TRUE);
  
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
        if (any_unix_signal_pending)
          dispatch_unix_signals ();
  #endif
@@ -132,7 +128,7 @@
      {
        /* mask all signals in the worker thread */
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
        sigset_t prev_mask;
        sigset_t all;
  
@@ -141,43 +137,46 @@
        glib_worker_context = g_main_context_new ();
        g_thread_new ("gmain", glib_worker_main, NULL);
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
        pthread_sigmask (SIG_SETMASK, &prev_mask, NULL);
  #endif
        g_once_init_leave (&initialised, TRUE);
 --- glib/gmain.h
 +++ glib/gmain.h
-@@ -524,8 +524,6 @@
+@@ -523,8 +523,10 @@
+  */
  GLIB_AVAILABLE_IN_ALL
  GSource *g_idle_source_new        (void);
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--GSource *g_child_watch_source_new (GPid pid);
--GLIB_AVAILABLE_IN_ALL
+ GSource *g_child_watch_source_new (GPid pid);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  GSource *g_timeout_source_new     (guint interval);
  GLIB_AVAILABLE_IN_ALL
- GSource *g_timeout_source_new_seconds (guint interval);
-@@ -571,16 +569,6 @@
+@@ -570,6 +572,7 @@
+ guint    g_timeout_add_seconds      (guint           interval,
                                       GSourceFunc     function,
                                       gpointer        data);
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--guint    g_child_watch_add_full     (gint            priority,
--                                     GPid            pid,
--                                     GChildWatchFunc function,
--                                     gpointer        data,
--                                     GDestroyNotify  notify);
--GLIB_AVAILABLE_IN_ALL
--guint    g_child_watch_add          (GPid            pid,
--                                     GChildWatchFunc function,
--                                     gpointer        data);
--GLIB_AVAILABLE_IN_ALL
+ guint    g_child_watch_add_full     (gint            priority,
+                                      GPid            pid,
+@@ -580,6 +583,7 @@
+ guint    g_child_watch_add          (GPid            pid,
+                                      GChildWatchFunc function,
+                                      gpointer        data);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  guint    g_idle_add                 (GSourceFunc     function,
                                       gpointer        data);
- GLIB_AVAILABLE_IN_ALL
-@@ -607,7 +595,6 @@
+@@ -607,7 +611,9 @@
  GLIB_VAR GSourceFuncs g_child_watch_funcs;
  GLIB_VAR GSourceFuncs g_idle_funcs;
  #ifdef G_OS_UNIX
--GLIB_VAR GSourceFuncs g_unix_signal_funcs;
++#ifndef __CloudABI__
+ GLIB_VAR GSourceFuncs g_unix_signal_funcs;
++#endif
  GLIB_VAR GSourceFuncs g_unix_fd_source_funcs;
  #endif
  
@@ -188,24 +187,27 @@
  #endif
        else if (source->source_funcs == &g_timeout_funcs ||
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
                 source->source_funcs == &g_unix_signal_funcs ||
  #endif
                 source->source_funcs == &g_idle_funcs)
-@@ -251,7 +251,6 @@
+@@ -251,8 +251,10 @@
    if (!source->source_funcs->closure_callback &&
  #ifdef G_OS_UNIX
        source->source_funcs != &g_unix_fd_source_funcs &&
--      source->source_funcs != &g_unix_signal_funcs &&
++#ifndef __CloudABI__
+       source->source_funcs != &g_unix_signal_funcs &&
  #endif
++#endif
        source->source_funcs != &g_child_watch_funcs &&
        source->source_funcs != &g_io_watch_funcs &&
-@@ -274,7 +273,7 @@
+       source->source_funcs != &g_timeout_funcs &&
+@@ -274,7 +276,7 @@
        if (marshal)
  	g_closure_set_marshal (closure, marshal);
        else if (source->source_funcs == &g_idle_funcs ||
 -#ifdef G_OS_UNIX
-+#if 0
++#if defined(G_OS_UNIX) && !defined(__CloudABI__)
                 source->source_funcs == &g_unix_signal_funcs ||
  #endif
                 source->source_funcs == &g_timeout_funcs)

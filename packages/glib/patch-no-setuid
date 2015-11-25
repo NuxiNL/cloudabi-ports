@@ -5,7 +5,7 @@
     */
    return issetugid ();
 -#elif defined(G_OS_UNIX)
-+#elif 0
++#elif defined(G_OS_UNIX) && !defined(__CloudABI__)
    uid_t ruid, euid, suid; /* Real, effective and saved user ID's */
    gid_t rgid, egid, sgid; /* Real, effective and saved group ID's */
  

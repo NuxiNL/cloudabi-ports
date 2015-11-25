@@ -4,7 +4,7 @@
   *
   * Since: 2.38
   */
-+#if 0
++#ifndef __CloudABI__
  GDir *
  g_dir_open_with_errno (const gchar *path,
                         guint        flags)
@@ -18,43 +18,51 @@
  
 --- glib/gdir.h
 +++ glib/gdir.h
-@@ -37,10 +37,6 @@
+@@ -36,10 +36,12 @@
+ 
  typedef struct _GDir GDir;
  
++#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
--GDir    *                g_dir_open           (const gchar  *path,
--					       guint         flags,
--					       GError      **error);
--GLIB_AVAILABLE_IN_ALL
+ GDir    *                g_dir_open           (const gchar  *path,
+ 					       guint         flags,
+ 					       GError      **error);
++#endif
+ GLIB_AVAILABLE_IN_ALL
  const gchar *            g_dir_read_name      (GDir         *dir);
  GLIB_AVAILABLE_IN_ALL
- void                     g_dir_rewind         (GDir         *dir);
 --- glib/glib-private.c
 +++ glib/glib-private.c
-@@ -43,7 +43,6 @@
+@@ -43,7 +43,9 @@
      g_check_setuid,
      g_main_context_new_with_next_id,
  
--    g_dir_open_with_errno,
++#ifndef __CloudABI__
+     g_dir_open_with_errno,
++#endif
      g_dir_new_from_dirp
    };
  
 --- glib/glib-private.h
 +++ glib/glib-private.h
-@@ -37,7 +37,6 @@
+@@ -37,7 +37,9 @@
  gchar *_glib_get_locale_dir    (void);
  #endif
  
--GDir * g_dir_open_with_errno (const gchar *path, guint flags);
++#ifndef __CloudABI__
+ GDir * g_dir_open_with_errno (const gchar *path, guint flags);
++#endif
  GDir * g_dir_new_from_dirp (gpointer dirp);
  
  #define GLIB_PRIVATE_CALL(symbol) (glib__private__()->symbol)
-@@ -57,8 +56,6 @@
+@@ -57,8 +59,10 @@
    gboolean              (* g_check_setuid)              (void);
    GMainContext *        (* g_main_context_new_with_next_id) (guint next_id);
  
--  GDir *                (* g_dir_open_with_errno)       (const gchar *path,
--                                                         guint        flags);
++#ifndef __CloudABI__
+   GDir *                (* g_dir_open_with_errno)       (const gchar *path,
+                                                          guint        flags);
++#endif
    GDir *                (* g_dir_new_from_dirp)         (gpointer dirp);
  
    /* Add other private functions here, initialize them in glib-private.c */

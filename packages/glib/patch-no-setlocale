@@ -1,44 +1,57 @@
 --- glib/gdate.c
 +++ glib/gdate.c
-@@ -979,7 +979,7 @@
+@@ -979,7 +979,11 @@
  g_date_prepare_to_parse (const gchar      *str, 
                           GDateParseTokens *pt)
  {
--  const gchar *locale = setlocale (LC_TIME, NULL);
++#ifndef __CloudABI__
+   const gchar *locale = setlocale (LC_TIME, NULL);
++#else
 +  const gchar *locale = "C";
++#endif
    gboolean recompute_localeinfo = FALSE;
    GDate d;
    
 --- glib/ggettext.c
 +++ glib/ggettext.c
-@@ -315,7 +315,7 @@
+@@ -315,8 +315,12 @@
        const char *default_domain     = textdomain (NULL);
        const char *translator_comment = gettext ("");
  #ifndef G_OS_WIN32
--      const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
-+      const char *translate_locale   = "C";
++#ifndef __CloudABI__
+       const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
  #else
++      const char *translate_locale   = "C";
++#endif
++#else
        const char *translate_locale   = g_win32_getlocale ();
  #endif
+       /* We should NOT translate only if all the following hold:
 --- glib/gtranslit.c
 +++ glib/gtranslit.c
-@@ -290,7 +290,7 @@
+@@ -290,7 +290,11 @@
      {
        const gchar *locale;
  
--      locale = setlocale (LC_CTYPE, NULL);
++#ifndef __CloudABI__
+       locale = setlocale (LC_CTYPE, NULL);
++#else
 +      locale = "C";
++#endif
        item_id = lookup_item_id_for_locale (locale);
        done = TRUE;
      }
 --- glib/guniprop.c
 +++ glib/guniprop.c
-@@ -697,7 +697,7 @@
+@@ -697,7 +697,11 @@
    locale[1] = tem[1];
    g_free (tem);
  #else
--  const char *locale = setlocale (LC_CTYPE, NULL);
++#ifndef __CloudABI__
+   const char *locale = setlocale (LC_CTYPE, NULL);
++#else
 +  const char *locale = "C";
++#endif
  
    if (locale == NULL)
      return LOCALE_NORMAL;
