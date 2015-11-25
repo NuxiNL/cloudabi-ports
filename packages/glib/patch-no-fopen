@@ -491,15 +491,17 @@
      {
 --- glib/gutils.c
 +++ glib/gutils.c
-@@ -39,7 +39,6 @@
+@@ -39,7 +39,9 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #ifdef G_OS_UNIX
--#include <pwd.h>
++#ifndef __CloudABI__
+ #include <pwd.h>
++#endif
  #include <unistd.h>
  #endif
  #include <sys/types.h>
-@@ -325,6 +324,7 @@
+@@ -325,6 +327,7 @@
   *
   * Returns: a newly-allocated string with the absolute path, or %NULL
   **/
@@ -507,7 +509,7 @@
  #ifdef G_OS_WIN32
  static gchar *
  inner_find_program_in_path (const gchar *program)
-@@ -482,6 +482,7 @@
+@@ -482,6 +485,7 @@
  
    return NULL;
  }
@@ -515,7 +517,7 @@
  
  /**
   * g_bit_nth_lsf:
-@@ -522,6 +523,7 @@
+@@ -522,6 +526,7 @@
   * Returns: the number of bits used to hold @number
   */
  
@@ -523,7 +525,7 @@
  G_LOCK_DEFINE_STATIC (g_utils_global);
  
  typedef struct
-@@ -993,6 +995,7 @@
+@@ -993,6 +998,7 @@
  
    return hostname;
  }
@@ -531,7 +533,7 @@
  
  G_LOCK_DEFINE_STATIC (g_prgname);
  static gchar *g_prgname = NULL;
-@@ -1150,6 +1153,7 @@
+@@ -1150,6 +1156,7 @@
   *               or freed.
   * Since: 2.6
   **/
@@ -539,7 +541,7 @@
  const gchar *
  g_get_user_data_dir (void)
  {
-@@ -2015,6 +2019,7 @@
+@@ -2015,6 +2022,7 @@
  
    return (const gchar * const *) conf_dir_vector;
  }
