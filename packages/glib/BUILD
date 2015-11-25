@@ -26,6 +26,21 @@ package(
     build_cmd=build,
 )
 
+
+def host_build(ctx):
+    build = ctx.extract().autoconf(['--disable-dtrace'])
+    build.make()
+    build.make_install().install()
+
+host_package(
+    name='glib',
+    version='2.46.2',
+    homepage='https://developer.gnome.org/glib/',
+    maintainer='info@nuxi.nl',
+    lib_depends={'gettext'},
+    build_cmd=host_build,
+)
+
 distfile(
     name='glib-2.46.2.tar.xz',
     checksum='5031722e37036719c1a09163cc6cf7c326e4c4f1f1e074b433c156862bd733db',
