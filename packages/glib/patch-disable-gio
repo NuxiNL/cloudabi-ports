@@ -1,0 +1,21 @@
+--- Makefile.in
++++ Makefile.in
+@@ -833,7 +833,7 @@
+ 
+ @ENABLE_INSTALLED_TESTS_TRUE@installed_test_meta_DATA = $(installed_testcases:=.test)
+ ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
+-SUBDIRS = . m4macros glib gmodule gthread gobject gio po docs tests
++SUBDIRS = . m4macros glib gmodule gthread gobject po docs tests
+ DIST_SUBDIRS = $(SUBDIRS) build
+ bin_SCRIPTS = glib-gettextize
+ AM_CPPFLAGS = \
+@@ -845,8 +845,7 @@
+ CONFIGURE_DEPENDENCIES = acglib.m4
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = glib-2.0.pc gobject-2.0.pc gmodule-2.0.pc \
+-	gmodule-export-2.0.pc gmodule-no-export-2.0.pc gthread-2.0.pc \
+-	gio-2.0.pc $(am__append_16) $(am__append_17)
++	gmodule-export-2.0.pc gmodule-no-export-2.0.pc gthread-2.0.pc
+ 
+ # build documentation when doing distcheck
+ DISTCHECK_CONFIGURE_FLAGS = --enable-debug --enable-gtk-doc --enable-man --disable-maintainer-mode

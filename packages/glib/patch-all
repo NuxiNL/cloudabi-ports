@@ -1,0 +1,1790 @@
+--- gio/gioenums.h
++++ gio/gioenums.h
+@@ -844,9 +844,7 @@
+ typedef enum /*< flags >*/
+ {
+   G_SOCKET_MSG_NONE,
+-  G_SOCKET_MSG_OOB = GLIB_SYSDEF_MSG_OOB,
+   G_SOCKET_MSG_PEEK = GLIB_SYSDEF_MSG_PEEK,
+-  G_SOCKET_MSG_DONTROUTE = GLIB_SYSDEF_MSG_DONTROUTE
+ } GSocketMsgFlags;
+ 
+ /**
+--- glib/gbacktrace.c
++++ glib/gbacktrace.c
+@@ -44,7 +44,6 @@
+ 
+ #ifdef G_OS_UNIX
+ #include <unistd.h>
+-#include <sys/wait.h>
+ #ifdef HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+ #endif /* HAVE_SYS_SELECT_H */
+@@ -80,7 +79,7 @@
+ #endif
+ 
+ 
+-#ifndef G_OS_WIN32
++#if 0
+ static void stack_trace (char **args);
+ #endif
+ 
+@@ -141,6 +140,8 @@
+ void
+ g_on_error_query (const gchar *prg_name)
+ {
++  abort();
++#if 0
+ #ifndef G_OS_WIN32
+   static const gchar * const query1 = "[E]xit, [H]alt";
+   static const gchar * const query2 = ", show [S]tack trace";
+@@ -205,6 +206,7 @@
+               MB_OK|MB_ICONERROR);
+   _exit(0);
+ #endif
++#endif
+ }
+ 
+ /**
+@@ -223,6 +225,8 @@
+ void
+ g_on_error_stack_trace (const gchar *prg_name)
+ {
++  abort();
++#if 0
+ #if defined(G_OS_UNIX)
+   pid_t pid;
+   gchar buf[16];
+@@ -256,6 +260,7 @@
+   else
+     abort ();
+ #endif
++#endif
+ }
+ 
+ #ifndef G_OS_WIN32
+@@ -268,6 +273,7 @@
+   stack_trace_done = TRUE;
+ }
+ 
++#if 0
+ static void
+ stack_trace (char **args)
+ {
+@@ -373,5 +379,6 @@
+   close (out_fd[1]);
+   _exit (0);
+ }
++#endif
+ 
+ #endif /* !G_OS_WIN32 */
+--- glib/gbookmarkfile.c
++++ glib/gbookmarkfile.c
+@@ -1780,6 +1780,7 @@
+  *
+  * Since: 2.12
+  */
++#if 0
+ gboolean
+ g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
+ 				     const gchar    *file,
+@@ -1842,6 +1843,7 @@
+ 
+   return found_file;
+ }
++#endif
+ 
+ 
+ /**
+@@ -1891,6 +1893,7 @@
+  *
+  * Since: 2.12
+  */
++#if 0
+ gboolean
+ g_bookmark_file_to_file (GBookmarkFile  *bookmark,
+ 			 const gchar    *filename,
+@@ -1928,6 +1931,7 @@
+   
+   return retval;
+ }
++#endif
+ 
+ static BookmarkItem *
+ g_bookmark_file_lookup_item (GBookmarkFile *bookmark,
+--- glib/gbookmarkfile.h
++++ glib/gbookmarkfile.h
+@@ -92,18 +92,9 @@
+ 						    gsize           length,
+ 						    GError        **error);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean       g_bookmark_file_load_from_data_dirs (GBookmarkFile  *bookmark,
+-						    const gchar    *file,
+-						    gchar         **full_path,
+-						    GError        **error);
+-GLIB_AVAILABLE_IN_ALL
+ gchar *        g_bookmark_file_to_data             (GBookmarkFile  *bookmark,
+ 						    gsize          *length,
+ 						    GError        **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_ALL
+-gboolean       g_bookmark_file_to_file             (GBookmarkFile  *bookmark,
+-						    const gchar    *filename,
+-						    GError        **error);
+ 
+ GLIB_AVAILABLE_IN_ALL
+ void           g_bookmark_file_set_title           (GBookmarkFile  *bookmark,
+--- glib/gcharset.c
++++ glib/gcharset.c
+@@ -234,6 +234,7 @@
+ static void
+ read_aliases (gchar *file)
+ {
++#if 0
+   FILE *fp;
+   char buf[256];
+ 
+@@ -281,6 +282,7 @@
+       }
+     }
+   fclose (fp);
++#endif
+ }
+ 
+ #endif
+--- glib/gdate.c
++++ glib/gdate.c
+@@ -979,7 +979,7 @@
+ g_date_prepare_to_parse (const gchar      *str, 
+                          GDateParseTokens *pt)
+ {
+-  const gchar *locale = setlocale (LC_TIME, NULL);
++  const gchar *locale = "C";
+   gboolean recompute_localeinfo = FALSE;
+   GDate d;
+   
+--- glib/gdir.c
++++ glib/gdir.c
+@@ -82,6 +82,7 @@
+  *
+  * Since: 2.38
+  */
++#if 0
+ GDir *
+ g_dir_open_with_errno (const gchar *path,
+                        guint        flags)
+@@ -158,6 +159,7 @@
+ 
+   return dir;
+ }
++#endif
+ 
+ #if defined (G_OS_WIN32) && !defined (_WIN64)
+ 
+--- glib/gdir.h
++++ glib/gdir.h
+@@ -37,10 +37,6 @@
+ typedef struct _GDir GDir;
+ 
+ GLIB_AVAILABLE_IN_ALL
+-GDir    *                g_dir_open           (const gchar  *path,
+-					       guint         flags,
+-					       GError      **error);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar *            g_dir_read_name      (GDir         *dir);
+ GLIB_AVAILABLE_IN_ALL
+ void                     g_dir_rewind         (GDir         *dir);
+--- glib/genviron.c
++++ glib/genviron.c
+@@ -270,6 +270,7 @@
+  *
+  * Since: 2.4
+  */
++#if 0
+ gboolean
+ g_setenv (const gchar *variable,
+           const gchar *value,
+@@ -299,6 +300,7 @@
+ #endif
+   return result == 0;
+ }
++#endif
+ 
+ #ifdef HAVE__NSGETENVIRON
+ #define environ (*_NSGetEnviron())
+--- glib/genviron.h
++++ glib/genviron.h
+@@ -36,10 +36,6 @@
+ GLIB_AVAILABLE_IN_ALL
+ const gchar * g_getenv           (const gchar  *variable);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean      g_setenv           (const gchar  *variable,
+-                                  const gchar  *value,
+-                                  gboolean      overwrite);
+-GLIB_AVAILABLE_IN_ALL
+ void          g_unsetenv         (const gchar  *variable);
+ GLIB_AVAILABLE_IN_ALL
+ gchar **      g_listenv          (void);
+--- glib/gfileutils.c
++++ glib/gfileutils.c
+@@ -205,6 +205,7 @@
+  *
+  * Since: 2.8
+  */
++#if 0
+ int
+ g_mkdir_with_parents (const gchar *pathname,
+ 		      int          mode)
+@@ -263,6 +264,7 @@
+ 
+   return 0;
+ }
++#endif
+ 
+ /**
+  * g_file_test:
+@@ -313,6 +315,7 @@
+  *
+  * Returns: whether a test was %TRUE
+  **/
++#if 0
+ gboolean
+ g_file_test (const gchar *filename,
+              GFileTest    test)
+@@ -457,6 +460,7 @@
+   return FALSE;
+ #endif
+ }
++#endif
+ 
+ G_DEFINE_QUARK (g-file-error-quark, g_file_error)
+ 
+@@ -762,6 +766,7 @@
+   return FALSE;
+ }
+ 
++#if 0
+ #ifndef G_OS_WIN32
+ 
+ static gboolean
+@@ -1255,6 +1260,7 @@
+   g_free (tmp_filename);
+   return retval;
+ }
++#endif
+ 
+ /*
+  * get_tmp_file based on the mkstemp implementation from the GNU C library.
+@@ -1331,6 +1337,7 @@
+  * they appear compatible, they may be vararg functions and calling
+  * varargs functions through a non-varargs type is undefined.
+  */
++#if 0
+ static gint
+ wrap_g_mkdir (const gchar *filename,
+               int          flags G_GNUC_UNUSED,
+@@ -1471,6 +1478,7 @@
+ {
+   return g_mkstemp_full (tmpl, O_RDWR | O_BINARY, 0600);
+ }
++#endif
+ 
+ static gint
+ g_get_tmp_name (const gchar      *tmpl,
+@@ -1578,6 +1586,7 @@
+  *     where there is a difference. The file handle should be closed with
+  *     close(). In case of errors, -1 is returned and @error will be set.
+  */
++#if 0
+ gint
+ g_file_open_tmp (const gchar  *tmpl,
+                  gchar       **name_used,
+@@ -1601,6 +1610,7 @@
+ 
+   return result;
+ }
++#endif
+ 
+ /**
+  * g_dir_make_tmp:
+@@ -1627,6 +1637,7 @@
+  *
+  * Since: 2.30
+  */
++#if 0
+ gchar *
+ g_dir_make_tmp (const gchar  *tmpl,
+                 GError      **error)
+@@ -1638,6 +1649,7 @@
+   else
+     return fulltemplate;
+ }
++#endif
+ 
+ static gchar *
+ g_build_path_va (const gchar  *separator,
+@@ -2432,6 +2444,7 @@
+  *
+  * Returns: the current directory
+  */
++#if 0
+ gchar *
+ g_get_current_dir (void)
+ {
+@@ -2499,6 +2512,7 @@
+ 
+ #endif /* !G_OS_WIN32 */
+ }
++#endif
+ 
+ 
+ /* NOTE : Keep this part last to ensure nothing in this file uses thn
+--- glib/gfileutils.h
++++ glib/gfileutils.h
+@@ -79,45 +79,19 @@
+ GFileError g_file_error_from_errno (gint err_no);
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gboolean g_file_test         (const gchar  *filename,
+-                              GFileTest     test);
+-GLIB_AVAILABLE_IN_ALL
+ gboolean g_file_get_contents (const gchar  *filename,
+                               gchar       **contents,
+                               gsize        *length,
+                               GError      **error);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean g_file_set_contents (const gchar *filename,
+-                              const gchar *contents,
+-                              gssize         length,
+-                              GError       **error);
+-GLIB_AVAILABLE_IN_ALL
+ gchar   *g_file_read_link    (const gchar  *filename,
+                               GError      **error);
+ 
+ /* Wrapper / workalike for mkdtemp() */
+-GLIB_AVAILABLE_IN_2_30
+-gchar   *g_mkdtemp            (gchar        *tmpl);
+-GLIB_AVAILABLE_IN_2_30
+-gchar   *g_mkdtemp_full       (gchar        *tmpl,
+-                               gint          mode);
+ 
+ /* Wrapper / workalike for mkstemp() */
+-GLIB_AVAILABLE_IN_ALL
+-gint     g_mkstemp            (gchar        *tmpl);
+-GLIB_AVAILABLE_IN_ALL
+-gint     g_mkstemp_full       (gchar        *tmpl,
+-                               gint          flags,
+-                               gint          mode);
+ 
+ /* Wrappers for g_mkstemp and g_mkdtemp() */
+-GLIB_AVAILABLE_IN_ALL
+-gint     g_file_open_tmp      (const gchar  *tmpl,
+-                               gchar       **name_used,
+-                               GError      **error);
+-GLIB_AVAILABLE_IN_2_30
+-gchar   *g_dir_make_tmp       (const gchar  *tmpl,
+-                               GError      **error);
+ 
+ GLIB_AVAILABLE_IN_ALL
+ gchar   *g_build_path         (const gchar *separator,
+@@ -133,9 +107,6 @@
+ GLIB_AVAILABLE_IN_ALL
+ gchar   *g_build_filenamev    (gchar      **args) G_GNUC_MALLOC;
+ 
+-GLIB_AVAILABLE_IN_ALL
+-gint     g_mkdir_with_parents (const gchar *pathname,
+-                               gint         mode);
+ 
+ #ifdef G_OS_WIN32
+ 
+@@ -171,8 +142,6 @@
+ #endif
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gchar *g_get_current_dir   (void);
+-GLIB_AVAILABLE_IN_ALL
+ gchar *g_path_get_basename (const gchar *file_name) G_GNUC_MALLOC;
+ GLIB_AVAILABLE_IN_ALL
+ gchar *g_path_get_dirname  (const gchar *file_name) G_GNUC_MALLOC;
+--- glib/ggettext.c
++++ glib/ggettext.c
+@@ -95,6 +95,7 @@
+ static void
+ ensure_gettext_initialized (void)
+ {
++#if 0
+   static gsize initialised;
+ 
+   if (g_once_init_enter (&initialised))
+@@ -111,6 +112,7 @@
+ #    endif
+       g_once_init_leave (&initialised, TRUE);
+     }
++#endif
+ }
+ 
+ /**
+@@ -312,10 +314,10 @@
+     {
+       gboolean should_translate = TRUE;
+ 
+-      const char *default_domain     = textdomain (NULL);
++      const char *default_domain     = NULL;
+       const char *translator_comment = gettext ("");
+ #ifndef G_OS_WIN32
+-      const char *translate_locale   = setlocale (LC_MESSAGES, NULL);
++      const char *translate_locale   = "C";
+ #else
+       const char *translate_locale   = g_win32_getlocale ();
+ #endif
+@@ -418,6 +420,7 @@
+  *
+  * Since: 2.26
+  */
++#if 0
+ const gchar *
+ g_dcgettext (const gchar *domain,
+              const gchar *msgid,
+@@ -428,6 +431,7 @@
+ 
+   return dcgettext (domain, msgid, category);
+ }
++#endif
+ 
+ /**
+  * g_dngettext:
+--- glib/ggettext.h
++++ glib/ggettext.h
+@@ -41,10 +41,6 @@
+ const gchar *g_dgettext      (const gchar *domain,
+                               const gchar *msgid) G_GNUC_FORMAT(2);
+ GLIB_AVAILABLE_IN_ALL
+-const gchar *g_dcgettext     (const gchar *domain,
+-                              const gchar *msgid,
+-                              gint         category) G_GNUC_FORMAT(2);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar *g_dngettext     (const gchar *domain,
+                               const gchar *msgid,
+                               const gchar *msgid_plural,
+--- glib/giochannel.h
++++ glib/giochannel.h
+@@ -287,10 +287,6 @@
+ 					   gint64        offset,
+ 					   GSeekType     type,
+ 					   GError      **error);
+-GLIB_AVAILABLE_IN_ALL
+-GIOChannel* g_io_channel_new_file         (const gchar  *filename,
+-					   const gchar  *mode,
+-					   GError      **error);
+ 
+ /* Error handling */
+ 
+--- glib/giounix.c
++++ glib/giounix.c
+@@ -441,6 +441,7 @@
+   return flags;
+ }
+ 
++#if 0
+ GIOChannel *
+ g_io_channel_new_file (const gchar *filename,
+                        const gchar *mode,
+@@ -578,6 +579,7 @@
+   ((GIOUnixChannel *) channel)->fd = fid;
+   return channel;
+ }
++#endif
+ 
+ /**
+  * g_io_channel_unix_new:
+--- glib/gkeyfile.c
++++ glib/gkeyfile.c
+@@ -486,10 +486,6 @@
+   gchar *value;
+ };
+ 
+-static gint                  find_file_in_data_dirs            (const gchar            *file,
+-								const gchar           **data_dirs,
+-								gchar                 **output_file,
+-								GError                **error);
+ static gboolean              g_key_file_load_from_fd           (GKeyFile               *key_file,
+ 								gint                    fd,
+ 								GKeyFileFlags           flags,
+@@ -671,6 +667,7 @@
+  * returns the file descriptor to the open file.  It also
+  * outputs the absolute path of the file in output_file.
+  */
++#if 0
+ static gint
+ find_file_in_data_dirs (const gchar   *file,
+                         const gchar  **dirs,
+@@ -745,6 +742,7 @@
+ 
+   return fd;
+ }
++#endif
+ 
+ static gboolean
+ g_key_file_load_from_fd (GKeyFile       *key_file,
+@@ -836,6 +834,7 @@
+  *
+  * Since: 2.6
+  **/
++#if 0
+ gboolean
+ g_key_file_load_from_file (GKeyFile       *key_file,
+ 			   const gchar    *file,
+@@ -869,6 +868,7 @@
+ 
+   return TRUE;
+ }
++#endif
+ 
+ /**
+  * g_key_file_load_from_data:
+@@ -946,6 +946,7 @@
+  *
+  * Since: 2.14
+  **/
++#if 0
+ gboolean
+ g_key_file_load_from_dirs (GKeyFile       *key_file,
+                            const gchar    *file,
+@@ -1057,6 +1058,7 @@
+ 
+   return found_file;
+ }
++#endif
+ 
+ /**
+  * g_key_file_ref: (skip)
+@@ -4411,6 +4413,7 @@
+  *
+  * Since: 2.40
+  */
++#if 0
+ gboolean
+ g_key_file_save_to_file (GKeyFile     *key_file,
+                          const gchar  *filename,
+@@ -4432,3 +4435,4 @@
+ 
+   return success;
+ }
++#endif
+--- glib/gkeyfile.h
++++ glib/gkeyfile.h
+@@ -66,37 +66,15 @@
+ void      g_key_file_set_list_separator     (GKeyFile             *key_file,
+ 					     gchar                 separator);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean  g_key_file_load_from_file         (GKeyFile             *key_file,
+-					     const gchar          *file,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+ gboolean  g_key_file_load_from_data         (GKeyFile             *key_file,
+ 					     const gchar          *data,
+ 					     gsize                 length,
+ 					     GKeyFileFlags         flags,
+ 					     GError              **error);
+ GLIB_AVAILABLE_IN_ALL
+-gboolean g_key_file_load_from_dirs          (GKeyFile             *key_file,
+-					     const gchar	  *file,
+-					     const gchar	 **search_dirs,
+-					     gchar		 **full_path,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+-gboolean g_key_file_load_from_data_dirs     (GKeyFile             *key_file,
+-					     const gchar          *file,
+-					     gchar               **full_path,
+-					     GKeyFileFlags         flags,
+-					     GError              **error);
+-GLIB_AVAILABLE_IN_ALL
+ gchar    *g_key_file_to_data                (GKeyFile             *key_file,
+ 					     gsize                *length,
+ 					     GError              **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_2_40
+-gboolean  g_key_file_save_to_file           (GKeyFile             *key_file,
+-                                             const gchar          *filename,
+-                                             GError              **error);
+ GLIB_AVAILABLE_IN_ALL
+ gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
+ GLIB_AVAILABLE_IN_ALL
+--- glib/glib-init.c
++++ glib/glib-init.c
+@@ -28,6 +28,7 @@
+ #include "gmem.h"       /* for g_mem_gc_friendly */
+ 
+ #include <string.h>
++#include <strings.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <ctype.h>
+--- glib/glib-private.c
++++ glib/glib-private.c
+@@ -43,7 +43,6 @@
+     g_check_setuid,
+     g_main_context_new_with_next_id,
+ 
+-    g_dir_open_with_errno,
+     g_dir_new_from_dirp
+   };
+ 
+--- glib/glib-private.h
++++ glib/glib-private.h
+@@ -37,7 +37,6 @@
+ gchar *_glib_get_locale_dir    (void);
+ #endif
+ 
+-GDir * g_dir_open_with_errno (const gchar *path, guint flags);
+ GDir * g_dir_new_from_dirp (gpointer dirp);
+ 
+ #define GLIB_PRIVATE_CALL(symbol) (glib__private__()->symbol)
+@@ -57,8 +56,6 @@
+   gboolean              (* g_check_setuid)              (void);
+   GMainContext *        (* g_main_context_new_with_next_id) (guint next_id);
+ 
+-  GDir *                (* g_dir_open_with_errno)       (const gchar *path,
+-                                                         guint        flags);
+   GDir *                (* g_dir_new_from_dirp)         (gpointer dirp);
+ 
+   /* Add other private functions here, initialize them in glib-private.c */
+--- glib/glib-unix.c
++++ glib/glib-unix.c
+@@ -212,6 +212,7 @@
+  *
+  * Since: 2.30
+  */
++#if 0
+ GSource *
+ g_unix_signal_source_new (int signum)
+ {
+@@ -281,6 +282,7 @@
+ {
+   return g_unix_signal_add_full (G_PRIORITY_DEFAULT, signum, handler, user_data, NULL);
+ }
++#endif
+ 
+ typedef struct
+ {
+--- glib/glib-unix.h
++++ glib/glib-unix.h
+@@ -26,7 +26,6 @@
+  */
+ #include <unistd.h>
+ #include <errno.h>
+-#include <sys/wait.h>
+ #include <stdlib.h>
+ #include <fcntl.h>
+ 
+@@ -66,20 +65,8 @@
+                                     gboolean   nonblock,
+                                     GError   **error);
+ 
+-GLIB_AVAILABLE_IN_2_30
+-GSource *g_unix_signal_source_new  (gint signum);
+ 
+-GLIB_AVAILABLE_IN_2_30
+-guint    g_unix_signal_add_full    (gint           priority,
+-                                    gint           signum,
+-                                    GSourceFunc    handler,
+-                                    gpointer       user_data,
+-                                    GDestroyNotify notify);
+ 
+-GLIB_AVAILABLE_IN_2_30
+-guint    g_unix_signal_add         (gint        signum,
+-                                    GSourceFunc handler,
+-                                    gpointer    user_data);
+ 
+ /**
+  * GUnixFDSourceFunc:
+--- glib/glib.h
++++ glib/glib.h
+@@ -75,7 +75,6 @@
+ #include <glib/gshell.h>
+ #include <glib/gslice.h>
+ #include <glib/gslist.h>
+-#include <glib/gspawn.h>
+ #include <glib/gstrfuncs.h>
+ #include <glib/gstring.h>
+ #include <glib/gstringchunk.h>
+--- glib/gmain-internal.h
++++ glib/gmain-internal.h
+@@ -26,7 +26,6 @@
+ 
+ G_BEGIN_DECLS
+ 
+-GSource *_g_main_create_unix_signal_watch (int signum);
+ 
+ G_END_DECLS
+ 
+--- glib/gmain.c
++++ glib/gmain.c
+@@ -448,7 +448,7 @@
+ G_LOCK_DEFINE_STATIC (main_loop);
+ static GMainContext *default_main_context;
+ 
+-#ifndef G_OS_WIN32
++#if 0
+ 
+ 
+ /* UNIX signals work by marking one of these variables then waking the
+@@ -4957,6 +4957,7 @@
+   G_UNLOCK(main_context_list);
+ }
+ 
++#if 0
+ static void
+ dispatch_unix_signals_unlocked (void)
+ {
+@@ -5055,6 +5056,7 @@
+   dispatch_unix_signals_unlocked ();
+   G_UNLOCK(unix_signal_lock);
+ }
++#endif
+ 
+ static gboolean
+ g_child_watch_prepare (GSource *source,
+@@ -5122,6 +5124,7 @@
+   return again;
+ }
+ 
++#if 0
+ static void
+ ref_unix_signal_handler_unlocked (int signum)
+ {
+@@ -5198,6 +5201,7 @@
+   unref_unix_signal_handler_unlocked (SIGCHLD);
+   G_UNLOCK (unix_signal_lock);
+ }
++#endif
+ 
+ #endif /* G_OS_WIN32 */
+ 
+@@ -5224,7 +5228,7 @@
+   return FALSE;
+ }
+ 
+-#ifndef G_OS_WIN32
++#if 0
+ 
+ static void
+ g_unix_signal_handler (int signum)
+@@ -5273,6 +5277,7 @@
+  *
+  * Since: 2.4
+  **/
++#if 0
+ GSource *
+ g_child_watch_source_new (GPid pid)
+ {
+@@ -5407,6 +5412,7 @@
+ {
+   return g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, function, data, NULL);
+ }
++#endif
+ 
+ 
+ /* Idle functions */
+@@ -5671,7 +5677,7 @@
+     {
+       g_main_context_iteration (glib_worker_context, TRUE);
+ 
+-#ifdef G_OS_UNIX
++#if 0
+       if (any_unix_signal_pending)
+         dispatch_unix_signals ();
+ #endif
+@@ -5688,7 +5694,7 @@
+   if (g_once_init_enter (&initialised))
+     {
+       /* mask all signals in the worker thread */
+-#ifdef G_OS_UNIX
++#if 0
+       sigset_t prev_mask;
+       sigset_t all;
+ 
+@@ -5697,7 +5703,7 @@
+ #endif
+       glib_worker_context = g_main_context_new ();
+       g_thread_new ("gmain", glib_worker_main, NULL);
+-#ifdef G_OS_UNIX
++#if 0
+       pthread_sigmask (SIG_SETMASK, &prev_mask, NULL);
+ #endif
+       g_once_init_leave (&initialised, TRUE);
+--- glib/gmain.h
++++ glib/gmain.h
+@@ -32,7 +32,6 @@
+ {
+   G_IO_IN	GLIB_SYSDEF_POLLIN,
+   G_IO_OUT	GLIB_SYSDEF_POLLOUT,
+-  G_IO_PRI	GLIB_SYSDEF_POLLPRI,
+   G_IO_ERR	GLIB_SYSDEF_POLLERR,
+   G_IO_HUP	GLIB_SYSDEF_POLLHUP,
+   G_IO_NVAL	GLIB_SYSDEF_POLLNVAL
+@@ -524,8 +523,6 @@
+ GLIB_AVAILABLE_IN_ALL
+ GSource *g_idle_source_new        (void);
+ GLIB_AVAILABLE_IN_ALL
+-GSource *g_child_watch_source_new (GPid pid);
+-GLIB_AVAILABLE_IN_ALL
+ GSource *g_timeout_source_new     (guint interval);
+ GLIB_AVAILABLE_IN_ALL
+ GSource *g_timeout_source_new_seconds (guint interval);
+@@ -571,16 +568,6 @@
+                                      GSourceFunc     function,
+                                      gpointer        data);
+ GLIB_AVAILABLE_IN_ALL
+-guint    g_child_watch_add_full     (gint            priority,
+-                                     GPid            pid,
+-                                     GChildWatchFunc function,
+-                                     gpointer        data,
+-                                     GDestroyNotify  notify);
+-GLIB_AVAILABLE_IN_ALL
+-guint    g_child_watch_add          (GPid            pid,
+-                                     GChildWatchFunc function,
+-                                     gpointer        data);
+-GLIB_AVAILABLE_IN_ALL
+ guint    g_idle_add                 (GSourceFunc     function,
+                                      gpointer        data);
+ GLIB_AVAILABLE_IN_ALL
+@@ -607,7 +594,6 @@
+ GLIB_VAR GSourceFuncs g_child_watch_funcs;
+ GLIB_VAR GSourceFuncs g_idle_funcs;
+ #ifdef G_OS_UNIX
+-GLIB_VAR GSourceFuncs g_unix_signal_funcs;
+ GLIB_VAR GSourceFuncs g_unix_fd_source_funcs;
+ #endif
+ 
+--- glib/gmappedfile.c
++++ glib/gmappedfile.c
+@@ -238,6 +238,7 @@
+  *
+  * Since: 2.8
+  */
++#if 0
+ GMappedFile *
+ g_mapped_file_new (const gchar  *filename,
+ 		   gboolean      writable,
+@@ -271,6 +272,7 @@
+ 
+   return file;
+ }
++#endif
+ 
+ 
+ /**
+--- glib/gmappedfile.h
++++ glib/gmappedfile.h
+@@ -32,10 +32,6 @@
+ typedef struct _GMappedFile GMappedFile;
+ 
+ GLIB_AVAILABLE_IN_ALL
+-GMappedFile *g_mapped_file_new          (const gchar  *filename,
+-				         gboolean      writable,
+-				         GError      **error) G_GNUC_MALLOC;
+-GLIB_AVAILABLE_IN_ALL
+ GMappedFile *g_mapped_file_new_from_fd  (gint          fd,
+ 					 gboolean      writable,
+ 					 GError      **error) G_GNUC_MALLOC;
+--- glib/gmessages.c
++++ glib/gmessages.c
+@@ -1279,7 +1279,7 @@
+ 			 gpointer       unused_data)
+ {
+   gchar level_prefix[STRING_BUFFER_SIZE];
+-#ifndef G_OS_WIN32
++#if 0
+   gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
+ #endif
+   int fd;
+@@ -1295,7 +1295,7 @@
+   if (!message)
+     message = "(NULL) message";
+ 
+-#ifndef G_OS_WIN32
++#if 0
+   format_unsigned (pid_string, getpid (), 10);
+ #endif
+ 
+@@ -1304,7 +1304,7 @@
+   else
+     write_string (fd, "\n** ");
+ 
+-#ifndef G_OS_WIN32
++#if 0
+   write_string (fd, "(process:");
+   write_string (fd, pid_string);
+   write_string (fd, "): ");
+@@ -1451,9 +1451,9 @@
+       const gchar *prg_name = g_get_prgname ();
+       
+       if (!prg_name)
+-	g_string_append_printf (gstring, "(process:%lu): ", (gulong)getpid ());
++	g_string_append_printf (gstring, "(process): ");
+       else
+-	g_string_append_printf (gstring, "(%s:%lu): ", prg_name, (gulong)getpid ());
++	g_string_append_printf (gstring, "(%s): ", prg_name);
+     }
+ 
+   if (log_domain)
+@@ -1536,6 +1536,7 @@
+  * use g_log(), or the convenience functions g_message(), g_warning()
+  * and g_error().
+  */
++#if 0
+ void
+ g_print (const gchar *format,
+          ...)
+@@ -1573,6 +1574,7 @@
+     }
+   g_free (string);
+ }
++#endif
+ 
+ /**
+  * g_set_printerr_handler:
+--- glib/gmessages.h
++++ glib/gmessages.h
+@@ -262,9 +262,6 @@
+  */
+ typedef void    (*GPrintFunc)           (const gchar    *string);
+ GLIB_AVAILABLE_IN_ALL
+-void            g_print                 (const gchar    *format,
+-                                         ...) G_GNUC_PRINTF (1, 2);
+-GLIB_AVAILABLE_IN_ALL
+ GPrintFunc      g_set_print_handler     (GPrintFunc      func);
+ GLIB_AVAILABLE_IN_ALL
+ void            g_printerr              (const gchar    *format,
+--- glib/gnulib/printf.c
++++ glib/gnulib/printf.c
+@@ -32,6 +32,7 @@
+ #include "vasnprintf.h"
+ #include "printf.h"
+ 
++#if 0
+ int _g_gnulib_printf (char const *format, ...)
+ {
+   va_list args;
+@@ -43,6 +44,7 @@
+ 
+   return retval;
+ }
++#endif
+ 
+ int _g_gnulib_fprintf (FILE *file, char const *format, ...)
+ {
+@@ -80,10 +82,12 @@
+   return retval;
+ }
+ 
++#if 0
+ int _g_gnulib_vprintf (char const *format, va_list args)         
+ {
+   return _g_gnulib_vfprintf (stdout, format, args);
+ }
++#endif
+ 
+ int _g_gnulib_vfprintf (FILE *file, char const *format, va_list args)
+ {
+--- glib/gnulib/printf.h
++++ glib/gnulib/printf.h
+@@ -20,8 +20,6 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ 
+-int _g_gnulib_printf    (char const *format, 
+-			 ...);
+ int _g_gnulib_fprintf   (FILE        *file,
+ 			 char const *format, 
+ 			 ...);
+@@ -32,8 +30,6 @@
+ 			 size_t       n,
+ 			 char const *format, 
+ 			 ...);
+-int _g_gnulib_vprintf   (char const *format,
+-			 va_list      args);            
+ int _g_gnulib_vfprintf  (FILE        *file,
+ 			 char const *format,
+ 			 va_list      args);
+--- glib/goption.c
++++ glib/goption.c
+@@ -1088,7 +1088,7 @@
+   gchar *help;
+ 
+   help = g_option_context_get_help (context, main_help, group);
+-  g_print ("%s", help);
++  g_printerr ("%s", help);
+   g_free (help);
+ 
+   exit (0);
+--- glib/gprintf.c
++++ glib/gprintf.c
+@@ -42,6 +42,7 @@
+  *
+  * Since: 2.2
+  **/
++#if 0
+ gint
+ g_printf (gchar const *format,
+ 	  ...)
+@@ -55,6 +56,7 @@
+   
+   return retval;
+ }
++#endif
+ 
+ /**
+  * g_fprintf:
+@@ -180,6 +182,7 @@
+  *
+  * Since: 2.2
+  **/
++#if 0
+ gint
+ g_vprintf (gchar const *format,
+ 	   va_list      args)
+@@ -188,6 +191,7 @@
+ 
+   return _g_vprintf (format, args);
+ }
++#endif
+ 
+ /**
+  * g_vfprintf:
+--- glib/gprintf.h
++++ glib/gprintf.h
+@@ -25,9 +25,6 @@
+ G_BEGIN_DECLS
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gint                  g_printf    (gchar const *format,
+-                                   ...) G_GNUC_PRINTF (1, 2);
+-GLIB_AVAILABLE_IN_ALL
+ gint                  g_fprintf   (FILE        *file,
+ 				   gchar const *format,
+ 				   ...) G_GNUC_PRINTF (2, 3);
+@@ -37,9 +34,6 @@
+ 				   ...) G_GNUC_PRINTF (2, 3);
+ 
+ GLIB_AVAILABLE_IN_ALL
+-gint                  g_vprintf   (gchar const *format,
+-                                   va_list      args) G_GNUC_PRINTF(1, 0);
+-GLIB_AVAILABLE_IN_ALL
+ gint                  g_vfprintf  (FILE        *file,
+ 				   gchar const *format,
+ 				   va_list      args) G_GNUC_PRINTF(2, 0);
+--- glib/grand.c
++++ glib/grand.c
+@@ -40,6 +40,7 @@
+ #include <math.h>
+ #include <errno.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
+ #include "grand.h"
+@@ -218,7 +219,9 @@
+ g_rand_new (void)
+ {
+   guint32 seed[4];
+-#ifdef G_OS_UNIX
++#ifdef __CloudABI__
++  arc4random_buf(seed, sizeof(seed));
++#elif defined(G_OS_UNIX)
+   static gboolean dev_urandom_exists = TRUE;
+   GTimeVal now;
+ 
+--- glib/gslice.c
++++ glib/gslice.c
+@@ -1431,7 +1431,7 @@
+   /* at least, put out "MEMORY-ERROR", in case we segfault during the rest of the function */
+   fputs ("\n***MEMORY-ERROR***: ", stderr);
+   pname = g_get_prgname();
+-  fprintf (stderr, "%s[%ld]: GSlice: ", pname ? pname : "", (long)getpid());
++  fprintf (stderr, "%s: GSlice: ", pname ? pname : "");
+   va_start (args, format);
+   vfprintf (stderr, format, args);
+   va_end (args);
+--- glib/gspawn.c
++++ glib/gspawn.c
+@@ -1,3 +1,4 @@
++#if 0
+ /* gspawn.c - Process launching
+  *
+  *  Copyright 2000 Red Hat, Inc.
+@@ -24,7 +25,6 @@
+ 
+ #include <sys/time.h>
+ #include <sys/types.h>
+-#include <sys/wait.h>
+ #include <unistd.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -1816,3 +1816,4 @@
+ g_spawn_close_pid (GPid pid)
+ {
+ }
++#endif
+--- glib/gspawn.h
++++ glib/gspawn.h
+@@ -1,3 +1,4 @@
++#error "Process spawning not supported in this environment"
+ /* gspawn.h - Process launching
+  *
+  *  Copyright 2000 Red Hat, Inc.
+--- glib/gstdio.c
++++ glib/gstdio.c
+@@ -38,7 +38,6 @@
+ #include <io.h>
+ #include <sys/utime.h>
+ #else
+-#include <utime.h>
+ #include <errno.h>
+ #endif
+ 
+@@ -78,6 +77,7 @@
+  * 
+  * Since: 2.8
+  */
++#if 0
+ int
+ g_access (const gchar *filename,
+ 	  int          mode)
+@@ -831,6 +831,7 @@
+   return utime (filename, utb);
+ #endif
+ }
++#endif
+ 
+ /**
+  * g_close:
+--- glib/gstdio.h
++++ glib/gstdio.h
+@@ -51,6 +51,7 @@
+ 
+ #endif
+ 
++#if 0
+ #if defined(G_OS_UNIX) && !defined(G_STDIO_NO_WRAP_ON_UNIX)
+ 
+ /* Just pass on to the system functions, so there's no potential for data
+@@ -73,19 +74,6 @@
+ #define g_utime   utime
+ #endif
+ 
+-GLIB_AVAILABLE_IN_ALL
+-int g_access (const gchar *filename,
+-	      int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_chdir  (const gchar *path);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_unlink (const gchar *filename);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_rmdir  (const gchar *filename);
+-
+ #else /* ! G_OS_UNIX */
+ 
+ /* Wrappers for C library functions that take pathname arguments. On
+@@ -98,69 +86,8 @@
+  * API.
+  */
+ 
+-GLIB_AVAILABLE_IN_ALL
+-int g_access    (const gchar *filename,
+-		 int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_chmod     (const gchar *filename,
+-		 int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_open      (const gchar *filename,
+-                 int          flags,
+-                 int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_creat     (const gchar *filename,
+-                 int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_rename    (const gchar *oldfilename,
+-                 const gchar *newfilename);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_mkdir     (const gchar *filename,
+-                 int          mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_chdir     (const gchar *path);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_stat      (const gchar *filename,
+-                 GStatBuf    *buf);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_lstat     (const gchar *filename,
+-                 GStatBuf    *buf);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_unlink    (const gchar *filename);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_remove    (const gchar *filename);
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_rmdir     (const gchar *filename);
+-
+-GLIB_AVAILABLE_IN_ALL
+-FILE *g_fopen   (const gchar *filename,
+-                 const gchar *mode);
+-
+-GLIB_AVAILABLE_IN_ALL
+-FILE *g_freopen (const gchar *filename,
+-                 const gchar *mode,
+-                 FILE        *stream);
+-
+-struct utimbuf;			/* Don't need the real definition of struct utimbuf when just
+-				 * including this header.
+-				 */
+-
+-GLIB_AVAILABLE_IN_ALL
+-int g_utime     (const gchar    *filename,
+-		 struct utimbuf *utb);
+-
+ #endif /* G_OS_UNIX */
++#endif
+ 
+ GLIB_AVAILABLE_IN_2_36
+ gboolean g_close (gint       fd,
+--- glib/gstrfuncs.c
++++ glib/gstrfuncs.c
+@@ -33,6 +33,7 @@
+ #include <stdlib.h>
+ #include <locale.h>
+ #include <string.h>
++#include <strings.h>
+ #include <locale.h>
+ #include <errno.h>
+ #include <ctype.h>              /* For tolower() */
+@@ -1291,7 +1292,7 @@
+         {
+           msg = g_locale_to_utf8 (msg, -1, NULL, NULL, &error);
+           if (error)
+-            g_print ("%s\n", error->message);
++            g_printerr ("%s\n", error->message);
+         }
+ 
+       g_hash_table_insert (errors, GINT_TO_POINTER (errnum), (char *) msg);
+--- glib/gtester.c
++++ glib/gtester.c
+@@ -24,7 +24,6 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+-#include <sys/wait.h>
+ #include <errno.h>
+ #include <signal.h>
+ 
+--- glib/gtestutils.c
++++ glib/gtestutils.c
+@@ -1,3 +1,4 @@
++#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
+ /* GLib testing utilities
+  * Copyright (C) 2007 Imendio AB
+  * Authors: Tim Janik, Sven Herzberg
+@@ -23,7 +24,6 @@
+ 
+ #include <sys/types.h>
+ #ifdef G_OS_UNIX
+-#include <sys/wait.h>
+ #include <sys/time.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+@@ -51,7 +51,6 @@
+ #include "gstrfuncs.h"
+ #include "gtimer.h"
+ #include "gslice.h"
+-#include "gspawn.h"
+ #include "glib-private.h"
+ 
+ 
+@@ -805,6 +804,7 @@
+     {
+     case G_TEST_LOG_START_BINARY:
+       if (test_tap_log)
++#define g_print g_printerr
+         g_print ("# random seed: %s\n", string2);
+       else if (g_test_verbose())
+         g_print ("GTest: random seed: %s\n", string2);
+@@ -910,7 +910,6 @@
+   guint i, e;
+ 
+   test_argv0 = argv[0];
+-  test_initial_cwd = g_get_current_dir ();
+ 
+   /* parse known args */
+   for (i = 1; i < argc; i++)
+@@ -1064,7 +1063,7 @@
+                strcmp ("-h", argv[i]) == 0 ||
+                strcmp ("--help", argv[i]) == 0)
+         {
+-          printf ("Usage:\n"
++          fprintf (stderr, "Usage:\n"
+                   "  %s [OPTION...]\n\n"
+                   "Help Options:\n"
+                   "  -h, --help                     Show help options\n\n"
+@@ -2611,7 +2610,7 @@
+ {
+   WaitForChildData *data = user_data;
+ 
+-#ifdef G_OS_UNIX
++#if 0
+   if (WIFEXITED (status)) /* normal exit */
+     data->child_status = WEXITSTATUS (status); /* 0..255 */
+   else if (WIFSIGNALED (status) && WTERMSIG (status) == SIGALRM)
+@@ -2632,11 +2631,13 @@
+ {
+   WaitForChildData *data = user_data;
+ 
++#if 0
+ #ifdef G_OS_WIN32
+   TerminateProcess (data->pid, G_TEST_STATUS_TIMED_OUT);
+ #else
+   kill (data->pid, SIGALRM);
+ #endif
++#endif
+ 
+   return FALSE;
+ }
+@@ -2669,7 +2670,7 @@
+     {
+       g_string_append_len (data->stdout_str, buf, nread);
+       if (data->echo_stdout)
+-        echo_file = stdout;
++        echo_file = stderr;
+     }
+   else
+     {
+@@ -2691,6 +2692,7 @@
+   return TRUE;
+ }
+ 
++#if 0
+ static void
+ wait_for_child (GPid pid,
+                 int stdout_fd, gboolean echo_stdout,
+@@ -2755,6 +2757,7 @@
+   g_clear_pointer (&data.stdout_io, g_io_channel_unref);
+   g_clear_pointer (&data.stderr_io, g_io_channel_unref);
+ }
++#endif
+ 
+ /**
+  * g_test_trap_fork:
+@@ -2802,7 +2805,7 @@
+ g_test_trap_fork (guint64        usec_timeout,
+                   GTestTrapFlags test_trap_flags)
+ {
+-#ifdef G_OS_UNIX
++#if 0
+   int stdout_pipe[2] = { -1, -1 };
+   int stderr_pipe[2] = { -1, -1 };
+ 
+@@ -2927,6 +2930,8 @@
+                         guint64               usec_timeout,
+                         GTestSubprocessFlags  test_flags)
+ {
++  g_error ("g_test_trap_subprocess: not implemented");
++#if 0
+   GError *error = NULL;
+   GPtrArray *argv;
+   GSpawnFlags flags;
+@@ -2988,6 +2993,7 @@
+                   stdout_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDOUT),
+                   stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
+                   usec_timeout);
++#endif
+ }
+ 
+ /**
+--- glib/gtimezone.c
++++ glib/gtimezone.c
+@@ -393,6 +393,7 @@
+ }
+ 
+ #ifdef G_OS_UNIX
++#if 0
+ static GBytes*
+ zone_info_unix (const gchar *identifier)
+ {
+@@ -435,6 +436,7 @@
+   g_free (filename);
+   return zoneinfo;
+ }
++#endif
+ 
+ static void
+ init_zone_from_iana_info (GTimeZone *gtz, GBytes *zoneinfo)
+@@ -1384,6 +1386,7 @@
+       g_free (rules);
+     }
+ 
++#if 0
+   if (tz->t_info == NULL)
+     {
+ #ifdef G_OS_UNIX
+@@ -1430,6 +1433,7 @@
+         }
+ #endif
+     }
++#endif
+ 
+   if (tz->t_info != NULL)
+     {
+--- glib/gtranslit.c
++++ glib/gtranslit.c
+@@ -290,7 +290,7 @@
+     {
+       const gchar *locale;
+ 
+-      locale = setlocale (LC_CTYPE, NULL);
++      locale = "C";
+       item_id = lookup_item_id_for_locale (locale);
+       done = TRUE;
+     }
+--- glib/guniprop.c
++++ glib/guniprop.c
+@@ -697,7 +697,7 @@
+   locale[1] = tem[1];
+   g_free (tem);
+ #else
+-  const char *locale = setlocale (LC_CTYPE, NULL);
++  const char *locale = "C";
+ 
+   if (locale == NULL)
+     return LOCALE_NORMAL;
+--- glib/gutils.c
++++ glib/gutils.c
+@@ -39,7 +39,6 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #ifdef G_OS_UNIX
+-#include <pwd.h>
+ #include <unistd.h>
+ #endif
+ #include <sys/types.h>
+@@ -325,6 +324,7 @@
+  *
+  * Returns: a newly-allocated string with the absolute path, or %NULL
+  **/
++#if 0
+ #ifdef G_OS_WIN32
+ static gchar *
+ inner_find_program_in_path (const gchar *program)
+@@ -482,6 +482,7 @@
+ 
+   return NULL;
+ }
++#endif
+ 
+ /**
+  * g_bit_nth_lsf:
+@@ -531,6 +532,7 @@
+   gchar *home_dir;
+ } UserDatabaseEntry;
+ 
++#if 0
+ static  gchar   *g_user_data_dir = NULL;
+ static  gchar  **g_system_data_dirs = NULL;
+ static  gchar   *g_user_cache_dir = NULL;
+@@ -538,6 +540,7 @@
+ static  gchar  **g_system_config_dirs = NULL;
+ 
+ static  gchar  **g_user_special_dirs = NULL;
++#endif
+ 
+ /* fifteen minutes of fame for everybody */
+ #define G_USER_DIRS_EXPIRE      15 * 60
+@@ -593,6 +596,7 @@
+ #endif
+ 
+ /* HOLDS: g_utils_global_lock */
++#if 0
+ static UserDatabaseEntry *
+ g_get_user_database_entry (void)
+ {
+@@ -783,6 +787,7 @@
+ 
+   return entry->real_name;
+ }
++#endif
+ 
+ /**
+  * g_get_home_dir:
+@@ -810,6 +815,7 @@
+  *
+  * Returns: the current user's home directory
+  */
++#if 0
+ const gchar *
+ g_get_home_dir (void)
+ {
+@@ -885,6 +891,7 @@
+ 
+   return home_dir;
+ }
++#endif
+ 
+ /**
+  * g_get_tmp_dir:
+@@ -971,6 +978,7 @@
+  *
+  * Since: 2.8
+  */
++#if 0
+ const gchar *
+ g_get_host_name (void)
+ {
+@@ -993,6 +1001,7 @@
+ 
+   return hostname;
+ }
++#endif
+ 
+ G_LOCK_DEFINE_STATIC (g_prgname);
+ static gchar *g_prgname = NULL;
+@@ -1150,6 +1159,7 @@
+  *               or freed.
+  * Since: 2.6
+  **/
++#if 0
+ const gchar *
+ g_get_user_data_dir (void)
+ {
+@@ -1732,6 +1742,7 @@
+ 
+   return g_user_special_dirs[directory];
+ }
++#endif
+ 
+ #ifdef G_OS_WIN32
+ 
+@@ -1925,6 +1936,7 @@
+  *               not be modified or freed.
+  * Since: 2.6
+  **/
++#if 0
+ const gchar * const * 
+ g_get_system_data_dirs (void)
+ {
+@@ -2015,6 +2027,7 @@
+ 
+   return (const gchar * const *) conf_dir_vector;
+ }
++#endif
+ 
+ /**
+  * g_nullify_pointer:
+@@ -2340,7 +2353,7 @@
+    * https://code.google.com/p/android-developer-preview/issues/detail?id=168
+    */
+   return issetugid ();
+-#elif defined(G_OS_UNIX)
++#elif 0
+   uid_t ruid, euid, suid; /* Real, effective and saved user ID's */
+   gid_t rgid, egid, sgid; /* Real, effective and saved group ID's */
+ 
+--- glib/gutils.h
++++ glib/gutils.h
+@@ -83,16 +83,8 @@
+ #endif /* !G_INLINE_FUNC */
+ 
+ GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_user_name        (void);
+-GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_real_name        (void);
+-GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_home_dir         (void);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar *         g_get_tmp_dir          (void);
+ GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_host_name	     (void);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar *         g_get_prgname          (void);
+ GLIB_AVAILABLE_IN_ALL
+ void                  g_set_prgname          (const gchar *prgname);
+@@ -102,14 +94,6 @@
+ void                  g_set_application_name (const gchar *application_name);
+ 
+ GLIB_AVAILABLE_IN_ALL
+-void      g_reload_user_special_dirs_cache     (void);
+-GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_user_data_dir      (void);
+-GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_user_config_dir    (void);
+-GLIB_AVAILABLE_IN_ALL
+-const gchar *         g_get_user_cache_dir     (void);
+-GLIB_AVAILABLE_IN_ALL
+ const gchar * const * g_get_system_data_dirs   (void);
+ 
+ #ifdef G_OS_WIN32
+@@ -131,11 +115,7 @@
+ #define g_get_system_data_dirs _g_win32_get_system_data_dirs
+ #endif
+ 
+-GLIB_AVAILABLE_IN_ALL
+-const gchar * const * g_get_system_config_dirs (void);
+ 
+-GLIB_AVAILABLE_IN_ALL
+-const gchar * g_get_user_runtime_dir (void);
+ 
+ /**
+  * GUserDirectory:
+@@ -172,8 +152,6 @@
+   G_USER_N_DIRECTORIES
+ } GUserDirectory;
+ 
+-GLIB_AVAILABLE_IN_ALL
+-const gchar * g_get_user_special_dir (GUserDirectory directory);
+ 
+ /**
+  * GDebugKey:
+@@ -258,8 +236,6 @@
+ 
+ 
+ /* Look for an executable in PATH, following execvp() rules */
+-GLIB_AVAILABLE_IN_ALL
+-gchar*  g_find_program_in_path  (const gchar *program);
+ 
+ /* Bit tests
+  */
+--- glib/libcharset/localcharset.c
++++ glib/libcharset/localcharset.c
+@@ -111,7 +111,9 @@
+   cp = charset_aliases;
+   if (cp == NULL)
+     {
+-#if !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
++#ifdef __CloudABI__
++      cp = "";
++#elif !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
+       FILE *fp;
+       const char *dir;
+       const char *base = "charset.alias";
+--- gmodule/gmodule.c
++++ gmodule/gmodule.c
+@@ -336,6 +336,7 @@
+   return TRUE;
+ }
+ 
++#if 0
+ static gchar*
+ parse_libtool_archive (const gchar* libtool_name)
+ {
+@@ -425,6 +426,7 @@
+ 
+   return name;
+ }
++#endif
+ 
+ static inline gboolean
+ str_check_suffix (const gchar* string,
+@@ -516,6 +518,7 @@
+       return module;
+     }
+ 
++#if 0
+   /* check whether we have a readable file right away */
+   if (g_file_test (file_name, G_FILE_TEST_IS_REGULAR))
+     name = g_strdup (file_name);
+@@ -539,6 +542,7 @@
+ 	  name = NULL;
+ 	}
+     }
++#endif
+   /* we can't access() the file, lets hope the platform backends finds
+    * it via library paths
+    */
+@@ -558,6 +562,7 @@
+   if (name)
+     {
+       /* if it's a libtool archive, figure library file to load */
++#if 0
+       if (str_check_suffix (name, ".la")) /* libtool archive? */
+ 	{
+ 	  gchar *real_name = parse_libtool_archive (name);
+@@ -569,6 +574,7 @@
+ 	      name = real_name;
+             }
+ 	}
++#endif
+       if (name)
+ 	handle = _g_module_open (name, (flags & G_MODULE_BIND_LAZY) != 0,
+ 			(flags & G_MODULE_BIND_LOCAL) != 0);
+--- gobject/gsourceclosure.c
++++ gobject/gsourceclosure.c
+@@ -39,7 +39,6 @@
+       static const GFlagsValue values[] = {
+ 	{ G_IO_IN,   "G_IO_IN",   "in" },
+ 	{ G_IO_OUT,  "G_IO_OUT",  "out" },
+-	{ G_IO_PRI,  "G_IO_PRI",  "pri" },
+ 	{ G_IO_ERR,  "G_IO_ERR",  "err" },
+ 	{ G_IO_HUP,  "G_IO_HUP",  "hup" },
+ 	{ G_IO_NVAL, "G_IO_NVAL", "nval" },
+@@ -201,12 +200,12 @@
+         closure_callback = (GSourceFunc)io_watch_closure_callback;
+       else if (source->source_funcs == &g_child_watch_funcs)
+         closure_callback = (GSourceFunc)g_child_watch_closure_callback;
+-#ifdef G_OS_UNIX
++#if 0
+       else if (source->source_funcs == &g_unix_fd_source_funcs)
+         closure_callback = (GSourceFunc)g_unix_fd_source_closure_callback;
+ #endif
+       else if (source->source_funcs == &g_timeout_funcs ||
+-#ifdef G_OS_UNIX
++#if 0
+                source->source_funcs == &g_unix_signal_funcs ||
+ #endif
+                source->source_funcs == &g_idle_funcs)
+@@ -251,7 +250,6 @@
+   if (!source->source_funcs->closure_callback &&
+ #ifdef G_OS_UNIX
+       source->source_funcs != &g_unix_fd_source_funcs &&
+-      source->source_funcs != &g_unix_signal_funcs &&
+ #endif
+       source->source_funcs != &g_child_watch_funcs &&
+       source->source_funcs != &g_io_watch_funcs &&
+@@ -274,7 +272,7 @@
+       if (marshal)
+ 	g_closure_set_marshal (closure, marshal);
+       else if (source->source_funcs == &g_idle_funcs ||
+-#ifdef G_OS_UNIX
++#if 0
+                source->source_funcs == &g_unix_signal_funcs ||
+ #endif
+                source->source_funcs == &g_timeout_funcs)
+--- tests/gobject/performance-threaded.c
++++ tests/gobject/performance-threaded.c
+@@ -281,6 +281,7 @@
+     }
+   avg = avg / array->len * 1000;
+ 
++#define g_print g_printerr
+   g_print ("  %u runs, min/avg/max = %.3f/%.3f/%.3f ms\n", array->len, min, avg, max);
+ }
+ 
+--- tests/gobject/performance.c
++++ tests/gobject/performance.c
+@@ -68,6 +68,7 @@
+   double elapsed, min_elapsed, max_elapsed, avg_elapsed, factor;
+   GTimer *timer;
+ 
++#define g_print g_printerr
+   g_print ("Running test %s\n", test->name);
+ 
+   /* Set up test */

@@ -1,0 +1,19 @@
+--- configure
++++ configure
+@@ -23635,7 +23635,7 @@
+ else
+ 
+   # Android does not have C_IN in public headers, we define it wherever necessary
+-  if test $glib_native_android != yes; then :
++  if false; then :
+ 
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking if arpa/nameser_compat.h is needed" >&5
+ $as_echo_n "checking if arpa/nameser_compat.h is needed... " >&6; }
+@@ -23747,7 +23747,6 @@
+ $as_echo "in -lbind" >&6; }
+                                          NETWORK_LIBS="-lbind $NETWORK_LIBS"
+ else
+-  as_fn_error $? "not found" "$LINENO" 5
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
