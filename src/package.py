@@ -164,21 +164,21 @@ class TargetPackage:
 
     def initialize_buildroot(self, host_depends, lib_depends=set()):
         # Ensure that all dependencies have been built.
+        host_deps = set()
         for dep in host_depends:
             package = self._host_packages[dep]
-            package.build()
+            host_deps.add(package)
             for depdep in package._lib_depends:
-                depdep.build()
+                host_deps.add(depdep)
+        for dep in host_deps:
+            dep.build()
         for dep in lib_depends:
             dep.build()
 
         # Install dependencies into an empty buildroot.
         util.remove_and_make_dir(config.DIR_BUILDROOT)
-        for dep in host_depends:
-            package = self._host_packages[dep]
-            package.extract()
-            for depdep in package._lib_depends:
-                depdep.extract()
+        for dep in host_deps:
+            dep.extract()
         prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
         for dep in lib_depends:
             dep.extract(prefix, prefix)
