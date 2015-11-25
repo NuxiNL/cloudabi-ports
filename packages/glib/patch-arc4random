@@ -1,0 +1,21 @@
+--- glib/grand.c
++++ glib/grand.c
+@@ -40,6 +40,7 @@
+ #include <math.h>
+ #include <errno.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
+ #include "grand.h"
+@@ -218,7 +219,9 @@
+ g_rand_new (void)
+ {
+   guint32 seed[4];
+-#ifdef G_OS_UNIX
++#ifdef __CloudABI__
++  arc4random_buf(seed, sizeof(seed));
++#elif defined(G_OS_UNIX)
+   static gboolean dev_urandom_exists = TRUE;
+   GTimeVal now;
+ 

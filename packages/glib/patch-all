@@ -1,15 +1,3 @@
---- gio/gioenums.h
-+++ gio/gioenums.h
-@@ -844,9 +844,7 @@
- typedef enum /*< flags >*/
- {
-   G_SOCKET_MSG_NONE,
--  G_SOCKET_MSG_OOB = GLIB_SYSDEF_MSG_OOB,
-   G_SOCKET_MSG_PEEK = GLIB_SYSDEF_MSG_PEEK,
--  G_SOCKET_MSG_DONTROUTE = GLIB_SYSDEF_MSG_DONTROUTE
- } GSocketMsgFlags;
- 
- /**
 --- glib/gbacktrace.c
 +++ glib/gbacktrace.c
 @@ -44,7 +44,6 @@
@@ -193,37 +181,6 @@
  const gchar *            g_dir_read_name      (GDir         *dir);
  GLIB_AVAILABLE_IN_ALL
  void                     g_dir_rewind         (GDir         *dir);
---- glib/genviron.c
-+++ glib/genviron.c
-@@ -270,6 +270,7 @@
-  *
-  * Since: 2.4
-  */
-+#if 0
- gboolean
- g_setenv (const gchar *variable,
-           const gchar *value,
-@@ -299,6 +300,7 @@
- #endif
-   return result == 0;
- }
-+#endif
- 
- #ifdef HAVE__NSGETENVIRON
- #define environ (*_NSGetEnviron())
---- glib/genviron.h
-+++ glib/genviron.h
-@@ -36,10 +36,6 @@
- GLIB_AVAILABLE_IN_ALL
- const gchar * g_getenv           (const gchar  *variable);
- GLIB_AVAILABLE_IN_ALL
--gboolean      g_setenv           (const gchar  *variable,
--                                  const gchar  *value,
--                                  gboolean      overwrite);
--GLIB_AVAILABLE_IN_ALL
- void          g_unsetenv         (const gchar  *variable);
- GLIB_AVAILABLE_IN_ALL
- gchar **      g_listenv          (void);
 --- glib/gfileutils.c
 +++ glib/gfileutils.c
 @@ -205,6 +205,7 @@
@@ -610,16 +567,6 @@
  GLIB_AVAILABLE_IN_ALL
  gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
  GLIB_AVAILABLE_IN_ALL
---- glib/glib-init.c
-+++ glib/glib-init.c
-@@ -28,6 +28,7 @@
- #include "gmem.h"       /* for g_mem_gc_friendly */
- 
- #include <string.h>
-+#include <strings.h>
- #include <stdlib.h>
- #include <stdio.h>
- #include <ctype.h>
 --- glib/glib-private.c
 +++ glib/glib-private.c
 @@ -43,7 +43,6 @@
@@ -815,15 +762,7 @@
        g_once_init_leave (&initialised, TRUE);
 --- glib/gmain.h
 +++ glib/gmain.h
-@@ -32,7 +32,6 @@
- {
-   G_IO_IN	GLIB_SYSDEF_POLLIN,
-   G_IO_OUT	GLIB_SYSDEF_POLLOUT,
--  G_IO_PRI	GLIB_SYSDEF_POLLPRI,
-   G_IO_ERR	GLIB_SYSDEF_POLLERR,
-   G_IO_HUP	GLIB_SYSDEF_POLLHUP,
-   G_IO_NVAL	GLIB_SYSDEF_POLLNVAL
-@@ -524,8 +523,6 @@
+@@ -524,8 +524,6 @@
  GLIB_AVAILABLE_IN_ALL
  GSource *g_idle_source_new        (void);
  GLIB_AVAILABLE_IN_ALL
@@ -832,7 +771,7 @@
  GSource *g_timeout_source_new     (guint interval);
  GLIB_AVAILABLE_IN_ALL
  GSource *g_timeout_source_new_seconds (guint interval);
-@@ -571,16 +568,6 @@
+@@ -571,16 +569,6 @@
                                       GSourceFunc     function,
                                       gpointer        data);
  GLIB_AVAILABLE_IN_ALL
@@ -849,7 +788,7 @@
  guint    g_idle_add                 (GSourceFunc     function,
                                       gpointer        data);
  GLIB_AVAILABLE_IN_ALL
-@@ -607,7 +594,6 @@
+@@ -607,7 +595,6 @@
  GLIB_VAR GSourceFuncs g_child_watch_funcs;
  GLIB_VAR GSourceFuncs g_idle_funcs;
  #ifdef G_OS_UNIX
@@ -1075,27 +1014,6 @@
  gint                  g_vfprintf  (FILE        *file,
  				   gchar const *format,
  				   va_list      args) G_GNUC_PRINTF(2, 0);
---- glib/grand.c
-+++ glib/grand.c
-@@ -40,6 +40,7 @@
- #include <math.h>
- #include <errno.h>
- #include <stdio.h>
-+#include <stdlib.h>
- #include <string.h>
- #include <sys/types.h>
- #include "grand.h"
-@@ -218,7 +219,9 @@
- g_rand_new (void)
- {
-   guint32 seed[4];
--#ifdef G_OS_UNIX
-+#ifdef __CloudABI__
-+  arc4random_buf(seed, sizeof(seed));
-+#elif defined(G_OS_UNIX)
-   static gboolean dev_urandom_exists = TRUE;
-   GTimeVal now;
- 
 --- glib/gslice.c
 +++ glib/gslice.c
 @@ -1431,7 +1431,7 @@
@@ -1114,15 +1032,7 @@
  /* gspawn.c - Process launching
   *
   *  Copyright 2000 Red Hat, Inc.
-@@ -24,7 +25,6 @@
- 
- #include <sys/time.h>
- #include <sys/types.h>
--#include <sys/wait.h>
- #include <unistd.h>
- #include <errno.h>
- #include <fcntl.h>
-@@ -1816,3 +1816,4 @@
+@@ -1816,3 +1817,4 @@
  g_spawn_close_pid (GPid pid)
  {
  }
@@ -1263,15 +1173,7 @@
  gboolean g_close (gint       fd,
 --- glib/gstrfuncs.c
 +++ glib/gstrfuncs.c
-@@ -33,6 +33,7 @@
- #include <stdlib.h>
- #include <locale.h>
- #include <string.h>
-+#include <strings.h>
- #include <locale.h>
- #include <errno.h>
- #include <ctype.h>              /* For tolower() */
-@@ -1291,7 +1292,7 @@
+@@ -1291,7 +1291,7 @@
          {
            msg = g_locale_to_utf8 (msg, -1, NULL, NULL, &error);
            if (error)
@@ -1292,12 +1194,7 @@
  
 --- glib/gtestutils.c
 +++ glib/gtestutils.c
-@@ -1,3 +1,4 @@
-+#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS
- /* GLib testing utilities
-  * Copyright (C) 2007 Imendio AB
-  * Authors: Tim Janik, Sven Herzberg
-@@ -23,7 +24,6 @@
+@@ -23,7 +23,6 @@
  
  #include <sys/types.h>
  #ifdef G_OS_UNIX
@@ -1305,7 +1202,7 @@
  #include <sys/time.h>
  #include <fcntl.h>
  #include <unistd.h>
-@@ -51,7 +51,6 @@
+@@ -51,7 +50,6 @@
  #include "gstrfuncs.h"
  #include "gtimer.h"
  #include "gslice.h"
@@ -1313,7 +1210,7 @@
  #include "glib-private.h"
  
  
-@@ -805,6 +804,7 @@
+@@ -805,6 +803,7 @@
      {
      case G_TEST_LOG_START_BINARY:
        if (test_tap_log)
@@ -1321,7 +1218,7 @@
          g_print ("# random seed: %s\n", string2);
        else if (g_test_verbose())
          g_print ("GTest: random seed: %s\n", string2);
-@@ -910,7 +910,6 @@
+@@ -910,7 +909,6 @@
    guint i, e;
  
    test_argv0 = argv[0];
@@ -1329,7 +1226,7 @@
  
    /* parse known args */
    for (i = 1; i < argc; i++)
-@@ -1064,7 +1063,7 @@
+@@ -1064,7 +1062,7 @@
                 strcmp ("-h", argv[i]) == 0 ||
                 strcmp ("--help", argv[i]) == 0)
          {
@@ -1338,7 +1235,7 @@
                    "  %s [OPTION...]\n\n"
                    "Help Options:\n"
                    "  -h, --help                     Show help options\n\n"
-@@ -2611,7 +2610,7 @@
+@@ -2611,7 +2609,7 @@
  {
    WaitForChildData *data = user_data;
  
@@ -1347,7 +1244,7 @@
    if (WIFEXITED (status)) /* normal exit */
      data->child_status = WEXITSTATUS (status); /* 0..255 */
    else if (WIFSIGNALED (status) && WTERMSIG (status) == SIGALRM)
-@@ -2632,11 +2631,13 @@
+@@ -2632,11 +2630,13 @@
  {
    WaitForChildData *data = user_data;
  
@@ -1361,7 +1258,7 @@
  
    return FALSE;
  }
-@@ -2669,7 +2670,7 @@
+@@ -2669,7 +2669,7 @@
      {
        g_string_append_len (data->stdout_str, buf, nread);
        if (data->echo_stdout)
@@ -1370,7 +1267,7 @@
      }
    else
      {
-@@ -2691,6 +2692,7 @@
+@@ -2691,6 +2691,7 @@
    return TRUE;
  }
  
@@ -1378,7 +1275,7 @@
  static void
  wait_for_child (GPid pid,
                  int stdout_fd, gboolean echo_stdout,
-@@ -2755,6 +2757,7 @@
+@@ -2755,6 +2756,7 @@
    g_clear_pointer (&data.stdout_io, g_io_channel_unref);
    g_clear_pointer (&data.stderr_io, g_io_channel_unref);
  }
@@ -1386,7 +1283,7 @@
  
  /**
   * g_test_trap_fork:
-@@ -2802,7 +2805,7 @@
+@@ -2802,7 +2804,7 @@
  g_test_trap_fork (guint64        usec_timeout,
                    GTestTrapFlags test_trap_flags)
  {
@@ -1395,7 +1292,7 @@
    int stdout_pipe[2] = { -1, -1 };
    int stderr_pipe[2] = { -1, -1 };
  
-@@ -2927,6 +2930,8 @@
+@@ -2927,6 +2929,8 @@
                          guint64               usec_timeout,
                          GTestSubprocessFlags  test_flags)
  {
@@ -1404,7 +1301,7 @@
    GError *error = NULL;
    GPtrArray *argv;
    GSpawnFlags flags;
-@@ -2988,6 +2993,7 @@
+@@ -2988,6 +2992,7 @@
                    stdout_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDOUT),
                    stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
                    usec_timeout);
