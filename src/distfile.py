@@ -127,6 +127,10 @@ class Distfile:
         # Extract one copy of the code to diff against.
         util.remove(tmpdir)
         orig_dir = self._extract_unpatched(os.path.join(tmpdir, 'orig'))
+        for path in util.walk_files(orig_dir):
+            if path.endswith('.orig'):
+                os.unlink(path)
+
         for patch in self._patches:
             print('FIXUP', patch)
             # Apply individual patches to the code.
