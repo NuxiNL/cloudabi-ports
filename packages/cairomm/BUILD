@@ -3,13 +3,23 @@
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+
+def build(ctx):
+    build = ctx.extract().autoconf()
+    build.make()
+    stage = build.make_install()
+    stage.path(
+        'share/devhelp/books/cairomm-1.0/cairomm-1.0.devhelp2'
+    ).unhardcode_paths()
+    stage.install()
+
 package(
     name='cairomm',
     version='1.12.0',
     homepage='http://cairographics.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cairo', 'cxx-runtime', 'libsigcxx'},
-    build_cmd=build_autoconf_automake,
+    build_cmd=build,
 )
 
 distfile(
