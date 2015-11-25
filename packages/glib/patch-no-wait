@@ -1,0 +1,191 @@
+--- glib/gbacktrace.c
++++ glib/gbacktrace.c
+@@ -44,7 +44,9 @@
+ 
+ #ifdef G_OS_UNIX
+ #include <unistd.h>
++#ifndef __CloudABI__
+ #include <sys/wait.h>
++#endif
+ #ifdef HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+ #endif /* HAVE_SYS_SELECT_H */
+@@ -80,7 +82,7 @@
+ #endif
+ 
+ 
+-#ifndef G_OS_WIN32
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
+ static void stack_trace (char **args);
+ #endif
+ 
+@@ -141,6 +143,7 @@
+ void
+ g_on_error_query (const gchar *prg_name)
+ {
++#ifndef __CloudABI__
+ #ifndef G_OS_WIN32
+   static const gchar * const query1 = "[E]xit, [H]alt";
+   static const gchar * const query2 = ", show [S]tack trace";
+@@ -205,6 +208,9 @@
+               MB_OK|MB_ICONERROR);
+   _exit(0);
+ #endif
++#else
++  abort();
++#endif
+ }
+ 
+ /**
+@@ -223,6 +229,7 @@
+ void
+ g_on_error_stack_trace (const gchar *prg_name)
+ {
++#ifndef __CloudABI__
+ #if defined(G_OS_UNIX)
+   pid_t pid;
+   gchar buf[16];
+@@ -256,9 +263,12 @@
+   else
+     abort ();
+ #endif
++#else
++  abort();
++#endif
+ }
+ 
+-#ifndef G_OS_WIN32
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
+ 
+ static gboolean stack_trace_done = FALSE;
+ 
+--- glib/glib-unix.h
++++ glib/glib-unix.h
+@@ -26,7 +26,9 @@
+  */
+ #include <unistd.h>
+ #include <errno.h>
++#ifndef __CloudABI__
+ #include <sys/wait.h>
++#endif
+ #include <stdlib.h>
+ #include <fcntl.h>
+ 
+--- glib/glib.h
++++ glib/glib.h
+@@ -75,7 +75,9 @@
+ #include <glib/gshell.h>
+ #include <glib/gslice.h>
+ #include <glib/gslist.h>
++#ifndef __CloudABI__
+ #include <glib/gspawn.h>
++#endif
+ #include <glib/gstrfuncs.h>
+ #include <glib/gstring.h>
+ #include <glib/gstringchunk.h>
+--- glib/gspawn.c
++++ glib/gspawn.c
+@@ -1,3 +1,4 @@
++#ifndef __CloudABI__
+ /* gspawn.c - Process launching
+  *
+  *  Copyright 2000 Red Hat, Inc.
+@@ -1816,3 +1817,4 @@
+ g_spawn_close_pid (GPid pid)
+ {
+ }
++#endif
+--- glib/gspawn.h
++++ glib/gspawn.h
+@@ -1,3 +1,6 @@
++#ifdef __CloudABI__
++#error "Spawning of processes is not supported"
++#endif
+ /* gspawn.h - Process launching
+  *
+  *  Copyright 2000 Red Hat, Inc.
+--- glib/gtestutils.c
++++ glib/gtestutils.c
+@@ -23,7 +23,9 @@
+ 
+ #include <sys/types.h>
+ #ifdef G_OS_UNIX
++#ifndef __CloudABI__
+ #include <sys/wait.h>
++#endif
+ #include <sys/time.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+@@ -51,7 +53,9 @@
+ #include "gstrfuncs.h"
+ #include "gtimer.h"
+ #include "gslice.h"
++#ifndef __CloudABI__
+ #include "gspawn.h"
++#endif
+ #include "glib-private.h"
+ 
+ 
+@@ -710,7 +714,9 @@
+ static char       *test_argv0_dirname;
+ static const char *test_disted_files_dir;
+ static const char *test_built_files_dir;
++#ifndef __CloudABI__
+ static char       *test_initial_cwd = NULL;
++#endif
+ static gboolean    test_in_subprocess = FALSE;
+ static GTestConfig mutable_test_config_vars = {
+   FALSE,        /* test_initialized */
+@@ -910,7 +916,9 @@
+   guint i, e;
+ 
+   test_argv0 = argv[0];
++#ifndef __CloudABI__
+   test_initial_cwd = g_get_current_dir ();
++#endif
+ 
+   /* parse known args */
+   for (i = 1; i < argc; i++)
+@@ -2604,6 +2612,7 @@
+     g_main_loop_quit (data->loop);
+ }
+ 
++#ifndef __CloudABI__
+ static void
+ child_exited (GPid     pid,
+               gint     status,
+@@ -2989,6 +2998,7 @@
+                   stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
+                   usec_timeout);
+ }
++#endif
+ 
+ /**
+  * g_test_subprocess:
+--- glib/gtestutils.h
++++ glib/gtestutils.h
+@@ -224,9 +224,11 @@
+   G_TEST_TRAP_INHERIT_STDIN     = 1 << 9
+ } GTestTrapFlags;
+ 
++#ifndef __CloudABI__
+ GLIB_DEPRECATED_IN_2_38_FOR (g_test_trap_subprocess)
+ gboolean g_test_trap_fork               (guint64              usec_timeout,
+                                          GTestTrapFlags       test_trap_flags);
++#endif
+ 
+ typedef enum {
+   G_TEST_SUBPROCESS_INHERIT_STDIN  = 1 << 0,
+@@ -234,10 +236,12 @@
+   G_TEST_SUBPROCESS_INHERIT_STDERR = 1 << 2
+ } GTestSubprocessFlags;
+ 
++#ifndef __CloudABI__
+ GLIB_AVAILABLE_IN_2_38
+ void     g_test_trap_subprocess         (const char           *test_path,
+                                          guint64               usec_timeout,
+                                          GTestSubprocessFlags  test_flags);
++#endif
+ 
+ GLIB_AVAILABLE_IN_ALL
+ gboolean g_test_trap_has_passed         (void);
