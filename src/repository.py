@@ -177,4 +177,27 @@ class Repository:
             get_target_package(
                 *random.sample(
                     self._deferred_target_packages.keys(), 1)[0])
-        return self._target_packages
+
+        # Generate per-architecture 'everything' meta packages. These
+        # packages depend on all of the packages for one architecture.
+        # They make it easier to install all packages at once.
+        packages = self._target_packages.copy()
+        for arch in config.ARCHITECTURES:
+            packages[('everything', arch)] = TargetPackage(
+                install_directory=os.path.join(self._install_directory, arch,
+                                               'everything'),
+                arch=arch,
+                name='everything',
+                version=SimpleVersion('1.0'),
+                homepage='https://nuxi.nl/',
+                maintainer='info@nuxi.nl',
+                host_packages=self._host_packages,
+                lib_depends={
+                    value
+                    for key, value in self._target_packages.items()
+                    if key[1] == arch
+                },
+                build_cmd=None,
+                distfiles={},
+                resource_directory=None)
+        return packages
