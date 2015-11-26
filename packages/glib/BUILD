@@ -15,7 +15,10 @@ def build(ctx):
         'glib_cv_value_POLLPRI=undefined',
     ])
     build.make(['bin_PROGRAMS='])
-    build.make_install(['bin_PROGRAMS=', 'install']).install()
+    stage = build.make_install(['bin_PROGRAMS=', 'install'])
+    stage.path('bin/glib-gettextize').unhardcode_paths()
+    stage.path('share/gdb').remove()
+    stage.install()
 
 package(
     name='glib',
