@@ -1,0 +1,40 @@
+--- include/curl/multi.h
++++ include/curl/multi.h
+@@ -100,7 +100,6 @@
+  * We don't use pollfd and POLL* constants explicitly
+  * to cover platforms without poll(). */
+ #define CURL_WAIT_POLLIN    0x0001
+-#define CURL_WAIT_POLLPRI   0x0002
+ #define CURL_WAIT_POLLOUT   0x0004
+ 
+ struct curl_waitfd {
+--- lib/multi.c
++++ lib/multi.c
+@@ -881,8 +881,6 @@
+     ufds[nfds].events = 0;
+     if(extra_fds[i].events & CURL_WAIT_POLLIN)
+       ufds[nfds].events |= POLLIN;
+-    if(extra_fds[i].events & CURL_WAIT_POLLPRI)
+-      ufds[nfds].events |= POLLPRI;
+     if(extra_fds[i].events & CURL_WAIT_POLLOUT)
+       ufds[nfds].events |= POLLOUT;
+     ++nfds;
+@@ -906,8 +904,6 @@
+           mask |= CURL_WAIT_POLLIN;
+         if(r & POLLOUT)
+           mask |= CURL_WAIT_POLLOUT;
+-        if(r & POLLPRI)
+-          mask |= CURL_WAIT_POLLPRI;
+ 
+         extra_fds[j].revents = mask;
+       }
+--- lib/select.c
++++ lib/select.c
+@@ -187,6 +187,7 @@
+   num = 0;
+   if(readfd0 != CURL_SOCKET_BAD) {
+     pfd[num].fd = readfd0;
++#define POLLPRI 0
+     pfd[num].events = POLLRDNORM|POLLIN|POLLRDBAND|POLLPRI;
+     pfd[num].revents = 0;
+     num++;

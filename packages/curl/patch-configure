@@ -1,0 +1,18 @@
+--- configure
++++ configure
+@@ -19588,7 +19588,6 @@
+ 
+ 
+ if test "$HAVE_GETHOSTBYNAME" != "1"; then
+-  as_fn_error $? "couldn't find libraries for gethostbyname()" "$LINENO" 5
+ fi
+ 
+ ac_fn_c_check_func "$LINENO" "strcasecmp" "ac_cv_func_strcasecmp"
+@@ -19914,7 +19913,6 @@
+     X-unknown)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find connect" >&5
+ $as_echo "cannot find connect" >&6; }
+-      as_fn_error $? "cannot find connect function in libraries." "$LINENO" 5
+       ;;
+     X-)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5

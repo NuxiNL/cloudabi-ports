@@ -1,0 +1,11 @@
+--- lib/connect.c
++++ lib/connect.c
+@@ -638,7 +638,7 @@
+       }
+       break;
+ #endif
+-#if defined(HAVE_SYS_UN_H) && defined(AF_UNIX)
++#if 0
+     case AF_UNIX:
+       su = (struct sockaddr_un*)sa;
+       snprintf(addr, MAX_IPADR_LEN, "%s", su->sun_path);

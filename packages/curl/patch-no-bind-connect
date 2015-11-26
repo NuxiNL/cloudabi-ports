@@ -1,0 +1,22 @@
+--- lib/connect.c
++++ lib/connect.c
+@@ -429,7 +429,8 @@
+   }
+ 
+   for(;;) {
+-    if(bind(sockfd, sock, sizeof_sa) >= 0) {
++    errno = ENOTCAPABLE;
++    if(0) {
+       /* we succeeded to bind */
+       struct Curl_sockaddr_storage add;
+       curl_socklen_t size = sizeof(add);
+@@ -1083,7 +1084,8 @@
+ 
+   /* Connect TCP sockets, bind UDP */
+   if(!isconnected && (conn->socktype == SOCK_STREAM)) {
+-    rc = connect(sockfd, &addr.sa_addr, addr.addrlen);
++    rc = -1;
++    errno = ENOTCAPABLE;
+     if(-1 == rc)
+       error = SOCKERRNO;
+   }
