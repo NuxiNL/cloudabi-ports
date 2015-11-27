@@ -1,3 +1,14 @@
+--- configure
++++ configure
+@@ -18350,7 +18350,7 @@
+ 
+ fi
+ 
+-if test x"$lt_shell_append" = xyes; then
++if false; then
+   sed -e '/^func_append ()$/,/^} # func_append /c\
+ func_append ()\
+ {\
 --- make/libtool.mk
 +++ make/libtool.mk
 @@ -1,7 +1,6 @@

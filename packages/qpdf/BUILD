@@ -5,8 +5,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract()
-    build = srcdir.autoconf(['--with-random='], inplace=True)
+    build = ctx.extract().autoconf(['--with-random='], inplace=True)
     build.make()
     build.make_install().install()
 
