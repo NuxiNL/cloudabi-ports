@@ -33,6 +33,7 @@ host_package(
     version='3.7.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
+    build_depends={'cmake'},
     build_cmd=build,
 )
 
