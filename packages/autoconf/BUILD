@@ -8,6 +8,7 @@ host_package(
     version='2.69',
     homepage='http://www.gnu.org/software/autoconf/',
     maintainer='info@nuxi.nl',
+    build_depends={'make'},
     build_cmd=build_autoconf_automake,
 )
 
