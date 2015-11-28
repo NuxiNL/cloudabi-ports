@@ -6,8 +6,8 @@
 
 def build(ctx):
     build = ctx.extract().cmake(['-DENABLE_STATIC=ON'])
-    build.make()
-    stage = build.make_install()
+    build.ninja()
+    stage = build.ninja_install()
     stage.path('bin/taglib-config').unhardcode_paths()
     stage.install()
 

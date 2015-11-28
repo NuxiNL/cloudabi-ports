@@ -9,8 +9,8 @@ def build(ctx):
     build = srcdir.path('source').cmake([
         '-DENABLE_CLI=OFF', '-DENABLE_SHARED=OFF',
     ])
-    build.make()
-    build.make_install().install()
+    build.ninja()
+    build.ninja_install().install()
 
 package(
     name='x265',

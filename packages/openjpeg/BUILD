@@ -8,8 +8,8 @@ def build(ctx):
     build = ctx.extract('%(name)s/version.2.1').cmake([
         '-DBUILD_CODEC=NO', '-DBUILD_MJ2=NO',
     ])
-    build.make()
-    build.make_install().install()
+    build.ninja()
+    build.ninja_install().install()
 
 package(
     name='openjpeg',

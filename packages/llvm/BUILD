@@ -10,8 +10,8 @@ def build(ctx):
 
     # Build and install LLVM.
     build = root.cmake()
-    build.make()
-    stage = build.make_install()
+    build.ninja()
+    stage = build.ninja_install()
 
     # Create symbolic links for various LLVM and Clang utilities, so
     # that it can act as a cross compiler.
@@ -33,7 +33,7 @@ host_package(
     version='3.7.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
-    build_depends={'cmake'},
+    build_depends={'cmake', 'ninja'},
     build_cmd=build,
 )
 

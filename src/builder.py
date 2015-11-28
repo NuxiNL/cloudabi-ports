@@ -142,6 +142,16 @@ class FileHandle:
             self._builder,
             os.path.join(stagedir, self._builder.get_prefix()[1:]))
 
+    def ninja(self):
+        self.run(['ninja'])
+
+    def ninja_install(self):
+        stagedir = self._builder._build_directory.get_new_directory()
+        self.run(['DESTDIR=' + stagedir, 'ninja', 'install'])
+        return FileHandle(
+            self._builder,
+            os.path.join(stagedir, self._builder.get_prefix()[1:]))
+
     def open(self, mode):
         return open(self._path, mode)
 
@@ -249,12 +259,16 @@ class HostBuilder:
 
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [
-            'cmake', sourcedir, '-DCMAKE_BUILD_TYPE=Release',
+            'cmake', sourcedir, '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
 
     @staticmethod
     def get_cc():
         return config.HOST_CC
+
+    @staticmethod
+    def get_cxx():
+        return config.HOST_CXX
 
     def get_prefix(self):
         return config.DIR_BUILDROOT
@@ -279,6 +293,8 @@ class HostBuilder:
         _chdir(cwd)
         subprocess.check_call([
             'env',
+            'CC=' + self.get_cc(),
+            'CXX=' + self.get_cxx(),
             'CFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
             'CXXFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
             'LDFLAGS=-L' + os.path.join(self.get_prefix(), 'lib'),
@@ -326,7 +342,7 @@ class TargetBuilder:
 
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [
-            'cmake', sourcedir,
+            'cmake', sourcedir, '-G', 'Ninja',
             '-DCMAKE_AR=' + self._tool('ar'),
             '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_FIND_ROOT_PATH=' + self._localbase,
@@ -420,6 +436,7 @@ class TargetBuilder:
             'CFLAGS=' + ' '.join(self._cflags),
             'CXX=' + self._tool('c++'),
             'CXXFLAGS=' + ' '.join(self._cflags),
+            'CXX_FOR_BUILD=' + self._host_builder.get_cxx(),
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
              # List tools directory twice, as certain tools and scripts

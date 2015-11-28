@@ -104,7 +104,7 @@ class TargetPackage:
             'autoconf', 'bash', 'binutils', 'bison', 'cmake',
             'coreutils', 'diffutils', 'findutils', 'gawk', 'gettext',
             'grep', 'help2man', 'libarchive', 'llvm', 'm4', 'make',
-            'pkgconf', 'sed', 'texinfo',
+            'ninja', 'pkgconf', 'sed', 'texinfo',
         }, self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
