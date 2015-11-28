@@ -21,8 +21,8 @@ DIR_RESOURCES = os.path.join(os.getcwd(), 'misc')
 # are down.
 FALLBACK_MIRRORS = {'https://nuxi.nl/distfiles/third_party/'}
 
-# Name of the GNU Make executable.
-GNU_MAKE = 'gmake' if platform.system() == 'FreeBSD' else 'make'
+# Host C compiler, used to compile the build tools.
+HOST_CC = '/usr/bin/cc'
 
 # Name of the Perl executable.
 PERL = ('/usr/local/bin/perl' if platform.system() == 'FreeBSD' else

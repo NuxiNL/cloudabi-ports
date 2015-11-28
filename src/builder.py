@@ -133,11 +133,11 @@ class FileHandle:
         self._builder.install(self._path, path)
 
     def make(self, args=['all']):
-        self.run([self._builder.get_make(), '-j6'] + args)
+        self.run(['make', '-j6'] + args)
 
     def make_install(self, args=['install']):
         stagedir = self._builder._build_directory.get_new_directory()
-        self.run([self._builder.get_make(), 'DESTDIR=' + stagedir] + args)
+        self.run(['make', 'DESTDIR=' + stagedir] + args)
         return FileHandle(
             self._builder,
             os.path.join(stagedir, self._builder.get_prefix()[1:]))
@@ -175,6 +175,9 @@ class BuildHandle:
         return FileHandle(self._builder,
                           self._builder.archive(obj._path for obj in objects))
 
+    def cc(self):
+        return self._builder.get_cc()
+
     def cpu(self):
         return self._builder.get_cpu()
 
@@ -193,6 +196,11 @@ class BuildHandle:
                 name % {'name': self._name, 'version': self._version}
             ].extract(self._builder._build_directory.get_new_directory())
         )
+
+    def host(self):
+        return BuildHandle(
+            self._builder._host_builder, self._name, self._version,
+            self._distfiles, self._resource_directory)
 
     def prefix(self):
         return self._builder.get_prefix()
@@ -245,8 +253,8 @@ class HostBuilder:
             '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
 
     @staticmethod
-    def get_make():
-        return config.GNU_MAKE
+    def get_cc():
+        return config.HOST_CC
 
     def get_prefix(self):
         return config.DIR_BUILDROOT
@@ -256,9 +264,14 @@ class HostBuilder:
         target = os.path.join(self._install_directory, target)
         for source_file, target_file in util.walk_files_concurrently(
                 source, target):
-            if os.path.relpath(target_file, target) not in {
-                'lib/charset.alias', 'share/info/dir',
-            }:
+            # As these are bootstrapping tools, there is no need to
+            # preserve any documentation and locales.
+            path = os.path.relpath(target_file, target)
+            if (path != 'lib/charset.alias' and
+                not path.startswith('share/doc/') and
+                not path.startswith('share/info/') and
+                not path.startswith('share/locale/') and
+                not path.startswith('share/man/')):
                 util.make_parent_dir(target_file)
                 util.copy_file(source_file, target_file, False)
 
@@ -356,10 +369,6 @@ class TargetBuilder:
     def get_cxx(self):
         return self._tool('c++')
 
-    @staticmethod
-    def get_make():
-        return 'make'
-
     def get_prefix(self):
         return self._prefix
 
@@ -407,12 +416,15 @@ class TargetBuilder:
             'env', '-i',
             'AR=' + self._tool('ar'),
             'CC=' + self._tool('cc'),
-            'CXX=' + self._tool('c++'),
+            'CC_FOR_BUILD=' + self._host_builder.get_cc(),
             'CFLAGS=' + ' '.join(self._cflags),
+            'CXX=' + self._tool('c++'),
             'CXXFLAGS=' + ' '.join(self._cflags),
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
-            'PATH=%s:/bin:/sbin:/usr/bin:/usr/sbin' % self._bindir,
+             # List tools directory twice, as certain tools and scripts
+             # get confused if PATH contains no colon.
+            'PATH=%s:%s' % (self._bindir, self._bindir),
             'PERL=' + config.PERL,
             'PKG_CONFIG=' + self._tool('pkg-config'),
             'RANLIB=' + self._tool('ranlib'),
