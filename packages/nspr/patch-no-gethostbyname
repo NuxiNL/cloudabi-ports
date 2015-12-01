@@ -1,0 +1,84 @@
+--- pr/include/prnetdb.h
++++ pr/include/prnetdb.h
+@@ -74,8 +74,6 @@
+ **                      the result will be PR_FAILURE and the reason
+ **                      for the failure can be retrieved by PR_GetError().
+ ***********************************************************************/
+-NSPR_API(PRStatus) PR_GetHostByName(
+-    const char *hostname, char *buf, PRIntn bufsize, PRHostEnt *hostentry);
+ 
+ /***********************************************************************
+ ** FUNCTION:	
+@@ -111,13 +109,6 @@
+ #define PR_AI_NOCANONNAME 0x8000
+ #define PR_AI_DEFAULT     (PR_AI_V4MAPPED | PR_AI_ADDRCONFIG)
+ 
+-NSPR_API(PRStatus) PR_GetIPNodeByName(
+-    const char *hostname,
+-    PRUint16 af,
+-    PRIntn flags,
+-    char *buf,
+-    PRIntn bufsize,
+-    PRHostEnt *hostentry);
+ 
+ /***********************************************************************
+ ** FUNCTION:	
+@@ -140,8 +131,6 @@
+ **                      the result will be PR_FAILURE and the reason
+ **                      for the failure can be retrieved by PR_GetError().
+ ***********************************************************************/
+-NSPR_API(PRStatus) PR_GetHostByAddr(
+-    const PRNetAddr *hostaddr, char *buf, PRIntn bufsize, PRHostEnt *hostentry);
+ 
+ /***********************************************************************
+ ** FUNCTION:	PR_EnumerateHostEnt()	
+--- pr/src/misc/prnetdb.c
++++ pr/src/misc/prnetdb.c
+@@ -484,6 +484,7 @@
+ ** Copy a hostent, and all of the memory that it refers to into
+ ** (hopefully) stacked buffers.
+ */
++#if 0
+ static PRStatus CopyHostent(
+     struct hostent *from,
+     char **buf,
+@@ -564,6 +565,7 @@
+ 	to->h_addr_list[na] = 0;
+ 	return PR_SUCCESS;
+ }
++#endif
+ 
+ #ifdef SYMBIAN
+ /* Set p_aliases by hand because Symbian's getprotobyname() returns NULL. */
+@@ -659,6 +661,7 @@
+ 
+ #endif  /* definition of GETHOSTBYXXX */
+ 
++#if 0
+ PR_IMPLEMENT(PRStatus) PR_GetHostByName(
+     const char *name, char *buf, PRIntn bufsize, PRHostEnt *hp)
+ {
+@@ -708,6 +711,7 @@
+ #endif
+ 	return rv;
+ }
++#endif
+ 
+ #if !defined(_PR_INET6) && \
+         defined(_PR_INET6_PROBE) && defined(_PR_HAVE_GETIPNODEBYNAME)
+@@ -791,6 +795,7 @@
+ }
+ #endif
+ 
++#if 0
+ PR_IMPLEMENT(PRStatus) PR_GetIPNodeByName(
+     const char *name, PRUint16 af, PRIntn flags,
+     char *buf, PRIntn bufsize, PRHostEnt *hp)
+@@ -1137,6 +1142,7 @@
+ 
+ 	return rv;
+ }
++#endif
+ 
+ /******************************************************************************/
+ /*

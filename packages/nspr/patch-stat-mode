@@ -1,0 +1,26 @@
+--- pr/src/md/unix/unix.c
++++ pr/src/md/unix/unix.c
+@@ -2537,9 +2537,9 @@
+     const struct stat *sb,
+     PRFileInfo *info)
+ {
+-    if (S_IFREG & sb->st_mode)
++    if (S_ISREG(sb->st_mode))
+         info->type = PR_FILE_FILE;
+-    else if (S_IFDIR & sb->st_mode)
++    else if (S_ISDIR(sb->st_mode))
+         info->type = PR_FILE_DIRECTORY;
+     else
+         info->type = PR_FILE_OTHER;
+@@ -2561,9 +2561,9 @@
+     const _MDStat64 *sb,
+     PRFileInfo64 *info)
+ {
+-    if (S_IFREG & sb->st_mode)
++    if (S_ISREG(sb->st_mode))
+         info->type = PR_FILE_FILE;
+-    else if (S_IFDIR & sb->st_mode)
++    else if (S_ISDIR(sb->st_mode))
+         info->type = PR_FILE_DIRECTORY;
+     else
+         info->type = PR_FILE_OTHER;

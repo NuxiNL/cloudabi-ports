@@ -1,0 +1,96 @@
+--- pr/include/private/primpl.h
++++ pr/include/private/primpl.h
+@@ -2013,6 +2013,7 @@
+ /*
+ ** Declare PRSharedMemory.
+ */
++#if 0
+ struct PRSharedMemory 
+ {
+     char        *ipcname; /* after conversion to native */
+@@ -2051,6 +2052,7 @@
+ 
+ extern PRStatus _MD_DeleteSharedMemory( const char *name );
+ #define _PR_MD_DELETE_SHARED_MEMORY  _MD_DeleteSharedMemory
++#endif
+ 
+ extern PRFileMap* _md_OpenAnonFileMap( 
+     const char *dirName,
+--- pr/include/prshm.h
++++ pr/include/prshm.h
+@@ -144,13 +144,6 @@
+ **   retrieved via PR_GetError() and PR_GetOSError();
+ **
+ */
+-NSPR_API( PRSharedMemory * )
+-    PR_OpenSharedMemory(
+-        const char *name,
+-        PRSize      size,
+-        PRIntn      flags,
+-        PRIntn      mode
+-);
+ /* Define values for PR_OpenShareMemory(...,create) */
+ #define PR_SHM_CREATE 0x1  /* create if not exist */
+ #define PR_SHM_EXCL   0x2  /* fail if already exists */
+@@ -178,11 +171,6 @@
+ **
+ **
+ */
+-NSPR_API( void * )
+-    PR_AttachSharedMemory(
+-        PRSharedMemory *shm,
+-        PRIntn  flags
+-);
+ /* Define values for PR_AttachSharedMemory(...,flags) */ 
+ #define PR_SHM_READONLY 0x01
+ 
+@@ -204,11 +192,6 @@
+ ** RETURNS: PRStatus
+ **
+ */
+-NSPR_API( PRStatus )
+-    PR_DetachSharedMemory(
+-        PRSharedMemory *shm,
+-        void  *addr
+-);
+ 
+ /*
+ ** FUNCTION: PR_CloseSharedMemory()
+@@ -226,10 +209,6 @@
+ ** RETURNS: PRStatus
+ **
+ */
+-NSPR_API( PRStatus )
+-    PR_CloseSharedMemory(
+-        PRSharedMemory *shm
+-);
+ 
+ /*
+ ** FUNCTION: PR_DeleteSharedMemory()
+@@ -247,10 +226,6 @@
+ ** RETURNS: PRStatus
+ **
+ */
+-NSPR_API( PRStatus )
+-    PR_DeleteSharedMemory( 
+-        const char *name
+-);
+ 
+ PR_END_EXTERN_C
+ 
+--- pr/src/memory/prshm.c
++++ pr/src/memory/prshm.c
+@@ -59,6 +59,7 @@
+ ** FUNCTION: PR_OpenSharedMemory()
+ **
+ */
++#if 0
+ PR_IMPLEMENT( PRSharedMemory * )
+     PR_OpenSharedMemory(
+         const char *name,
+@@ -121,4 +122,5 @@
+     if (!_pr_initialized) _PR_ImplicitInitialization();
+     return(_PR_MD_DELETE_SHARED_MEMORY( name ));
+ } /* end PR_DestroySharedMemory() */
++#endif
+ /* end prshm.c */

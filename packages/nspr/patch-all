@@ -77,19 +77,7 @@
  #define _MD_GETOPENFILEINFO(fd, info)	_MD_getopenfileinfo(fd, info)
  #define _MD_GETOPENFILEINFO64(fd, info)	_MD_getopenfileinfo64(fd, info)
  #define _MD_RENAME(from, to)		    _MD_rename(from, to)
-@@ -462,11 +441,7 @@
- extern void _MD_query_fd_inheritable(PRFileDesc *fd);
- #define _MD_QUERY_FD_INHERITABLE _MD_query_fd_inheritable
- 
--extern PRStatus _MD_gethostname(char *name, PRUint32 namelen);
--#define _MD_GETHOSTNAME		_MD_gethostname
- 
--extern PRStatus _MD_getsysinfo(PRSysInfo cmd, char *name, PRUint32 namelen);
--#define _MD_GETSYSINFO		_MD_getsysinfo
- 
- extern int _MD_unix_get_nonblocking_connect_error(int osfd);
- 
-@@ -613,9 +588,7 @@
+@@ -613,9 +592,7 @@
      PRIntn fildes, _MDOff64_t offset);
  struct _MD_IOVector
  {
@@ -254,22 +242,6 @@
  
  /* Current Time */
  NSPR_API(PRTime) _PR_MD_NOW(void);
-@@ -2013,6 +2003,7 @@
- /*
- ** Declare PRSharedMemory.
- */
-+#if 0
- struct PRSharedMemory 
- {
-     char        *ipcname; /* after conversion to native */
-@@ -2051,6 +2042,7 @@
- 
- extern PRStatus _MD_DeleteSharedMemory( const char *name );
- #define _PR_MD_DELETE_SHARED_MEMORY  _MD_DeleteSharedMemory
-+#endif
- 
- extern PRFileMap* _md_OpenAnonFileMap( 
-     const char *dirName,
 --- pr/include/prlink.h
 +++ pr/include/prlink.h
 @@ -50,7 +50,6 @@
@@ -290,40 +262,6 @@
  
  /*
  ** Set the size of the logging buffer. If "buffer_size" is zero then the
---- pr/include/prnetdb.h
-+++ pr/include/prnetdb.h
-@@ -74,8 +74,6 @@
- **                      the result will be PR_FAILURE and the reason
- **                      for the failure can be retrieved by PR_GetError().
- ***********************************************************************/
--NSPR_API(PRStatus) PR_GetHostByName(
--    const char *hostname, char *buf, PRIntn bufsize, PRHostEnt *hostentry);
- 
- /***********************************************************************
- ** FUNCTION:	
-@@ -111,13 +109,6 @@
- #define PR_AI_NOCANONNAME 0x8000
- #define PR_AI_DEFAULT     (PR_AI_V4MAPPED | PR_AI_ADDRCONFIG)
- 
--NSPR_API(PRStatus) PR_GetIPNodeByName(
--    const char *hostname,
--    PRUint16 af,
--    PRIntn flags,
--    char *buf,
--    PRIntn bufsize,
--    PRHostEnt *hostentry);
- 
- /***********************************************************************
- ** FUNCTION:	
-@@ -140,8 +131,6 @@
- **                      the result will be PR_FAILURE and the reason
- **                      for the failure can be retrieved by PR_GetError().
- ***********************************************************************/
--NSPR_API(PRStatus) PR_GetHostByAddr(
--    const PRNetAddr *hostaddr, char *buf, PRIntn bufsize, PRHostEnt *hostentry);
- 
- /***********************************************************************
- ** FUNCTION:	PR_EnumerateHostEnt()	
 --- pr/include/prproces.h
 +++ pr/include/prproces.h
 @@ -18,37 +18,15 @@
@@ -390,85 +328,6 @@
 +
  
  PR_END_EXTERN_C
- 
---- pr/include/prshm.h
-+++ pr/include/prshm.h
-@@ -144,13 +144,6 @@
- **   retrieved via PR_GetError() and PR_GetOSError();
- **
- */
--NSPR_API( PRSharedMemory * )
--    PR_OpenSharedMemory(
--        const char *name,
--        PRSize      size,
--        PRIntn      flags,
--        PRIntn      mode
--);
- /* Define values for PR_OpenShareMemory(...,create) */
- #define PR_SHM_CREATE 0x1  /* create if not exist */
- #define PR_SHM_EXCL   0x2  /* fail if already exists */
-@@ -178,11 +171,6 @@
- **
- **
- */
--NSPR_API( void * )
--    PR_AttachSharedMemory(
--        PRSharedMemory *shm,
--        PRIntn  flags
--);
- /* Define values for PR_AttachSharedMemory(...,flags) */ 
- #define PR_SHM_READONLY 0x01
- 
-@@ -204,11 +192,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_DetachSharedMemory(
--        PRSharedMemory *shm,
--        void  *addr
--);
- 
- /*
- ** FUNCTION: PR_CloseSharedMemory()
-@@ -226,10 +209,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_CloseSharedMemory(
--        PRSharedMemory *shm
--);
- 
- /*
- ** FUNCTION: PR_DeleteSharedMemory()
-@@ -247,10 +226,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_DeleteSharedMemory( 
--        const char *name
--);
- 
- PR_END_EXTERN_C
- 
---- pr/include/prsystem.h
-+++ pr/include/prsystem.h
-@@ -38,13 +38,7 @@
- 
- /* Types of information available via PR_GetSystemInfo(...) */
- typedef enum {
--    PR_SI_HOSTNAME,  /* the hostname with the domain name (if any)
--                      * removed */
--    PR_SI_SYSNAME,
--    PR_SI_RELEASE,
--    PR_SI_ARCHITECTURE,
--    PR_SI_HOSTNAME_UNTRUNCATED  /* the hostname exactly as configured
--                                 * on the system */
-+    PR_SI_ARCHITECTURE
- } PRSysInfo;
- 
  
 --- pr/include/prtpool.h
 +++ pr/include/prtpool.h
@@ -625,30 +484,6 @@
  
  #if !defined(_PR_PTHREADS)
  
-@@ -2537,9 +2538,9 @@
-     const struct stat *sb,
-     PRFileInfo *info)
- {
--    if (S_IFREG & sb->st_mode)
-+    if (S_ISREG(sb->st_mode))
-         info->type = PR_FILE_FILE;
--    else if (S_IFDIR & sb->st_mode)
-+    else if (S_ISDIR(sb->st_mode))
-         info->type = PR_FILE_DIRECTORY;
-     else
-         info->type = PR_FILE_OTHER;
-@@ -2561,9 +2562,9 @@
-     const _MDStat64 *sb,
-     PRFileInfo64 *info)
- {
--    if (S_IFREG & sb->st_mode)
-+    if (S_ISREG(sb->st_mode))
-         info->type = PR_FILE_FILE;
--    else if (S_IFDIR & sb->st_mode)
-+    else if (S_ISDIR(sb->st_mode))
-         info->type = PR_FILE_DIRECTORY;
-     else
-         info->type = PR_FILE_OTHER;
 @@ -2574,6 +2575,7 @@
      return 0;
  }  /* _MD_convert_stat64_to_fileinfo64 */
@@ -709,34 +544,6 @@
      sigact.sa_handler = SIG_IGN;
      sigemptyset(&sigact.sa_mask);
      sigact.sa_flags = 0;
-@@ -3508,6 +3507,7 @@
- }
- #endif
- 
-+#if 0
- PRStatus _MD_gethostname(char *name, PRUint32 namelen)
- {
-     PRIntn rv;
-@@ -3538,6 +3538,7 @@
- 		return PR_FAILURE;
-     return PR_SUCCESS;
- }
-+#endif
- 
- /*
-  *******************************************************************
---- pr/src/md/unix/unix_errors.c
-+++ pr/src/md/unix/unix_errors.c
-@@ -80,7 +80,9 @@
-             prError = PR_FILE_TOO_BIG_ERROR;
-             break;
-         case EHOSTUNREACH:
-+#ifdef EHOSTDOWN
-         case EHOSTDOWN:
-+#endif
-             prError = PR_HOST_UNREACHABLE_ERROR;
-             break;
-         case EINPROGRESS:
 --- pr/src/md/unix/uxproces.c
 +++ pr/src/md/unix/uxproces.c
 @@ -9,7 +9,6 @@
@@ -824,87 +631,6 @@
  #endif
  }  /* _MD_KillUnixProcess */
 +#endif
---- pr/src/md/unix/uxrng.c
-+++ pr/src/md/unix/uxrng.c
-@@ -6,12 +6,22 @@
- 
- #include "primpl.h"
- 
-+#include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
- #include <errno.h>
- #include <sys/time.h>
- 
- 
-+#if defined(CLOUDABI)
-+
-+extern PRSize _PR_MD_GetRandomNoise( void *buf, PRSize size )
-+{
-+    arc4random_buf(buf, size);
-+} /* end _PR_MD_GetRandomNoise() */
-+
-+#else
-+
- #if defined(SOLARIS)
- 
- static size_t
-@@ -250,3 +260,5 @@
- 
-     return n;
- } /* end _PR_MD_GetRandomNoise() */
-+
-+#endif
---- pr/src/md/unix/uxshm.c
-+++ pr/src/md/unix/uxshm.c
-@@ -476,7 +476,6 @@
-     PRIntn      urc;
-     PRIntn      mode = 0600;
-     char        *genName;
--    pid_t       pid = getpid(); /* for generating filename */
-     PRThread    *tid = PR_GetCurrentThread(); /* for generating filename */
-     int         incr; /* for generating filename */
-     const int   maxTries = 20; /* maximum # attempts at a unique filename */
-@@ -487,6 +486,7 @@
-     ** open the file, unlink the file.
-     ** make maxTries number of attempts at uniqueness in the filename
-     */
-+#if 0
-     for ( incr = 0; incr < maxTries ; incr++ ) {
- #if defined(SYMBIAN)
- #define NSPR_AFM_FILENAME "%s\\NSPR-AFM-%d-%p.%d"
-@@ -545,6 +545,15 @@
-         ("_md_OpenAnonFileMap(): unlink(): %s", genName ));
- 
-     PR_smprintf_free( genName );
-+#endif
-+    osfd = shm_open( SHM_ANON, (O_CREAT | O_EXCL | O_RDWR), mode );
-+    if ( -1 == osfd ) {
-+        _PR_MD_MAP_OPEN_ERROR( errno );
-+        PR_LOG( _pr_shma_lm, PR_LOG_DEBUG,
-+            ("_md_OpenAnonFileMap(): shm_open(SHM_ANON): failed, filename: %s, errno: %d", 
-+                genName, PR_GetOSError()));
-+        goto Finished;
-+    }
- 
-     fd = PR_ImportFile( osfd );
-     if ( NULL == fd ) {
---- pr/src/memory/prshm.c
-+++ pr/src/memory/prshm.c
-@@ -59,6 +59,7 @@
- ** FUNCTION: PR_OpenSharedMemory()
- **
- */
-+#if 0
- PR_IMPLEMENT( PRSharedMemory * )
-     PR_OpenSharedMemory(
-         const char *name,
-@@ -121,4 +122,5 @@
-     if (!_pr_initialized) _PR_ImplicitInitialization();
-     return(_PR_MD_DELETE_SHARED_MEMORY( name ));
- } /* end PR_DestroySharedMemory() */
-+#endif
- /* end prshm.c */
 --- pr/src/misc/prinit.c
 +++ pr/src/misc/prinit.c
 @@ -456,6 +456,7 @@
@@ -939,82 +665,6 @@
  
  /*
   ********************************************************************
---- pr/src/misc/prnetdb.c
-+++ pr/src/misc/prnetdb.c
-@@ -484,6 +484,7 @@
- ** Copy a hostent, and all of the memory that it refers to into
- ** (hopefully) stacked buffers.
- */
-+#if 0
- static PRStatus CopyHostent(
-     struct hostent *from,
-     char **buf,
-@@ -564,6 +565,7 @@
- 	to->h_addr_list[na] = 0;
- 	return PR_SUCCESS;
- }
-+#endif
- 
- #ifdef SYMBIAN
- /* Set p_aliases by hand because Symbian's getprotobyname() returns NULL. */
-@@ -659,6 +661,7 @@
- 
- #endif  /* definition of GETHOSTBYXXX */
- 
-+#if 0
- PR_IMPLEMENT(PRStatus) PR_GetHostByName(
-     const char *name, char *buf, PRIntn bufsize, PRHostEnt *hp)
- {
-@@ -708,6 +711,7 @@
- #endif
- 	return rv;
- }
-+#endif
- 
- #if !defined(_PR_INET6) && \
-         defined(_PR_INET6_PROBE) && defined(_PR_HAVE_GETIPNODEBYNAME)
-@@ -791,6 +795,7 @@
- }
- #endif
- 
-+#if 0
- PR_IMPLEMENT(PRStatus) PR_GetIPNodeByName(
-     const char *name, PRUint16 af, PRIntn flags,
-     char *buf, PRIntn bufsize, PRHostEnt *hp)
-@@ -1137,6 +1142,7 @@
- 
- 	return rv;
- }
-+#endif
- 
- /******************************************************************************/
- /*
---- pr/src/misc/prsystem.c
-+++ pr/src/misc/prsystem.c
-@@ -43,7 +43,6 @@
- 
- #if defined(XP_UNIX)
- #include <unistd.h>
--#include <sys/utsname.h>
- #endif
- 
- #if defined(LINUX)
-@@ -90,6 +89,7 @@
- 
-     switch(cmd)
-     {
-+#if 0
-       case PR_SI_HOSTNAME:
-       case PR_SI_HOSTNAME_UNTRUNCATED:
-         if (PR_FAILURE == _PR_MD_GETHOSTNAME(buf, (PRUintn)buflen))
-@@ -149,6 +149,7 @@
-         }
- #endif /* OS2 */
-         break;
-+#endif
- 
-       case PR_SI_ARCHITECTURE:
-         /* Return the architecture of the machine (ie. x86, mips, alpha, ...)*/
 --- pr/src/misc/prtpool.c
 +++ pr/src/misc/prtpool.c
 @@ -851,6 +851,7 @@
@@ -1043,15 +693,6 @@
  static PRFileDesc * InitializeRecording( void )
  {
      char    *logFileName;
-@@ -657,7 +658,7 @@
-     logLostData = 0; /* reset at entry */
-     logState = LogReset;
- 
--#ifdef XP_UNIX
-+#if defined(XP_UNIX) && !defined(CLOUDABI)
-     if ((getuid() != geteuid()) || (getgid() != getegid())) {
-         return NULL;
-     }
 @@ -683,6 +684,7 @@
      }
      return logFile;

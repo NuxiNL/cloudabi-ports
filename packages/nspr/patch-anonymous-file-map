@@ -1,0 +1,34 @@
+--- pr/src/md/unix/uxshm.c
++++ pr/src/md/unix/uxshm.c
+@@ -476,7 +476,6 @@
+     PRIntn      urc;
+     PRIntn      mode = 0600;
+     char        *genName;
+-    pid_t       pid = getpid(); /* for generating filename */
+     PRThread    *tid = PR_GetCurrentThread(); /* for generating filename */
+     int         incr; /* for generating filename */
+     const int   maxTries = 20; /* maximum # attempts at a unique filename */
+@@ -487,6 +486,7 @@
+     ** open the file, unlink the file.
+     ** make maxTries number of attempts at uniqueness in the filename
+     */
++#if 0
+     for ( incr = 0; incr < maxTries ; incr++ ) {
+ #if defined(SYMBIAN)
+ #define NSPR_AFM_FILENAME "%s\\NSPR-AFM-%d-%p.%d"
+@@ -545,6 +545,15 @@
+         ("_md_OpenAnonFileMap(): unlink(): %s", genName ));
+ 
+     PR_smprintf_free( genName );
++#endif
++    osfd = shm_open( SHM_ANON, (O_CREAT | O_EXCL | O_RDWR), mode );
++    if ( -1 == osfd ) {
++        _PR_MD_MAP_OPEN_ERROR( errno );
++        PR_LOG( _pr_shma_lm, PR_LOG_DEBUG,
++            ("_md_OpenAnonFileMap(): shm_open(SHM_ANON): failed, filename: %s, errno: %d", 
++                genName, PR_GetOSError()));
++        goto Finished;
++    }
+ 
+     fd = PR_ImportFile( osfd );
+     if ( NULL == fd ) {
