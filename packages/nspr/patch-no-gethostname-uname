@@ -31,7 +31,17 @@
  
 --- pr/src/md/unix/unix.c
 +++ pr/src/md/unix/unix.c
-@@ -3508,6 +3508,7 @@
+@@ -15,7 +15,9 @@
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
++#if !defined(CLOUDABI)
+ #include <sys/utsname.h>
++#endif
+ 
+ #ifdef _PR_POLL_AVAILABLE
+ #include <poll.h>
+@@ -3508,6 +3510,7 @@
  }
  #endif
  
@@ -39,7 +49,7 @@
  PRStatus _MD_gethostname(char *name, PRUint32 namelen)
  {
      PRIntn rv;
-@@ -3538,6 +3539,7 @@
+@@ -3538,6 +3541,7 @@
  		return PR_FAILURE;
      return PR_SUCCESS;
  }

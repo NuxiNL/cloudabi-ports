@@ -1,0 +1,359 @@
+--- pr/include/md/_unixos.h
++++ pr/include/md/_unixos.h
+@@ -334,8 +334,6 @@
+ extern char *   _MD_read_dir(struct _MDDir *, PRIntn);
+ extern PRInt32  _MD_open(const char *name, PRIntn osflags, PRIntn mode);
+ extern PRInt32	_MD_delete(const char *name);
+-extern PRInt32	_MD_getfileinfo(const char *fn, PRFileInfo *info);
+-extern PRInt32  _MD_getfileinfo64(const char *fn, PRFileInfo64 *info);
+ extern PRInt32  _MD_getopenfileinfo(const PRFileDesc *fd, PRFileInfo *info);
+ extern PRInt32  _MD_getopenfileinfo64(const PRFileDesc *fd, PRFileInfo64 *info);
+ extern PRInt32	_MD_rename(const char *from, const char *to);
+@@ -361,8 +359,6 @@
+ extern PRInt32 _MD_write(PRFileDesc *fd, const void *buf, PRInt32 amount);
+ #define _MD_WRITE(fd,buf,amount)	    _MD_write(fd,buf,amount)
+ #define _MD_DELETE(name)		        _MD_delete(name)
+-#define _MD_GETFILEINFO(fn, info)	    _MD_getfileinfo(fn, info)
+-#define _MD_GETFILEINFO64(fn, info)	    _MD_getfileinfo64(fn, info)
+ #define _MD_GETOPENFILEINFO(fd, info)	_MD_getopenfileinfo(fd, info)
+ #define _MD_GETOPENFILEINFO64(fd, info)	_MD_getopenfileinfo64(fd, info)
+ #define _MD_RENAME(from, to)		    _MD_rename(from, to)
+@@ -613,9 +609,7 @@
+     PRIntn fildes, _MDOff64_t offset);
+ struct _MD_IOVector
+ {
+-    _MD_Open64 _open64;
+     _MD_Mmap64 _mmap64;
+-    _MD_Stat64 _stat64;
+     _MD_Fstat64 _fstat64;
+     _MD_Lseek64 _lseek64;
+ };
+--- pr/include/obsolete/probslet.h
++++ pr/include/obsolete/probslet.h
+@@ -139,7 +139,6 @@
+ #ifndef NO_NSPR_10_SUPPORT
+ #include <sys/stat.h>
+ 
+-NSPR_API(PRInt32) PR_Stat(const char *path, struct stat *buf);
+ #endif /* NO_NSPR_10_SUPPORT */
+ 
+ PR_END_EXTERN_C
+--- pr/include/prio.h
++++ pr/include/prio.h
+@@ -612,7 +612,6 @@
+ **
+ */
+ 
+-NSPR_API(PRFileDesc*) PR_Open(const char *name, PRIntn flags, PRIntn mode);
+ 
+ /*
+  **************************************************************************
+@@ -638,8 +637,6 @@
+ #define PR_IWOTH 00002  /* write permission, others */
+ #define PR_IXOTH 00001  /* execute/search permission, others */
+ 
+-NSPR_API(PRFileDesc*) PR_OpenFile(
+-    const char *name, PRIntn flags, PRIntn mode);
+ 
+ #ifdef MOZ_UNICODE
+ /*
+@@ -783,7 +780,6 @@
+  ***************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_Delete(const char *name);
+ 
+ /**************************************************************************/
+ 
+@@ -826,8 +822,6 @@
+  ***************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_GetFileInfo(const char *fn, PRFileInfo *info);
+-NSPR_API(PRStatus) PR_GetFileInfo64(const char *fn, PRFileInfo64 *info);
+ 
+ #ifdef MOZ_UNICODE
+ /*
+@@ -872,7 +866,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRStatus)    PR_Rename(const char *from, const char *to);
+ 
+ /*
+  *************************************************************************
+@@ -904,7 +897,6 @@
+     PR_ACCESS_READ_OK = 3
+ } PRAccessHow;
+ 
+-NSPR_API(PRStatus) PR_Access(const char *name, PRAccessHow how);
+ 
+ /*
+  *************************************************************************
+@@ -1021,7 +1013,6 @@
+  *************************************************************************
+  */
+ 
+-NSPR_API(PRDir*) PR_OpenDir(const char *name);
+ 
+ #ifdef MOZ_UNICODE
+ /*
+@@ -1116,7 +1107,6 @@
+  *************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_MkDir(const char *name, PRIntn mode);
+ 
+ /*
+  *************************************************************************
+@@ -1128,7 +1118,6 @@
+  *************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_MakeDir(const char *name, PRIntn mode);
+ 
+ /*
+  *************************************************************************
+@@ -1148,7 +1137,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_RmDir(const char *name);
+ 
+ /*
+  *************************************************************************
+--- pr/include/prlog.h
++++ pr/include/prlog.h
+@@ -136,7 +136,6 @@
+ ** Set the file to use for logging. Returns PR_FALSE if the file cannot
+ ** be created
+ */
+-NSPR_API(PRBool) PR_SetLogFile(const char *name);
+ 
+ /*
+ ** Set the size of the logging buffer. If "buffer_size" is zero then the
+--- pr/include/prtpool.h
++++ pr/include/prtpool.h
+@@ -54,9 +54,6 @@
+ 									PRJobFn fn, void * arg, PRBool joinable);
+ 
+ /* queue a job, when the socket connection to addr succeeds or fails */
+-NSPR_API(PRJob *)
+-PR_QueueJob_Connect(PRThreadPool *tpool, PRJobIoDesc *iod,
+-			const PRNetAddr *addr, PRJobFn fn, void * arg, PRBool joinable);
+ 
+ /* queue a job, when a timer exipres */
+ NSPR_API(PRJob *)
+--- pr/include/prtrace.h
++++ pr/include/prtrace.h
+@@ -581,10 +581,6 @@
+ #define PR_RECORD_TRACE_ENTRIES()
+ #endif
+     
+-NSPR_API(void)
+-	PR_RecordTraceEntries(
+-        void 
+-);
+ 
+ /* -----------------------------------------------------------------------
+ ** FUNCTION: PR_GetTraceEntries() -- Retreive trace entries from
+--- pr/src/io/prlog.c
++++ pr/src/io/prlog.c
+@@ -238,13 +238,14 @@
+         }
+         PR_SetLogBuffering(isSync ? 0 : bufSize);
+ 
+-#ifdef XP_UNIX
++#if defined(XP_UNIX) && !defined(CLOUDABI)
+         if ((getuid() != geteuid()) || (getgid() != getegid())) {
+             return;
+         }
+ #endif /* XP_UNIX */
+ 
+         ev = PR_GetEnv("NSPR_LOG_FILE");
++#if 0
+         if (ev && ev[0]) {
+             if (!PR_SetLogFile(ev)) {
+ #ifdef XP_PC
+@@ -258,12 +259,12 @@
+ #endif
+             }
+         } else {
++#endif
+ #ifdef _PR_USE_STDIO_FOR_LOGGING
+             logFile = stderr;
+ #else
+             logFile = _pr_stderr;
+ #endif
+-        }
+     }
+ }
+ 
+@@ -362,6 +363,7 @@
+     return lm;
+ }
+ 
++#if 0
+ PR_IMPLEMENT(PRBool) PR_SetLogFile(const char *file)
+ {
+ #ifdef _PR_USE_STDIO_FOR_LOGGING
+@@ -415,6 +417,7 @@
+     return (PRBool) (newLogFile != 0);
+ #endif /* _PR_USE_STDIO_FOR_LOGGING */
+ }
++#endif
+ 
+ PR_IMPLEMENT(void) PR_SetLogBuffering(PRIntn buffer_size)
+ {
+--- pr/src/md/unix/unix.c
++++ pr/src/md/unix/unix.c
+@@ -2574,6 +2574,7 @@
+     return 0;
+ }  /* _MD_convert_stat64_to_fileinfo64 */
+ 
++#if 0
+ PRInt32 _MD_getfileinfo(const char *fn, PRFileInfo *info)
+ {
+     PRInt32 rv;
+@@ -2597,6 +2598,7 @@
+         rv = _MD_convert_stat64_to_fileinfo64(&sb, info);
+     return rv;
+ }
++#endif
+ 
+ PRInt32 _MD_getopenfileinfo(const PRFileDesc *fd, PRFileInfo *info)
+ {
+@@ -2626,7 +2628,7 @@
+  * initialized by _PR_MD_FINAL_INIT.  This means the log file cannot be a
+  * large file on some platforms.
+  */
+-#ifdef SYMBIAN
++#if defined(CLOUDABI) || defined(SYMBIAN)
+ struct _MD_IOVector _md_iovector; /* Will crash if NSPR_LOG_FILE is set. */
+ #else
+ struct _MD_IOVector _md_iovector = { open };
+@@ -2798,14 +2800,12 @@
+     _md_iovector._stat64 = stat64;
+     _md_iovector._lseek64 = lseek64;
+ #elif defined(_PR_HAVE_LARGE_OFF_T)
+-    _md_iovector._open64 = open;
+     _md_iovector._mmap64 = mmap;
+ #if defined(OSF1) && defined(__GNUC__)
+     _md_iovector._fstat64 = fstat_forwarder;
+     _md_iovector._stat64 = stat_forwarder;
+ #else
+     _md_iovector._fstat64 = fstat;
+-    _md_iovector._stat64 = stat;
+ #endif
+     _md_iovector._lseek64 = lseek;
+ #else
+--- pr/src/misc/prtpool.c
++++ pr/src/misc/prtpool.c
+@@ -851,6 +851,7 @@
+ }
+ 
+ /* queue a job, when a socket can be connected */
++#if 0
+ PR_IMPLEMENT(PRJob *)
+ PR_QueueJob_Connect(PRThreadPool *tpool, PRJobIoDesc *iod,
+ 			const PRNetAddr *addr, PRJobFn fn, void * arg, PRBool joinable)
+@@ -873,6 +874,7 @@
+ 		return(PR_QueueJob(tpool, fn, arg, joinable));
+ 	}
+ }
++#endif
+ 
+ /* queue a job, when a timer expires */
+ PR_IMPLEMENT(PRJob *)
+--- pr/src/misc/prtrace.c
++++ pr/src/misc/prtrace.c
+@@ -642,6 +642,7 @@
+ /*
+ **
+ */
++#if 0
+ static PRFileDesc * InitializeRecording( void )
+ {
+     char    *logFileName;
+@@ -683,6 +684,7 @@
+     }
+     return logFile;
+ } /* end InitializeRecording() */
++#endif
+ 
+ /*
+ **
+@@ -751,6 +753,7 @@
+ /*
+ **
+ */
++#if 0
+ PR_IMPLEMENT(void)
+ 	PR_RecordTraceEntries(
+         void 
+@@ -826,6 +829,7 @@
+         ("RecordTraceEntries: exiting"));
+     return;
+ } /* end  PR_RecordTraceEntries() */
++#endif
+ 
+ /*
+ **
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -3529,6 +3529,7 @@
+ /****************************** I/O public methods ***************************/
+ /*****************************************************************************/
+ 
++#if 0
+ PR_IMPLEMENT(PRFileDesc*) PR_OpenFile(
+     const char *name, PRIntn flags, PRIntn mode)
+ {
+@@ -3675,6 +3676,7 @@
+     PR_Unlock(_pr_rename_lock);
+     return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
+ }  /* PR_Rename */
++#endif
+ 
+ PR_IMPLEMENT(PRStatus) PR_CloseDir(PRDir *dir)
+ {
+@@ -3693,6 +3695,7 @@
+     return PR_SUCCESS;
+ }  /* PR_CloseDir */
+ 
++#if 0
+ PR_IMPLEMENT(PRStatus) PR_MakeDir(const char *name, PRIntn mode)
+ {
+     PRInt32 rv = -1;
+@@ -3755,6 +3758,7 @@
+     }
+     return dir;
+ }  /* PR_OpenDir */
++#endif
+ 
+ static PRInt32 _pr_poll_with_poll(
+     PRPollDesc *pds, PRIntn npds, PRIntervalTime timeout)
+@@ -4708,6 +4712,7 @@
+  * defined here for historical (or hysterical) reasons.
+  */
+ 
++#if 0
+ PR_IMPLEMENT(PRInt32) PR_GetSysfdTableMax(void)
+ {
+ #if defined(AIX) || defined(SYMBIAN)
+@@ -4745,13 +4750,14 @@
+     return rlim.rlim_cur;
+ #endif
+ }
++#endif
+ 
+ /*
+  * PR_Stat is supported for backward compatibility; some existing Java
+  * code uses it.  New code should use PR_GetFileInfo.
+  */
+ 
+-#ifndef NO_NSPR_10_SUPPORT
++#if 0
+ PR_IMPLEMENT(PRInt32) PR_Stat(const char *name, struct stat *buf)
+ {
+     static PRBool unwarned = PR_TRUE;

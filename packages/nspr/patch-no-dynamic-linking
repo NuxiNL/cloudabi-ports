@@ -1,0 +1,28 @@
+--- pr/include/prlink.h
++++ pr/include/prlink.h
+@@ -50,7 +50,6 @@
+ ** The storage for the result is allocated by the runtime and becomes the
+ ** responsibility of the caller.
+ */
+-NSPR_API(char*) PR_GetLibraryName(const char *dir, const char *lib);
+ 
+ /*
+ **
+--- pr/src/linking/prlink.c
++++ pr/src/linking/prlink.c
+@@ -328,6 +328,7 @@
+ /*
+ ** Build library name from path, lib and extensions
+ */
++#if 0
+ PR_IMPLEMENT(char*) 
+ PR_GetLibraryName(const char *path, const char *lib)
+ {
+@@ -367,6 +368,7 @@
+ #endif /* XP_UNIX || XP_BEOS */
+     return fullname;
+ }
++#endif
+ 
+ /*
+ ** Free the memory allocated, for the caller, by PR_GetLibraryName
