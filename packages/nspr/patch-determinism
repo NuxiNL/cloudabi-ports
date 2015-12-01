@@ -1,0 +1,60 @@
+--- lib/ds/Makefile.in
++++ lib/ds/Makefile.in
+@@ -114,12 +114,6 @@
+ 
+ $(TINC):
+ 	@$(MAKE_OBJDIR)
+-	@$(ECHO) '#define _BUILD_STRING "$(SH_DATE)"' > $(TINC)
+-	@if test ! -z "$(SH_NOW)"; then \
+-	    $(ECHO) '#define _BUILD_TIME $(SH_NOW)$(SUF)' >> $(TINC); \
+-	else \
+-	    true; \
+-	fi
+ 	@$(ECHO) '#define _PRODUCTION "$(PROD)"' >> $(TINC)
+ 
+ 
+--- lib/libc/src/Makefile.in
++++ lib/libc/src/Makefile.in
+@@ -116,12 +116,6 @@
+ 
+ $(TINC):
+ 	@$(MAKE_OBJDIR)
+-	@$(ECHO) '#define _BUILD_STRING "$(SH_DATE)"' > $(TINC)
+-	@if test ! -z "$(SH_NOW)"; then \
+-	    $(ECHO) '#define _BUILD_TIME $(SH_NOW)$(SUF)' >> $(TINC); \
+-	else \
+-	    true; \
+-	fi
+ 	@$(ECHO) '#define _PRODUCTION "$(PROD)"' >> $(TINC)
+ 
+ 
+--- lib/prstreams/Makefile.in
++++ lib/prstreams/Makefile.in
+@@ -116,12 +116,6 @@
+ 
+ $(TINC):
+ 	@$(MAKE_OBJDIR)
+-	@$(ECHO) '#define _BUILD_STRING "$(SH_DATE)"' > $(TINC)
+-	@if test ! -z "$(SH_NOW)"; then \
+-	    $(ECHO) '#define _BUILD_TIME $(SH_NOW)$(SUF)' >> $(TINC); \
+-	else \
+-	    true; \
+-	fi
+ 	@$(ECHO) '#define _PRODUCTION "$(PROD)"' >> $(TINC)
+ 
+ 
+--- pr/src/Makefile.in
++++ pr/src/Makefile.in
+@@ -330,12 +330,6 @@
+ 
+ $(TINC):
+ 	@$(MAKE_OBJDIR)
+-	@$(ECHO) '#define _BUILD_STRING "$(SH_DATE)"' > $(TINC)
+-	@if test ! -z "$(SH_NOW)"; then \
+-	    $(ECHO) '#define _BUILD_TIME $(SH_NOW)$(SUF)' >> $(TINC); \
+-	else \
+-	    true; \
+-	fi
+ 	@$(ECHO) '#define _PRODUCTION "$(PROD)"' >> $(TINC)
+ 
+ 
