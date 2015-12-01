@@ -1,0 +1,10 @@
+--- pr/include/md/_pth.h
++++ pr/include/md/_pth.h
+@@ -229,6 +229,7 @@
+ 	|| defined(RISCOS) /* XXX */
+ #define PT_PRIO_MIN            0
+ #define PT_PRIO_MAX            126
++#elif defined(CLOUDABI)
+ #else
+ #error "pthreads is not supported for this architecture"
+ #endif

@@ -1,0 +1,18 @@
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -26,7 +26,6 @@
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/uio.h>
+-#include <sys/file.h>
+ #include <sys/ioctl.h>
+ #if defined(DARWIN)
+ #include <sys/utsname.h> /* for uname */
+@@ -44,7 +43,6 @@
+ #else
+ /* To pick up getrlimit() etc. */
+ #include <sys/time.h>
+-#include <sys/resource.h>
+ #endif
+ 
+ #ifdef SOLARIS

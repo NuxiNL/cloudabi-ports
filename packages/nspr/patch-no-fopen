@@ -333,22 +333,7 @@
  
  static PRInt32 _pr_poll_with_poll(
      PRPollDesc *pds, PRIntn npds, PRIntervalTime timeout)
-@@ -4708,6 +4712,7 @@
-  * defined here for historical (or hysterical) reasons.
-  */
- 
-+#if 0
- PR_IMPLEMENT(PRInt32) PR_GetSysfdTableMax(void)
- {
- #if defined(AIX) || defined(SYMBIAN)
-@@ -4745,13 +4750,14 @@
-     return rlim.rlim_cur;
- #endif
- }
-+#endif
- 
- /*
-  * PR_Stat is supported for backward compatibility; some existing Java
+@@ -4751,7 +4755,7 @@
   * code uses it.  New code should use PR_GetFileInfo.
   */
  

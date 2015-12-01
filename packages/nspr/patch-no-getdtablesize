@@ -1,0 +1,30 @@
+--- pr/include/obsolete/probslet.h
++++ pr/include/obsolete/probslet.h
+@@ -132,9 +132,7 @@
+ ** declared here for historical reasons.
+ */
+ 
+-NSPR_API(PRInt32) PR_GetSysfdTableMax(void);
+ 
+-NSPR_API(PRInt32) PR_SetSysfdTableSize(PRIntn table_size);
+ 
+ #ifndef NO_NSPR_10_SUPPORT
+ #include <sys/stat.h>
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -4708,6 +4708,7 @@
+  * defined here for historical (or hysterical) reasons.
+  */
+ 
++#if 0
+ PR_IMPLEMENT(PRInt32) PR_GetSysfdTableMax(void)
+ {
+ #if defined(AIX) || defined(SYMBIAN)
+@@ -4745,6 +4746,7 @@
+     return rlim.rlim_cur;
+ #endif
+ }
++#endif
+ 
+ /*
+  * PR_Stat is supported for backward compatibility; some existing Java

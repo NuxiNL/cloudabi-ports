@@ -1,0 +1,258 @@
+--- pr/include/md/_unixos.h
++++ pr/include/md/_unixos.h
+@@ -208,29 +208,12 @@
+ 
+ /************************************************************************/
+ 
+-struct _MDProcess {
+-    pid_t pid;
+-};
+ 
+-struct PRProcess;
+-struct PRProcessAttr;
+ 
+ /* Create a new process (fork() + exec()) */
+-#define _MD_CREATE_PROCESS _MD_CreateUnixProcess
+-extern struct PRProcess * _MD_CreateUnixProcess(
+-    const char *path,
+-    char *const *argv,
+-    char *const *envp,
+-    const struct PRProcessAttr *attr
+-);
+ 
+-#define _MD_DETACH_PROCESS _MD_DetachUnixProcess
+-extern PRStatus _MD_DetachUnixProcess(struct PRProcess *process);
+ 
+ /* Wait for a child process to terminate */
+-#define _MD_WAIT_PROCESS _MD_WaitUnixProcess
+-extern PRStatus _MD_WaitUnixProcess(struct PRProcess *process,
+-    PRInt32 *exitCode);
+ 
+ #define _MD_KILL_PROCESS _MD_KillUnixProcess
+ extern PRStatus _MD_KillUnixProcess(struct PRProcess *process);
+--- pr/include/private/primpl.h
++++ pr/include/private/primpl.h
+@@ -1674,19 +1674,7 @@
+ #endif
+ };
+ 
+-struct PRProcessAttr {
+-    PRFileDesc *stdinFd;
+-    PRFileDesc *stdoutFd;
+-    PRFileDesc *stderrFd;
+-    char *currentDirectory;
+-    char *fdInheritBuffer;
+-    PRSize fdInheritBufferSize;
+-    PRSize fdInheritBufferUsed;
+-};
+ 
+-struct PRProcess {
+-    _MDProcess md;
+-};
+ 
+ struct PRFileMap {
+     PRFileDesc *fd;
+@@ -1896,6 +1884,7 @@
+ 
+ /* Process control */
+ 
++#if 0
+ extern PRProcess * _PR_MD_CREATE_PROCESS(
+     const char *path,
+     char *const *argv,
+@@ -1911,6 +1900,7 @@
+ 
+ extern PRStatus _PR_MD_KILL_PROCESS(PRProcess *process);
+ #define    _PR_MD_KILL_PROCESS _MD_KILL_PROCESS        
++#endif
+ 
+ /* Current Time */
+ NSPR_API(PRTime) _PR_MD_NOW(void);
+--- pr/include/prproces.h
++++ pr/include/prproces.h
+@@ -18,37 +18,15 @@
+ typedef struct PRProcess PRProcess;
+ typedef struct PRProcessAttr PRProcessAttr;
+ 
+-NSPR_API(PRProcessAttr *) PR_NewProcessAttr(void);
+ 
+-NSPR_API(void) PR_ResetProcessAttr(PRProcessAttr *attr);
+ 
+-NSPR_API(void) PR_DestroyProcessAttr(PRProcessAttr *attr);
+ 
+-NSPR_API(void) PR_ProcessAttrSetStdioRedirect(
+-    PRProcessAttr *attr,
+-    PRSpecialFD stdioFd,
+-    PRFileDesc *redirectFd
+-);
+ 
+ /*
+  * OBSOLETE -- use PR_ProcessAttrSetStdioRedirect instead.
+  */
+-NSPR_API(void) PR_SetStdioRedirect(
+-    PRProcessAttr *attr,
+-    PRSpecialFD stdioFd,
+-    PRFileDesc *redirectFd
+-);
+-
+-NSPR_API(PRStatus) PR_ProcessAttrSetCurrentDirectory(
+-    PRProcessAttr *attr,
+-    const char *dir
+-);
+-
+-NSPR_API(PRStatus) PR_ProcessAttrSetInheritableFD(
+-    PRProcessAttr *attr,
+-    PRFileDesc *fd,
+-    const char *name
+-);
++
++
+ 
+ /*
+ ** Create a new process
+@@ -63,23 +41,10 @@
+ ** termination using PR_WaitProcess(). 
+ */
+ 
+-NSPR_API(PRProcess*) PR_CreateProcess(
+-    const char *path,
+-    char *const *argv,
+-    char *const *envp,
+-    const PRProcessAttr *attr);
+-
+-NSPR_API(PRStatus) PR_CreateProcessDetached(
+-    const char *path,
+-    char *const *argv,
+-    char *const *envp,
+-    const PRProcessAttr *attr);
+ 
+-NSPR_API(PRStatus) PR_DetachProcess(PRProcess *process);
+ 
+-NSPR_API(PRStatus) PR_WaitProcess(PRProcess *process, PRInt32 *exitCode);
+ 
+-NSPR_API(PRStatus) PR_KillProcess(PRProcess *process);
++
+ 
+ PR_END_EXTERN_C
+ 
+--- pr/src/md/unix/uxproces.c
++++ pr/src/md/unix/uxproces.c
+@@ -9,7 +9,6 @@
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <signal.h>
+-#include <sys/wait.h>
+ #include <string.h>
+ #if defined(AIX)
+ #include <dlfcn.h>  /* For dlopen, dlsym, dlclose */
+@@ -46,6 +45,7 @@
+     _PR_PID_WAITING
+ } pr_PidState;
+ 
++#if 0
+ typedef struct pr_PidRecord {
+     pid_t pid;
+     int exitStatus;
+@@ -53,6 +53,7 @@
+     PRCondVar *reapedCV;
+     struct pr_PidRecord *next;
+ } pr_PidRecord;
++#endif
+ 
+ /*
+  * Irix sprocs and LinuxThreads are actually a kind of processes
+@@ -84,6 +85,7 @@
+  * collected in this structure.
+  */
+ 
++#if 0
+ static struct {
+     PRCallOnceType once;
+     PRThread *thread;
+@@ -110,6 +112,7 @@
+                               */
+ #endif /* AIX */
+ } pr_wp;
++#endif
+ 
+ #ifdef _PR_SHARE_CLONES
+ static int pr_waitpid_daemon_exit;
+@@ -125,6 +128,7 @@
+ }
+ #endif
+ 
++#if 0
+ static PRStatus _MD_InitProcesses(void);
+ #if !defined(_PR_NATIVE_THREADS)
+ static void pr_InstallSigchldHandler(void);
+@@ -334,6 +338,7 @@
+ #endif
+     return process;
+ }
++#endif
+ 
+ #ifdef _PR_SHARE_CLONES
+ 
+@@ -412,6 +417,7 @@
+ 
+ #else  /* ! _PR_SHARE_CLONES */
+ 
++#if 0
+ PRProcess *
+ _MD_CreateUnixProcess(
+     const char *path,
+@@ -424,6 +430,7 @@
+     }
+     return ForkAndExec(path, argv, envp, attr);
+ }  /* _MD_CreateUnixProcess */
++#endif
+ 
+ #endif  /* _PR_SHARE_CLONES */
+ 
+@@ -436,6 +443,7 @@
+ #define NBUCKETS (1 << NBUCKETS_LOG2)
+ #define PID_HASH_MASK ((pid_t) (NBUCKETS - 1))
+ 
++#if 0
+ static pr_PidRecord *
+ FindPidTable(pid_t pid)
+ {
+@@ -883,3 +891,4 @@
+     return PR_FAILURE;
+ #endif
+ }  /* _MD_KillUnixProcess */
++#endif
+--- pr/src/misc/prinit.c
++++ pr/src/misc/prinit.c
+@@ -456,6 +456,7 @@
+ 
+ #endif /* defined(_PR_PTHREADS) */
+ 
++#if 0
+ PR_IMPLEMENT(PRProcessAttr *)
+ PR_NewProcessAttr(void)
+ {
+@@ -620,6 +621,7 @@
+     attr->fdInheritBufferUsed += nwritten; 
+     return PR_SUCCESS;
+ }
++#endif
+ 
+ PR_IMPLEMENT(PRFileDesc *) PR_GetInheritedFD(
+     const char *name)
+@@ -693,6 +695,7 @@
+     }
+ }
+ 
++#if 0
+ PR_IMPLEMENT(PRProcess*) PR_CreateProcess(
+     const char *path,
+     char *const *argv,
+@@ -738,6 +741,7 @@
+ {
+     return _PR_MD_KILL_PROCESS(process);
+ }
++#endif
+ 
+ /*
+  ********************************************************************

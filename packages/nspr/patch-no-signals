@@ -1,0 +1,139 @@
+--- pr/include/private/pprthred.h
++++ pr/include/private/pprthred.h
+@@ -149,13 +149,11 @@
+ ** This routine prevents all other GC able threads from running. This call is needed by 
+ ** the garbage collector.
+ */
+-NSPR_API(void) PR_SuspendAll(void);
+ 
+ /*
+ ** This routine unblocks all other GC able threads that were suspended from running by 
+ ** PR_SuspendAll(). This call is needed by the garbage collector.
+ */
+-NSPR_API(void) PR_ResumeAll(void);
+ 
+ /*
+ ** Return the thread stack pointer of the given thread. 
+--- pr/src/md/unix/unix.c
++++ pr/src/md/unix/unix.c
+@@ -64,7 +64,6 @@
+ 
+ static PRInt64 minus_one;
+ 
+-sigset_t timer_set;
+ 
+ #if !defined(_PR_PTHREADS)
+ 
+@@ -2816,10 +2815,8 @@
+ 
+ void _PR_UnixInit(void)
+ {
+-    struct sigaction sigact;
+     int rv;
+ 
+-    sigemptyset(&timer_set);
+ 
+ #if !defined(_PR_PTHREADS)
+ 
+@@ -2869,7 +2866,7 @@
+         rv = sigvector(SIGPIPE, &vec, NULL);
+         PR_ASSERT(0 == rv);
+     }
+-#else
++#elif 0
+     sigact.sa_handler = SIG_IGN;
+     sigemptyset(&sigact.sa_mask);
+     sigact.sa_flags = 0;
+--- pr/src/pthreads/ptthread.c
++++ pr/src/pthreads/ptthread.c
+@@ -61,7 +61,6 @@
+ 
+ static void _pt_thread_death(void *arg);
+ static void _pt_thread_death_internal(void *arg, PRBool callDestructors);
+-static void init_pthread_gc_support(void);
+ 
+ #if defined(_PR_DCETHREADS) || _POSIX_THREAD_PRIORITY_SCHEDULING > 0
+ static PRIntn pt_PriorityMap(PRThreadPriority pri)
+@@ -1207,14 +1206,15 @@
+ 
+ /* a bogus signal mask for forcing a timed wait */
+ /* Not so bogus in AIX as we really do a sigwait */
++#if !defined(CLOUDABI)
+ static sigset_t sigwait_set;
++#endif
+ 
+ static struct timespec onemillisec = {0, 1000000L};
+ #ifndef PT_NO_SIGTIMEDWAIT
+ static struct timespec hundredmillisec = {0, 100000000L};
+ #endif
+ 
+-static void suspend_signal_handler(PRIntn sig);
+ 
+ #ifdef PT_NO_SIGTIMEDWAIT
+ static void null_signal_handler(PRIntn sig);
+@@ -1227,6 +1227,7 @@
+  * conflict with the use of these two signals in our GC support.
+  * So we don't know how to support GC on Linux pthreads.
+  */
++#if 0
+ static void init_pthread_gc_support(void)
+ {
+ #ifndef SYMBIAN
+@@ -1268,6 +1269,7 @@
+ #endif /* defined(_PR_DCETHREADS) */
+ #endif /* SYMBIAN */
+ }
++#endif
+ 
+ PR_IMPLEMENT(void) PR_SetThreadGCAble(void)
+ {
+@@ -1384,6 +1386,7 @@
+ }
+ #endif
+ 
++#if 0
+ static void suspend_signal_handler(PRIntn sig)
+ {
+ 	PRThread *me = PR_GetCurrentThread();
+@@ -1503,6 +1506,7 @@
+     PR_LOG(_pr_gc_lm, PR_LOG_ALWAYS,
+         ("End pt_SuspendTest thred %p tid %X\n", thred, thred->id));
+ }  /* pt_SuspendTest */
++#endif
+ 
+ static void pt_ResumeSet(PRThread *thred)
+ {
+@@ -1529,6 +1533,7 @@
+ 
+ }  /* pt_ResumeSet */
+ 
++#if 0
+ static void pt_ResumeTest(PRThread *thred)
+ {
+     PR_LOG(_pr_gc_lm, PR_LOG_ALWAYS, 
+@@ -1570,8 +1575,6 @@
+     PRThread *me = PR_GetCurrentThread();
+     int rv;
+ 
+-    rv = pthread_once(&pt_gc_support_control, init_pthread_gc_support);
+-    PR_ASSERT(0 == rv);
+     PR_LOG(_pr_gc_lm, PR_LOG_ALWAYS, ("Begin PR_SuspendAll\n"));
+     /*
+      * Stop all threads which are marked GC able.
+@@ -1647,6 +1650,7 @@
+         PR_IntervalToMilliseconds(etime - stime)));
+ #endif
+ }  /* PR_ResumeAll */
++#endif
+ 
+ /* Return the stack pointer for the given thread- used by the GC */
+ PR_IMPLEMENT(void *)PR_GetSP(PRThread *thred)
+@@ -1671,8 +1675,6 @@
+ {
+     PRIntn rv;
+ 
+-    rv = pthread_once(&pt_gc_support_control, init_pthread_gc_support);
+-    PR_ASSERT(0 == rv);  /* returns -1 on failure */
+ #ifdef DEBUG
+     suspendAllOn = PR_TRUE;
+ #endif

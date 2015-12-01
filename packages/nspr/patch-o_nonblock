@@ -1,0 +1,11 @@
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -3256,7 +3256,7 @@
+     || defined(AIX) || defined(FREEBSD) || defined(NETBSD) \
+     || defined(OPENBSD) || defined(BSDI) || defined(NTO) \
+     || defined(DARWIN) || defined(UNIXWARE) || defined(RISCOS) \
+-    || defined(SYMBIAN)
++    || defined(SYMBIAN) || defined(CLOUDABI)
+ #define _PR_FCNTL_FLAGS O_NONBLOCK
+ #else
+ #error "Can't determine architecture"

@@ -1,0 +1,18 @@
+--- pr/src/pthreads/ptthread.c
++++ pr/src/pthreads/ptthread.c
+@@ -1731,6 +1731,7 @@
+ 
+ PR_IMPLEMENT(PRStatus) PR_SetCurrentThreadName(const char *name)
+ {
++#ifndef CLOUDABI
+     PRThread *thread;
+     size_t nameLen;
+     int result;
+@@ -1801,6 +1802,7 @@
+         PR_SetError(PR_UNKNOWN_ERROR, result);
+         return PR_FAILURE;
+     }
++#endif
+     return PR_SUCCESS;
+ }
+ 
