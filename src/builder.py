@@ -188,6 +188,9 @@ class BuildHandle:
     def cc(self):
         return self._builder.get_cc()
 
+    def cflags(self):
+        return self._builder.get_cflags()
+
     def cpu(self):
         return self._builder.get_cpu()
 
@@ -265,6 +268,10 @@ class HostBuilder:
     @staticmethod
     def get_cc():
         return config.HOST_CC
+
+    @staticmethod
+    def get_cflags():
+        return '-O2'
 
     @staticmethod
     def get_cxx():
