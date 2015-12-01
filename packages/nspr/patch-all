@@ -1,201 +1,3 @@
---- pr/include/md/_cloudabi.cfg
-+++ pr/include/md/_cloudabi.cfg
-@@ -0,0 +1,168 @@
-+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-+/* This Source Code Form is subject to the terms of the Mozilla Public
-+ * License, v. 2.0. If a copy of the MPL was not distributed with this
-+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-+
-+#ifndef nspr_cpucfg___
-+#define nspr_cpucfg___
-+
-+#ifndef XP_UNIX
-+#define XP_UNIX
-+#endif
-+
-+#ifndef CLOUDABI
-+#define CLOUDABI
-+#endif
-+
-+#include <sys/socket.h>
-+#define PR_AF_INET6 AF_INET6
-+
-+#ifndef HAVE_LONG_LONG
-+#define HAVE_LONG_LONG
-+#endif
-+
-+#if defined(__aarch64__)
-+
-+#undef  IS_BIG_ENDIAN
-+#define IS_LITTLE_ENDIAN 1
-+#define IS_64
-+
-+#define PR_BYTES_PER_BYTE   1
-+#define PR_BYTES_PER_SHORT  2
-+#define PR_BYTES_PER_INT    4
-+#define PR_BYTES_PER_INT64  8
-+#define PR_BYTES_PER_LONG   8
-+#define PR_BYTES_PER_FLOAT  4
-+#define PR_BYTES_PER_DOUBLE 8
-+#define PR_BYTES_PER_WORD   8
-+#define PR_BYTES_PER_DWORD  8
-+
-+#define PR_BITS_PER_BYTE    8
-+#define PR_BITS_PER_SHORT   16
-+#define PR_BITS_PER_INT     32
-+#define PR_BITS_PER_INT64   64
-+#define PR_BITS_PER_LONG    64
-+#define PR_BITS_PER_FLOAT   32
-+#define PR_BITS_PER_DOUBLE  64
-+#define PR_BITS_PER_WORD    64
-+
-+#define PR_BITS_PER_BYTE_LOG2   3
-+#define PR_BITS_PER_SHORT_LOG2  4
-+#define PR_BITS_PER_INT_LOG2    5
-+#define PR_BITS_PER_INT64_LOG2  6
-+#define PR_BITS_PER_LONG_LOG2   6
-+#define PR_BITS_PER_FLOAT_LOG2  5
-+#define PR_BITS_PER_DOUBLE_LOG2 6
-+#define PR_BITS_PER_WORD_LOG2   6
-+
-+#define PR_ALIGN_OF_SHORT   2
-+#define PR_ALIGN_OF_INT     4
-+#define PR_ALIGN_OF_LONG    8
-+#define PR_ALIGN_OF_INT64   8
-+#define PR_ALIGN_OF_FLOAT   4
-+#define PR_ALIGN_OF_DOUBLE  8
-+#define PR_ALIGN_OF_POINTER 8
-+#define PR_ALIGN_OF_WORD    8
-+
-+#define PR_BYTES_PER_WORD_LOG2  3
-+#define PR_BYTES_PER_DWORD_LOG2 3
-+
-+#elif defined(__x86_64__)
-+
-+#define IS_LITTLE_ENDIAN 1
-+#undef  IS_BIG_ENDIAN
-+#define HAVE_ALIGNED_DOUBLES
-+#define HAVE_ALIGNED_LONGLONGS
-+#define IS_64
-+
-+#define PR_BYTES_PER_BYTE   1
-+#define PR_BYTES_PER_SHORT  2
-+#define PR_BYTES_PER_INT    4
-+#define PR_BYTES_PER_INT64  8
-+#define PR_BYTES_PER_LONG   8
-+#define PR_BYTES_PER_FLOAT  4
-+#define PR_BYTES_PER_DOUBLE 8
-+#define PR_BYTES_PER_WORD   8
-+#define PR_BYTES_PER_DWORD  8
-+#define PR_BYTES_PER_WORD_LOG2   3
-+#define PR_BYTES_PER_DWORD_LOG2  3
-+
-+#define PR_BITS_PER_BYTE    8
-+#define PR_BITS_PER_SHORT   16
-+#define PR_BITS_PER_INT     32
-+#define PR_BITS_PER_INT64   64
-+#define PR_BITS_PER_LONG    64
-+#define PR_BITS_PER_FLOAT   32
-+#define PR_BITS_PER_DOUBLE  64
-+#define PR_BITS_PER_WORD    64
-+
-+#define PR_BITS_PER_BYTE_LOG2   3
-+#define PR_BITS_PER_SHORT_LOG2  4
-+#define PR_BITS_PER_INT_LOG2    5
-+#define PR_BITS_PER_INT64_LOG2  6
-+#define PR_BITS_PER_LONG_LOG2   6
-+#define PR_BITS_PER_FLOAT_LOG2  5
-+#define PR_BITS_PER_DOUBLE_LOG2 6
-+#define PR_BITS_PER_WORD_LOG2   6
-+
-+#define PR_ALIGN_OF_SHORT   2
-+#define PR_ALIGN_OF_INT     4
-+#define PR_ALIGN_OF_LONG    8
-+#define PR_ALIGN_OF_INT64   8
-+#define PR_ALIGN_OF_FLOAT   4
-+#define PR_ALIGN_OF_DOUBLE  8
-+#define PR_ALIGN_OF_POINTER 8
-+#define PR_ALIGN_OF_WORD    8
-+
-+#else
-+
-+#error "Unknown CPU architecture"
-+
-+#endif
-+
-+#ifndef NO_NSPR_10_SUPPORT
-+
-+#define BYTES_PER_BYTE		PR_BYTES_PER_BYTE
-+#define BYTES_PER_SHORT 	PR_BYTES_PER_SHORT
-+#define BYTES_PER_INT 		PR_BYTES_PER_INT
-+#define BYTES_PER_INT64		PR_BYTES_PER_INT64
-+#define BYTES_PER_LONG		PR_BYTES_PER_LONG
-+#define BYTES_PER_FLOAT		PR_BYTES_PER_FLOAT
-+#define BYTES_PER_DOUBLE	PR_BYTES_PER_DOUBLE
-+#define BYTES_PER_WORD		PR_BYTES_PER_WORD
-+#define BYTES_PER_DWORD		PR_BYTES_PER_DWORD
-+
-+#define BITS_PER_BYTE		PR_BITS_PER_BYTE
-+#define BITS_PER_SHORT		PR_BITS_PER_SHORT
-+#define BITS_PER_INT		PR_BITS_PER_INT
-+#define BITS_PER_INT64		PR_BITS_PER_INT64
-+#define BITS_PER_LONG		PR_BITS_PER_LONG
-+#define BITS_PER_FLOAT		PR_BITS_PER_FLOAT
-+#define BITS_PER_DOUBLE		PR_BITS_PER_DOUBLE
-+#define BITS_PER_WORD		PR_BITS_PER_WORD
-+
-+#define BITS_PER_BYTE_LOG2	PR_BITS_PER_BYTE_LOG2
-+#define BITS_PER_SHORT_LOG2	PR_BITS_PER_SHORT_LOG2
-+#define BITS_PER_INT_LOG2	PR_BITS_PER_INT_LOG2
-+#define BITS_PER_INT64_LOG2	PR_BITS_PER_INT64_LOG2
-+#define BITS_PER_LONG_LOG2	PR_BITS_PER_LONG_LOG2
-+#define BITS_PER_FLOAT_LOG2	PR_BITS_PER_FLOAT_LOG2
-+#define BITS_PER_DOUBLE_LOG2 	PR_BITS_PER_DOUBLE_LOG2
-+#define BITS_PER_WORD_LOG2	PR_BITS_PER_WORD_LOG2
-+
-+#define ALIGN_OF_SHORT		PR_ALIGN_OF_SHORT
-+#define ALIGN_OF_INT		PR_ALIGN_OF_INT
-+#define ALIGN_OF_LONG		PR_ALIGN_OF_LONG
-+#define ALIGN_OF_INT64		PR_ALIGN_OF_INT64
-+#define ALIGN_OF_FLOAT		PR_ALIGN_OF_FLOAT
-+#define ALIGN_OF_DOUBLE		PR_ALIGN_OF_DOUBLE
-+#define ALIGN_OF_POINTER	PR_ALIGN_OF_POINTER
-+#define ALIGN_OF_WORD		PR_ALIGN_OF_WORD
-+
-+#define BYTES_PER_WORD_LOG2	PR_BYTES_PER_WORD_LOG2
-+#define BYTES_PER_DWORD_LOG2	PR_BYTES_PER_DWORD_LOG2
-+#define WORDS_PER_DWORD_LOG2	PR_WORDS_PER_DWORD_LOG2
-+
-+#endif /* NO_NSPR_10_SUPPORT */
-+
-+#endif /* nspr_cpucfg___ */
---- pr/include/md/_cloudabi.h
-+++ pr/include/md/_cloudabi.h
-@@ -0,0 +1,24 @@
-+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-+/* This Source Code Form is subject to the terms of the Mozilla Public
-+ * License, v. 2.0. If a copy of the MPL was not distributed with this
-+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-+
-+#ifndef nspr_cloudabi_defs_h___
-+#define nspr_cloudabi_defs_h___
-+
-+#define _MD_EARLY_INIT() do { } while (0)
-+#define _MD_FINAL_INIT() do { } while (0)
-+#define _MD_INTERVAL_USE_GTOD
-+
-+#define _PR_HAVE_GETADDRINFO
-+#define _PR_HAVE_LARGE_OFF_T
-+#define _PR_INET6
-+#define _PR_STAT_HAS_ST_ATIM
-+
-+#if defined(__aarch64__)
-+#define _PR_SI_ARCHITECTURE "aarch64"
-+#elif defined(__x86_64__)
-+#define _PR_SI_ARCHITECTURE "x86-64"
-+#endif
-+
-+#endif /* nspr_cloudabi_defs_h___ */
 --- pr/include/md/_pth.h
 +++ pr/include/md/_pth.h
 @@ -116,7 +116,7 @@
@@ -227,15 +29,6 @@
  #error "Need to define _PT_PTHREAD_YIELD for this platform"
 --- pr/include/md/_unixos.h
 +++ pr/include/md/_unixos.h
-@@ -50,7 +50,7 @@
- #include <sys/select.h>
- #endif
- 
--#ifndef SYMBIAN
-+#if !defined(CLOUDABI) && !defined(SYMBIAN)
- #define HAVE_NETINET_TCP_H
- #endif
- 
 @@ -208,29 +208,12 @@
  
  /************************************************************************/
@@ -326,18 +119,6 @@
      _MD_Fstat64 _fstat64;
      _MD_Lseek64 _lseek64;
  };
---- pr/include/md/prosdep.h
-+++ pr/include/md/prosdep.h
-@@ -85,6 +85,9 @@
- #elif defined(SYMBIAN)
- #include "md/_symbian.h"
- 
-+#elif defined(CLOUDABI)
-+#include "md/_cloudabi.h"
-+
- #else
- #error unknown Unix flavor
- 
 --- pr/include/obsolete/probslet.h
 +++ pr/include/obsolete/probslet.h
 @@ -132,14 +132,11 @@
@@ -355,74 +136,9 @@
  #endif /* NO_NSPR_10_SUPPORT */
  
  PR_END_EXTERN_C
---- pr/include/prenv.h
-+++ pr/include/prenv.h
-@@ -111,7 +111,6 @@
- ** 
- ** 
- */
--NSPR_API(PRStatus) PR_SetEnv(const char *string);
- 
- /*
- ** PR_DuplicateEnvironment() -- Obtain a copy of the environment.
 --- pr/include/prio.h
 +++ pr/include/prio.h
-@@ -316,11 +316,8 @@
- typedef PRInt32 (PR_CALLBACK *PRWritevFN)(
-     PRFileDesc *fd, const PRIOVec *iov, PRInt32 iov_size,
-     PRIntervalTime timeout);
--typedef PRStatus (PR_CALLBACK *PRConnectFN)(
--    PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout);
- typedef PRFileDesc* (PR_CALLBACK *PRAcceptFN) (
-     PRFileDesc *fd, PRNetAddr *addr, PRIntervalTime timeout);
--typedef PRStatus (PR_CALLBACK *PRBindFN)(PRFileDesc *fd, const PRNetAddr *addr);
- typedef PRStatus (PR_CALLBACK *PRListenFN)(PRFileDesc *fd, PRIntn backlog);
- typedef PRStatus (PR_CALLBACK *PRShutdownFN)(PRFileDesc *fd, PRIntn how);
- typedef PRInt32 (PR_CALLBACK *PRRecvFN)(
-@@ -332,9 +329,6 @@
- typedef PRInt32 (PR_CALLBACK *PRRecvfromFN)(
-     PRFileDesc *fd, void *buf, PRInt32 amount,
-     PRIntn flags, PRNetAddr *addr, PRIntervalTime timeout);
--typedef PRInt32 (PR_CALLBACK *PRSendtoFN)(
--    PRFileDesc *fd, const void *buf, PRInt32 amount,
--    PRIntn flags, const PRNetAddr *addr, PRIntervalTime timeout);
- typedef PRInt16 (PR_CALLBACK *PRPollFN)(
-     PRFileDesc *fd, PRInt16 in_flags, PRInt16 *out_flags);
- typedef PRInt32 (PR_CALLBACK *PRAcceptreadFN)(
-@@ -347,8 +341,6 @@
- typedef PRStatus (PR_CALLBACK *PRGetpeernameFN)(PRFileDesc *fd, PRNetAddr *addr);
- typedef PRStatus (PR_CALLBACK *PRGetsocketoptionFN)(
-     PRFileDesc *fd, PRSocketOptionData *data);
--typedef PRStatus (PR_CALLBACK *PRSetsocketoptionFN)(
--    PRFileDesc *fd, const PRSocketOptionData *data);
- typedef PRInt32 (PR_CALLBACK *PRSendfileFN)(
- 	PRFileDesc *networkSocket, PRSendFileData *sendData,
- 	PRTransmitFileFlags flags, PRIntervalTime timeout);
-@@ -369,15 +361,12 @@
-     PRFileInfoFN fileInfo;          /* Get information about an open file       */
-     PRFileInfo64FN fileInfo64;      /*           ditto, 64 bit                  */
-     PRWritevFN writev;              /* Write segments as described by iovector  */
--    PRConnectFN connect;            /* Connect to the specified (net) address   */
-     PRAcceptFN accept;              /* Accept a connection for a (net) peer     */
--    PRBindFN bind;                  /* Associate a (net) address with the fd    */
-     PRListenFN listen;              /* Prepare to listen for (net) connections  */
-     PRShutdownFN shutdown;          /* Shutdown a (net) connection              */
-     PRRecvFN recv;                  /* Solicit up the the specified bytes       */
-     PRSendFN send;                  /* Send all the bytes specified             */
-     PRRecvfromFN recvfrom;          /* Solicit (net) bytes and report source    */
--    PRSendtoFN sendto;              /* Send bytes to (net) address specified    */
-     PRPollFN poll;                  /* Test the fd to see if it is ready        */
-     PRAcceptreadFN acceptread;      /* Accept and read on a new (net) fd        */
-     PRTransmitfileFN transmitfile;  /* Transmit at entire file                  */
-@@ -387,7 +376,6 @@
-     PRReservedFN reserved_fn_5;     /* reserved for future use */
-     PRGetsocketoptionFN getsocketoption;
-                                     /* Get current setting of specified option  */
--    PRSetsocketoptionFN setsocketoption;
-                                     /* Set value of specified option            */
-     PRSendfileFN sendfile;			/* Send a (partial) file with header/trailer*/
-     PRConnectcontinueFN connectcontinue;
-@@ -612,7 +600,6 @@
+@@ -612,7 +612,6 @@
  **
  */
  
@@ -430,7 +146,7 @@
  
  /*
   **************************************************************************
-@@ -638,8 +625,6 @@
+@@ -638,8 +637,6 @@
  #define PR_IWOTH 00002  /* write permission, others */
  #define PR_IXOTH 00001  /* execute/search permission, others */
  
@@ -439,7 +155,7 @@
  
  #ifdef MOZ_UNICODE
  /*
-@@ -783,7 +768,6 @@
+@@ -783,7 +780,6 @@
   ***************************************************************************
   */
  
@@ -447,7 +163,7 @@
  
  /**************************************************************************/
  
-@@ -826,8 +810,6 @@
+@@ -826,8 +822,6 @@
   ***************************************************************************
   */
  
@@ -456,7 +172,7 @@
  
  #ifdef MOZ_UNICODE
  /*
-@@ -872,7 +854,6 @@
+@@ -872,7 +866,6 @@
   **************************************************************************
   */
  
@@ -464,7 +180,7 @@
  
  /*
   *************************************************************************
-@@ -904,7 +885,6 @@
+@@ -904,7 +897,6 @@
      PR_ACCESS_READ_OK = 3
  } PRAccessHow;
  
@@ -472,7 +188,7 @@
  
  /*
   *************************************************************************
-@@ -1021,7 +1001,6 @@
+@@ -1021,7 +1013,6 @@
   *************************************************************************
   */
  
@@ -480,7 +196,7 @@
  
  #ifdef MOZ_UNICODE
  /*
-@@ -1116,7 +1095,6 @@
+@@ -1116,7 +1107,6 @@
   *************************************************************************
   */
  
@@ -488,7 +204,7 @@
  
  /*
   *************************************************************************
-@@ -1128,7 +1106,6 @@
+@@ -1128,7 +1118,6 @@
   *************************************************************************
   */
  
@@ -496,7 +212,7 @@
  
  /*
   *************************************************************************
-@@ -1148,7 +1125,6 @@
+@@ -1148,7 +1137,6 @@
   **************************************************************************
   */
  
@@ -504,42 +220,6 @@
  
  /*
   *************************************************************************
-@@ -1254,8 +1230,6 @@
-  **************************************************************************
-  */
- 
--NSPR_API(PRStatus) PR_Connect(
--    PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout);
- 
- /*
-  *************************************************************************
-@@ -1365,7 +1339,6 @@
-  **************************************************************************
-  */
- 
--NSPR_API(PRStatus) PR_Bind(PRFileDesc *fd, const PRNetAddr *addr);
- 
- /*
-  *************************************************************************
-@@ -1550,9 +1523,6 @@
-  **************************************************************************
-  */
- 
--NSPR_API(PRInt32) PR_SendTo(
--    PRFileDesc *fd, const void *buf, PRInt32 amount, PRIntn flags,
--    const PRNetAddr *addr, PRIntervalTime timeout);
- 
- /*
- *************************************************************************
-@@ -1767,8 +1737,6 @@
- NSPR_API(PRStatus)	PR_GetSocketOption(
-     PRFileDesc *fd, PRSocketOptionData *data);
- 
--NSPR_API(PRStatus)	PR_SetSocketOption(
--    PRFileDesc *fd, const PRSocketOptionData *data);
- 
- /*
-  *********************************************************************
 --- pr/include/private/pprio.h
 +++ pr/include/private/pprio.h
 @@ -131,7 +131,6 @@
@@ -861,231 +541,9 @@
  
  /* -----------------------------------------------------------------------
  ** FUNCTION: PR_GetTraceEntries() -- Retreive trace entries from
---- pr/src/io/prfile.c
-+++ pr/src/io/prfile.c
-@@ -233,15 +233,12 @@
-     FileGetInfo,
-     FileGetInfo64,
-     (PRWritevFN)_PR_InvalidInt,		
--    (PRConnectFN)_PR_InvalidStatus,		
-     (PRAcceptFN)_PR_InvalidDesc,		
--    (PRBindFN)_PR_InvalidStatus,		
-     (PRListenFN)_PR_InvalidStatus,		
-     (PRShutdownFN)_PR_InvalidStatus,	
-     (PRRecvFN)_PR_InvalidInt,		
-     (PRSendFN)_PR_InvalidInt,		
-     (PRRecvfromFN)_PR_InvalidInt,	
--    (PRSendtoFN)_PR_InvalidInt,		
-     FilePoll,         
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -250,7 +247,6 @@
-     (PRReservedFN)_PR_InvalidInt,	
-     (PRReservedFN)_PR_InvalidInt,	
-     (PRGetsocketoptionFN)_PR_InvalidStatus,	
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -277,15 +273,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,		
--    (PRConnectFN)_PR_InvalidStatus,		
-     (PRAcceptFN)_PR_InvalidDesc,		
--    (PRBindFN)_PR_InvalidStatus,		
-     (PRListenFN)_PR_InvalidStatus,		
-     (PRShutdownFN)_PR_InvalidStatus,	
-     (PRRecvFN)_PR_InvalidInt,		
-     (PRSendFN)_PR_InvalidInt,		
-     (PRRecvfromFN)_PR_InvalidInt,	
--    (PRSendtoFN)_PR_InvalidInt,		
-     FilePoll,         
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -294,7 +287,6 @@
-     (PRReservedFN)_PR_InvalidInt,	
-     (PRReservedFN)_PR_InvalidInt,	
-     (PRGetsocketoptionFN)_PR_InvalidStatus,	
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
---- pr/src/io/priometh.c
-+++ pr/src/io/priometh.c
-@@ -23,15 +23,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
-     (PRPollFN)_PR_InvalidInt16,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -40,7 +37,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus,
-     (PRReservedFN)_PR_InvalidInt,
-@@ -149,11 +145,6 @@
- 	return((fd->methods->fsync)(fd));
- }
- 
--PR_IMPLEMENT(PRStatus) PR_Connect(
--    PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout)
--{
--	return((fd->methods->connect)(fd,addr,timeout));
--}
- 
- PR_IMPLEMENT(PRStatus) PR_ConnectContinue(
-     PRFileDesc *fd, PRInt16 out_flags)
-@@ -167,10 +158,6 @@
- 	return((fd->methods->accept)(fd,addr,timeout));
- }
- 
--PR_IMPLEMENT(PRStatus) PR_Bind(PRFileDesc *fd, const PRNetAddr *addr)
--{
--	return((fd->methods->bind)(fd,addr));
--}
- 
- PR_IMPLEMENT(PRStatus) PR_Shutdown(PRFileDesc *fd, PRShutdownHow how)
- {
-@@ -211,12 +198,6 @@
- 	return((fd->methods->recvfrom)(fd,buf,amount,flags,addr,timeout));
- }
- 
--PR_IMPLEMENT(PRInt32) PR_SendTo(
--    PRFileDesc *fd, const void *buf, PRInt32 amount,
--    PRIntn flags, const PRNetAddr *addr, PRIntervalTime timeout)
--{
--	return((fd->methods->sendto)(fd,buf,amount,flags,addr,timeout));
--}
- 
- PR_IMPLEMENT(PRInt32) PR_TransmitFile(
-     PRFileDesc *sd, PRFileDesc *fd, const void *hdr, PRInt32 hlen,
-@@ -248,11 +229,6 @@
- 	return((fd->methods->getsocketoption)(fd, data));
- }
- 
--PR_IMPLEMENT(PRStatus) PR_SetSocketOption(
--    PRFileDesc *fd, const PRSocketOptionData *data)
--{
--	return((fd->methods->setsocketoption)(fd, data));
--}
- 
- PR_IMPLEMENT(PRInt32) PR_SendFile(
- 	PRFileDesc *sd, PRSendFileData *sfd,
---- pr/src/io/prlayer.c
-+++ pr/src/io/prlayer.c
-@@ -153,6 +153,7 @@
-     return (fd->lower->methods->writev)(fd->lower, iov, size, timeout);
- }
- 
-+#if 0
- static PRStatus PR_CALLBACK pl_DefConnect (
-     PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout)
- {
-@@ -161,6 +162,7 @@
- 
-     return (fd->lower->methods->connect)(fd->lower, addr, timeout);
- }
-+#endif
- 
- static PRStatus PR_CALLBACK pl_DefConnectcontinue (
-     PRFileDesc *fd, PRInt16 out_flags)
-@@ -213,6 +215,7 @@
- 	}
- }
- 
-+#if 0
- static PRStatus PR_CALLBACK pl_DefBind (PRFileDesc *fd, const PRNetAddr *addr)
- {
-     PR_ASSERT(fd != NULL);
-@@ -220,6 +223,7 @@
- 
-     return (fd->lower->methods->bind)(fd->lower, addr);
- }
-+#endif
- 
- static PRStatus PR_CALLBACK pl_DefListen (PRFileDesc *fd, PRIntn backlog)
- {
-@@ -269,6 +273,7 @@
-         fd->lower, buf, amount, flags, addr, timeout);
- }
- 
-+#if 0
- static PRInt32 PR_CALLBACK pl_DefSendto (
-     PRFileDesc *fd, const void *buf, PRInt32 amount, PRIntn flags,
-     const PRNetAddr *addr, PRIntervalTime timeout)
-@@ -279,6 +284,7 @@
-     return (fd->lower->methods->sendto)(
-         fd->lower, buf, amount, flags, addr, timeout);
- }
-+#endif
- 
- static PRInt16 PR_CALLBACK pl_DefPoll (
-     PRFileDesc *fd, PRInt16 in_flags, PRInt16 *out_flags)
-@@ -370,6 +376,7 @@
-     return (fd->lower->methods->getsocketoption)(fd->lower, data);
- }
- 
-+#if 0
- static PRStatus PR_CALLBACK pl_DefSetsocketoption (
-     PRFileDesc *fd, const PRSocketOptionData *data)
- {
-@@ -378,6 +385,7 @@
- 
-     return (fd->lower->methods->setsocketoption)(fd->lower, data);
- }
-+#endif
- 
- static PRInt32 PR_CALLBACK pl_DefSendfile (
- 	PRFileDesc *sd, PRSendFileData *sfd,
-@@ -404,15 +412,12 @@
-     pl_DefFileInfo,
-     pl_DefFileInfo64,
-     pl_DefWritev,
--    pl_DefConnect,
-     pl_TopAccept,
--    pl_DefBind,
-     pl_DefListen,
-     pl_DefShutdown,
-     pl_DefRecv,
-     pl_DefSend,
-     pl_DefRecvfrom,
--    pl_DefSendto,
-     pl_DefPoll,
-     pl_DefAcceptread,
-     pl_DefTransmitfile,
-@@ -421,7 +426,6 @@
-     (PRReservedFN)_PR_InvalidInt,
-     (PRReservedFN)_PR_InvalidInt,
-     pl_DefGetsocketoption,
--    pl_DefSetsocketoption,
-     pl_DefSendfile,
-     pl_DefConnectcontinue,
-     (PRReservedFN)_PR_InvalidInt,
 --- pr/src/io/prlog.c
 +++ pr/src/io/prlog.c
-@@ -8,6 +8,7 @@
- #include "prenv.h"
- #include "prprf.h"
- #include <string.h>
-+#include <strings.h>
- #ifdef ANDROID
- #include <android/log.h>
- #endif
-@@ -238,13 +239,14 @@
+@@ -238,13 +238,14 @@
          }
          PR_SetLogBuffering(isSync ? 0 : bufSize);
  
@@ -1101,7 +559,7 @@
          if (ev && ev[0]) {
              if (!PR_SetLogFile(ev)) {
  #ifdef XP_PC
-@@ -258,12 +260,12 @@
+@@ -258,12 +259,12 @@
  #endif
              }
          } else {
@@ -1115,7 +573,7 @@
      }
  }
  
-@@ -362,6 +364,7 @@
+@@ -362,6 +363,7 @@
      return lm;
  }
  
@@ -1123,7 +581,7 @@
  PR_IMPLEMENT(PRBool) PR_SetLogFile(const char *file)
  {
  #ifdef _PR_USE_STDIO_FOR_LOGGING
-@@ -415,6 +418,7 @@
+@@ -415,6 +417,7 @@
      return (PRBool) (newLogFile != 0);
  #endif /* _PR_USE_STDIO_FOR_LOGGING */
  }
@@ -1166,66 +624,6 @@
  #ifndef SO_SNDBUF
  #define SO_SNDBUF           _PR_NO_SUCH_SOCKOPT
  #endif
---- pr/src/io/prpolevt.c
-+++ pr/src/io/prpolevt.c
-@@ -63,15 +63,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
-     _pr_PolEvtPoll,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -80,7 +77,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
---- pr/src/io/prsocket.c
-+++ pr/src/io/prsocket.c
-@@ -1090,7 +1090,6 @@
- 	SocketRecv,
- 	SocketSend,
- 	(PRRecvfromFN)_PR_InvalidInt,
--	(PRSendtoFN)_PR_InvalidInt,
- 	SocketPoll,
- 	SocketAcceptRead,
- 	SocketTransmitFile,
-@@ -1161,15 +1160,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
- 	SocketPoll,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -1178,7 +1174,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
 --- pr/src/linking/prlink.c
 +++ pr/src/linking/prlink.c
 @@ -328,6 +328,7 @@
@@ -1562,24 +960,6 @@
  } /* end PR_DestroySharedMemory() */
 +#endif
  /* end prshm.c */
---- pr/src/misc/prenv.c
-+++ pr/src/misc/prenv.c
-@@ -63,6 +63,7 @@
-     return ev;
- }
- 
-+#if 0
- PR_IMPLEMENT(PRStatus) PR_SetEnv(const char *string)
- {
-     PRIntn result;
-@@ -76,6 +77,7 @@
-     _PR_UNLOCK_ENV();
-     return result ? PR_FAILURE : PR_SUCCESS;
- }
-+#endif
- 
- #if defined(XP_UNIX) && (!defined(DARWIN) || defined(HAVE_CRT_EXTERNS_H))
- PR_IMPLEMENT(char **) PR_DuplicateEnvironment(void)
 --- pr/src/misc/prinit.c
 +++ pr/src/misc/prinit.c
 @@ -456,6 +456,7 @@
