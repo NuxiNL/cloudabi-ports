@@ -18,63 +18,19 @@
      const char *dirName,
 --- pr/include/prshm.h
 +++ pr/include/prshm.h
-@@ -144,13 +144,6 @@
+@@ -144,6 +144,7 @@
  **   retrieved via PR_GetError() and PR_GetOSError();
  **
  */
--NSPR_API( PRSharedMemory * )
--    PR_OpenSharedMemory(
--        const char *name,
--        PRSize      size,
--        PRIntn      flags,
--        PRIntn      mode
--);
- /* Define values for PR_OpenShareMemory(...,create) */
- #define PR_SHM_CREATE 0x1  /* create if not exist */
- #define PR_SHM_EXCL   0x2  /* fail if already exists */
-@@ -178,11 +171,6 @@
- **
- **
- */
--NSPR_API( void * )
--    PR_AttachSharedMemory(
--        PRSharedMemory *shm,
--        PRIntn  flags
--);
- /* Define values for PR_AttachSharedMemory(...,flags) */ 
- #define PR_SHM_READONLY 0x01
- 
-@@ -204,11 +192,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_DetachSharedMemory(
--        PRSharedMemory *shm,
--        void  *addr
--);
- 
- /*
- ** FUNCTION: PR_CloseSharedMemory()
-@@ -226,10 +209,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_CloseSharedMemory(
--        PRSharedMemory *shm
--);
- 
- /*
- ** FUNCTION: PR_DeleteSharedMemory()
-@@ -247,10 +226,6 @@
- ** RETURNS: PRStatus
- **
- */
--NSPR_API( PRStatus )
--    PR_DeleteSharedMemory( 
--        const char *name
--);
++#if 0
+ NSPR_API( PRSharedMemory * )
+     PR_OpenSharedMemory(
+         const char *name,
+@@ -251,6 +252,7 @@
+     PR_DeleteSharedMemory( 
+         const char *name
+ );
++#endif
  
  PR_END_EXTERN_C
  

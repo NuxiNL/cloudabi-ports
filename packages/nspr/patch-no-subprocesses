@@ -1,35 +1,21 @@
 --- pr/include/md/_unixos.h
 +++ pr/include/md/_unixos.h
-@@ -208,29 +208,12 @@
+@@ -208,6 +208,7 @@
  
  /************************************************************************/
  
--struct _MDProcess {
--    pid_t pid;
--};
- 
--struct PRProcess;
--struct PRProcessAttr;
- 
- /* Create a new process (fork() + exec()) */
--#define _MD_CREATE_PROCESS _MD_CreateUnixProcess
--extern struct PRProcess * _MD_CreateUnixProcess(
--    const char *path,
--    char *const *argv,
--    char *const *envp,
--    const struct PRProcessAttr *attr
--);
- 
--#define _MD_DETACH_PROCESS _MD_DetachUnixProcess
--extern PRStatus _MD_DetachUnixProcess(struct PRProcess *process);
- 
- /* Wait for a child process to terminate */
--#define _MD_WAIT_PROCESS _MD_WaitUnixProcess
--extern PRStatus _MD_WaitUnixProcess(struct PRProcess *process,
--    PRInt32 *exitCode);
++#if 0
+ struct _MDProcess {
+     pid_t pid;
+ };
+@@ -234,6 +235,7 @@
  
  #define _MD_KILL_PROCESS _MD_KillUnixProcess
  extern PRStatus _MD_KillUnixProcess(struct PRProcess *process);
++#endif
+ 
+ /************************************************************************/
+ 
 --- pr/include/private/primpl.h
 +++ pr/include/private/primpl.h
 @@ -1674,19 +1674,7 @@

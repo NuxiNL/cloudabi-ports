@@ -22,27 +22,19 @@
  extern PRInt32		_MD_socket(int af, int type, int flags);
 --- pr/include/private/pprio.h
 +++ pr/include/private/pprio.h
-@@ -131,7 +131,6 @@
+@@ -131,6 +131,7 @@
  **    PR_SUCCESS when the lock is held
  **    PR_FAILURE otherwise
  */
--NSPR_API(PRStatus) PR_LockFile(PRFileDesc *fd);
++#if 0
+ NSPR_API(PRStatus) PR_LockFile(PRFileDesc *fd);
  
  /* FUNCTION: PR_TLockFile
- ** DESCRIPTION:
-@@ -141,7 +140,6 @@
- **    PR_SUCCESS when the lock is held
+@@ -152,6 +153,7 @@
  **    PR_FAILURE otherwise
  */
--NSPR_API(PRStatus) PR_TLockFile(PRFileDesc *fd);
- 
- /* FUNCTION: PR_UnlockFile
- ** DESCRIPTION:
-@@ -151,7 +149,6 @@
- **    PR_SUCCESS when the lock is released
- **    PR_FAILURE otherwise
- */
--NSPR_API(PRStatus) PR_UnlockFile(PRFileDesc *fd);
+ NSPR_API(PRStatus) PR_UnlockFile(PRFileDesc *fd);
++#endif
  
  /*
  ** Emulate acceptread by accept and recv.
