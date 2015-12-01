@@ -1,0 +1,15 @@
+--- pr/src/misc/prsystem.c
++++ pr/src/misc/prsystem.c
+@@ -243,10 +243,10 @@
+     }
+     /* if that fails, fall back to more standard methods */
+     if (!numCpus) {
+-        numCpus = sysconf( _SC_NPROCESSORS_CONF );
++        numCpus = sysconf( _SC_NPROCESSORS_ONLN );
+     }
+ #elif defined(XP_UNIX)
+-    numCpus = sysconf( _SC_NPROCESSORS_CONF );
++    numCpus = sysconf( _SC_NPROCESSORS_ONLN );
+ #else
+ #error "An implementation is required"
+ #endif

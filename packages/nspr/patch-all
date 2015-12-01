@@ -68,17 +68,7 @@
  extern PRInt32  _MD_getopenfileinfo(const PRFileDesc *fd, PRFileInfo *info);
  extern PRInt32  _MD_getopenfileinfo64(const PRFileDesc *fd, PRFileInfo64 *info);
  extern PRInt32	_MD_rename(const char *from, const char *to);
-@@ -347,9 +328,6 @@
- extern PRInt32 	_PR_UnixSendFile(PRFileDesc *sd, PRSendFileData *sfd,
- 			PRTransmitFileFlags flags, PRIntervalTime timeout);
- 
--extern PRStatus _MD_LockFile(PRInt32 osfd);
--extern PRStatus _MD_TLockFile(PRInt32 osfd);
--extern PRStatus _MD_UnlockFile(PRInt32 osfd);
- 
- #define _MD_OPEN_DIR(dir, name)		    _MD_open_dir(dir, name)
- #define _MD_CLOSE_DIR(dir)		        _MD_close_dir(dir)
-@@ -361,8 +339,6 @@
+@@ -361,8 +342,6 @@
  extern PRInt32 _MD_write(PRFileDesc *fd, const void *buf, PRInt32 amount);
  #define _MD_WRITE(fd,buf,amount)	    _MD_write(fd,buf,amount)
  #define _MD_DELETE(name)		        _MD_delete(name)
@@ -87,17 +77,7 @@
  #define _MD_GETOPENFILEINFO(fd, info)	_MD_getopenfileinfo(fd, info)
  #define _MD_GETOPENFILEINFO64(fd, info)	_MD_getopenfileinfo64(fd, info)
  #define _MD_RENAME(from, to)		    _MD_rename(from, to)
-@@ -372,9 +348,6 @@
- #define _MD_RMDIR(name)			        _MD_rmdir(name)
- #define _MD_ACCEPT_READ(sock, newSock, raddr, buf, amount)	_MD_accept_read(sock, newSock, raddr, buf, amount)
- 
--#define _MD_LOCKFILE _MD_LockFile
--#define _MD_TLOCKFILE _MD_TLockFile
--#define _MD_UNLOCKFILE _MD_UnlockFile
- 
- 
- extern PRInt32		_MD_socket(int af, int type, int flags);
-@@ -462,11 +435,7 @@
+@@ -462,11 +441,7 @@
  extern void _MD_query_fd_inheritable(PRFileDesc *fd);
  #define _MD_QUERY_FD_INHERITABLE _MD_query_fd_inheritable
  
@@ -109,7 +89,7 @@
  
  extern int _MD_unix_get_nonblocking_connect_error(int osfd);
  
-@@ -613,9 +582,7 @@
+@@ -613,9 +588,7 @@
      PRIntn fildes, _MDOff64_t offset);
  struct _MD_IOVector
  {
@@ -220,32 +200,6 @@
  
  /*
   *************************************************************************
---- pr/include/private/pprio.h
-+++ pr/include/private/pprio.h
-@@ -131,7 +131,6 @@
- **    PR_SUCCESS when the lock is held
- **    PR_FAILURE otherwise
- */
--NSPR_API(PRStatus) PR_LockFile(PRFileDesc *fd);
- 
- /* FUNCTION: PR_TLockFile
- ** DESCRIPTION:
-@@ -141,7 +140,6 @@
- **    PR_SUCCESS when the lock is held
- **    PR_FAILURE otherwise
- */
--NSPR_API(PRStatus) PR_TLockFile(PRFileDesc *fd);
- 
- /* FUNCTION: PR_UnlockFile
- ** DESCRIPTION:
-@@ -151,7 +149,6 @@
- **    PR_SUCCESS when the lock is released
- **    PR_FAILURE otherwise
- */
--NSPR_API(PRStatus) PR_UnlockFile(PRFileDesc *fd);
- 
- /*
- ** Emulate acceptread by accept and recv.
 --- pr/include/private/pprthred.h
 +++ pr/include/private/pprthred.h
 @@ -149,13 +149,11 @@
@@ -755,15 +709,6 @@
      sigact.sa_handler = SIG_IGN;
      sigemptyset(&sigact.sa_mask);
      sigact.sa_flags = 0;
-@@ -3472,7 +3471,7 @@
-     _PR_MD_MAP_FLOCK_ERROR(_MD_ERRNO());
-     return PR_FAILURE;
- }
--#else
-+#elif 0
- 
- PRStatus
- _MD_LockFile(PRInt32 f)
 @@ -3508,6 +3507,7 @@
  }
  #endif
@@ -1070,30 +1015,6 @@
  
        case PR_SI_ARCHITECTURE:
          /* Return the architecture of the machine (ie. x86, mips, alpha, ...)*/
-@@ -243,10 +244,10 @@
-     }
-     /* if that fails, fall back to more standard methods */
-     if (!numCpus) {
--        numCpus = sysconf( _SC_NPROCESSORS_CONF );
-+        numCpus = sysconf( _SC_NPROCESSORS_ONLN );
-     }
- #elif defined(XP_UNIX)
--    numCpus = sysconf( _SC_NPROCESSORS_CONF );
-+    numCpus = sysconf( _SC_NPROCESSORS_ONLN );
- #else
- #error "An implementation is required"
- #endif
---- pr/src/misc/prtime.c
-+++ pr/src/misc/prtime.c
-@@ -491,7 +491,7 @@
- #define MT_safe_localtime(timer, result) \
-         (localtime_r(timer, result) == -1 ? NULL: result)
- 
--#elif defined(HAVE_POINTER_LOCALTIME_R)
-+#elif defined(HAVE_POINTER_LOCALTIME_R) || defined(CLOUDABI)
- 
- #define MT_safe_localtime localtime_r
- 
 --- pr/src/misc/prtpool.c
 +++ pr/src/misc/prtpool.c
 @@ -851,6 +851,7 @@
@@ -1183,71 +1104,7 @@
  #define _PRSelectFdSetArg_t fd_set *
  #else
  #error "Cannot determine architecture"
-@@ -900,6 +899,7 @@
-     else return PR_FALSE;
- }  /* pt_writev_cont */
- 
-+#if 0
- static PRBool pt_sendto_cont(pt_Continuation *op, PRInt16 revents)
- {
-     PRIntn bytes = sendto(
-@@ -922,6 +922,7 @@
-     }
-     else return PR_FALSE;
- }  /* pt_sendto_cont */
-+#endif
- 
- static PRBool pt_recvfrom_cont(pt_Continuation *op, PRInt16 revents)
- {
-@@ -1535,6 +1536,7 @@
-     return PR_SUCCESS;
- }  /* pt_Fsync */
- 
-+#if 0
- static PRStatus pt_Connect(
-     PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout)
- {
-@@ -1591,6 +1593,7 @@
-     }
-     return PR_SUCCESS;
- }  /* pt_Connect */
-+#endif
- 
- static PRStatus pt_ConnectContinue(
-     PRFileDesc *fd, PRInt16 out_flags)
-@@ -1726,6 +1729,7 @@
-     return NULL;
- }  /* pt_Accept */
- 
-+#if 0
- static PRStatus pt_Bind(PRFileDesc *fd, const PRNetAddr *addr)
- {
-     PRIntn rv;
-@@ -1775,6 +1779,7 @@
-     }
-     return PR_SUCCESS;
- }  /* pt_Bind */
-+#endif
- 
- static PRStatus pt_Listen(PRFileDesc *fd, PRIntn backlog)
- {
-@@ -1979,6 +1984,7 @@
-     return pt_Send(fd, buf, amount, 0, PR_INTERVAL_NO_TIMEOUT);
- }  /* pt_SocketWrite */
- 
-+#if 0
- static PRInt32 pt_SendTo(
-     PRFileDesc *fd, const void *buf,
-     PRInt32 amount, PRIntn flags, const PRNetAddr *addr,
-@@ -2043,6 +2049,7 @@
-         pt_MapError(_PR_MD_MAP_SENDTO_ERROR, syserrno);
-     return bytes;
- }  /* pt_SendTo */
-+#endif
- 
- static PRInt32 pt_RecvFrom(PRFileDesc *fd, void *buf, PRInt32 amount,
-     PRIntn flags, PRNetAddr *addr, PRIntervalTime timeout)
-@@ -2837,6 +2844,7 @@
+@@ -2837,6 +2836,7 @@
      {
          switch (data->option)
          {
@@ -1255,7 +1112,7 @@
              case PR_SockOpt_Linger:
              {
                  struct linger linger;
-@@ -2850,6 +2858,7 @@
+@@ -2850,6 +2850,7 @@
                      PR_SecondsToInterval(linger.l_linger);
                  break;
              }
@@ -1263,7 +1120,7 @@
              case PR_SockOpt_Reuseaddr:
              case PR_SockOpt_Keepalive:
              case PR_SockOpt_NoDelay:
-@@ -2908,6 +2917,7 @@
+@@ -2908,6 +2909,7 @@
                  data->value.mcast_ttl = ttl;
                  break;
              }
@@ -1271,7 +1128,7 @@
              case PR_SockOpt_AddMember:
              case PR_SockOpt_DropMember:
              {
-@@ -2922,6 +2932,7 @@
+@@ -2922,6 +2924,7 @@
                      mreq.imr_interface.s_addr;
                  break;
              }
@@ -1279,143 +1136,7 @@
              case PR_SockOpt_McastInterface:
              {
                  length = sizeof(data->value.mcast_if.inet.ip);
-@@ -2941,6 +2952,7 @@
-     return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
- }  /* pt_GetSocketOption */
- 
-+#if 0
- static PRStatus pt_SetSocketOption(PRFileDesc *fd, const PRSocketOptionData *data)
- {
-     PRIntn rv;
-@@ -3051,6 +3063,7 @@
-     }
-     return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
- }  /* pt_SetSocketOption */
-+#endif
- 
- /*****************************************************************************/
- /****************************** I/O method objects ***************************/
-@@ -3069,15 +3082,12 @@
-     pt_FileInfo,
-     pt_FileInfo64,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
-     pt_Poll,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -3086,7 +3096,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -3108,15 +3117,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
-     pt_Poll,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -3125,7 +3131,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -3147,15 +3152,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     pt_Writev,
--    pt_Connect,
-     pt_Accept,
--    pt_Bind,
-     pt_Listen,
-     pt_Shutdown,
-     pt_Recv,
-     pt_Send,
-     (PRRecvfromFN)_PR_InvalidInt,
--    (PRSendtoFN)_PR_InvalidInt,
-     pt_Poll,
-     pt_AcceptRead,
-     pt_TransmitFile,
-@@ -3164,7 +3166,6 @@
-     (PRReservedFN)_PR_InvalidInt,
-     (PRReservedFN)_PR_InvalidInt,
-     pt_GetSocketOption,
--    pt_SetSocketOption,
-     pt_SendFile, 
-     pt_ConnectContinue,
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -3186,15 +3187,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     pt_Writev,
--    pt_Connect,
-     (PRAcceptFN)_PR_InvalidDesc,
--    pt_Bind,
-     pt_Listen,
-     pt_Shutdown,
-     pt_Recv,
-     pt_Send,
-     pt_RecvFrom,
--    pt_SendTo,
-     pt_Poll,
-     (PRAcceptreadFN)_PR_InvalidInt,
-     (PRTransmitfileFN)_PR_InvalidInt,
-@@ -3203,7 +3201,6 @@
-     (PRReservedFN)_PR_InvalidInt,
-     (PRReservedFN)_PR_InvalidInt,
-     pt_GetSocketOption,
--    pt_SetSocketOption,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -3225,15 +3222,12 @@
-     (PRFileInfoFN)_PR_InvalidStatus,
-     (PRFileInfo64FN)_PR_InvalidStatus,
-     (PRWritevFN)_PR_InvalidInt,        
--    (PRConnectFN)_PR_InvalidStatus,        
-     (PRAcceptFN)_PR_InvalidDesc,        
--    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
-     (PRShutdownFN)_PR_InvalidStatus,    
-     (PRRecvFN)_PR_InvalidInt,        
-     (PRSendFN)_PR_InvalidInt,        
-     (PRRecvfromFN)_PR_InvalidInt,    
--    (PRSendtoFN)_PR_InvalidInt,        
- 	pt_Poll,
-     (PRAcceptreadFN)_PR_InvalidInt,   
-     (PRTransmitfileFN)_PR_InvalidInt, 
-@@ -3242,7 +3236,6 @@
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRReservedFN)_PR_InvalidInt,    
-     (PRGetsocketoptionFN)_PR_InvalidStatus,
--    (PRSetsocketoptionFN)_PR_InvalidStatus,
-     (PRSendfileFN)_PR_InvalidInt, 
-     (PRConnectcontinueFN)_PR_InvalidStatus, 
-     (PRReservedFN)_PR_InvalidInt, 
-@@ -3256,7 +3249,7 @@
+@@ -3256,7 +3259,7 @@
      || defined(AIX) || defined(FREEBSD) || defined(NETBSD) \
      || defined(OPENBSD) || defined(BSDI) || defined(NTO) \
      || defined(DARWIN) || defined(UNIXWARE) || defined(RISCOS) \
@@ -1424,7 +1145,7 @@
  #define _PR_FCNTL_FLAGS O_NONBLOCK
  #else
  #error "Can't determine architecture"
-@@ -3529,6 +3522,7 @@
+@@ -3529,6 +3532,7 @@
  /****************************** I/O public methods ***************************/
  /*****************************************************************************/
  
@@ -1432,7 +1153,7 @@
  PR_IMPLEMENT(PRFileDesc*) PR_OpenFile(
      const char *name, PRIntn flags, PRIntn mode)
  {
-@@ -3675,6 +3669,7 @@
+@@ -3675,6 +3679,7 @@
      PR_Unlock(_pr_rename_lock);
      return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
  }  /* PR_Rename */
@@ -1440,7 +1161,7 @@
  
  PR_IMPLEMENT(PRStatus) PR_CloseDir(PRDir *dir)
  {
-@@ -3693,6 +3688,7 @@
+@@ -3693,6 +3698,7 @@
      return PR_SUCCESS;
  }  /* PR_CloseDir */
  
@@ -1448,7 +1169,7 @@
  PR_IMPLEMENT(PRStatus) PR_MakeDir(const char *name, PRIntn mode)
  {
      PRInt32 rv = -1;
-@@ -3755,6 +3751,7 @@
+@@ -3755,6 +3761,7 @@
      }
      return dir;
  }  /* PR_OpenDir */
@@ -1456,22 +1177,7 @@
  
  static PRInt32 _pr_poll_with_poll(
      PRPollDesc *pds, PRIntn npds, PRIntervalTime timeout)
-@@ -4640,6 +4637,7 @@
-     if (fd) fd->secret->md.osfd = handle;
- }  /*  PR_ChangeFileDescNativeHandle*/
- 
-+#if 0
- PR_IMPLEMENT(PRStatus) PR_LockFile(PRFileDesc *fd)
- {
-     PRStatus status = PR_SUCCESS;
-@@ -4702,12 +4700,14 @@
- 
-     return status;
- }
-+#endif
- 
- /*
-  * The next two entry points should not be in the API, but they are
+@@ -4708,6 +4715,7 @@
   * defined here for historical (or hysterical) reasons.
   */
  
@@ -1479,7 +1185,7 @@
  PR_IMPLEMENT(PRInt32) PR_GetSysfdTableMax(void)
  {
  #if defined(AIX) || defined(SYMBIAN)
-@@ -4745,13 +4745,14 @@
+@@ -4745,13 +4753,14 @@
      return rlim.rlim_cur;
  #endif
  }

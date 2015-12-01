@@ -315,3 +315,205 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus, 
      (PRReservedFN)_PR_InvalidInt, 
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -900,6 +900,7 @@
+     else return PR_FALSE;
+ }  /* pt_writev_cont */
+ 
++#if 0
+ static PRBool pt_sendto_cont(pt_Continuation *op, PRInt16 revents)
+ {
+     PRIntn bytes = sendto(
+@@ -922,6 +923,7 @@
+     }
+     else return PR_FALSE;
+ }  /* pt_sendto_cont */
++#endif
+ 
+ static PRBool pt_recvfrom_cont(pt_Continuation *op, PRInt16 revents)
+ {
+@@ -1535,6 +1537,7 @@
+     return PR_SUCCESS;
+ }  /* pt_Fsync */
+ 
++#if 0
+ static PRStatus pt_Connect(
+     PRFileDesc *fd, const PRNetAddr *addr, PRIntervalTime timeout)
+ {
+@@ -1591,6 +1594,7 @@
+     }
+     return PR_SUCCESS;
+ }  /* pt_Connect */
++#endif
+ 
+ static PRStatus pt_ConnectContinue(
+     PRFileDesc *fd, PRInt16 out_flags)
+@@ -1726,6 +1730,7 @@
+     return NULL;
+ }  /* pt_Accept */
+ 
++#if 0
+ static PRStatus pt_Bind(PRFileDesc *fd, const PRNetAddr *addr)
+ {
+     PRIntn rv;
+@@ -1775,6 +1780,7 @@
+     }
+     return PR_SUCCESS;
+ }  /* pt_Bind */
++#endif
+ 
+ static PRStatus pt_Listen(PRFileDesc *fd, PRIntn backlog)
+ {
+@@ -1979,6 +1985,7 @@
+     return pt_Send(fd, buf, amount, 0, PR_INTERVAL_NO_TIMEOUT);
+ }  /* pt_SocketWrite */
+ 
++#if 0
+ static PRInt32 pt_SendTo(
+     PRFileDesc *fd, const void *buf,
+     PRInt32 amount, PRIntn flags, const PRNetAddr *addr,
+@@ -2043,6 +2050,7 @@
+         pt_MapError(_PR_MD_MAP_SENDTO_ERROR, syserrno);
+     return bytes;
+ }  /* pt_SendTo */
++#endif
+ 
+ static PRInt32 pt_RecvFrom(PRFileDesc *fd, void *buf, PRInt32 amount,
+     PRIntn flags, PRNetAddr *addr, PRIntervalTime timeout)
+@@ -2941,6 +2949,7 @@
+     return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
+ }  /* pt_GetSocketOption */
+ 
++#if 0
+ static PRStatus pt_SetSocketOption(PRFileDesc *fd, const PRSocketOptionData *data)
+ {
+     PRIntn rv;
+@@ -3051,6 +3060,7 @@
+     }
+     return (-1 == rv) ? PR_FAILURE : PR_SUCCESS;
+ }  /* pt_SetSocketOption */
++#endif
+ 
+ /*****************************************************************************/
+ /****************************** I/O method objects ***************************/
+@@ -3069,15 +3079,12 @@
+     pt_FileInfo,
+     pt_FileInfo64,
+     (PRWritevFN)_PR_InvalidInt,        
+-    (PRConnectFN)_PR_InvalidStatus,        
+     (PRAcceptFN)_PR_InvalidDesc,        
+-    (PRBindFN)_PR_InvalidStatus,        
+     (PRListenFN)_PR_InvalidStatus,        
+     (PRShutdownFN)_PR_InvalidStatus,    
+     (PRRecvFN)_PR_InvalidInt,        
+     (PRSendFN)_PR_InvalidInt,        
+     (PRRecvfromFN)_PR_InvalidInt,    
+-    (PRSendtoFN)_PR_InvalidInt,        
+     pt_Poll,
+     (PRAcceptreadFN)_PR_InvalidInt,   
+     (PRTransmitfileFN)_PR_InvalidInt, 
+@@ -3086,7 +3093,6 @@
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRGetsocketoptionFN)_PR_InvalidStatus,
+-    (PRSetsocketoptionFN)_PR_InvalidStatus,
+     (PRSendfileFN)_PR_InvalidInt, 
+     (PRConnectcontinueFN)_PR_InvalidStatus, 
+     (PRReservedFN)_PR_InvalidInt, 
+@@ -3108,15 +3114,12 @@
+     (PRFileInfoFN)_PR_InvalidStatus,
+     (PRFileInfo64FN)_PR_InvalidStatus,
+     (PRWritevFN)_PR_InvalidInt,        
+-    (PRConnectFN)_PR_InvalidStatus,        
+     (PRAcceptFN)_PR_InvalidDesc,        
+-    (PRBindFN)_PR_InvalidStatus,        
+     (PRListenFN)_PR_InvalidStatus,        
+     (PRShutdownFN)_PR_InvalidStatus,    
+     (PRRecvFN)_PR_InvalidInt,        
+     (PRSendFN)_PR_InvalidInt,        
+     (PRRecvfromFN)_PR_InvalidInt,    
+-    (PRSendtoFN)_PR_InvalidInt,        
+     pt_Poll,
+     (PRAcceptreadFN)_PR_InvalidInt,   
+     (PRTransmitfileFN)_PR_InvalidInt, 
+@@ -3125,7 +3128,6 @@
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRGetsocketoptionFN)_PR_InvalidStatus,
+-    (PRSetsocketoptionFN)_PR_InvalidStatus,
+     (PRSendfileFN)_PR_InvalidInt, 
+     (PRConnectcontinueFN)_PR_InvalidStatus, 
+     (PRReservedFN)_PR_InvalidInt, 
+@@ -3147,15 +3149,12 @@
+     (PRFileInfoFN)_PR_InvalidStatus,
+     (PRFileInfo64FN)_PR_InvalidStatus,
+     pt_Writev,
+-    pt_Connect,
+     pt_Accept,
+-    pt_Bind,
+     pt_Listen,
+     pt_Shutdown,
+     pt_Recv,
+     pt_Send,
+     (PRRecvfromFN)_PR_InvalidInt,
+-    (PRSendtoFN)_PR_InvalidInt,
+     pt_Poll,
+     pt_AcceptRead,
+     pt_TransmitFile,
+@@ -3164,7 +3163,6 @@
+     (PRReservedFN)_PR_InvalidInt,
+     (PRReservedFN)_PR_InvalidInt,
+     pt_GetSocketOption,
+-    pt_SetSocketOption,
+     pt_SendFile, 
+     pt_ConnectContinue,
+     (PRReservedFN)_PR_InvalidInt, 
+@@ -3186,15 +3184,12 @@
+     (PRFileInfoFN)_PR_InvalidStatus,
+     (PRFileInfo64FN)_PR_InvalidStatus,
+     pt_Writev,
+-    pt_Connect,
+     (PRAcceptFN)_PR_InvalidDesc,
+-    pt_Bind,
+     pt_Listen,
+     pt_Shutdown,
+     pt_Recv,
+     pt_Send,
+     pt_RecvFrom,
+-    pt_SendTo,
+     pt_Poll,
+     (PRAcceptreadFN)_PR_InvalidInt,
+     (PRTransmitfileFN)_PR_InvalidInt,
+@@ -3203,7 +3198,6 @@
+     (PRReservedFN)_PR_InvalidInt,
+     (PRReservedFN)_PR_InvalidInt,
+     pt_GetSocketOption,
+-    pt_SetSocketOption,
+     (PRSendfileFN)_PR_InvalidInt, 
+     (PRConnectcontinueFN)_PR_InvalidStatus, 
+     (PRReservedFN)_PR_InvalidInt, 
+@@ -3225,15 +3219,12 @@
+     (PRFileInfoFN)_PR_InvalidStatus,
+     (PRFileInfo64FN)_PR_InvalidStatus,
+     (PRWritevFN)_PR_InvalidInt,        
+-    (PRConnectFN)_PR_InvalidStatus,        
+     (PRAcceptFN)_PR_InvalidDesc,        
+-    (PRBindFN)_PR_InvalidStatus,        
+     (PRListenFN)_PR_InvalidStatus,        
+     (PRShutdownFN)_PR_InvalidStatus,    
+     (PRRecvFN)_PR_InvalidInt,        
+     (PRSendFN)_PR_InvalidInt,        
+     (PRRecvfromFN)_PR_InvalidInt,    
+-    (PRSendtoFN)_PR_InvalidInt,        
+ 	pt_Poll,
+     (PRAcceptreadFN)_PR_InvalidInt,   
+     (PRTransmitfileFN)_PR_InvalidInt, 
+@@ -3242,7 +3233,6 @@
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRReservedFN)_PR_InvalidInt,    
+     (PRGetsocketoptionFN)_PR_InvalidStatus,
+-    (PRSetsocketoptionFN)_PR_InvalidStatus,
+     (PRSendfileFN)_PR_InvalidInt, 
+     (PRConnectcontinueFN)_PR_InvalidStatus, 
+     (PRReservedFN)_PR_InvalidInt, 

@@ -1,0 +1,77 @@
+--- pr/include/md/_unixos.h
++++ pr/include/md/_unixos.h
+@@ -347,9 +347,6 @@
+ extern PRInt32 	_PR_UnixSendFile(PRFileDesc *sd, PRSendFileData *sfd,
+ 			PRTransmitFileFlags flags, PRIntervalTime timeout);
+ 
+-extern PRStatus _MD_LockFile(PRInt32 osfd);
+-extern PRStatus _MD_TLockFile(PRInt32 osfd);
+-extern PRStatus _MD_UnlockFile(PRInt32 osfd);
+ 
+ #define _MD_OPEN_DIR(dir, name)		    _MD_open_dir(dir, name)
+ #define _MD_CLOSE_DIR(dir)		        _MD_close_dir(dir)
+@@ -372,9 +369,6 @@
+ #define _MD_RMDIR(name)			        _MD_rmdir(name)
+ #define _MD_ACCEPT_READ(sock, newSock, raddr, buf, amount)	_MD_accept_read(sock, newSock, raddr, buf, amount)
+ 
+-#define _MD_LOCKFILE _MD_LockFile
+-#define _MD_TLOCKFILE _MD_TLockFile
+-#define _MD_UNLOCKFILE _MD_UnlockFile
+ 
+ 
+ extern PRInt32		_MD_socket(int af, int type, int flags);
+--- pr/include/private/pprio.h
++++ pr/include/private/pprio.h
+@@ -131,7 +131,6 @@
+ **    PR_SUCCESS when the lock is held
+ **    PR_FAILURE otherwise
+ */
+-NSPR_API(PRStatus) PR_LockFile(PRFileDesc *fd);
+ 
+ /* FUNCTION: PR_TLockFile
+ ** DESCRIPTION:
+@@ -141,7 +140,6 @@
+ **    PR_SUCCESS when the lock is held
+ **    PR_FAILURE otherwise
+ */
+-NSPR_API(PRStatus) PR_TLockFile(PRFileDesc *fd);
+ 
+ /* FUNCTION: PR_UnlockFile
+ ** DESCRIPTION:
+@@ -151,7 +149,6 @@
+ **    PR_SUCCESS when the lock is released
+ **    PR_FAILURE otherwise
+ */
+-NSPR_API(PRStatus) PR_UnlockFile(PRFileDesc *fd);
+ 
+ /*
+ ** Emulate acceptread by accept and recv.
+--- pr/src/md/unix/unix.c
++++ pr/src/md/unix/unix.c
+@@ -3472,7 +3472,7 @@
+     _PR_MD_MAP_FLOCK_ERROR(_MD_ERRNO());
+     return PR_FAILURE;
+ }
+-#else
++#elif 0
+ 
+ PRStatus
+ _MD_LockFile(PRInt32 f)
+--- pr/src/pthreads/ptio.c
++++ pr/src/pthreads/ptio.c
+@@ -4640,6 +4640,7 @@
+     if (fd) fd->secret->md.osfd = handle;
+ }  /*  PR_ChangeFileDescNativeHandle*/
+ 
++#if 0
+ PR_IMPLEMENT(PRStatus) PR_LockFile(PRFileDesc *fd)
+ {
+     PRStatus status = PR_SUCCESS;
+@@ -4702,6 +4703,7 @@
+ 
+     return status;
+ }
++#endif
+ 
+ /*
+  * The next two entry points should not be in the API, but they are

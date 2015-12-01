@@ -1,0 +1,10 @@
+--- pr/src/io/prlog.c
++++ pr/src/io/prlog.c
+@@ -8,6 +8,7 @@
+ #include "prenv.h"
+ #include "prprf.h"
+ #include <string.h>
++#include <strings.h>
+ #ifdef ANDROID
+ #include <android/log.h>
+ #endif
