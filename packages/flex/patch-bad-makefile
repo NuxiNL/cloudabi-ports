@@ -1,0 +1,11 @@
+--- tests/Makefile.in
++++ tests/Makefile.in
+@@ -2873,7 +2873,7 @@
+ .ll.cc: $(FLEX)
+ 	$(FLEX) -+ -o $@ $<
+ 
+-bison_nr_main.($OBJEXT): bison_nr_parser.h bison_nr_scanner.h
++bison_nr_main.$(OBJEXT): bison_nr_parser.h bison_nr_scanner.h
+ bison_nr_scanner.h: bison_nr_scanner.c
+ 
+ bison_yylloc_main.$(OBJEXT): bison_yylloc_parser.h bison_yylloc_scanner.h
