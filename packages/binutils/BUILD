@@ -12,7 +12,7 @@ def build(ctx):
             '--disable-gdb',
             '--disable-nls',
             '--disable-werror',
-            '--enable-deterministic-archives'])
+        ])
         build.make()
 
         # Only install the linker and strip.
