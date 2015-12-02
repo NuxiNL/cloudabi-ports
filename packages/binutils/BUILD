@@ -28,7 +28,7 @@ host_package(
     version='2.26.51',
     homepage='http://www.gnu.org/software/binutils/',
     maintainer='info@nuxi.nl',
-    build_depends={'make'},
+    build_depends={'bison', 'flex', 'make'},
     build_cmd=build,
 )
 
