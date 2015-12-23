@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='opus',
-    version='1.1',
+    version='1.1.1',
     homepage='http://www.opus-codec.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,7 +19,7 @@ package(
 )
 
 distfile(
-    name='opus-1.1.tar.gz',
-    checksum='b9727015a58affcf3db527322bf8c4d2fcf39f5f6b8f15dbceca20206cbe1d95',
+    name='opus-1.1.1.tar.gz',
+    checksum='9b84ff56bd7720d5554103c557664efac2b8b18acc4bbcc234cb881ab9a3371e',
     master_sites={'http://downloads.xiph.org/releases/opus/'},
 )
