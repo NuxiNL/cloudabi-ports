@@ -1,16 +1,16 @@
 --- boost/test/impl/framework.ipp
 +++ boost/test/impl/framework.ipp
-@@ -1201,6 +1201,7 @@
+@@ -1216,6 +1216,7 @@
          }
      }
  
 +#if 0
-     switch( runtime_config::random_seed() ) {
+     unsigned seed = runtime_config::get<unsigned>( runtime_config::RANDOM_SEED );
+     switch( seed ) {
      case 0:
-         break;
-@@ -1214,6 +1215,7 @@
-         BOOST_TEST_MESSAGE( "Test cases order is shuffled using seed: " << runtime_config::random_seed() );
-         std::srand( runtime_config::random_seed() );
+@@ -1226,6 +1227,7 @@
+         BOOST_TEST_MESSAGE( "Test cases order is shuffled using seed: " << seed );
+         std::srand( seed );
      }
 +#endif
  

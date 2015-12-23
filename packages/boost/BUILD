@@ -6,7 +6,7 @@
 
 def build(ctx):
     # Build b2 for the host system.
-    srcdir = ctx.extract('%(name)s_1_59_0')
+    srcdir = ctx.extract('%(name)s_1_60_0')
     srcdir.host().run(['./bootstrap.sh', '--with-toolset=cc'])
 
     # Build Boost libraries.
@@ -25,7 +25,7 @@ def build(ctx):
 
 package(
     name='boost',
-    version='1.59.0',
+    version='1.60.0',
     homepage='http://www.boost.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'bzip2', 'cxx-runtime', 'icu4c', 'zlib'},
@@ -33,7 +33,7 @@ package(
 )
 
 distfile(
-    name='boost_1_59_0.tar.bz2',
-    checksum='727a932322d94287b62abb1bd2d41723eec4356a7728909e38adb65ca25241ca',
-    master_sites=sites_sourceforge('boost/boost/1.59.0'),
+    name='boost_1_60_0.tar.bz2',
+    checksum='686affff989ac2488f79a97b9479efb9f2abae035b5ed4d8226de6857933fd3b',
+    master_sites=sites_sourceforge('boost/boost/1.60.0'),
 )

@@ -1,6 +1,6 @@
 --- libs/filesystem/src/unique_path.cpp
 +++ libs/filesystem/src/unique_path.cpp
-@@ -43,7 +43,9 @@
+@@ -73,7 +73,9 @@
  
  void system_crypt_random(void* buf, std::size_t len, boost::system::error_code* ec)
  {
@@ -13,8 +13,8 @@
    if (file == -1)
 --- libs/random/src/random_device.cpp
 +++ libs/random/src/random_device.cpp
-@@ -118,6 +118,28 @@
-   HCRYPTPROV hProv;
+@@ -147,6 +147,28 @@
+   const std::string provider;
  };
  
 +#elif 1

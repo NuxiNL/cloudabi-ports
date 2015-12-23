@@ -1,6 +1,6 @@
 --- boost/asio/detail/impl/socket_ops.ipp
 +++ boost/asio/detail/impl/socket_ops.ipp
-@@ -2016,8 +2016,8 @@
+@@ -2019,8 +2019,8 @@
          && ((ipv6_address->s6_addr[1] & 0x0f) == 0x02));
      if ((!is_link_local && !is_multicast_link_local)
          || if_indextoname(static_cast<unsigned>(scope_id), if_name + 1) == 0)
@@ -42,7 +42,7 @@
                  return finish > start;
 --- boost/test/utils/setcolor.hpp
 +++ boost/test/utils/setcolor.hpp
-@@ -70,7 +70,7 @@
+@@ -71,7 +71,7 @@
                            term_color::_ fg   = term_color::ORIGINAL,
                            term_color::_ bg   = term_color::ORIGINAL )
      {
@@ -64,7 +64,7 @@
      BOOST_WAVE_LEXER_THROW_VAR(lexing_exception, errcode, buffer, s->line,
 --- libs/regex/src/posix_api.cpp
 +++ libs/regex/src/posix_api.cpp
-@@ -175,7 +175,7 @@
+@@ -172,7 +172,7 @@
  #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
              int r = (::sprintf_s)(localbuf, 5, "%d", i);
  #else
@@ -73,7 +73,7 @@
  #endif
              if(r < 0)
                 return 0; // sprintf failed
-@@ -187,7 +187,7 @@
+@@ -184,7 +184,7 @@
  #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
        (::sprintf_s)(localbuf, 5, "%d", 0);
  #else
@@ -81,4 +81,4 @@
 +      (std::snprintf)(localbuf, sizeof(localbuf), "%d", 0);
  #endif
        if(std::strlen(localbuf) < buf_size)
-          re_detail::strcpy_s(buf, buf_size, localbuf);
+          BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);

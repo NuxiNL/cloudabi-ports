@@ -1,6 +1,6 @@
 --- boost/regex/v4/regex_workaround.hpp
 +++ boost/regex/v4/regex_workaround.hpp
-@@ -196,9 +196,10 @@
+@@ -197,9 +197,10 @@
        const char *strSource 
     )
     {
@@ -13,7 +13,7 @@
        return 0;
     }
     inline std::size_t strcat_s(
-@@ -207,9 +208,11 @@
+@@ -208,9 +209,11 @@
        const char *strSource 
     )
     {
@@ -29,7 +29,7 @@
  
 --- libs/regex/src/wide_posix_api.cpp
 +++ libs/regex/src/wide_posix_api.cpp
-@@ -164,11 +164,7 @@
+@@ -161,11 +161,7 @@
        {
           result = std::wcslen(wnames[code]) + 1;
           if(buf_size >= result)
@@ -42,7 +42,7 @@
           return result;
        }
        return result;
-@@ -188,13 +184,10 @@
+@@ -185,13 +181,10 @@
  #else
              (std::swprintf)(localbuf, 5, L"%d", i);
  #endif
@@ -60,7 +60,7 @@
           }
        }
  #if defined(_WIN32_WCE) && !defined(UNDER_CE)
-@@ -202,13 +195,10 @@
+@@ -199,13 +192,10 @@
  #else
        (std::swprintf)(localbuf, 5, L"%d", 0);
  #endif

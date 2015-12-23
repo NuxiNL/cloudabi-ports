@@ -34,7 +34,7 @@
  
 --- boost/filesystem/operations.hpp
 +++ boost/filesystem/operations.hpp
-@@ -309,6 +309,7 @@
+@@ -348,6 +348,7 @@
  //                             implementation details                                   //
  //--------------------------------------------------------------------------------------//
  
@@ -42,7 +42,7 @@
    namespace detail
    {
      //  We cannot pass a BOOST_SCOPED_ENUM to a compled function because it will result
-@@ -1218,6 +1219,7 @@
+@@ -1338,6 +1339,7 @@
    {
      BOOST_FILESYSTEM_DECL bool possible_large_file_size_support();
    }
@@ -209,18 +209,18 @@
          include positional options, or not. */
 --- boost/regex/config.hpp
 +++ boost/regex/config.hpp
-@@ -133,7 +133,7 @@
- 
- /* disable our own file-iterators and mapfiles if we can't
-  * support them: */
--#if !defined(BOOST_HAS_DIRENT_H) && !(defined(_WIN32) && !defined(BOOST_REGEX_NO_W32))
-+#if 1
- #  define BOOST_REGEX_NO_FILEITER
+@@ -153,7 +153,7 @@
+ #    define BOOST_REGEX_NO_FILEITER
+ #  endif
+ #else // defined(_WIN32)
+-#  if !defined(BOOST_HAS_DIRENT_H)
++#  if 1
+ #    define BOOST_REGEX_NO_FILEITER
+ #  endif
  #endif
- 
 --- boost/test/impl/test_tools.ipp
 +++ boost/test/impl/test_tools.ipp
-@@ -495,6 +495,7 @@
+@@ -494,6 +494,7 @@
  
  //____________________________________________________________________________//
  
@@ -228,7 +228,7 @@
  output_test_stream::output_test_stream( const_string pattern_file_name, bool match_or_save, bool text_or_binary )
  : m_pimpl( new Impl )
  {
-@@ -512,6 +513,7 @@
+@@ -511,6 +512,7 @@
      m_pimpl->m_match_or_save    = match_or_save;
      m_pimpl->m_text_or_binary   = text_or_binary;
  }
@@ -267,7 +267,7 @@
  //  operations.cpp  --------------------------------------------------------------------//
  
  //  Copyright 2002-2009, 2014 Beman Dawes
-@@ -2265,3 +2266,4 @@
+@@ -2339,3 +2340,4 @@
  }  // namespace detail
  } // namespace filesystem
  } // namespace boost
@@ -412,7 +412,7 @@
  } } // End namespaces iostreams, boost.
 --- libs/locale/src/shared/message.cpp
 +++ libs/locale/src/shared/message.cpp
-@@ -40,6 +40,7 @@
+@@ -42,6 +42,7 @@
      namespace locale {
          namespace gnu_gettext {
              
@@ -420,7 +420,7 @@
              class c_file {
                  c_file(c_file const &);
                  void operator=(c_file const &);
-@@ -100,6 +101,7 @@
+@@ -102,6 +103,7 @@
                  #endif
  
              };
@@ -428,7 +428,7 @@
  
              class mo_file {
              public:
-@@ -627,12 +629,13 @@
+@@ -629,12 +631,13 @@
  
                      std::auto_ptr<mo_file> mo;
  
@@ -443,7 +443,7 @@
                      else {
                          c_file the_file;
                          the_file.open(file_name,locale_encoding);
-@@ -640,6 +643,7 @@
+@@ -642,6 +645,7 @@
                              return false;
                          mo.reset(new mo_file(the_file.file));
                      }
@@ -453,7 +453,7 @@
  
 --- libs/log/build/Jamfile.v2
 +++ libs/log/build/Jamfile.v2
-@@ -227,8 +227,6 @@
+@@ -228,8 +228,6 @@
      default_attribute_names.cpp
      default_sink.cpp
      text_ostream_backend.cpp
