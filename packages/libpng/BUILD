@@ -14,7 +14,7 @@ def build(ctx):
 
 package(
     name='libpng',
-    version='1.6.19',
+    version='1.6.20',
     homepage='http://www.libpng.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'zlib'},
@@ -22,7 +22,7 @@ package(
 )
 
 distfile(
-    name='libpng-1.6.19.tar.xz',
-    checksum='311c5657f53516986c67713c946f616483e3cdb52b8b2ee26711be74e8ac35e8',
-    master_sites=sites_sourceforge('libpng/libpng16/1.6.19'),
+    name='libpng-1.6.20.tar.xz',
+    checksum='55c5959e9f3484d96141a3226c53bc9da42a4845e70879d3e1d6e94833d1918b',
+    master_sites=sites_sourceforge('libpng/libpng16/1.6.20'),
 )

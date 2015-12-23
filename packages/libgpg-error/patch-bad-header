@@ -1,8 +1,8 @@
 --- src/estream.c
 +++ src/estream.c
-@@ -68,7 +68,6 @@
+@@ -74,7 +74,6 @@
+ # include <sys/time.h>
  #endif
- 
  #include <sys/types.h>
 -#include <sys/file.h>
  #include <sys/stat.h>

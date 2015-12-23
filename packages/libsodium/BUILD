@@ -5,7 +5,7 @@
 
 package(
     name='libsodium',
-    version='1.0.6',
+    version='1.0.7',
     homepage='https://www.libsodium.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -13,7 +13,7 @@ package(
 )
 
 distfile(
-    name='libsodium-1.0.6.tar.gz',
-    checksum='940d03ea7d2caa7940e24564bf6d9f66d6edd1df1e0111ff8e3655f3b864fb59',
+    name='libsodium-1.0.7.tar.gz',
+    checksum='7ad1e78763510c163ca48f05133057726a825cf97386c581bf12b01d7654204a',
     master_sites={'https://download.libsodium.org/libsodium/releases/'},
 )

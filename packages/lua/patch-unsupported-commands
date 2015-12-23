@@ -1,6 +1,6 @@
 --- src/lauxlib.c
 +++ src/lauxlib.c
-@@ -238,6 +238,7 @@
+@@ -240,6 +240,7 @@
  }
  
  
@@ -8,7 +8,7 @@
  #if !defined(l_inspectstat)	/* { */
  
  #if defined(LUA_USE_POSIX)
-@@ -275,6 +276,7 @@
+@@ -277,6 +278,7 @@
      return 3;  /* return true/nil,what,code */
    }
  }
@@ -16,7 +16,7 @@
  
  /* }====================================================== */
  
-@@ -638,6 +640,7 @@
+@@ -686,6 +688,7 @@
  }
  
  
@@ -24,7 +24,7 @@
  LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
                                               const char *mode) {
    LoadF lf;
-@@ -672,6 +675,7 @@
+@@ -720,6 +723,7 @@
    lua_remove(L, fnameindex);
    return status;
  }
@@ -40,7 +40,7 @@
  LUALIB_API int (luaL_fileresult) (lua_State *L, int stat, const char *fname);
 -LUALIB_API int (luaL_execresult) (lua_State *L, int stat);
  
- /* pre-defined references */
+ /* predefined references */
  #define LUA_NOREF       (-2)
 @@ -72,10 +71,6 @@
  LUALIB_API int (luaL_ref) (lua_State *L, int t);
@@ -71,7 +71,7 @@
  
  
  #define SPACECHARS	" \f\n\r\t\v"
-@@ -300,6 +302,7 @@
+@@ -285,6 +287,7 @@
  }
  
  
@@ -79,7 +79,7 @@
  static int luaB_loadfile (lua_State *L) {
    const char *fname = luaL_optstring(L, 1, NULL);
    const char *mode = luaL_optstring(L, 2, NULL);
-@@ -307,6 +310,7 @@
+@@ -292,6 +295,7 @@
    int status = luaL_loadfilex(L, fname, mode);
    return load_aux(L, status, env);
  }
@@ -87,7 +87,7 @@
  
  
  /*
-@@ -369,6 +373,7 @@
+@@ -354,6 +358,7 @@
  /* }====================================================== */
  
  
@@ -95,7 +95,7 @@
  static int dofilecont (lua_State *L, int d1, lua_KContext d2) {
    (void)d1;  (void)d2;  /* only to match 'lua_Kfunction' prototype */
    return lua_gettop(L) - 1;
-@@ -383,6 +388,7 @@
+@@ -368,6 +373,7 @@
    lua_callk(L, 0, LUA_MULTRET, 0, dofilecont);
    return dofilecont(L, 0, 0);
  }
@@ -103,7 +103,7 @@
  
  
  static int luaB_assert (lua_State *L) {
-@@ -469,11 +475,9 @@
+@@ -454,11 +460,9 @@
  static const luaL_Reg base_funcs[] = {
    {"assert", luaB_assert},
    {"collectgarbage", luaB_collectgarbage},
@@ -115,7 +115,7 @@
    {"load", luaB_load},
  #if defined(LUA_COMPAT_LOADSTRING)
    {"loadstring", luaB_load},
-@@ -481,7 +485,6 @@
+@@ -466,7 +470,6 @@
    {"next", luaB_next},
    {"pairs", luaB_pairs},
    {"pcall", luaB_pcall},
@@ -162,7 +162,7 @@
  #define LUAI_THROW(L,c)		_longjmp((c)->b, 1)
 --- src/liolib.c
 +++ src/liolib.c
-@@ -233,6 +233,7 @@
+@@ -239,6 +239,7 @@
  }
  
  
@@ -170,7 +170,7 @@
  static void opencheck (lua_State *L, const char *fname, const char *mode) {
    LStream *p = newfile(L);
    p->f = fopen(fname, mode);
-@@ -269,6 +270,7 @@
+@@ -275,6 +276,7 @@
    p->closef = &io_pclose;
    return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
  }
@@ -178,7 +178,7 @@
  
  
  static int io_tmpfile (lua_State *L) {
-@@ -288,6 +290,7 @@
+@@ -294,6 +296,7 @@
  }
  
  
@@ -186,7 +186,7 @@
  static int g_iofile (lua_State *L, const char *f, const char *mode) {
    if (!lua_isnoneornil(L, 1)) {
      const char *filename = lua_tostring(L, 1);
-@@ -313,6 +316,7 @@
+@@ -319,6 +322,7 @@
  static int io_output (lua_State *L) {
    return g_iofile(L, IO_OUTPUT, "w");
  }
@@ -194,7 +194,7 @@
  
  
  static int io_readline (lua_State *L);
-@@ -334,6 +338,7 @@
+@@ -347,6 +351,7 @@
  }
  
  
@@ -202,7 +202,7 @@
  static int io_lines (lua_State *L) {
    int toclose;
    if (lua_isnone(L, 1)) lua_pushnil(L);  /* at least one argument */
-@@ -352,6 +357,7 @@
+@@ -365,6 +370,7 @@
    aux_lines(L, toclose);
    return 1;
  }
@@ -210,7 +210,7 @@
  
  
  /*
-@@ -676,11 +682,6 @@
+@@ -689,11 +695,6 @@
  static const luaL_Reg iolib[] = {
    {"close", io_close},
    {"flush", io_flush},
@@ -222,7 +222,7 @@
    {"read", io_read},
    {"tmpfile", io_tmpfile},
    {"type", io_type},
-@@ -744,8 +745,6 @@
+@@ -757,8 +758,6 @@
    luaL_newlib(L, iolib);  /* new module */
    createmeta(L);
    /* create (and set) default files */
@@ -240,7 +240,7 @@
 +#if 0
  static int math_randomseed (lua_State *L) {
    l_srand((unsigned int)(lua_Integer)luaL_checknumber(L, 1));
-   (void)rand(); /* discard first value to avoid undesirable correlations */
+   (void)l_rand(); /* discard first value to avoid undesirable correlations */
    return 0;
  }
 +#endif
@@ -307,7 +307,7 @@
    /* set field 'cpath' */
 --- src/loslib.c
 +++ src/loslib.c
-@@ -122,6 +122,7 @@
+@@ -127,6 +127,7 @@
  
  
  
@@ -315,7 +315,7 @@
  static int os_execute (lua_State *L) {
    const char *cmd = luaL_optstring(L, 1, NULL);
    int stat = system(cmd);
-@@ -156,6 +157,7 @@
+@@ -161,6 +162,7 @@
    lua_pushstring(L, buff);
    return 1;
  }
@@ -323,7 +323,7 @@
  
  
  static int os_getenv (lua_State *L) {
-@@ -319,6 +321,7 @@
+@@ -337,6 +339,7 @@
  /* }====================================================== */
  
  
@@ -331,7 +331,7 @@
  static int os_setlocale (lua_State *L) {
    static const int cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY,
                        LC_NUMERIC, LC_TIME};
-@@ -329,6 +332,7 @@
+@@ -347,6 +350,7 @@
    lua_pushstring(L, setlocale(cat[op], l));
    return 1;
  }
@@ -339,7 +339,7 @@
  
  
  static int os_exit (lua_State *L) {
-@@ -348,14 +352,9 @@
+@@ -366,14 +370,9 @@
    {"clock",     os_clock},
    {"date",      os_date},
    {"difftime",  os_difftime},

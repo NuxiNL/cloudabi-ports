@@ -1,83 +1,84 @@
 --- include/curl/curl.h
 +++ include/curl/curl.h
-@@ -136,8 +136,6 @@
-                                        file, this link should link to following
-                                        files */
+@@ -139,9 +139,7 @@
    long flags;                       /* as defined below */
--#define HTTPPOST_FILENAME (1<<0)    /* specified content is a file name */
--#define HTTPPOST_READFILE (1<<1)    /* specified content is a file name */
- #define HTTPPOST_PTRNAME (1<<2)     /* name is only stored pointer
-                                        do not free in formfree */
- #define HTTPPOST_PTRCONTENTS (1<<3) /* contents is only stored pointer
-@@ -942,10 +940,8 @@
+ 
+ /* specified content is a file name */
+-#define CURL_HTTPPOST_FILENAME (1<<0)
+ /* specified content is a file name */
+-#define CURL_HTTPPOST_READFILE (1<<1)
+ /* name is only stored pointer do not free in formfree */
+ #define CURL_HTTPPOST_PTRNAME (1<<2)
+ /* contents is only stored pointer do not free in formfree */
+@@ -957,10 +955,8 @@
    CINIT(HTTPPOST, OBJECTPOINT, 24),
  
    /* name of the file keeping your private SSL-certificate */
--  CINIT(SSLCERT, OBJECTPOINT, 25),
+-  CINIT(SSLCERT, STRINGPOINT, 25),
  
    /* password for the SSL or SSH private key */
--  CINIT(KEYPASSWD, OBJECTPOINT, 26),
+-  CINIT(KEYPASSWD, STRINGPOINT, 26),
  
    /* send TYPE parameter? */
    CINIT(CRLF, LONG, 27),
-@@ -1049,7 +1045,6 @@
+@@ -1064,7 +1060,6 @@
  
    /* The CApath or CAfile used to validate the peer certificate
       this option is used only if SSL_VERIFYPEER is true */
--  CINIT(CAINFO, OBJECTPOINT, 65),
+-  CINIT(CAINFO, STRINGPOINT, 65),
  
    /* 66 = OBSOLETE */
    /* 67 = OBSOLETE */
-@@ -1108,7 +1103,6 @@
+@@ -1123,7 +1118,6 @@
  
    /* Specify which file name to write all known cookies in after completed
       operation. Set file name to "-" (dash) to make it go to stdout. */
--  CINIT(COOKIEJAR, OBJECTPOINT, 82),
+-  CINIT(COOKIEJAR, STRINGPOINT, 82),
  
    /* Specify which SSL ciphers to use */
-   CINIT(SSL_CIPHER_LIST, OBJECTPOINT, 83),
-@@ -1123,13 +1117,10 @@
+   CINIT(SSL_CIPHER_LIST, STRINGPOINT, 83),
+@@ -1138,13 +1132,10 @@
    CINIT(FTP_USE_EPSV, LONG, 85),
  
    /* type of the file keeping your SSL-certificate ("DER", "PEM", "ENG") */
--  CINIT(SSLCERTTYPE, OBJECTPOINT, 86),
+-  CINIT(SSLCERTTYPE, STRINGPOINT, 86),
  
    /* name of the file keeping your private SSL-key */
--  CINIT(SSLKEY, OBJECTPOINT, 87),
+-  CINIT(SSLKEY, STRINGPOINT, 87),
  
    /* type of the file keeping your private SSL-key ("DER", "PEM", "ENG") */
--  CINIT(SSLKEYTYPE, OBJECTPOINT, 88),
+-  CINIT(SSLKEYTYPE, STRINGPOINT, 88),
  
    /* crypto engine for the SSL-sub system */
-   CINIT(SSLENGINE, OBJECTPOINT, 89),
-@@ -1159,7 +1150,6 @@
+   CINIT(SSLENGINE, STRINGPOINT, 89),
+@@ -1174,7 +1165,6 @@
  
    /* The CApath directory used to validate the peer certificate
       this option is used only if SSL_VERIFYPEER is true */
--  CINIT(CAPATH, OBJECTPOINT, 97),
+-  CINIT(CAPATH, STRINGPOINT, 97),
  
    /* Instruct libcurl to use a smaller receive buffer */
    CINIT(BUFFERSIZE, LONG, 98),
-@@ -1411,10 +1401,8 @@
+@@ -1426,10 +1416,8 @@
    CINIT(SEEKDATA, OBJECTPOINT, 168),
  
    /* CRL file */
--  CINIT(CRLFILE, OBJECTPOINT, 169),
+-  CINIT(CRLFILE, STRINGPOINT, 169),
  
    /* Issuer certificate */
--  CINIT(ISSUERCERT, OBJECTPOINT, 170),
+-  CINIT(ISSUERCERT, STRINGPOINT, 170),
  
    /* (IPv6) Address scope */
    CINIT(ADDRESS_SCOPE, LONG, 171),
-@@ -1622,7 +1610,6 @@
+@@ -1637,7 +1625,6 @@
  
    /* The public key in DER form used to validate the peer public key
       this option is used only if SSL_VERIFYPEER is true */
--  CINIT(PINNEDPUBLICKEY, OBJECTPOINT, 230),
+-  CINIT(PINNEDPUBLICKEY, STRINGPOINT, 230),
  
    /* Path to Unix domain socket */
-   CINIT(UNIX_SOCKET_PATH, OBJECTPOINT, 231),
-@@ -1806,16 +1793,13 @@
+   CINIT(UNIX_SOCKET_PATH, STRINGPOINT, 231),
+@@ -1830,16 +1817,13 @@
    CFINIT(COPYCONTENTS),
    CFINIT(PTRCONTENTS),
    CFINIT(CONTENTSLENGTH),
@@ -96,7 +97,7 @@
    CFINIT(END),
 --- lib/cookie.c
 +++ lib/cookie.c
-@@ -895,9 +895,11 @@
+@@ -916,9 +916,11 @@
      c = calloc(1, sizeof(struct CookieInfo));
      if(!c)
        return NULL; /* failed to get memory */
@@ -108,7 +109,7 @@
    }
    else {
      /* we got an already existing one, use that */
-@@ -905,6 +907,7 @@
+@@ -926,6 +928,7 @@
    }
    c->running = FALSE; /* this is not running, this is init */
  
@@ -116,7 +117,7 @@
    if(file && strequal(file, "-")) {
      fp = stdin;
      fromfile=FALSE;
-@@ -915,6 +918,7 @@
+@@ -936,6 +939,7 @@
    }
    else
      fp = file?fopen(file, FOPEN_READTEXT):NULL;
@@ -124,7 +125,7 @@
  
    c->newsession = newsession; /* new session? */
  
-@@ -1198,7 +1202,6 @@
+@@ -1219,7 +1223,6 @@
  void Curl_cookie_cleanup(struct CookieInfo *c)
  {
    if(c) {
@@ -132,7 +133,7 @@
      Curl_cookie_freelist(c->cookies, TRUE);
      free(c); /* free the base struct as well */
    }
-@@ -1242,6 +1245,7 @@
+@@ -1263,6 +1266,7 @@
   *
   * The function returns non-zero on write failure.
   */
@@ -140,7 +141,7 @@
  static int cookie_output(struct CookieInfo *c, const char *dumphere)
  {
    struct Cookie *co;
-@@ -1295,6 +1299,7 @@
+@@ -1316,6 +1320,7 @@
  
    return 0;
  }
@@ -148,7 +149,7 @@
  
  struct curl_slist *Curl_cookie_list(struct SessionHandle *data)
  {
-@@ -1329,6 +1334,7 @@
+@@ -1350,6 +1355,7 @@
  
  void Curl_flush_cookies(struct SessionHandle *data, int cleanup)
  {
@@ -156,7 +157,7 @@
    if(data->set.str[STRING_COOKIEJAR]) {
      if(data->change.cookielist) {
        /* If there is a list of cookie files to read, do it first so that
-@@ -1344,7 +1350,9 @@
+@@ -1365,7 +1371,9 @@
        infof(data, "WARNING: failed to save cookies in %s\n",
              data->set.str[STRING_COOKIEJAR]);
    }
@@ -179,7 +180,7 @@
    bool newsession; /* new session, discard session cookies on load */
 --- lib/easy.c
 +++ lib/easy.c
-@@ -911,7 +911,7 @@
+@@ -920,7 +920,7 @@
      /* If cookies are enabled in the parent handle, we enable them
         in the clone as well! */
      outcurl->cookies = Curl_cookie_init(data,
@@ -190,7 +191,7 @@
      if(!outcurl->cookies)
 --- lib/formdata.c
 +++ lib/formdata.c
-@@ -126,6 +126,7 @@
+@@ -134,6 +134,7 @@
   * parent_form_info is NULL.
   *
   ***************************************************************************/
@@ -198,7 +199,7 @@
  static FormInfo * AddFormInfo(char *value,
                                char *contenttype,
                                FormInfo *parent_form_info)
-@@ -152,6 +153,7 @@
+@@ -160,6 +161,7 @@
  
    return form_info;
  }
@@ -206,7 +207,7 @@
  
  /***************************************************************************
   *
-@@ -380,6 +382,7 @@
+@@ -391,6 +393,7 @@
        break;
  
        /* Get contents from a given file name */
@@ -214,7 +215,7 @@
      case CURLFORM_FILECONTENT:
        if(current_form->flags & (HTTPPOST_PTRCONTENTS|HTTPPOST_READFILE))
          return_value = CURL_FORMADD_OPTION_TWICE;
-@@ -446,6 +449,7 @@
+@@ -457,6 +460,7 @@
          }
          break;
        }
@@ -222,7 +223,7 @@
  
      case CURLFORM_BUFFERPTR:
        current_form->flags |= HTTPPOST_PTRBUFFER|HTTPPOST_BUFFER;
-@@ -491,6 +495,7 @@
+@@ -502,6 +506,7 @@
        }
        break;
  
@@ -230,7 +231,7 @@
      case CURLFORM_CONTENTTYPE:
        {
          const char *contenttype =
-@@ -533,6 +538,7 @@
+@@ -544,6 +549,7 @@
          }
          break;
        }
@@ -238,7 +239,7 @@
      case CURLFORM_CONTENTHEADER:
        {
          /* this "cast increases required alignment of target type" but
-@@ -603,22 +609,17 @@
+@@ -614,22 +620,17 @@
          form != NULL;
          form = form->more) {
        if(((!form->name || !form->value) && !post) ||
@@ -263,7 +264,7 @@
          if(((form->flags & HTTPPOST_FILENAME) ||
              (form->flags & HTTPPOST_BUFFER)) &&
             !form->contenttype ) {
-@@ -633,6 +634,7 @@
+@@ -644,6 +645,7 @@
            }
            form->contenttype_alloc = TRUE;
          }
@@ -271,7 +272,7 @@
          if(!(form->flags & HTTPPOST_PTRNAME) &&
             (form == first_form) ) {
            /* Note that there's small risk that form->name is NULL here if the
-@@ -649,7 +651,7 @@
+@@ -660,7 +662,7 @@
            }
            form->name_alloc = TRUE;
          }
@@ -280,7 +281,7 @@
                              HTTPPOST_PTRCONTENTS | HTTPPOST_PTRBUFFER |
                              HTTPPOST_CALLBACK)) && form->value) {
            /* copy value (without strdup; possibly contains null characters) */
-@@ -845,10 +847,10 @@
+@@ -859,10 +861,10 @@
      *formp = newform;
  
    if(size) {
@@ -292,7 +293,7 @@
      else {
        /* Since this is a file to be uploaded here, add the size of the actual
           file */
-@@ -860,6 +862,7 @@
+@@ -874,6 +876,7 @@
            return CURLE_BAD_FUNCTION_ARGUMENT;
        }
      }
@@ -300,7 +301,7 @@
    }
    return CURLE_OK;
  }
-@@ -923,7 +926,7 @@
+@@ -937,7 +940,7 @@
      return (int)result;
  
    for(ptr = data; ptr; ptr = ptr->next) {
@@ -309,7 +310,7 @@
        char buffer[8192];
        size_t nread;
        struct Form temp;
-@@ -1213,12 +1216,12 @@
+@@ -1227,12 +1230,12 @@
          if(result)
            break;
        }
@@ -324,7 +325,7 @@
            result = formdata_add_filename(post, &form, &size);
          }
  
-@@ -1250,6 +1253,7 @@
+@@ -1264,6 +1267,7 @@
        if(result)
          break;
  
@@ -332,7 +333,7 @@
        if((post->flags & HTTPPOST_FILENAME) ||
           (post->flags & HTTPPOST_READFILE)) {
          /* we should include the contents from the specified file */
-@@ -1293,7 +1297,9 @@
+@@ -1307,7 +1311,9 @@
            result = CURLE_READ_ERROR;
          }
        }
@@ -343,7 +344,7 @@
          /* include contents of buffer */
          result = AddFormData(&form, FORM_CONTENT, post->buffer,
                               post->bufferlength, &size);
-@@ -1404,13 +1410,16 @@
+@@ -1419,13 +1425,16 @@
                             size_t size)
  {
    size_t nread;
@@ -360,7 +361,7 @@
    }
    else {
      if(!form->fp) {
-@@ -1429,6 +1438,7 @@
+@@ -1444,6 +1453,7 @@
      }
      form->data = form->data->next;
    }
@@ -368,7 +369,7 @@
  
    return nread;
  }
-@@ -1453,7 +1463,7 @@
+@@ -1468,7 +1478,7 @@
    if(!form->data)
      return 0; /* nothing, error, empty */
  
@@ -407,7 +408,7 @@
  }
 --- lib/url.c
 +++ lib/url.c
-@@ -1175,6 +1175,7 @@
+@@ -1180,6 +1180,7 @@
      }
      break;
  
@@ -415,7 +416,7 @@
    case CURLOPT_COOKIEJAR:
      /*
       * Set cookie file name to dump all cookies to when we're done.
-@@ -1195,6 +1196,7 @@
+@@ -1200,6 +1201,7 @@
      data->cookies = newcookies;
    }
      break;
@@ -423,7 +424,7 @@
  
    case CURLOPT_COOKIESESSION:
      /*
-@@ -1913,6 +1915,7 @@
+@@ -1918,6 +1920,7 @@
       */
      data->set.ioctl_client = va_arg(param, void *);
      break;
@@ -431,7 +432,7 @@
    case CURLOPT_SSLCERT:
      /*
       * String that holds file name of the SSL certificate to use
-@@ -1948,6 +1951,7 @@
+@@ -1953,6 +1956,7 @@
      result = setstropt(&data->set.str[STRING_KEY_PASSWD],
                         va_arg(param, char *));
      break;
@@ -439,7 +440,7 @@
    case CURLOPT_SSLENGINE:
      /*
       * String that holds the SSL crypto engine.
-@@ -2077,6 +2081,7 @@
+@@ -2082,6 +2086,7 @@
      result = CURLE_NOT_BUILT_IN;
  #endif
      break;
@@ -447,7 +448,7 @@
    case CURLOPT_PINNEDPUBLICKEY:
      /*
       * Set pinned public key for SSL connection.
-@@ -2121,6 +2126,7 @@
+@@ -2126,6 +2131,7 @@
      result = setstropt(&data->set.str[STRING_SSL_ISSUERCERT],
                         va_arg(param, char *));
      break;
@@ -455,7 +456,7 @@
    case CURLOPT_TELNETOPTIONS:
      /*
       * Set a linked list of telnet options
-@@ -5689,10 +5695,6 @@
+@@ -5717,10 +5723,6 @@
       that will be freed as part of the SessionHandle struct, but all cloned
       copies will be separately allocated.
    */
@@ -468,7 +469,7 @@
    data->set.ssl.cipher_list = data->set.str[STRING_SSL_CIPHER_LIST];
 --- lib/urldata.h
 +++ lib/urldata.h
-@@ -344,10 +344,6 @@
+@@ -366,10 +366,6 @@
    bool verifypeer;       /* set TRUE if this is desired */
    bool verifyhost;       /* set TRUE if CN/SAN must match hostname */
    bool verifystatus;     /* set TRUE if certificate status must be checked */
@@ -479,7 +480,7 @@
    char *random_file;     /* path to file containing "random" data */
    char *egdsocket;       /* path to file containing the EGD daemon socket */
    char *cipher_list;     /* list of ciphers to use */
-@@ -1345,10 +1341,7 @@
+@@ -1374,10 +1370,7 @@
  struct Curl_multi;    /* declared and used only in multi.c */
  
  enum dupstring {
@@ -490,7 +491,7 @@
    STRING_CUSTOMREQUEST,   /* HTTP/FTP/RTSP request/method to use */
    STRING_DEFAULT_PROTOCOL, /* Protocol to use when the URL doesn't specify */
    STRING_DEVICE,          /* local network interface/address to use */
-@@ -1356,9 +1349,6 @@
+@@ -1385,9 +1378,6 @@
    STRING_FTP_ACCOUNT,     /* ftp account data */
    STRING_FTP_ALTERNATIVE_TO_USER, /* command to send if USER/PASS fails */
    STRING_FTPPORT,         /* port to send with the FTP PORT command */
@@ -500,7 +501,7 @@
    STRING_KRB_LEVEL,       /* krb security level */
    STRING_NETRC_FILE,      /* if not NULL, use this instead of trying to find
                               $HOME/.netrc */
-@@ -1366,15 +1356,10 @@
+@@ -1395,15 +1385,10 @@
    STRING_SET_RANGE,       /* range, if used */
    STRING_SET_REFERER,     /* custom string for the HTTP referer field */
    STRING_SET_URL,         /* what original URL to work on */
@@ -518,7 +519,7 @@
    STRING_OPTIONS,         /* <options>, if used */
 --- lib/vtls/openssl.c
 +++ lib/vtls/openssl.c
-@@ -295,6 +295,7 @@
+@@ -286,6 +286,7 @@
    return -1;
  }
  
@@ -526,7 +527,7 @@
  #if defined(HAVE_OPENSSL_ENGINE_H) && defined(HAVE_ENGINE_LOAD_FOUR_ARGS)
  /*
   * Supply default password to the engine user interface conversation.
-@@ -646,6 +647,7 @@
+@@ -637,6 +638,7 @@
    }
    return 1;
  }
@@ -534,7 +535,7 @@
  
  /* returns non-zero on failure */
  static int x509_name_oneline(X509_NAME *a, char *buf, size_t size)
-@@ -714,9 +716,6 @@
+@@ -705,9 +707,6 @@
  #define CONF_MFLAGS_DEFAULT_SECTION 0x0
  #endif
  
@@ -544,7 +545,7 @@
  
    /* Lets get nice error messages */
    SSL_load_error_strings();
-@@ -1875,6 +1874,7 @@
+@@ -1869,6 +1868,7 @@
    }
  #endif
  
@@ -552,7 +553,7 @@
    if(data->set.str[STRING_CERT] || data->set.str[STRING_CERT_TYPE]) {
      if(!cert_stuff(conn,
                     connssl->ctx,
-@@ -1886,6 +1886,7 @@
+@@ -1880,6 +1880,7 @@
        return CURLE_SSL_CERTPROBLEM;
      }
    }
@@ -560,7 +561,7 @@
  
    ciphers = data->set.str[STRING_SSL_CIPHER_LIST];
    if(!ciphers)
-@@ -1918,6 +1919,7 @@
+@@ -1912,6 +1913,7 @@
      }
    }
  #endif
@@ -568,7 +569,7 @@
    if(data->set.str[STRING_SSL_CAFILE] || data->set.str[STRING_SSL_CAPATH]) {
      /* tell SSL where to find CA certificates that are used to verify
         the servers certificate. */
-@@ -1976,6 +1978,7 @@
+@@ -1970,6 +1972,7 @@
            "  CRLfile: %s\n", data->set.str[STRING_SSL_CRLFILE] ?
            data->set.str[STRING_SSL_CRLFILE]: "none");
    }
@@ -576,7 +577,7 @@
  
    /* Try building a chain using issuers in the trusted store first to avoid
    problems with server-sent legacy intermediates.
-@@ -2419,6 +2422,7 @@
+@@ -2413,6 +2416,7 @@
   * Heavily modified from:
   * https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning#OpenSSL
   */
@@ -584,7 +585,7 @@
  static CURLcode pkp_pin_peer_pubkey(struct SessionHandle *data, X509* cert,
                                      const char *pinnedpubkey)
  {
-@@ -2474,6 +2478,7 @@
+@@ -2468,6 +2472,7 @@
  
    return result;
  }
@@ -592,7 +593,7 @@
  
  /*
   * Get the server cert, verify it and show it etc, only call failf() if the
-@@ -2551,6 +2556,7 @@
+@@ -2545,6 +2550,7 @@
         deallocating the certificate. */
  
      /* e.g. match issuer name with provided issuer certificate */
@@ -600,7 +601,7 @@
      if(data->set.str[STRING_SSL_ISSUERCERT]) {
        fp = fopen(data->set.str[STRING_SSL_ISSUERCERT], FOPEN_READTEXT);
        if(!fp) {
-@@ -2589,6 +2595,7 @@
+@@ -2583,6 +2589,7 @@
              data->set.str[STRING_SSL_ISSUERCERT]);
        X509_free(issuer);
      }
@@ -608,7 +609,7 @@
  
      lerr = data->set.ssl.certverifyresult =
        SSL_get_verify_result(connssl->handle);
-@@ -2627,12 +2634,14 @@
+@@ -2621,12 +2628,14 @@
      /* when not strict, we don't bother about the verify cert problems */
      result = CURLE_OK;
  
@@ -667,7 +668,7 @@
  CURLcode Curl_pin_peer_pubkey(struct SessionHandle *data,
                                const char *pinnedpubkey,
                                const unsigned char *pubkey, size_t pubkeylen)
-@@ -912,6 +911,7 @@
+@@ -914,6 +913,7 @@
  
    return result;
  }
@@ -677,7 +678,7 @@
  CURLcode Curl_ssl_md5sum(unsigned char *tmp, /* input */
 --- lib/vtls/vtls.h
 +++ lib/vtls/vtls.h
-@@ -117,9 +117,6 @@
+@@ -118,9 +118,6 @@
                           unsigned char *md5sum, /* output */
                           size_t md5len);
  /* Check pinned public key. */

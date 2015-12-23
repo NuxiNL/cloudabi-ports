@@ -12,7 +12,7 @@ def build(ctx):
 
 package(
     name='lua',
-    version='5.3.1',
+    version='5.3.2',
     homepage='http://www.lua.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -20,8 +20,8 @@ package(
 )
 
 distfile(
-    name='lua-5.3.1.tar.gz',
-    checksum='072767aad6cc2e62044a66e8562f51770d941e972dc1e4068ba719cd8bffac17',
+    name='lua-5.3.2.tar.gz',
+    checksum='c740c7bb23a936944e1cc63b7c3c5351a8976d7867c5252c8854f7b2af9da68f',
     master_sites={'http://www.lua.org/ftp/'},
     unsafe_string_sources={
         'src/lobject.c',

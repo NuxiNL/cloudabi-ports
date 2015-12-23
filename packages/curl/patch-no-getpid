@@ -1,6 +1,6 @@
 --- lib/smb.c
 +++ lib/smb.c
-@@ -352,7 +352,7 @@
+@@ -354,7 +354,7 @@
    h->flags2 = smb_swap16(SMB_FLAGS2_IS_LONG_NAME | SMB_FLAGS2_KNOWS_LONG_NAME);
    h->uid = smb_swap16(smbc->uid);
    h->tid = smb_swap16(req->tid);

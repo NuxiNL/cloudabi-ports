@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='libxml2',
-    version='2.9.2',
+    version='2.9.3',
     homepage='http://www.xmlsoft.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -26,8 +26,8 @@ package(
 )
 
 distfile(
-    name='libxml2-2.9.2.tar.gz',
-    checksum='5178c30b151d044aefb1b08bf54c3003a0ac55c59c866763997529d60770d5bc',
+    name='libxml2-2.9.3.tar.gz',
+    checksum='4de9e31f46b44d34871c22f54bfc54398ef124d6f7cafb1f4a5958fbcd3ba12d',
     master_sites={'ftp://xmlsoft.org/libxml2/'},
     unsafe_string_sources={
         'HTMLparser.c',

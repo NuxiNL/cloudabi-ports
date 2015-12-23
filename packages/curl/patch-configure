@@ -1,6 +1,6 @@
 --- configure
 +++ configure
-@@ -19587,9 +19587,6 @@
+@@ -19485,9 +19485,6 @@
  fi
  
  
@@ -10,7 +10,7 @@
  
  ac_fn_c_check_func "$LINENO" "strcasecmp" "ac_cv_func_strcasecmp"
  if test "x$ac_cv_func_strcasecmp" = xyes; then :
-@@ -19914,7 +19911,6 @@
+@@ -19812,7 +19809,6 @@
      X-unknown)
        { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find connect" >&5
  $as_echo "cannot find connect" >&6; }
