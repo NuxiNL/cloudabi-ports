@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='gettext-0.19.6.tar.xz',
     checksum='9b95816620fd1168cb4eeca0e9dc0ffd86e864fc668f76f5e37cc054d6982e51',
-    master_sites={'http://ftp.gnu.org/gnu/gettext/'},
+    master_sites=sites_gnu('gettext'),
 )

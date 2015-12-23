@@ -6,7 +6,7 @@
 host_package(
     name='automake',
     version='1.15',
-    homepage='http://www.gnu.org/software/automake/',
+    homepage='https://www.gnu.org/software/automake/',
     maintainer='info@nuxi.nl',
     build_depends={'autoconf', 'm4', 'make'},
     build_cmd=build_autoconf_automake,
@@ -15,5 +15,5 @@ host_package(
 distfile(
     name='automake-1.15.tar.xz',
     checksum='9908c75aabd49d13661d6dcb1bc382252d22cc77bf733a2d55e87f2aa2db8636',
-    master_sites={'http://ftp.gnu.org/gnu/automake/'},
+    master_sites=sites_gnu('automake'),
 )

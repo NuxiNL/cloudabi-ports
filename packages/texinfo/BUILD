@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='texinfo-6.0.tar.xz',
     checksum='11ba4358696e8be3b3c7cfc88b89cf69525791aeabf0ee0a59ca58ebbd3471e4',
-    master_sites={'http://ftp.gnu.org/gnu/texinfo/'},
+    master_sites=sites_gnu('texinfo'),
 )

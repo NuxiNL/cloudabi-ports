@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='coreutils-8.24.tar.xz',
     checksum='a2d75286a4b9ef3a13039c2da3868a61be4ee9f17d8ae380a35a97e506972170',
-    master_sites={'http://ftp.gnu.org/gnu/coreutils/'},
+    master_sites=sites_gnu('coreutils'),
 )

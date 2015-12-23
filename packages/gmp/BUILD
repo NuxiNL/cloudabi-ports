@@ -21,9 +21,6 @@ package(
 distfile(
     name='gmp-6.1.0.tar.xz',
     checksum='68dadacce515b0f8a54f510edf07c1b636492bcdb8e8d54c56eb216225d16989',
-    master_sites={
-        'https://gmplib.org/download/gmp/',
-        'https://ftp.gnu.org/gnu/gmp/',
-    },
+    master_sites=sites_gnu('gmp'),
     unsafe_string_sources={'printf/sprintffuns.c'},
 )

@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='sed-4.2.2.tar.bz2',
     checksum='f048d1838da284c8bc9753e4506b85a1e0cc1ea8999d36f6995bcb9460cddbd7',
-    master_sites={'http://ftp.gnu.org/gnu/sed/'},
+    master_sites=sites_gnu('sed'),
 )

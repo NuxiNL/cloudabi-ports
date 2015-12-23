@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='make-4.1.tar.bz2',
     checksum='0bc7613389650ee6a24554b52572a272f7356164fd2c4132b0bcf13123e4fca5',
-    master_sites={'http://ftp.gnu.org/gnu/make/'},
+    master_sites=sites_gnu('make'),
 )

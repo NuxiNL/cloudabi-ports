@@ -24,7 +24,7 @@ package(
 distfile(
     name='libtasn1-4.7.tar.gz',
     checksum='a40780dc93fc6d819170240e8ece25352058a85fd1d2347ce0f143667d8f11c9',
-    master_sites={'http://ftp.gnu.org/gnu/libtasn1/'},
+    master_sites=sites_gnu('libtasn1'),
     unsafe_string_sources={
         'lib/decoding.c',
         'lib/element.c',

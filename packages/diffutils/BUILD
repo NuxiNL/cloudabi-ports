@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='diffutils-3.3.tar.xz',
     checksum='a25e89a8ab65fded1731e4186be1bb25cda967834b6df973599cdcd5abdfc19c',
-    master_sites={'http://ftp.gnu.org/gnu/diffutils/'},
+    master_sites=sites_gnu('diffutils'),
 )

@@ -15,5 +15,5 @@ host_package(
 distfile(
     name='grep-2.22.tar.xz',
     checksum='ca91d22f017bfcb503d4bc3b44295491c89a33a3df0c3d8b8614f2d3831836eb',
-    master_sites={'http://ftp.gnu.org/gnu/grep/'},
+    master_sites=sites_gnu('grep'),
 )

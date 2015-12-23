@@ -26,7 +26,7 @@ def build(ctx):
 host_package(
     name='binutils',
     version='2.26.51',
-    homepage='http://www.gnu.org/software/binutils/',
+    homepage='https://www.gnu.org/software/binutils/',
     maintainer='info@nuxi.nl',
     build_depends={'bison', 'flex', 'make'},
     build_cmd=build,

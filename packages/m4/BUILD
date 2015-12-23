@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='m4-1.4.17.tar.xz',
     checksum='f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508',
-    master_sites={'http://ftp.gnu.org/gnu/m4/'},
+    master_sites=sites_gnu('m4'),
 )

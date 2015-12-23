@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='help2man-1.47.3.tar.xz',
     checksum='c232af6475ef65bee02770862a362f4c4c2e6c9967d39e987eb94cadcfc13856',
-    master_sites={'http://ftp.gnu.org/gnu/help2man/'},
+    master_sites=sites_gnu('help2man'),
 )

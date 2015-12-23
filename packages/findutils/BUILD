@@ -15,5 +15,5 @@ host_package(
 distfile(
     name='findutils-4.4.2.tar.gz',
     checksum='434f32d171cbc0a5e72cfc5372c6fc4cb0e681f8dce566a0de5b6fccd702b62a',
-    master_sites={'http://ftp.gnu.org/gnu/findutils/'},
+    master_sites=sites_gnu('findutils'),
 )

@@ -21,5 +21,5 @@ package(
 distfile(
     name='nettle-3.1.1.tar.gz',
     checksum='5fd4d25d64d8ddcb85d0d897572af73b05b4d163c6cc49438a5bfbb8ff293d4c',
-    master_sites={'https://ftp.gnu.org/gnu/nettle/'},
+    master_sites=sites_gnu('nettle'),
 )

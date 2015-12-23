@@ -14,5 +14,5 @@ host_package(
 distfile(
     name='gawk-4.1.3.tar.xz',
     checksum='e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625',
-    master_sites={'http://ftp.gnu.org/gnu/gawk/'},
+    master_sites=sites_gnu('gawk'),
 )

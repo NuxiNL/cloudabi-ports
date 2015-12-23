@@ -15,5 +15,5 @@ host_package(
 distfile(
     name='bison-3.0.4.tar.xz',
     checksum='a72428c7917bdf9fa93cb8181c971b6e22834125848cf1d03ce10b1bb0716fe1',
-    master_sites={'http://ftp.gnu.org/gnu/bison/'},
+    master_sites=sites_gnu('bison'),
 )

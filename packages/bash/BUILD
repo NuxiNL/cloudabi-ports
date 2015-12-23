@@ -23,5 +23,5 @@ host_package(
 distfile(
     name='bash-4.3.30.tar.gz',
     checksum='317881019bbf2262fb814b7dd8e40632d13c3608d2f237800a8828fbb8a640dd',
-    master_sites={'http://ftp.gnu.org/gnu/bash/'},
+    master_sites=sites_gnu('bash'),
 )

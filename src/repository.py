@@ -80,6 +80,12 @@ class Repository:
                         (path, arch, name))
                 self._deferred_target_packages[(name, arch)] = package
 
+        def op_sites_gnu(suffix):
+            return {fmt + suffix + '/' for fmt in {
+                'http://ftp.gnu.org/gnu/',
+                'http://ftp.nluug.nl/gnu/',
+            }}
+
         def op_sites_sourceforge(suffix):
             return {fmt + suffix + '/' for fmt in {
                 'http://downloads.sourceforge.net/project/',
@@ -104,6 +110,7 @@ class Repository:
             'distfile': op_distfile,
             'host_package': op_host_package,
             'package': op_package,
+            'sites_gnu': op_sites_gnu,
             'sites_sourceforge': op_sites_sourceforge,
         }
 
