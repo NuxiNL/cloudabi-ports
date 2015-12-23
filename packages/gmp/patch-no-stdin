@@ -1,6 +1,6 @@
 --- gmp-h.in
 +++ gmp-h.in
-@@ -597,9 +597,6 @@
+@@ -592,9 +592,6 @@
  __GMP_DECLSPEC int gmp_fscanf (FILE *, const char *, ...);
  #endif
  
@@ -10,7 +10,7 @@
  #define gmp_sscanf __gmp_sscanf
  __GMP_DECLSPEC int gmp_sscanf (const char *, const char *, ...);
  
-@@ -608,11 +605,6 @@
+@@ -603,11 +600,6 @@
  __GMP_DECLSPEC int gmp_vfscanf (FILE *, const char *, va_list);
  #endif
  
