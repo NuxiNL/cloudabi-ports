@@ -24,11 +24,17 @@ class Distfile:
         self._distdir = distdir
         self._name = name
         self._checksum = checksum
-        # TODO(ed): Should append the directory name to FALLBACK_MIRRORS.
-        self._master_sites = master_sites | config.FALLBACK_MIRRORS
         self._patches = patches
         self._unsafe_string_sources = unsafe_string_sources
         self._pathname = os.path.join(distdir, self._name)
+
+        # Compute distfile URLs based on the provided list of sites.
+        # Also add fallback URLs in case the master sites are down.
+        self._urls = {
+            site + os.path.basename(self._name) for site in master_sites
+        } | {
+            site + self._name for site in config.FALLBACK_MIRRORS
+        }
 
     @staticmethod
     def _apply_patch(patch, target):
@@ -93,8 +99,7 @@ class Distfile:
             except FileNotFoundError as e:
                 print(e)
 
-            url = (random.sample(self._master_sites, 1)[0] +
-                   os.path.basename(self._name))
+            url = random.sample(self._urls, 1)[0]
             print('FETCH', url)
             try:
                 util.make_parent_dir(self._pathname)
