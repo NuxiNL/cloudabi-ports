@@ -42,6 +42,10 @@ distfile(
     master_sites={'http://download.icu-project.org/files/icu4c/56.1/'},
     unsafe_string_sources={
         'source/common/cstring.h',
+        'source/common/uloc.cpp',
+        'source/i18n/choicfmt.cpp',
         'source/i18n/decNumber.c',
+        'source/i18n/digitlst.cpp',
+        'source/i18n/plurrule.cpp',
     },
 )
