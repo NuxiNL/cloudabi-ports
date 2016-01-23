@@ -257,6 +257,10 @@ class HostBuilder:
         self._build_directory = build_directory
         self._install_directory = install_directory
 
+        self._cflags = [
+            '-O2', '-I' + os.path.join(self.get_prefix(), 'include'),
+        ]
+
     def autoconf(self, builddir, script, args):
         self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
@@ -269,15 +273,15 @@ class HostBuilder:
     def get_cc():
         return config.HOST_CC
 
-    @staticmethod
-    def get_cflags():
-        return '-O2'
+    def get_cflags(self):
+        return ' '.join(self._cflags)
 
     @staticmethod
     def get_cxx():
         return config.HOST_CXX
 
-    def get_prefix(self):
+    @staticmethod
+    def get_prefix():
         return config.DIR_BUILDROOT
 
     def install(self, source, target):
@@ -302,8 +306,8 @@ class HostBuilder:
             'env',
             'CC=' + self.get_cc(),
             'CXX=' + self.get_cxx(),
-            'CFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
-            'CXXFLAGS=-O2 -I' + os.path.join(self.get_prefix(), 'include'),
+            'CFLAGS=' + ' '.join(self._cflags),
+            'CXXFLAGS=' + ' '.join(self._cflags),
             'LDFLAGS=-L' + os.path.join(self.get_prefix(), 'lib'),
             'PATH=%s:%s' % (os.path.join(self.get_prefix(), 'bin'),
                             os.getenv('PATH')),
