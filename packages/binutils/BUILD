@@ -25,7 +25,7 @@ def build(ctx):
 
 host_package(
     name='binutils',
-    version='2.26.51',
+    version='2.26',
     homepage='https://www.gnu.org/software/binutils/',
     maintainer='info@nuxi.nl',
     build_depends={'bison', 'flex', 'make'},
@@ -33,7 +33,7 @@ host_package(
 )
 
 distfile(
-    name='binutils-2.26.51.tar.bz2',
-    checksum='b1c55ea8dd7d70ab8b5a03bbeb86cbbef0f9dd18aa7be085141666e5096992ac',
-    master_sites={'ftp://sourceware.org/pub/binutils/snapshots/'},
+    name='binutils-2.26.tar.bz2',
+    checksum='c2ace41809542f5237afc7e3b8f32bb92bc7bc53c6232a84463c423b0714ecd9',
+    master_sites=sites_gnu('binutils'),
 )
