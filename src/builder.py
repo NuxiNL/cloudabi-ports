@@ -94,7 +94,20 @@ class FileHandle:
 
     def compile(self, args=[]):
         output = self._path + '.o'
-        self._builder.compile(self._path, output, args)
+        os.chdir(os.path.dirname(self._path))
+        ext = os.path.splitext(self._path)[1]
+        if ext in {'.c', '.S'}:
+            print('CC', self._path)
+            subprocess.check_call(
+                [self._builder.get_cc()] + self._builder.get_cflags() +
+                args + ['-c', '-o', output, self._path])
+        elif ext == '.cpp':
+            print('CXX', self._path)
+            subprocess.check_call(
+                [self._builder.get_cxx()] + self._builder.get_cxxflags() +
+                args + ['-c', '-o', output, self._path])
+        else:
+            raise Exception('Unknown file extension: %s' % ext)
         return FileHandle(self._builder, output)
 
     def debug_shell(self):
@@ -189,7 +202,7 @@ class BuildHandle:
         return self._builder.get_cc()
 
     def cflags(self):
-        return self._builder.get_cflags()
+        return ' '.join(self._builder.get_cflags())
 
     def cpu(self):
         return self._builder.get_cpu()
@@ -198,9 +211,11 @@ class BuildHandle:
         return self._builder.get_cxx()
 
     def executable(self, objects):
-        return FileHandle(
-            self._builder, self._builder.executable(
-                obj._path for obj in objects))
+        objs = sorted(obj._path for obj in objects)
+        output = self._builder._build_directory.get_new_executable()
+        print('LD', output)
+        subprocess.check_call([self._builder.get_cc(), '-o', output] + objs)
+        return FileHandle(self._builder, output)
 
     def extract(self, name='%(name)s-%(version)s'):
         return FileHandle(
@@ -274,7 +289,7 @@ class HostBuilder:
         return config.HOST_CC
 
     def get_cflags(self):
-        return ' '.join(self._cflags)
+        return self._cflags
 
     @staticmethod
     def get_cxx():
@@ -367,34 +382,20 @@ class TargetBuilder:
             '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0],
             '-DUNIX=YES'] + args)
 
-    def compile(self, source, target, args):
-        os.chdir(os.path.dirname(source))
-        ext = os.path.splitext(source)[1]
-        if ext in {'.c', '.S'}:
-            print('CC', source)
-            subprocess.check_call(
-                [self._tool('cc')] + self._cflags + args +
-                ['-c', '-o', target, source])
-        elif ext == '.cpp':
-            print('CXX', source)
-            subprocess.check_call(
-                [self._tool('c++')] + self._cflags + args +
-                ['-c', '-o', target, source])
-        else:
-            raise Exception('Unknown file extension: %s' % ext)
+    def get_cc(self):
+        return self._tool('cc')
 
-    def executable(self, object_files):
-        objs = sorted(object_files)
-        output = self._build_directory.get_new_executable()
-        print('LD', output)
-        subprocess.check_call([self._tool('cc'), '-o', output] + objs)
-        return output
+    def get_cflags(self):
+        return self._cflags
 
     def get_cpu(self):
         return self._arch.split('-', 1)[0]
 
     def get_cxx(self):
         return self._tool('c++')
+
+    def get_cxxflags(self):
+        return self._cflags
 
     def get_prefix(self):
         return self._prefix

@@ -64,6 +64,7 @@ class Repository:
 
         def op_host_package(**kwargs):
             package = kwargs
+            package['resource_directory'] = os.path.dirname(path)
             name = package['name']
             if name in self._deferred_host_packages:
                 raise Exception('%s is redeclaring packages %s' % (path, name))

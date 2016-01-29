@@ -16,12 +16,14 @@ from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 class HostPackage:
 
     def __init__(self, install_directory, name, version, homepage,
-                 maintainer, build_depends, lib_depends, distfiles, build_cmd):
+                 maintainer, build_depends, lib_depends, distfiles,
+                 build_cmd, resource_directory):
         self._install_directory = install_directory
         self._name = name
         self._version = version
         self._distfiles = distfiles
         self._build_cmd = build_cmd
+        self._resource_directory = resource_directory
 
         # Compute the set of transitive build dependencies.
         self._build_depends = set()
@@ -57,7 +59,8 @@ class HostPackage:
         self._build_cmd(
             BuildHandle(
                 HostBuilder(BuildDirectory(), self._install_directory),
-                self._name, self._version, self._distfiles, None))
+                self._name, self._version, self._distfiles,
+                self._resource_directory))
 
     def extract(self):
         # Copy files literally.
