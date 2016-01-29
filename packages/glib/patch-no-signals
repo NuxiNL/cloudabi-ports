@@ -57,7 +57,23 @@
  
  
  /* UNIX signals work by marking one of these variables then waking the
-@@ -4957,6 +4957,7 @@
+@@ -487,6 +487,7 @@
+   NULL
+ };
+ 
++#ifndef __CloudABI__
+ GSourceFuncs g_child_watch_funcs =
+ {
+   g_child_watch_prepare,
+@@ -494,6 +495,7 @@
+   g_child_watch_dispatch,
+   g_child_watch_finalize
+ };
++#endif
+ 
+ GSourceFuncs g_idle_funcs =
+ {
+@@ -4957,6 +4959,7 @@
    G_UNLOCK(main_context_list);
  }
  
@@ -65,7 +81,7 @@
  static void
  dispatch_unix_signals_unlocked (void)
  {
-@@ -5055,6 +5056,7 @@
+@@ -5055,6 +5058,7 @@
    dispatch_unix_signals_unlocked ();
    G_UNLOCK(unix_signal_lock);
  }
@@ -73,7 +89,7 @@
  
  static gboolean
  g_child_watch_prepare (GSource *source,
-@@ -5122,6 +5124,7 @@
+@@ -5122,6 +5126,7 @@
    return again;
  }
  
@@ -81,7 +97,7 @@
  static void
  ref_unix_signal_handler_unlocked (int signum)
  {
-@@ -5198,6 +5201,7 @@
+@@ -5198,6 +5203,7 @@
    unref_unix_signal_handler_unlocked (SIGCHLD);
    G_UNLOCK (unix_signal_lock);
  }
@@ -89,7 +105,7 @@
  
  #endif /* G_OS_WIN32 */
  
-@@ -5224,7 +5228,7 @@
+@@ -5224,7 +5230,7 @@
    return FALSE;
  }
  
@@ -98,7 +114,7 @@
  
  static void
  g_unix_signal_handler (int signum)
-@@ -5273,6 +5277,7 @@
+@@ -5273,6 +5279,7 @@
   *
   * Since: 2.4
   **/
@@ -106,7 +122,7 @@
  GSource *
  g_child_watch_source_new (GPid pid)
  {
-@@ -5407,6 +5412,7 @@
+@@ -5407,6 +5414,7 @@
  {
    return g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, function, data, NULL);
  }
@@ -114,7 +130,7 @@
  
  
  /* Idle functions */
-@@ -5671,7 +5677,7 @@
+@@ -5671,7 +5679,7 @@
      {
        g_main_context_iteration (glib_worker_context, TRUE);
  
@@ -123,7 +139,7 @@
        if (any_unix_signal_pending)
          dispatch_unix_signals ();
  #endif
-@@ -5688,7 +5694,7 @@
+@@ -5688,7 +5696,7 @@
    if (g_once_init_enter (&initialised))
      {
        /* mask all signals in the worker thread */
@@ -132,7 +148,7 @@
        sigset_t prev_mask;
        sigset_t all;
  
-@@ -5697,7 +5703,7 @@
+@@ -5697,7 +5705,7 @@
  #endif
        glib_worker_context = g_main_context_new ();
        g_thread_new ("gmain", glib_worker_main, NULL);
@@ -170,8 +186,13 @@
  GLIB_AVAILABLE_IN_ALL
  guint    g_idle_add                 (GSourceFunc     function,
                                       gpointer        data);
-@@ -607,7 +611,9 @@
+@@ -604,10 +608,14 @@
+ 
+ /* Hook for GClosure / GSource integration. Don't touch */
+ GLIB_VAR GSourceFuncs g_timeout_funcs;
++#ifndef __CloudABI__
  GLIB_VAR GSourceFuncs g_child_watch_funcs;
++#endif
  GLIB_VAR GSourceFuncs g_idle_funcs;
  #ifdef G_OS_UNIX
 +#ifndef __CloudABI__
@@ -182,7 +203,16 @@
  
 --- gobject/gsourceclosure.c
 +++ gobject/gsourceclosure.c
-@@ -206,7 +206,7 @@
+@@ -199,14 +199,16 @@
+     {
+       if (source->source_funcs == &g_io_watch_funcs)
+         closure_callback = (GSourceFunc)io_watch_closure_callback;
++#ifndef __CloudABI__
+       else if (source->source_funcs == &g_child_watch_funcs)
+         closure_callback = (GSourceFunc)g_child_watch_closure_callback;
++#endif
+ #ifdef G_OS_UNIX
+       else if (source->source_funcs == &g_unix_fd_source_funcs)
          closure_callback = (GSourceFunc)g_unix_fd_source_closure_callback;
  #endif
        else if (source->source_funcs == &g_timeout_funcs ||
@@ -191,7 +221,7 @@
                 source->source_funcs == &g_unix_signal_funcs ||
  #endif
                 source->source_funcs == &g_idle_funcs)
-@@ -251,8 +251,10 @@
+@@ -251,9 +253,13 @@
    if (!source->source_funcs->closure_callback &&
  #ifdef G_OS_UNIX
        source->source_funcs != &g_unix_fd_source_funcs &&
@@ -199,10 +229,13 @@
        source->source_funcs != &g_unix_signal_funcs &&
  #endif
 +#endif
++#ifndef __CloudABI__
        source->source_funcs != &g_child_watch_funcs &&
++#endif
        source->source_funcs != &g_io_watch_funcs &&
        source->source_funcs != &g_timeout_funcs &&
-@@ -274,7 +276,7 @@
+       source->source_funcs != &g_idle_funcs)
+@@ -274,7 +280,7 @@
        if (marshal)
  	g_closure_set_marshal (closure, marshal);
        else if (source->source_funcs == &g_idle_funcs ||
