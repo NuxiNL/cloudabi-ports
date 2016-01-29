@@ -5,10 +5,11 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
+    root = ctx.extract('%(name)s-3.8.0rc1.src')
+    ctx.extract('cfe-3.8.0rc1.src').rename(root.path('tools/clang'))
+    ctx.extract('lld-3.8.0rc1.src').rename(root.path('tools/lld'))
 
-    # Build and install LLVM.
+    # Build and install LLVM, Clang and LLD.
     build = root.cmake()
     build.ninja()
     stage = build.ninja_install()
@@ -28,9 +29,21 @@ def build(ctx):
     bindir.install('bin')
     stage.path('lib/clang').install('lib/clang')
 
+    # Install ld, a tiny wrapper around LLD, invoking it in such a way
+    # that it acts as the GNU linker. Don't use LLD on aarch64 yet, as
+    # support for that platform is not yet complete.
+    ld = ctx.executable({
+        ctx.resource('ld.c').compile([
+            '-DPATH_LLD="%s/bin/lld"' % ctx.prefix(),
+        ]),
+    })
+    for arch in ARCHITECTURES:
+        if not arch.startswith('aarch64-'):
+            ld.install('bin/%s-ld' % arch)
+
 host_package(
     name='llvm',
-    version='3.7.0',
+    version='3.7.91',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -38,17 +51,17 @@ host_package(
 )
 
 distfile(
-    name='cfe-3.7.0.src.tar.xz',
-    checksum='4ed740c5a91df1c90a4118c5154851d6a475f39a91346bdf268c1c29c13aa1cc',
-    master_sites={'http://llvm.org/releases/3.7.0/'},
-    patches={
-        'aarch64',
-        'implicit-library-functions',
-    },
+    name='cfe-3.8.0rc1.src.tar.xz',
+    checksum='11cd5e001fe83a55040a976c8e7d7b2c808534980df16b97b200b3b897df89c3',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
 )
 distfile(
-    name='llvm-3.7.0.src.tar.xz',
-    checksum='ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153',
-    master_sites={'http://llvm.org/releases/3.7.0/'},
-    patches={'prefer-ranlib'},
+    name='lld-3.8.0rc1.src.tar.xz',
+    checksum='7cf97833bd471362255340125defe14dcc89678bb89a13e1a205bdda9c456e8e',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
+)
+distfile(
+    name='llvm-3.8.0rc1.src.tar.xz',
+    checksum='41809e45cb3a97908c5741b4c15c90d801793e09d75858a6cfaa9582f233249b',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
 )

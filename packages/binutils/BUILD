@@ -15,13 +15,15 @@ def build(ctx):
         ])
         build.make()
 
-        # Only install the linker and strip.
+        # We only need the strip utility, except on aarch64. On aarch64,
+        # we also install the linker, as LLD does not yet support this
+        # architecture completely.
         stage = build.make_install()
-        for bin in {'ld', 'strip'}:
-            filename = 'bin/%s-%s' % (arch, bin)
+        filenames = {'bin/%s-strip' % arch}
+        if arch.startswith('aarch64-'):
+            filenames |= {'bin/%s-ld' % arch, '%s/lib/ldscripts' % arch}
+        for filename in filenames:
             stage.path(filename).install(filename)
-        filename = '%s/lib/ldscripts' % arch
-        stage.path(filename).install(filename)
 
 host_package(
     name='binutils',

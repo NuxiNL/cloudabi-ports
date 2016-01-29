@@ -5,12 +5,12 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('libcxxabi-%(version)s.src').rename(root.path('libcxxabi'))
+    root = ctx.extract('%(name)s-3.8.0rc1.src')
+    ctx.extract('libcxxabi-3.8.0rc1.src').rename(root.path('libcxxabi'))
 
     # Build libc++.a.
     sources = {
-        'algorithm.cpp', 'bind.cpp', 'chrono.cpp',
+        'algorithm.cpp', 'any.cpp', 'bind.cpp', 'chrono.cpp',
         'condition_variable.cpp', 'debug.cpp', 'exception.cpp',
         'future.cpp', 'hash.cpp', 'ios.cpp', 'iostream.cpp', 'locale.cpp',
         'memory.cpp', 'mutex.cpp', 'new.cpp', 'optional.cpp',
@@ -34,7 +34,7 @@ def build(ctx):
 
 package(
     name='libcxx',
-    version='3.7.0',
+    version='3.7.91',
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -42,7 +42,7 @@ package(
 )
 
 distfile(
-    name='libcxx-3.7.0.src.tar.xz',
-    checksum='c18f3c8333cd7e678c1424a57fe5e25efe740ca7caf62ac67152b4723f3ad08e',
-    master_sites={'http://llvm.org/releases/3.7.0/'},
+    name='libcxx-3.8.0rc1.src.tar.xz',
+    checksum='5dad3ca39b1c3f711e6d3db289638ab8e97eeb637e5c25be5c70a7043909adad',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
 )

@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('libunwind-%(version)s.src').rename(root.path('libunwind'))
+    root = ctx.extract('%(name)s-3.8.0rc1.src')
+    ctx.extract('libunwind-3.8.0rc1.src').rename(root.path('libunwind'))
     sources = {
         'abort_message.cpp', 'cxa_aux_runtime.cpp',
         'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
@@ -28,7 +28,7 @@ def build(ctx):
 
 package(
     name='libcxxabi',
-    version='3.7.0',
+    version='3.7.91',
     homepage='http://libcxxabi.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
@@ -36,7 +36,7 @@ package(
 )
 
 distfile(
-    name='libcxxabi-3.7.0.src.tar.xz',
-    checksum='48b074fd334958b2d8bab893c897a0c8258328782cdec2d229c7bce432b49beb',
-    master_sites={'http://llvm.org/releases/3.7.0/'},
+    name='libcxxabi-3.8.0rc1.src.tar.xz',
+    checksum='80fa99f47f4a0a4d62daeea25125087b6de6ccbb577ab144c802cf1188f8abf9',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
 )
