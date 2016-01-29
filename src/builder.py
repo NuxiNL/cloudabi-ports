@@ -51,15 +51,12 @@ class FileHandle:
     def autoconf(self, args=[], inplace=False):
         for path in util.walk_files(self._path):
             filename = os.path.basename(path)
-            if filename == 'config.sub':
-                # Replace config.sub files by an up-to-date copy. The copy
-                # provided by the tarball rarely supports CloudABI.
+            if filename in {'config.guess', 'config.sub'}:
+                # Replace the config.guess and config.sub files by
+                # up-to-date copies. The copies provided by the tarball
+                # rarely support CloudABI.
                 os.unlink(path)
-                shutil.copy(
-                    os.path.join(
-                        config.DIR_RESOURCES,
-                        'config.sub'),
-                    path)
+                shutil.copy(os.path.join(config.DIR_RESOURCES, filename), path)
             elif filename == 'ltmain.sh':
                 # Patch up libtool to archive object files in sorted
                 # order. This has been fixed in the meantime.
