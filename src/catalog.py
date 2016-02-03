@@ -215,18 +215,20 @@ class DebianCatalog(Catalog):
                 '.',
             ])
 
-        # Create 'control.tar.gz' tarball that contains the control file.
-        util.make_dir(controldir)
-        with open(os.path.join(controldir, 'control'), 'w') as f:
-            f.write(self._get_control_snippet(package, version))
-        tar(controldir)
-
         # Create 'data.tar.xz' tarball that contains the files that need
         # to be installed by the package.
         prefix = os.path.join('/usr', package.get_arch())
         util.make_dir(datadir)
         package.extract(os.path.join(datadir, prefix[1:]), prefix)
         tar(datadir)
+
+        # Create 'control.tar.xz' tarball that contains the control files.
+        util.make_dir(controldir)
+        datadir_files = list(util.walk_files(datadir))
+        datadir_size = sum(os.path.getsize(fpath) for fpath in datadir_files)
+        with open(os.path.join(controldir, 'control'), 'w') as f:
+            f.write(self._get_control_snippet(package, version, datadir_size))
+        tar(controldir)
 
         path = os.path.join(rootdir, 'output.txz')
         subprocess.check_call([
