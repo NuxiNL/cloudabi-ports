@@ -136,8 +136,8 @@ def remove_and_make_dir(path):
     make_dir(path)
 
 
-def sha256(path):
-    checksum = hashlib.sha256()
+def _hash_file(path, algorithm):
+    checksum = algorithm()
     if os.path.islink(path):
         checksum.update(bytes(os.readlink(path), encoding='ASCII'))
     else:
@@ -148,6 +148,14 @@ def sha256(path):
                     break
                 checksum.update(data)
     return checksum
+
+
+def sha256(path):
+    return _hash_file(path, hashlib.sha256)
+
+
+def md5(path):
+    return _hash_file(path, hashlib.md5)
 
 
 def walk_files(path):

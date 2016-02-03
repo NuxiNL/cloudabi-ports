@@ -6,6 +6,7 @@
 import base64
 import collections
 import lzma
+import math
 import os
 import stat
 import subprocess
@@ -101,7 +102,12 @@ class DebianCatalog(Catalog):
             package.get_debian_name(), version.get_debian_version())
 
     @staticmethod
-    def _get_control_snippet(package, version):
+    def _get_control_snippet(package, version, installed_size=None):
+        """Returns a string suitable for writing to a .deb control file.
+
+        For the fields refer to the Debian Policy Manual
+        https://www.debian.org/doc/debian-policy/ch-controlfields.html
+        """
         snippet = (
             'Package: %(debian_name)s\n'
             'Version: %(version)s\n'
@@ -116,6 +122,11 @@ class DebianCatalog(Catalog):
                 'debian_name': package.get_debian_name(),
                 'version': version.get_debian_version(),
             })
+
+        # Optional, estimate in kB of disk space needed to install the package
+        if installed_size is not None:
+            snippet += 'Installed-Size: %d\n' % math.ceil(installed_size/1024)
+
         lib_depends = package.get_lib_depends()
         if lib_depends:
             snippet += 'Depends: %s\n' % ', '.join(sorted(
@@ -204,18 +215,24 @@ class DebianCatalog(Catalog):
                 '.',
             ])
 
-        # Create 'control.tar.gz' tarball that contains the control file.
-        util.make_dir(controldir)
-        with open(os.path.join(controldir, 'control'), 'w') as f:
-            f.write(self._get_control_snippet(package, version))
-        tar(controldir)
-
         # Create 'data.tar.xz' tarball that contains the files that need
         # to be installed by the package.
         prefix = os.path.join('/usr', package.get_arch())
         util.make_dir(datadir)
         package.extract(os.path.join(datadir, prefix[1:]), prefix)
         tar(datadir)
+
+        # Create 'control.tar.xz' tarball that contains the control files.
+        util.make_dir(controldir)
+        datadir_files = list(util.walk_files(datadir))
+        datadir_size = sum(os.path.getsize(fpath) for fpath in datadir_files)
+        with open(os.path.join(controldir, 'control'), 'w') as f:
+            f.write(self._get_control_snippet(package, version, datadir_size))
+        with open(os.path.join(controldir, 'md5sums'), 'w') as f:
+            f.writelines('%s %s\n' % (util.md5(fpath).hexdigest(),
+                                      os.path.relpath(fpath, datadir))
+                         for fpath in datadir_files)
+        tar(controldir)
 
         path = os.path.join(rootdir, 'output.txz')
         subprocess.check_call([
