@@ -228,6 +228,10 @@ class DebianCatalog(Catalog):
         datadir_size = sum(os.path.getsize(fpath) for fpath in datadir_files)
         with open(os.path.join(controldir, 'control'), 'w') as f:
             f.write(self._get_control_snippet(package, version, datadir_size))
+        with open(os.path.join(controldir, 'md5sums'), 'w') as f:
+            f.writelines('%s %s\n' % (util.md5(fpath).hexdigest(),
+                                      os.path.relpath(fpath, datadir))
+                         for fpath in datadir_files)
         tar(controldir)
 
         path = os.path.join(rootdir, 'output.txz')
