@@ -224,7 +224,7 @@ class DebianCatalog(Catalog):
 
         # Create 'control.tar.xz' tarball that contains the control files.
         util.make_dir(controldir)
-        datadir_files = list(util.walk_files(datadir))
+        datadir_files = sorted(util.walk_files(datadir))
         datadir_size = sum(os.path.getsize(fpath) for fpath in datadir_files)
         with open(os.path.join(controldir, 'control'), 'w') as f:
             f.write(self._get_control_snippet(package, version, datadir_size))
