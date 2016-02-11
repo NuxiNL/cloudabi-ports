@@ -32,3 +32,26 @@ repository for your operating system to your system's configuration.
 Please refer to [Nuxi's website](https://nuxi.nl/) for documentation on
 how to configure access to the CloudABI Ports Collection on your
 operating system.
+
+## Support
+
+### Public support
+
+The
+[cloudabi-devel@googlegroups.com](mailto:cloudabi-devel@googlegroups.com)
+mailing list is used to discuss the development of CloudABI. It is
+possible to sign up for this mailing list and browse its archive on
+[Google Groups](https://groups.google.com/forum/#!forum/cloudabi-devel).
+
+An IRC channel called `#cloudabi` exists on EFnet.
+
+Bugs and pull requests can be submitted through
+[GitHub](https://github.com/NuxiNL/cloudlibc).
+
+### Commercial support
+
+CloudABI has been developed by [Nuxi](https://nuxi.nl/), an IT company
+based in the lovely city of
+['s-Hertogenbosch, the Netherlands](http://en.wikipedia.org/wiki/%27s-Hertogenbosch).
+Are you interested in receiving commercial support on CloudABI or any of
+its components? Be sure to get in touch with us at info@nuxi.nl.
