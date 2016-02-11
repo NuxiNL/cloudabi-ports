@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='nettle',
-    version='3.1.1',
+    version='3.2',
     homepage='http://www.lysator.liu.se/~nisse/nettle/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
@@ -19,7 +19,7 @@ package(
 )
 
 distfile(
-    name='nettle-3.1.1.tar.gz',
-    checksum='5fd4d25d64d8ddcb85d0d897572af73b05b4d163c6cc49438a5bfbb8ff293d4c',
+    name='nettle-3.2.tar.gz',
+    checksum='ea4283def236413edab5a4cf9cf32adf540c8df1b9b67641cfc2302fca849d97',
     master_sites=sites_gnu('nettle'),
 )

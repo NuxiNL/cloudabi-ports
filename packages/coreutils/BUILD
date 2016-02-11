@@ -1,18 +1,18 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 host_package(
     name='coreutils',
-    version='8.24',
+    version='8.25',
     homepage='https://www.gnu.org/software/coreutils/',
     maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 
 distfile(
-    name='coreutils-8.24.tar.xz',
-    checksum='a2d75286a4b9ef3a13039c2da3868a61be4ee9f17d8ae380a35a97e506972170',
+    name='coreutils-8.25.tar.xz',
+    checksum='31e67c057a5b32a582f26408c789e11c2e8d676593324849dcf5779296cdce87',
     master_sites=sites_gnu('coreutils'),
 )

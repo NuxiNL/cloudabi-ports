@@ -1,11 +1,11 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 host_package(
     name='findutils',
-    version='4.4.2',
+    version='4.6.0',
     homepage='https://www.gnu.org/software/findutils/',
     maintainer='info@nuxi.nl',
     build_depends={'make'},
@@ -13,7 +13,7 @@ host_package(
 )
 
 distfile(
-    name='findutils-4.4.2.tar.gz',
-    checksum='434f32d171cbc0a5e72cfc5372c6fc4cb0e681f8dce566a0de5b6fccd702b62a',
+    name='findutils-4.6.0.tar.gz',
+    checksum='ded4c9f73731cd48fec3b6bdaccce896473b6d8e337e9612e16cf1431bb1169d',
     master_sites=sites_gnu('findutils'),
 )
