@@ -1,11 +1,11 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc1.src')
+    root = ctx.extract('%(name)s-3.8.0rc2.src')
     c_sources = {
         'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
         'UnwindRegistersRestore.S', 'UnwindRegistersSave.S',
@@ -22,7 +22,7 @@ def build(ctx):
 
 package(
     name='libunwind',
-    version='3.7.91',
+    version='3.7.92',
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
@@ -30,7 +30,7 @@ package(
 )
 
 distfile(
-    name='libunwind-3.8.0rc1.src.tar.xz',
-    checksum='315efa934334f0e5ad02a1ca52be6509adcb15f5287494d70434a41649c16614',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
+    name='libunwind-3.8.0rc2.src.tar.xz',
+    checksum='c569f80b8624375d296e95a8ec5db6d65ed10b5126d7c8731be755b84338d396',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
 )

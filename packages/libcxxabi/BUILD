@@ -1,12 +1,12 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc1.src')
-    ctx.extract('libunwind-3.8.0rc1.src').rename(root.path('libunwind'))
+    root = ctx.extract('%(name)s-3.8.0rc2.src')
+    ctx.extract('libunwind-3.8.0rc2.src').rename(root.path('libunwind'))
     sources = {
         'abort_message.cpp', 'cxa_aux_runtime.cpp',
         'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
@@ -28,7 +28,7 @@ def build(ctx):
 
 package(
     name='libcxxabi',
-    version='3.7.91',
+    version='3.7.92',
     homepage='http://libcxxabi.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
@@ -36,7 +36,7 @@ package(
 )
 
 distfile(
-    name='libcxxabi-3.8.0rc1.src.tar.xz',
-    checksum='80fa99f47f4a0a4d62daeea25125087b6de6ccbb577ab144c802cf1188f8abf9',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
+    name='libcxxabi-3.8.0rc2.src.tar.xz',
+    checksum='d517b2f9b4dcf0cdf6bfd1d0417bd7ccd120d7f6d6a343d338f278be4e291d4c',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
 )

@@ -1,11 +1,11 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc1.src')
+    root = ctx.extract('%(name)s-3.8.0rc2.src')
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
         'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -53,7 +53,7 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='3.7.91',
+    version='3.7.92',
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cloudlibc'},
@@ -61,7 +61,7 @@ package(
 )
 
 distfile(
-    name='compiler-rt-3.8.0rc1.src.tar.xz',
-    checksum='770925debdb35985423835fcb6ac7b572ee273ff8a175f580d37e3ee930c2f9b',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc1/'},
+    name='compiler-rt-3.8.0rc2.src.tar.xz',
+    checksum='2bdda9d47e59b075eba87fa712625f1cb7013a3c529223442247288d92ca56ff',
+    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
 )
