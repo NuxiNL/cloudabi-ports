@@ -46,7 +46,7 @@ possible to sign up for this mailing list and browse its archive on
 An IRC channel called `#cloudabi` exists on EFnet.
 
 Bugs and pull requests can be submitted through
-[GitHub](https://github.com/NuxiNL/cloudlibc).
+[GitHub](https://github.com/NuxiNL/cloudabi-ports).
 
 ### Commercial support
 
