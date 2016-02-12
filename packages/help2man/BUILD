@@ -8,6 +8,7 @@ host_package(
     version='1.47.3',
     homepage='https://www.gnu.org/software/help2man/',
     maintainer='info@nuxi.nl',
+    build_depends={'texinfo'},
     build_cmd=build_autoconf_automake,
 )
 
