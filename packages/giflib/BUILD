@@ -24,5 +24,8 @@ distfile(
     name='giflib-5.1.2.tar.bz2',
     checksum='76c0a084c3b02f9315ff937b8be6096186002fea26f33e2123081ba2be6e2a7c',
     master_sites=sites_sourceforge('giflib'),
-    unsafe_string_sources={'lib/gif_font.c', 'util/getarg.c'},
+    unsafe_string_sources={
+        'lib/gif_font.c',
+        'util/getarg.c',
+    },
 )
