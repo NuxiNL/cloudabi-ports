@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='picosat',
-    version='960',
+    version='965',
     homepage='http://fmv.jku.at/picosat/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,8 +21,8 @@ package(
 )
 
 distfile(
-    name='picosat-960.tar.gz',
-    checksum='edb3184a04766933b092713d0ae5782e4a3da31498629f8bb2b31234a563e817',
+    name='picosat-965.tar.gz',
+    checksum='15169b4f28ba8f628f353f6f75a100845cdef4a2244f101a02b6e5a26e46a754',
     master_sites={'http://fmv.jku.at/picosat/'},
     unsafe_string_sources={'picosat.c'},
 )

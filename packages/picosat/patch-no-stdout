@@ -1,11 +1,11 @@
 --- picosat.c
 +++ picosat.c
-@@ -1213,7 +1213,7 @@
+@@ -1238,7 +1238,7 @@
    ps->lreduceadjustcnt = ps->lreduceadjustinc = 100;
    ps->lpropagations = ~0ull;
  
--  ps->out = stdout;
-+  ps->out = NULL;
-   new_prefix (ps, "c ");
-   ps->verbosity = 0;
-   ps->plain = 0;
+-#ifndef RCODE
++#if 0
+   ps->out = stdout;
+ #else
+   ps->out = 0;
