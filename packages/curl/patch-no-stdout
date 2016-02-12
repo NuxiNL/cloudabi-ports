@@ -46,7 +46,7 @@
  {
 --- lib/url.c
 +++ lib/url.c
-@@ -496,8 +496,8 @@
+@@ -497,8 +497,8 @@
  {
    CURLcode result = CURLE_OK;
  

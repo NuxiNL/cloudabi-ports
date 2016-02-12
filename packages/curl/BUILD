@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -16,7 +16,7 @@ def build(ctx):
 
 package(
     name='curl',
-    version='7.46.0',
+    version='7.47.1',
     homepage='http://curl.haxx.se/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libressl', 'zlib'},
@@ -24,8 +24,8 @@ package(
 )
 
 distfile(
-    name='curl-7.46.0.tar.lzma',
-    checksum='fe854a0dedf0a89da72aa1725d8ff66285b613d366a88f14681dacd824024087',
+    name='curl-7.47.1.tar.lzma',
+    checksum='c9b2fd75417ff0a1d0cd1bb284d1d8d7a08963f945860c987d59ae0eb412aa01',
     master_sites={'http://curl.haxx.se/download/'},
     unsafe_string_sources={
         'lib/curl_sasl.c',

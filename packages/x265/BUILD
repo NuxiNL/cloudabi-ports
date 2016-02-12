@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -14,7 +14,7 @@ def build(ctx):
 
 package(
     name='x265',
-    version='1.8',
+    version='1.9',
     homepage='http://x265.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -22,8 +22,8 @@ package(
 )
 
 distfile(
-    name='x265_1.8.tar.gz',
-    checksum='d41a3f0cc06dfc3967f6c47f458cb30b6aaa518f86c56c147946395bfe22b6f2',
+    name='x265_1.9.tar.gz',
+    checksum='3e4654133ed957a98708fdb4cb9a154d9e80922b84e26e43fc462a101c5b15c8',
     master_sites={'http://ftp.videolan.org/pub/videolan/x265/'},
     unsafe_string_sources={'source/common/common.h'},
 )

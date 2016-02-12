@@ -9,7 +9,7 @@
  
  INSTALL_HFILES=\
  	re2/filtered_re2.h\
-@@ -258,13 +258,10 @@
+@@ -259,13 +259,10 @@
  
  benchmark: obj/test/regexp_benchmark
  

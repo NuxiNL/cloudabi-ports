@@ -1,17 +1,17 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 
 def build(ctx):
-    build = ctx.extract('%(name)ssrc.v9a').autoconf()
+    build = ctx.extract('%(name)ssrc.v9b').autoconf()
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'man_MANS=', 'install']).install()
 
 package(
     name='jpeg',
-    version='9.1',
+    version='9.2',
     homepage='http://www.ijg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,8 +19,8 @@ package(
 )
 
 distfile(
-    name='jpegsrc.v9a.tar.gz',
-    checksum='3a753ea48d917945dd54a2d97de388aa06ca2eb1066cbfdc6652036349fe05a7',
+    name='jpegsrc.v9b.tar.gz',
+    checksum='240fd398da741669bf3c90366f58452ea59041cacc741a489b99f2f6a0bad052',
     master_sites={'http://www.ijg.org/files/'},
     unsafe_string_sources={'jerror.c'},
 )
