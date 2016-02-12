@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -25,5 +25,5 @@ package(
 distfile(
     name='libtom/ltf-0.02.tar.bz2',
     checksum='7e80498e526888e3999cb711bd9b2ffc6738723adb89c7dd400f133b46a88707',
-    master_sites={'http://www.libtom.net/files/'},
+    master_sites={'https://github.com/libtom/libtomfloat/releases/download/0.02/'},
 )

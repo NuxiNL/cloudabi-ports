@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -26,5 +26,5 @@ package(
 distfile(
     name='libtom/crypt-1.17.tar.bz2',
     checksum='e33b47d77a495091c8703175a25c8228aff043140b2554c08a3c3cd71f79d116',
-    master_sites={'http://www.libtom.net/files/'},
+    master_sites={'https://github.com/libtom/libtomcrypt/releases/download/1.17/'},
 )

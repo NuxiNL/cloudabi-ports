@@ -1,0 +1,24 @@
+--- pb_add.c
++++ pb_add.c
+@@ -11,6 +11,9 @@
+  */
+ #include <tompoly.h>
+ 
++#define MIN(a, b) ((a) < (b) ? (a) : (b))
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++
+ int pb_add(pb_poly *a, pb_poly *b, pb_poly *c)
+ {
+    int err, x, y, z, characteristic;
+--- pb_sub.c
++++ pb_sub.c
+@@ -11,6 +11,9 @@
+  */
+ #include <tompoly.h>
+ 
++#define MIN(a, b) ((a) < (b) ? (a) : (b))
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++
+ int pb_sub(pb_poly *a, pb_poly *b, pb_poly *c)
+ {
+    int neg, err, x, y, z, characteristic;

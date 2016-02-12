@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='tomsfastmath',
-    version='0.12',
+    version='0.13',
     homepage='http://www.libtom.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -23,7 +23,8 @@ package(
 )
 
 distfile(
-    name='libtom/tfm-0.12.tar.bz2',
-    checksum='aa854c6664c3ba173809326ad9d3c18918b52f84040658b247e2ce7527032021',
-    master_sites={'http://www.libtom.net/files/'},
+    name='libtom/tfm-0.13.tar.bz2',
+    checksum='8defe6f20759a455ade46b2f3c4de46d2358a6222236f78012736a6aeed63407',
+    master_sites={'https://github.com/libtom/tomsfastmath/releases/download/v0.13.0/'},
+    unsafe_string_sources={'src/misc/fp_ident.c'},
 )

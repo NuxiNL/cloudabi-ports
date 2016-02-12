@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libtommath',
-    version='0.42.0',
+    version='1.0',
     homepage='http://www.libtom.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -23,7 +23,7 @@ package(
 )
 
 distfile(
-    name='libtom/ltm-0.42.0.tar.bz2',
-    checksum='7b5c258304c34ac5901cfddb9f809b9b3b8ac7d04f700cf006ac766a923eb217',
-    master_sites={'http://www.libtom.net/files/'},
+    name='libtom/ltm-1.0.tar.xz',
+    checksum='993a7df9ee091fca430cdde3263df57d88ef62af8103903214da49fc51bbb56c',
+    master_sites={'https://github.com/libtom/libtommath/releases/download/v1.0/'},
 )
