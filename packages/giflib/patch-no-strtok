@@ -1,21 +1,21 @@
 --- lib/gif_font.c
 +++ lib/gif_font.c
-@@ -232,7 +232,8 @@
+@@ -237,7 +237,8 @@
+ 		      border + TextWidth * GIF_FONT_WIDTH + border - 1,
+ 		      border + LineCount * GIF_FONT_HEIGHT + border - 1, bg);
+ 	(void)strcpy(dup, (char *)legend);
+-	cp = strtok((char *)dup, "\r\n");
++	char *lasts;
++	cp = strtok_r((char *)dup, "\r\n", &lasts);
+ 	do {
+ 	    int leadspace = 0;
  
-     /* draw the text */
-     i = 0;
--    cp = strtok((char *)legend, "\r\n");
-+    char *lasts;
-+    cp = strtok_r((char *)legend, "\r\n", &lasts);
-     do {
-         int leadspace = 0;
+@@ -246,7 +247,7 @@
  
-@@ -241,7 +242,7 @@
+ 	    GifDrawText8x8(Image, x + border + (leadspace * GIF_FONT_WIDTH),
+ 			   y + border + (GIF_FONT_HEIGHT * i++), cp, fg);
+-	    cp = strtok((char *)NULL, "\r\n");
++	    cp = strtok_r((char *)NULL, "\r\n", &lasts);
+ 	} while (cp);
+ 	(void)free((void *)dup);
  
-         GifDrawText8x8(Image, x + border + (leadspace * GIF_FONT_WIDTH),
-                  y + border + (GIF_FONT_HEIGHT * i++), cp, fg);
--        cp = strtok((char *)NULL, "\r\n");
-+        cp = strtok_r((char *)NULL, "\r\n", &lasts);
-     } while (cp);
- 
-     /* outline the box */
