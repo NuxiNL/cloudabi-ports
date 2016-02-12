@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='pixman',
-    version='0.32.8',
+    version='0.34.0',
     homepage='http://www.pixman.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='pixman-0.32.8.tar.gz',
-    checksum='575ade17c40b47d391b02b4c0c63531c897b31e70046c96749514b7d8800d65d',
+    name='pixman-0.34.0.tar.gz',
+    checksum='21b6b249b51c6800dc9553b65106e1e37d0e25df942c90531d4c3997aa20a88e',
     master_sites={'http://cairographics.org/releases/'},
 )
