@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -21,9 +21,13 @@ DIR_RESOURCES = os.path.join(os.getcwd(), 'misc')
 # are down.
 FALLBACK_MIRRORS = {'https://nuxi.nl/distfiles/third_party/'}
 
-# Host C and C++ compiler, used to compile the build tools.
-HOST_CC = '/usr/bin/cc'
-HOST_CXX = '/usr/bin/c++'
+# Host C and C++ compiler, used to compile the build tools. We'd better
+# use Clang if available. Compared to GCC, it has the advantage that it
+# does not depend on the 'as' and 'ld' utilities being part of $PATH.
+HOST_CC = ('/usr/bin/clang-3.7' if platform.system() == 'Linux' else
+           '/usr/bin/cc')
+HOST_CXX = ('/usr/bin/clang++-3.7' if platform.system() == 'Linux' else
+            '/usr/bin/c++')
 
 # Name of the Perl executable.
 PERL = ('/usr/local/bin/perl' if platform.system() == 'FreeBSD' else
