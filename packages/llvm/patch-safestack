@@ -1,0 +1,26 @@
+--- lib/Driver/ToolChains.cpp
++++ lib/Driver/ToolChains.cpp
+@@ -2971,6 +2971,12 @@
+   return new tools::cloudabi::Linker(*this);
+ }
+ 
++SanitizerMask CloudABI::getSupportedSanitizers() const {
++  SanitizerMask Res = ToolChain::getSupportedSanitizers();
++  Res |= SanitizerKind::SafeStack;
++  return Res;
++}
++
+ /// OpenBSD - OpenBSD tool chain which can call as(1) and ld(1) directly.
+ 
+ OpenBSD::OpenBSD(const Driver &D, const llvm::Triple &Triple,
+--- lib/Driver/ToolChains.h
++++ lib/Driver/ToolChains.h
+@@ -611,6 +611,8 @@
+ 
+   bool isPIEDefault() const override { return false; }
+ 
++  SanitizerMask getSupportedSanitizers() const override;
++
+ protected:
+   Tool *buildLinker() const override;
+ };

@@ -54,14 +54,17 @@ distfile(
     name='cfe-3.8.0rc2.src.tar.xz',
     checksum='94b0e158a31573c4bb47b872fea08c49f4e6754a4de2bacdc20db231c9ace9b6',
     master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    patches={'safestack'},
 )
 distfile(
     name='lld-3.8.0rc2.src.tar.xz',
     checksum='03c328d2d126b65dae2619b9195a4177818c8451d5b843bbc4110c300bcd1a23',
     master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    patches={},
 )
 distfile(
     name='llvm-3.8.0rc2.src.tar.xz',
     checksum='8141ba68fde29e213fb82886b58b722d9c2aa2179116d1e7f8a7d6de23508047',
     master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    patches={},
 )
