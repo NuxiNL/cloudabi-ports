@@ -342,7 +342,7 @@ class TargetBuilder:
         self._bindir = os.path.join(config.DIR_BUILDROOT, 'bin')
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
         self._cflags = [
-            '-O2', '-fstack-protector-strong',
+            '-O2', '-fsanitize=safe-stack',
             '-Werror=implicit-function-declaration', '-Werror=date-time',
         ]
 
