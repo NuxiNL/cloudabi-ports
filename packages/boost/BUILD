@@ -14,9 +14,9 @@ def build(ctx):
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
     stage = srcdir.path('stage')
     srcdir.run([
-        './b2', '-j8', 'binary-format=elf', 'link=static',
-        'toolset=gcc-cloudabi', '--without-python', '--prefix=%s' % stage,
-        'install',
+        './b2', '-j8', '-d+2', 'binary-format=elf', 'link=static',
+        'toolset=gcc-cloudabi', 'cxxflags=' + ctx.cxxflags(),
+        '--without-python', '--prefix=%s' % stage, 'install',
     ] + {
         'aarch64': ['abi=aapcs', 'address-model=64', 'architecture=arm'],
         'x86_64': ['abi=sysv', 'address-model=64', 'architecture=x86'],
