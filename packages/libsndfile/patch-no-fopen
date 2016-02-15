@@ -1,0 +1,270 @@
+--- src/command.c
++++ src/command.c
+@@ -136,7 +136,6 @@
+ 	{	SF_FORMAT_PVF,		"PVF (Portable Voice Format)",			"pvf"	},
+ 	{	SF_FORMAT_RAW,		"RAW (header-less)",					"raw"	},
+ 	{	SF_FORMAT_RF64,		"RF64 (RIFF 64)",						"rf64"	},
+-	{	SF_FORMAT_SD2,		"SD2 (Sound Designer II)", 				"sd2"	},
+ 	{	SF_FORMAT_SDS,		"SDS (Midi Sample Dump Standard)", 		"sds"	},
+ 	{	SF_FORMAT_IRCAM,	"SF (Berkeley/IRCAM/CARL)",				"sf"	},
+ 	{	SF_FORMAT_VOC,		"VOC (Creative Labs)",					"voc"	},
+--- src/common.c
++++ src/common.c
+@@ -1416,7 +1416,6 @@
+ 		CASE_NAME (SF_FORMAT_SDS) ;
+ 		CASE_NAME (SF_FORMAT_AVR) ;
+ 		CASE_NAME (SF_FORMAT_WAVEX) ;
+-		CASE_NAME (SF_FORMAT_SD2) ;
+ 		CASE_NAME (SF_FORMAT_FLAC) ;
+ 		CASE_NAME (SF_FORMAT_CAF) ;
+ 		CASE_NAME (SF_FORMAT_WVE) ;
+--- src/common.h
++++ src/common.h
+@@ -794,14 +794,12 @@
+ /* Default seek function. Use for PCM and float encoded data. */
+ sf_count_t	psf_default_seek (SF_PRIVATE *psf, int mode, sf_count_t samples_from_start) ;
+ 
+-int macos_guess_file_type (SF_PRIVATE *psf, const char *filename) ;
+ 
+ /*------------------------------------------------------------------------------------
+ **	File I/O functions which will allow access to large files (> 2 Gig) on
+ **	some 32 bit OSes. Implementation in file_io.c.
+ */
+ 
+-int psf_fopen (SF_PRIVATE *psf) ;
+ int psf_set_stdio (SF_PRIVATE *psf) ;
+ int psf_file_valid (SF_PRIVATE *psf) ;
+ void psf_set_file (SF_PRIVATE *psf, int fd) ;
+@@ -825,7 +823,6 @@
+ int psf_fclose (SF_PRIVATE *psf) ;
+ 
+ /* Open and close the resource fork of a file. */
+-int psf_open_rsrc (SF_PRIVATE *psf) ;
+ int psf_close_rsrc (SF_PRIVATE *psf) ;
+ 
+ /*
+@@ -848,7 +845,6 @@
+ int		paf_open	(SF_PRIVATE *psf) ;
+ int		pvf_open	(SF_PRIVATE *psf) ;
+ int		raw_open	(SF_PRIVATE *psf) ;
+-int		sd2_open	(SF_PRIVATE *psf) ;
+ int		sds_open	(SF_PRIVATE *psf) ;
+ int		svx_open	(SF_PRIVATE *psf) ;
+ int		voc_open	(SF_PRIVATE *psf) ;
+--- src/file_io.c
++++ src/file_io.c
+@@ -73,9 +73,9 @@
+ */
+ 
+ static int psf_close_fd (int fd) ;
+-static int psf_open_fd (PSF_FILE * pfile) ;
+ static sf_count_t psf_get_filelen_fd (int fd) ;
+ 
++#if 0
+ int
+ psf_fopen (SF_PRIVATE *psf)
+ {
+@@ -93,6 +93,7 @@
+ 
+ 	return psf->error ;
+ } /* psf_fopen */
++#endif
+ 
+ int
+ psf_fclose (SF_PRIVATE *psf)
+@@ -114,6 +115,7 @@
+ 	return retval ;
+ } /* psf_fclose */
+ 
++#if 0
+ int
+ psf_open_rsrc (SF_PRIVATE *psf)
+ {
+@@ -166,6 +168,7 @@
+ 
+ 	return psf->error ;
+ } /* psf_open_rsrc */
++#endif
+ 
+ sf_count_t
+ psf_get_filelen (SF_PRIVATE *psf)
+@@ -535,6 +538,7 @@
+ 	return ;
+ } /* psf_use_rsrc */
+ 
++#if 0
+ static int
+ psf_open_fd (PSF_FILE * pfile)
+ {	int fd, oflag, mode ;
+@@ -578,6 +582,7 @@
+ 
+ 	return fd ;
+ } /* psf_open_fd */
++#endif
+ 
+ static void
+ psf_log_syserr (SF_PRIVATE *psf, int error)
+--- src/macos.c
++++ src/macos.c
+@@ -28,6 +28,7 @@
+ 
+ #define	STR_MARKER	MAKE_MARKER ('S', 'T', 'R', ' ')
+ 
++#if 0
+ int
+ macos_guess_file_type (SF_PRIVATE * psf, const char *filename)
+ {	static char rsrc_name [1024] ;
+@@ -48,4 +49,5 @@
+ 
+ 	return 0 ;
+ } /* macos_guess_file_type */
++#endif
+ 
+--- src/sd2.c
++++ src/sd2.c
+@@ -88,8 +88,6 @@
+ 
+ static int sd2_close	(SF_PRIVATE *psf) ;
+ 
+-static int sd2_parse_rsrc_fork (SF_PRIVATE *psf) ;
+-static int parse_str_rsrc (SF_PRIVATE *psf, SD2_RSRC * rsrc) ;
+ 
+ static int sd2_write_rsrc_fork (SF_PRIVATE *psf, int calc_length) ;
+ 
+@@ -97,6 +95,7 @@
+ ** Public functions.
+ */
+ 
++#if 0
+ int
+ sd2_open (SF_PRIVATE *psf)
+ {	int subformat, error = 0, valid ;
+@@ -167,6 +166,7 @@
+ 
+ 	return error ;
+ } /* sd2_open */
++#endif
+ 
+ /*------------------------------------------------------------------------------
+ */
+@@ -427,6 +427,7 @@
+ 	return ;
+ } /* read_rsrc_str */
+ 
++#if 0
+ static int
+ sd2_parse_rsrc_fork (SF_PRIVATE *psf)
+ {	SD2_RSRC rsrc ;
+@@ -664,4 +665,5 @@
+ 
+ 	return 0 ;
+ } /* parse_str_rsrc */
++#endif
+ 
+--- src/sndfile.c
++++ src/sndfile.c
+@@ -280,7 +280,6 @@
+ static int	copy_filename (SF_PRIVATE *psf, const char *path) ;
+ static int	psf_close (SF_PRIVATE *psf) ;
+ 
+-static int	try_resource_fork (SF_PRIVATE * psf) ;
+ 
+ /*------------------------------------------------------------------------------
+ ** Private (static) variables.
+@@ -315,6 +314,7 @@
+ **	Public functions.
+ */
+ 
++#if 0
+ SNDFILE*
+ sf_open	(const char *path, int mode, SF_INFO *sfinfo)
+ {	SF_PRIVATE 	*psf ;
+@@ -344,15 +344,18 @@
+ 
+ 	return psf_open_file (psf, sfinfo) ;
+ } /* sf_open */
++#endif
+ 
+ SNDFILE*
+ sf_open_fd	(int fd, int mode, SF_INFO *sfinfo, int close_desc)
+ {	SF_PRIVATE 	*psf ;
+ 
++#if 0
+ 	if ((SF_CONTAINER (sfinfo->format)) == SF_FORMAT_SD2)
+ 	{	sf_errno = SFE_SD2_FD_DISALLOWED ;
+ 		return	NULL ;
+ 		} ;
++#endif
+ 
+ 	if ((psf = calloc (1, sizeof (SF_PRIVATE))) == NULL)
+ 	{	sf_errno = SFE_MALLOC_FAILED ;
+@@ -801,6 +804,7 @@
+ 					return 1 ;
+ 				break ;
+ 
++#if 0
+ 		case SF_FORMAT_SD2 :
+ 				/* SD2 is strictly big endian. */
+ 				if (endian == SF_ENDIAN_LITTLE || endian == SF_ENDIAN_CPU)
+@@ -808,6 +812,7 @@
+ 				if (subformat == SF_FORMAT_PCM_S8 || subformat == SF_FORMAT_PCM_16 || subformat == SF_FORMAT_PCM_24 || subformat == SF_FORMAT_PCM_32)
+ 					return 1 ;
+ 				break ;
++#endif
+ 
+ 		case SF_FORMAT_WVE :
+ 				if (info->channels > 1)
+@@ -2354,6 +2359,7 @@
+ ** Private functions.
+ */
+ 
++#if 0
+ static int
+ try_resource_fork (SF_PRIVATE * psf)
+ {	int old_error = psf->error ;
+@@ -2370,6 +2376,7 @@
+ 
+ 	return SF_FORMAT_SD2 ;
+ } /* try_resource_fork */
++#endif
+ 
+ static int
+ format_from_extension (SF_PRIVATE *psf)
+@@ -2548,9 +2555,6 @@
+ 	if (buffer [0] == MAKE_MARKER ('a', 'j', 'k', 'g'))
+ 		return 0 /*-SF_FORMAT_SHN-*/ ;
+ 
+-	/* This must be the last one. */
+-	if (psf->filelength > 0 && (format = try_resource_fork (psf)) != 0)
+-		return format ;
+ 
+ 	return 0 ;
+ } /* guess_file_type */
+@@ -2913,9 +2917,6 @@
+ 				error = htk_open (psf) ;
+ 				break ;
+ 
+-		case	SF_FORMAT_SD2 :
+-				error = sd2_open (psf) ;
+-				break ;
+ 
+ 		case	SF_FORMAT_REX2 :
+ 				error = rx2_open (psf) ;
+--- src/sndfile.h.in
++++ src/sndfile.h.in
+@@ -64,7 +64,6 @@
+ 	SF_FORMAT_SDS			= 0x110000,		/* Midi Sample Dump Standard */
+ 	SF_FORMAT_AVR			= 0x120000,		/* Audio Visual Research */
+ 	SF_FORMAT_WAVEX			= 0x130000,		/* MS WAVE with WAVEFORMATEX */
+-	SF_FORMAT_SD2			= 0x160000,		/* Sound Designer 2 */
+ 	SF_FORMAT_FLAC			= 0x170000,		/* FLAC lossless file format */
+ 	SF_FORMAT_CAF			= 0x180000,		/* Core Audio File format */
+ 	SF_FORMAT_WVE			= 0x190000,		/* Psion WVE format */
+@@ -533,7 +532,6 @@
+ ** All calls to sf_open() should be matched with a call to sf_close().
+ */
+ 
+-SNDFILE* 	sf_open		(const char *path, int mode, SF_INFO *sfinfo) ;
+ 
+ 
+ /* Use the existing file descriptor to create a SNDFILE object. If close_desc

@@ -1,0 +1,188 @@
+--- src/ALAC/alac_encoder.c
++++ src/ALAC/alac_encoder.c
+@@ -484,7 +484,6 @@
+ 		{
+ 			*bitstream = startBits ;		// reset bitstream state
+ 			doEscape = true ;
+-			printf ("compressed frame too big: %u vs. %u \n", minBits, escapeBits) ;
+ 		}
+ 	}
+ 
+@@ -660,7 +659,6 @@
+ 		if (minBits >= escapeBits)
+ 		{
+ 			doEscape = true ;
+-			printf ("compressed frame too big: %u vs. %u\n", minBits, escapeBits) ;
+ 		}
+ 
+ 	}
+@@ -909,7 +907,6 @@
+ 		{
+ 			*bitstream = startBits ;		// reset bitstream state
+ 			doEscape = true ;
+-			printf ("compressed frame too big: %u vs. %u\n", minBits, escapeBits) ;
+ 		}
+ 	}
+ 
+@@ -1057,7 +1054,6 @@
+ 					break ;
+ 
+ 				default:
+-					printf ("That ain't right! (%u)\n", tag) ;
+ 					status = kALAC_ParamError ;
+ 					goto Exit ;
+ 			}
+--- src/alac.c
++++ src/alac.c
+@@ -290,7 +290,6 @@
+ 			break ;
+ 
+ 		default :
+-			printf ("%s : info->bits_per_sample %u\n", __func__, info->bits_per_sample) ;
+ 			return SFE_UNSUPPORTED_ENCODING ;
+ 		} ;
+ 
+@@ -815,7 +814,7 @@
+ 	chunk_info.id_size = 4 ;
+ 
+ 	if ((chunk_iterator = psf_get_chunk_iterator (psf, chunk_info.id)) == NULL)
+-	{	printf ("%s %d : no chunk iterator found\n\n", __func__, __LINE__) ;
++	{
+ 		free (chunk_info.data) ;
+ 		chunk_info.data = NULL ;
+ 		return NULL ;
+@@ -827,7 +826,7 @@
+ 	chunk_info.data = pakt_data = malloc (pakt_size + 5) ;
+ 
+ 	if ((bcount = psf->get_chunk_data (psf, chunk_iterator, &chunk_info)) != SF_ERR_NO_ERROR)
+-	{	printf ("%s %d : %s\n\n", __func__, __LINE__, sf_error_number (bcount)) ;
++	{
+ 		while (chunk_iterator)
+ 			chunk_iterator = psf->next_chunk_iterator (psf, chunk_iterator) ;
+ 		free (chunk_info.data) ;
+@@ -852,7 +851,7 @@
+ 
+ 			count ++ ;
+ 			if (count > 5 || bcount + count > pakt_size)
+-			{	printf ("%s %d : Ooops! count %d    bcount %d\n", __func__, __LINE__, count, bcount) ;
++			{
+ 				value = 0 ;
+ 				break ;
+ 				} ;
+--- src/audio_detect.c
++++ src/audio_detect.c
+@@ -60,7 +60,6 @@
+ 			"    be_int_24_32 : %d\n",
+ 			vote.le_float, vote.be_float, vote.le_int_24_32, vote.be_int_24_32) ;
+ 
+-	if (0) puts (psf->parselog.buf) ;
+ 
+ 	if (ad->endianness == SF_ENDIAN_LITTLE && vote.le_float > (3 * datalen) / 4)
+ 	{	/* Almost certainly 32 bit floats. */
+--- src/common.c
++++ src/common.c
+@@ -1114,6 +1114,7 @@
+ /*-----------------------------------------------------------------------------------------------
+ */
+ 
++#if 0
+ void
+ psf_hexdump (const void *ptr, int len)
+ {	const char *data ;
+@@ -1144,6 +1145,7 @@
+ 
+ 	puts ("") ;
+ } /* psf_hexdump */
++#endif
+ 
+ void
+ psf_log_SF_INFO (SF_PRIVATE *psf)
+--- src/common.h
++++ src/common.h
+@@ -990,7 +990,6 @@
+ ** Helper/debug functions.
+ */
+ 
+-void	psf_hexdump (const void *ptr, int len) ;
+ 
+ const char * str_of_major_format (int format) ;
+ const char * str_of_minor_format (int format) ;
+--- src/interleave.c
++++ src/interleave.c
+@@ -65,7 +65,6 @@
+ 	if (! (pdata = malloc (sizeof (INTERLEAVE_DATA))))
+ 		return SFE_MALLOC_FAILED ;
+ 
+-puts ("interleave_init") ;
+ 
+ 	psf->interleave = pdata ;
+ 
+--- src/rf64.c
++++ src/rf64.c
+@@ -722,7 +722,7 @@
+ 		return psf->error ;
+ 
+ 	if (has_data && psf->dataoffset != psf->headindex)
+-	{	printf ("Oooops : has_data && psf->dataoffset != psf->headindex\n") ;
++	{
+ 		return psf->error = SFE_INTERNAL ;
+ 		} ;
+ 
+--- src/sds.c
++++ src/sds.c
+@@ -434,14 +434,8 @@
+ 	if ((k = psf_fread (psds->read_data, 1, SDS_BLOCK_SIZE, psf)) != SDS_BLOCK_SIZE)
+ 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, SDS_BLOCK_SIZE) ;
+ 
+-	if (psds->read_data [0] != 0xF0)
+-	{	printf ("Error A : %02X\n", psds->read_data [0] & 0xFF) ;
+-		} ;
+ 
+ 	checksum = psds->read_data [1] ;
+-	if (checksum != 0x7E)
+-	{	printf ("Error 1 : %02X\n", checksum & 0xFF) ;
+-		}
+ 
+ 	for (k = 2 ; k <= SDS_BLOCK_SIZE - 3 ; k ++)
+ 		checksum ^= psds->read_data [k] ;
+@@ -478,14 +472,8 @@
+ 	if ((k = psf_fread (psds->read_data, 1, SDS_BLOCK_SIZE, psf)) != SDS_BLOCK_SIZE)
+ 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, SDS_BLOCK_SIZE) ;
+ 
+-	if (psds->read_data [0] != 0xF0)
+-	{	printf ("Error A : %02X\n", psds->read_data [0] & 0xFF) ;
+-		} ;
+ 
+ 	checksum = psds->read_data [1] ;
+-	if (checksum != 0x7E)
+-	{	printf ("Error 1 : %02X\n", checksum & 0xFF) ;
+-		}
+ 
+ 	for (k = 2 ; k <= SDS_BLOCK_SIZE - 3 ; k ++)
+ 		checksum ^= psds->read_data [k] ;
+@@ -522,14 +510,8 @@
+ 	if ((k = psf_fread (psds->read_data, 1, SDS_BLOCK_SIZE, psf)) != SDS_BLOCK_SIZE)
+ 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, SDS_BLOCK_SIZE) ;
+ 
+-	if (psds->read_data [0] != 0xF0)
+-	{	printf ("Error A : %02X\n", psds->read_data [0] & 0xFF) ;
+-		} ;
+ 
+ 	checksum = psds->read_data [1] ;
+-	if (checksum != 0x7E)
+-	{	printf ("Error 1 : %02X\n", checksum & 0xFF) ;
+-		}
+ 
+ 	for (k = 2 ; k <= SDS_BLOCK_SIZE - 3 ; k ++)
+ 		checksum ^= psds->read_data [k] ;
+--- src/sndfile.c
++++ src/sndfile.c
+@@ -447,7 +447,7 @@
+ 
+ 	if (errnum < 0 || errnum > SFE_MAX_ERROR)
+ 	{	/* This really shouldn't happen in release versions. */
+-		printf ("Not a valid error number (%d).\n", errnum) ;
++		fprintf (stderr, "Not a valid error number (%d).\n", errnum) ;
+ 		return bad_errnum ;
+ 		} ;
+ 

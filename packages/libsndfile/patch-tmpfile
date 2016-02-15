@@ -1,0 +1,54 @@
+--- src/alac.c
++++ src/alac.c
+@@ -58,7 +58,6 @@
+ 		ALAC_ENCODER encoder ;
+ 	} ;
+ 
+-	char enctmpname [512] ;
+ 	FILE *enctmp ;
+ 
+ 	int	buffer	[] ;
+@@ -207,7 +206,6 @@
+ 			while ((readcount = fread (ubuf.ucbuf, 1, sizeof (ubuf.ucbuf), plac->enctmp)) > 0)
+ 				psf_fwrite (ubuf.ucbuf, 1, readcount, psf) ;
+ 			fclose (plac->enctmp) ;
+-			remove (plac->enctmpname) ;
+ 			} ;
+ 		} ;
+ 
+@@ -351,8 +349,8 @@
+ 
+ 	plac->pakt_info = alac_pakt_alloc (2000) ;
+ 
+-	if ((plac->enctmp = psf_open_tmpfile (plac->enctmpname, sizeof (plac->enctmpname))) == NULL)
+-	{	psf_log_printf (psf, "Error : Failed to open temp file '%s' : \n", plac->enctmpname, strerror (errno)) ;
++	if ((plac->enctmp = tmpfile()) == NULL)
++	{	psf_log_printf (psf, "Error : Failed to open temp file : \n", strerror (errno)) ;
+ 		return SFE_ALAC_FAIL_TMPFILE ;
+ 		} ;
+ 
+--- src/common.c
++++ src/common.c
+@@ -1629,6 +1629,7 @@
+ 	return ;
+ } /* psf_d2i_clip_array */
+ 
++#if 0
+ FILE *
+ psf_open_tmpfile (char * fname, size_t fnamelen)
+ {	const char * tmpdir ;
+@@ -1654,3 +1655,4 @@
+ 	memset (fname, 0, fnamelen) ;
+ 	return NULL ;
+ } /* psf_open_tmpfile */
++#endif
+--- src/common.h
++++ src/common.h
+@@ -984,7 +984,6 @@
+ 
+ void	alac_get_desc_chunk_items (int subformat, uint32_t *fmt_flags, uint32_t *frames_per_packet) ;
+ 
+-FILE *	psf_open_tmpfile (char * fname, size_t fnamelen) ;
+ 
+ /*------------------------------------------------------------------------------------
+ ** Helper/debug functions.
