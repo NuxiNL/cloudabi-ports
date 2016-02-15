@@ -6,6 +6,7 @@
 
 import os
 
+from src import config
 from src import util
 from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.catalog_set import CatalogSet
@@ -68,5 +69,6 @@ os.rename(netbsd_path, DIR_NETBSD_CATALOG)
 os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))
 os.rename(openbsd_path, DIR_OPENBSD_CATALOG)
 
-# Zap the temporary directory.
+# Zap the temporary directories.
+util.remove(config.DIR_BUILDROOT)
 util.remove(DIR_TMP)

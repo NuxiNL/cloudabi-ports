@@ -53,3 +53,8 @@ else:
     # Build all packages.
     for package in target_packages.values():
         build_package(package)
+
+# When terminating successfully, remove the build directory. It will
+# only contain temporary files that were used to generate the last
+# package.
+util.remove(config.DIR_BUILDROOT)
