@@ -21,7 +21,7 @@ package(
     version='1.0.26',
     homepage='http://www.mega-nerd.com/libsndfile/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c-runtime'},
+    lib_depends={'c-runtime', 'flac', 'libogg', 'libvorbis', 'speex'},
     build_cmd=build,
 )
 

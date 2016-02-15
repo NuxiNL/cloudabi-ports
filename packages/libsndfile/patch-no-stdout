@@ -107,6 +107,17 @@
  
  const char * str_of_major_format (int format) ;
  const char * str_of_minor_format (int format) ;
+--- src/flac.c
++++ src/flac.c
+@@ -596,7 +596,7 @@
+ 		} ;
+ 
+ 	if (! FLAC__stream_encoder_set_metadata (pflac->fse, &pflac->metadata, 1))
+-	{	printf ("%s %d : fail\n", __func__, __LINE__) ;
++	{
+ 		return ;
+ 		} ;
+ 
 --- src/interleave.c
 +++ src/interleave.c
 @@ -65,7 +65,6 @@
