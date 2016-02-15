@@ -1,0 +1,10 @@
+--- src/libFLAC/metadata_object.c
++++ src/libFLAC/metadata_object.c
+@@ -36,6 +36,7 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
++#include <strings.h>
+ 
+ #include "private/metadata.h"
+ #include "private/memory.h"

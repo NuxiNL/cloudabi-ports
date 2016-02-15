@@ -1,0 +1,583 @@
+--- include/FLAC/metadata.h
++++ include/FLAC/metadata.h
+@@ -156,7 +156,6 @@
+  *    or the file contained no STREAMINFO block.  (A memory allocation error
+  *    is possible because this function must set up a file decoder.)
+  */
+-FLAC_API FLAC__bool FLAC__metadata_get_streaminfo(const char *filename, FLAC__StreamMetadata *streaminfo);
+ 
+ /** Read the VORBIS_COMMENT metadata block of the given FLAC file.  This
+  *  function will try to skip any ID3v2 tag at the head of the file.
+@@ -175,7 +174,6 @@
+  *    decoder error, or the file contained no VORBIS_COMMENT block, and
+  *    \a *tags will be set to \c NULL.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_get_tags(const char *filename, FLAC__StreamMetadata **tags);
+ 
+ /** Read the CUESHEET metadata block of the given FLAC file.  This
+  *  function will try to skip any ID3v2 tag at the head of the file.
+@@ -194,7 +192,6 @@
+  *    error, a file decoder error, or the file contained no CUESHEET
+  *    block, and \a *cuesheet will be set to \c NULL.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_get_cuesheet(const char *filename, FLAC__StreamMetadata **cuesheet);
+ 
+ /** Read a PICTURE metadata block of the given FLAC file.  This
+  *  function will try to skip any ID3v2 tag at the head of the file.
+@@ -234,7 +231,6 @@
+  *    error, a file decoder error, or the file contained no PICTURE
+  *    block, and \a *picture will be set to \c NULL.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_get_picture(const char *filename, FLAC__StreamMetadata **picture, FLAC__StreamMetadata_Picture_Type type, const char *mime_type, const FLAC__byte *description, unsigned max_width, unsigned max_height, unsigned max_depth, unsigned max_colors);
+ 
+ /* \} */
+ 
+@@ -403,7 +399,6 @@
+  *    \c false if a memory allocation error occurs, the file can't be
+  *    opened, or another error occurs, else \c true.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_simple_iterator_init(FLAC__Metadata_SimpleIterator *iterator, const char *filename, FLAC__bool read_only, FLAC__bool preserve_file_stats);
+ 
+ /** Returns \c true if the FLAC file is writable.  If \c false, calls to
+  *  FLAC__metadata_simple_iterator_set_block() and
+@@ -602,7 +597,6 @@
+  * \retval FLAC__bool
+  *    \c true if successful, else \c false.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_simple_iterator_set_block(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool use_padding);
+ 
+ /** This is similar to FLAC__metadata_simple_iterator_set_block()
+  *  except that instead of writing over an existing block, it appends
+@@ -627,7 +621,6 @@
+  * \retval FLAC__bool
+  *    \c true if successful, else \c false.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_simple_iterator_insert_block_after(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool use_padding);
+ 
+ /** Deletes the block at the current position.  This will cause the
+  *  entire FLAC file to be rewritten, unless \a use_padding is \c true,
+@@ -646,7 +639,6 @@
+  * \retval FLAC__bool
+  *    \c true if successful, else \c false.
+  */
+-FLAC_API FLAC__bool FLAC__metadata_simple_iterator_delete_block(FLAC__Metadata_SimpleIterator *iterator, FLAC__bool use_padding);
+ 
+ /* \} */
+ 
+@@ -830,7 +822,6 @@
+  *    \a filename, else \c false.  On failure, check the status with
+  *    FLAC__metadata_chain_status().
+  */
+-FLAC_API FLAC__bool FLAC__metadata_chain_read(FLAC__Metadata_Chain *chain, const char *filename);
+ 
+ /** Read all metadata from an Ogg FLAC file into the chain.
+  *
+@@ -847,7 +838,6 @@
+  *    \a filename, else \c false.  On failure, check the status with
+  *    FLAC__metadata_chain_status().
+  */
+-FLAC_API FLAC__bool FLAC__metadata_chain_read_ogg(FLAC__Metadata_Chain *chain, const char *filename);
+ 
+ /** Read all metadata from a FLAC stream into the chain via I/O callbacks.
+  *
+@@ -968,7 +958,6 @@
+  *    \c true if the write succeeded, else \c false.  On failure,
+  *    check the status with FLAC__metadata_chain_status().
+  */
+-FLAC_API FLAC__bool FLAC__metadata_chain_write(FLAC__Metadata_Chain *chain, FLAC__bool use_padding, FLAC__bool preserve_file_stats);
+ 
+ /** Write all metadata out to a FLAC stream via callbacks.
+  *
+--- include/FLAC/stream_decoder.h
++++ include/FLAC/stream_decoder.h
+@@ -1293,14 +1293,6 @@
+  *    \c FLAC__STREAM_DECODER_INIT_STATUS_OK if initialization was successful;
+  *    see FLAC__StreamDecoderInitStatus for the meanings of other return values.
+  */
+-FLAC_API FLAC__StreamDecoderInitStatus FLAC__stream_decoder_init_file(
+-	FLAC__StreamDecoder *decoder,
+-	const char *filename,
+-	FLAC__StreamDecoderWriteCallback write_callback,
+-	FLAC__StreamDecoderMetadataCallback metadata_callback,
+-	FLAC__StreamDecoderErrorCallback error_callback,
+-	void *client_data
+-);
+ 
+ /** Initialize the decoder instance to decode Ogg FLAC files.
+  *
+@@ -1339,14 +1331,6 @@
+  *    \c FLAC__STREAM_DECODER_INIT_STATUS_OK if initialization was successful;
+  *    see FLAC__StreamDecoderInitStatus for the meanings of other return values.
+  */
+-FLAC_API FLAC__StreamDecoderInitStatus FLAC__stream_decoder_init_ogg_file(
+-	FLAC__StreamDecoder *decoder,
+-	const char *filename,
+-	FLAC__StreamDecoderWriteCallback write_callback,
+-	FLAC__StreamDecoderMetadataCallback metadata_callback,
+-	FLAC__StreamDecoderErrorCallback error_callback,
+-	void *client_data
+-);
+ 
+ /** Finish the decoding process.
+  *  Flushes the decoding buffer, releases resources, resets the decoder
+--- include/FLAC/stream_encoder.h
++++ include/FLAC/stream_encoder.h
+@@ -1660,7 +1660,6 @@
+  *    \c FLAC__STREAM_ENCODER_INIT_STATUS_OK if initialization was successful;
+  *    see FLAC__StreamEncoderInitStatus for the meanings of other return values.
+  */
+-FLAC_API FLAC__StreamEncoderInitStatus FLAC__stream_encoder_init_file(FLAC__StreamEncoder *encoder, const char *filename, FLAC__StreamEncoderProgressCallback progress_callback, void *client_data);
+ 
+ /** Initialize the encoder instance to encode Ogg FLAC files.
+  *
+@@ -1692,7 +1691,6 @@
+  *    \c FLAC__STREAM_ENCODER_INIT_STATUS_OK if initialization was successful;
+  *    see FLAC__StreamEncoderInitStatus for the meanings of other return values.
+  */
+-FLAC_API FLAC__StreamEncoderInitStatus FLAC__stream_encoder_init_ogg_file(FLAC__StreamEncoder *encoder, const char *filename, FLAC__StreamEncoderProgressCallback progress_callback, void *client_data);
+ 
+ /** Finish the encoding process.
+  *  Flushes the encoding buffer, releases resources, resets the encoder
+--- include/FLAC++/decoder.h
++++ include/FLAC++/decoder.h
+@@ -226,11 +226,7 @@
+ 			virtual ~File();
+ 
+ 			virtual ::FLAC__StreamDecoderInitStatus init(FILE *file);                      ///< See FLAC__stream_decoder_init_FILE()
+-			virtual ::FLAC__StreamDecoderInitStatus init(const char *filename);            ///< See FLAC__stream_decoder_init_file()
+-			virtual ::FLAC__StreamDecoderInitStatus init(const std::string &filename);     ///< See FLAC__stream_decoder_init_file()
+ 			virtual ::FLAC__StreamDecoderInitStatus init_ogg(FILE *file);                  ///< See FLAC__stream_decoder_init_ogg_FILE()
+-			virtual ::FLAC__StreamDecoderInitStatus init_ogg(const char *filename);        ///< See FLAC__stream_decoder_init_ogg_file()
+-			virtual ::FLAC__StreamDecoderInitStatus init_ogg(const std::string &filename); ///< See FLAC__stream_decoder_init_ogg_file()
+ 		protected:
+ 			// this is a dummy implementation to satisfy the pure virtual in Stream that is actually supplied internally by the C layer
+ 			virtual ::FLAC__StreamDecoderReadStatus read_callback(FLAC__byte buffer[], size_t *bytes);
+--- include/FLAC++/encoder.h
++++ include/FLAC++/encoder.h
+@@ -236,11 +236,7 @@
+ 			virtual ~File();
+ 
+ 			virtual ::FLAC__StreamEncoderInitStatus init(FILE *file);                      ///< See FLAC__stream_encoder_init_FILE()
+-			virtual ::FLAC__StreamEncoderInitStatus init(const char *filename);            ///< See FLAC__stream_encoder_init_file()
+-			virtual ::FLAC__StreamEncoderInitStatus init(const std::string &filename);     ///< See FLAC__stream_encoder_init_file()
+ 			virtual ::FLAC__StreamEncoderInitStatus init_ogg(FILE *file);                  ///< See FLAC__stream_encoder_init_ogg_FILE()
+-			virtual ::FLAC__StreamEncoderInitStatus init_ogg(const char *filename);        ///< See FLAC__stream_encoder_init_ogg_file()
+-			virtual ::FLAC__StreamEncoderInitStatus init_ogg(const std::string &filename); ///< See FLAC__stream_encoder_init_ogg_file()
+ 		protected:
+ 			/// See FLAC__StreamEncoderProgressCallback
+ 			virtual void progress_callback(FLAC__uint64 bytes_written, FLAC__uint64 samples_written, unsigned frames_written, unsigned total_frames_estimate);
+--- include/FLAC++/metadata.h
++++ include/FLAC++/metadata.h
+@@ -1002,16 +1002,9 @@
+ 		 * \{
+ 		 */
+ 
+-		FLACPP_API bool get_streaminfo(const char *filename, StreamInfo &streaminfo); ///< See FLAC__metadata_get_streaminfo().
+ 
+-		FLACPP_API bool get_tags(const char *filename, VorbisComment *&tags); ///< See FLAC__metadata_get_tags().
+-		FLACPP_API bool get_tags(const char *filename, VorbisComment &tags); ///< See FLAC__metadata_get_tags().
+ 
+-		FLACPP_API bool get_cuesheet(const char *filename, CueSheet *&cuesheet); ///< See FLAC__metadata_get_cuesheet().
+-		FLACPP_API bool get_cuesheet(const char *filename, CueSheet &cuesheet); ///< See FLAC__metadata_get_cuesheet().
+ 
+-		FLACPP_API bool get_picture(const char *filename, Picture *&picture, ::FLAC__StreamMetadata_Picture_Type type, const char *mime_type, const FLAC__byte *description, unsigned max_width, unsigned max_height, unsigned max_depth, unsigned max_colors); ///< See FLAC__metadata_get_picture().
+-		FLACPP_API bool get_picture(const char *filename, Picture &picture, ::FLAC__StreamMetadata_Picture_Type type, const char *mime_type, const FLAC__byte *description, unsigned max_width, unsigned max_height, unsigned max_depth, unsigned max_colors); ///< See FLAC__metadata_get_picture().
+ 
+ 		/* \} */
+ 
+@@ -1068,7 +1061,6 @@
+ 
+ 			bool is_valid() const; ///< Returns \c true iff object was properly constructed.
+ 
+-			bool init(const char *filename, bool read_only, bool preserve_file_stats); ///< See FLAC__metadata_simple_iterator_init().
+ 
+ 			Status status();                                                    ///< See FLAC__metadata_simple_iterator_status().
+ 			bool is_writable() const;                                           ///< See FLAC__metadata_simple_iterator_is_writable().
+@@ -1082,9 +1074,6 @@
+ 			unsigned get_block_length() const;                                  ///< See FLAC__metadata_simple_iterator_get_block_length().
+ 			bool get_application_id(FLAC__byte *id);                            ///< See FLAC__metadata_simple_iterator_get_application_id().
+ 			Prototype *get_block();                                             ///< See FLAC__metadata_simple_iterator_get_block().
+-			bool set_block(Prototype *block, bool use_padding = true);          ///< See FLAC__metadata_simple_iterator_set_block().
+-			bool insert_block_after(Prototype *block, bool use_padding = true); ///< See FLAC__metadata_simple_iterator_insert_block_after().
+-			bool delete_block(bool use_padding = true);                         ///< See FLAC__metadata_simple_iterator_delete_block().
+ 
+ 		protected:
+ 			::FLAC__Metadata_SimpleIterator *iterator_;
+@@ -1162,7 +1151,6 @@
+ 
+ 			Status status();                                                ///< See FLAC__metadata_chain_status().
+ 
+-			bool read(const char *filename, bool is_ogg = false);                                ///< See FLAC__metadata_chain_read(), FLAC__metadata_chain_read_ogg().
+ 			bool read(FLAC__IOHandle handle, FLAC__IOCallbacks callbacks, bool is_ogg = false);  ///< See FLAC__metadata_chain_read_with_callbacks(), FLAC__metadata_chain_read_ogg_with_callbacks().
+ 
+ 			bool check_if_tempfile_needed(bool use_padding);                ///< See FLAC__metadata_chain_check_if_tempfile_needed().
+--- src/libFLAC/metadata_iterators.c
++++ src/libFLAC/metadata_iterators.c
+@@ -99,7 +99,6 @@
+ 
+ static FLAC__bool write_metadata_block_stationary_(FLAC__Metadata_SimpleIterator *iterator, const FLAC__StreamMetadata *block);
+ static FLAC__bool write_metadata_block_stationary_with_padding_(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, unsigned padding_length, FLAC__bool padding_is_last);
+-static FLAC__bool rewrite_whole_file_(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool append);
+ 
+ static void simple_iterator_push_(FLAC__Metadata_SimpleIterator *iterator);
+ static FLAC__bool simple_iterator_pop_(FLAC__Metadata_SimpleIterator *iterator);
+@@ -107,20 +106,13 @@
+ static unsigned seek_to_first_metadata_block_cb_(FLAC__IOHandle handle, FLAC__IOCallback_Read read_cb, FLAC__IOCallback_Seek seek_cb);
+ static unsigned seek_to_first_metadata_block_(FILE *f);
+ 
+-static FLAC__bool simple_iterator_copy_file_prefix_(FLAC__Metadata_SimpleIterator *iterator, FILE **tempfile, char **tempfilename, FLAC__bool append);
+-static FLAC__bool simple_iterator_copy_file_postfix_(FLAC__Metadata_SimpleIterator *iterator, FILE **tempfile, char **tempfilename, int fixup_is_last_code, FLAC__off_t fixup_is_last_flag_offset, FLAC__bool backup);
+ 
+ static FLAC__bool copy_n_bytes_from_file_(FILE *file, FILE *tempfile, FLAC__off_t bytes, FLAC__Metadata_SimpleIteratorStatus *status);
+ static FLAC__bool copy_n_bytes_from_file_cb_(FLAC__IOHandle handle, FLAC__IOCallback_Read read_cb, FLAC__IOHandle temp_handle, FLAC__IOCallback_Write temp_write_cb, FLAC__off_t bytes, FLAC__Metadata_SimpleIteratorStatus *status);
+ static FLAC__bool copy_remaining_bytes_from_file_(FILE *file, FILE *tempfile, FLAC__Metadata_SimpleIteratorStatus *status);
+ static FLAC__bool copy_remaining_bytes_from_file_cb_(FLAC__IOHandle handle, FLAC__IOCallback_Read read_cb, FLAC__IOCallback_Eof eof_cb, FLAC__IOHandle temp_handle, FLAC__IOCallback_Write temp_write_cb, FLAC__Metadata_SimpleIteratorStatus *status);
+ 
+-static FLAC__bool open_tempfile_(const char *filename, const char *tempfile_path_prefix, FILE **tempfile, char **tempfilename, FLAC__Metadata_SimpleIteratorStatus *status);
+-static FLAC__bool transport_tempfile_(const char *filename, FILE **tempfile, char **tempfilename, FLAC__Metadata_SimpleIteratorStatus *status);
+-static void cleanup_tempfile_(FILE **tempfile, char **tempfilename);
+ 
+-static FLAC__bool get_file_stats_(const char *filename, struct flac_stat_s *stats);
+-static void set_file_stats_(const char *filename, struct flac_stat_s *stats);
+ 
+ static int fseek_wrapper_(FLAC__IOHandle handle, FLAC__int64 offset, int whence);
+ static FLAC__int64 ftell_wrapper_(FLAC__IOHandle handle);
+@@ -155,6 +147,7 @@
+ 	FLAC__StreamMetadata *object;
+ } level0_client_data;
+ 
++#if 0
+ static FLAC__StreamMetadata *get_one_metadata_block_(const char *filename, FLAC__MetadataType type)
+ {
+ 	level0_client_data cd;
+@@ -233,6 +226,7 @@
+ 
+ 	return 0 != *cuesheet;
+ }
++#endif
+ 
+ FLAC__StreamDecoderWriteStatus write_callback_(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *client_data)
+ {
+@@ -265,6 +259,7 @@
+ 		cd->got_error = true;
+ }
+ 
++#if 0
+ FLAC_API FLAC__bool FLAC__metadata_get_picture(const char *filename, FLAC__StreamMetadata **picture, FLAC__StreamMetadata_Picture_Type type, const char *mime_type, const FLAC__byte *description, unsigned max_width, unsigned max_height, unsigned max_depth, unsigned max_colors)
+ {
+ 	FLAC__Metadata_SimpleIterator *it;
+@@ -314,6 +309,7 @@
+ 
+ 	return (0 != *picture);
+ }
++#endif
+ 
+ 
+ /****************************************************************************
+@@ -376,6 +372,7 @@
+ 	return iterator;
+ }
+ 
++#if 0
+ static void simple_iterator_free_guts_(FLAC__Metadata_SimpleIterator *iterator)
+ {
+ 	FLAC__ASSERT(0 != iterator);
+@@ -403,6 +400,7 @@
+ 	simple_iterator_free_guts_(iterator);
+ 	free(iterator);
+ }
++#endif
+ 
+ FLAC_API FLAC__Metadata_SimpleIteratorStatus FLAC__metadata_simple_iterator_status(FLAC__Metadata_SimpleIterator *iterator)
+ {
+@@ -415,6 +413,7 @@
+ 	return status;
+ }
+ 
++#if 0
+ static FLAC__bool simple_iterator_prime_input_(FLAC__Metadata_SimpleIterator *iterator, FLAC__bool read_only)
+ {
+ 	unsigned ret;
+@@ -458,6 +457,7 @@
+ 			return false;
+ 	}
+ }
++#endif
+ 
+ #if 0
+ @@@ If we decide to finish implementing this, put this comment back in metadata.h
+@@ -477,6 +477,7 @@
+ FLAC__bool FLAC__metadata_simple_iterator_init(FLAC__Metadata_SimpleIterator *iterator, const char *filename, FLAC__bool preserve_file_stats, const char *tempfile_path_prefix);
+ #endif
+ 
++#if 0
+ FLAC_API FLAC__bool FLAC__metadata_simple_iterator_init(FLAC__Metadata_SimpleIterator *iterator, const char *filename, FLAC__bool read_only, FLAC__bool preserve_file_stats)
+ {
+ 	const char *tempfile_path_prefix = 0; /*@@@ search for comments near 'flac_rename(...)' for what it will take to finish implementing this */
+@@ -500,6 +501,7 @@
+ 
+ 	return simple_iterator_prime_input_(iterator, read_only);
+ }
++#endif
+ 
+ FLAC_API FLAC__bool FLAC__metadata_simple_iterator_is_writable(const FLAC__Metadata_SimpleIterator *iterator)
+ {
+@@ -653,6 +655,7 @@
+ 	return block;
+ }
+ 
++#if 0
+ FLAC_API FLAC__bool FLAC__metadata_simple_iterator_set_block(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool use_padding)
+ {
+ 	FLAC__ASSERT_DECLARATION(FLAC__off_t debug_target_offset = iterator->offset[iterator->depth];)
+@@ -867,6 +870,7 @@
+ 		return ret;
+ 	}
+ }
++#endif
+ 
+ 
+ 
+@@ -1359,6 +1363,7 @@
+ 	return true;
+ }
+ 
++#if 0
+ static FLAC__bool chain_rewrite_metadata_in_place_(FLAC__Metadata_Chain *chain)
+ {
+ 	FILE *file;
+@@ -1439,6 +1444,7 @@
+ 	cleanup_tempfile_(&tempfile, &tempfilename);
+ 	return false;
+ }
++#endif
+ 
+ /* assumes 'handle' is already at beginning of file */
+ static FLAC__bool chain_rewrite_file_cb_(FLAC__Metadata_Chain *chain, FLAC__IOHandle handle, FLAC__IOCallback_Read read_cb, FLAC__IOCallback_Seek seek_cb, FLAC__IOCallback_Eof eof_cb, FLAC__IOHandle temp_handle, FLAC__IOCallback_Write temp_write_cb)
+@@ -1512,6 +1518,7 @@
+ 	return status;
+ }
+ 
++#if 0
+ static FLAC__bool chain_read_(FLAC__Metadata_Chain *chain, const char *filename, FLAC__bool is_ogg)
+ {
+ 	FILE *file;
+@@ -1555,6 +1562,7 @@
+ {
+ 	return chain_read_(chain, filename, /*is_ogg=*/true);
+ }
++#endif
+ 
+ static FLAC__bool chain_read_with_callbacks_(FLAC__Metadata_Chain *chain, FLAC__IOHandle handle, FLAC__IOCallbacks callbacks, FLAC__bool is_ogg)
+ {
+@@ -1631,6 +1639,7 @@
+ 	return (current_length != chain->initial_length);
+ }
+ 
++#if 0
+ FLAC_API FLAC__bool FLAC__metadata_chain_write(FLAC__Metadata_Chain *chain, FLAC__bool use_padding, FLAC__bool preserve_file_stats)
+ {
+ 	struct flac_stat_s stats;
+@@ -1681,6 +1690,7 @@
+ 
+ 	return true;
+ }
++#endif
+ 
+ FLAC_API FLAC__bool FLAC__metadata_chain_write_with_callbacks(FLAC__Metadata_Chain *chain, FLAC__bool use_padding, FLAC__IOHandle handle, FLAC__IOCallbacks callbacks)
+ {
+@@ -2913,6 +2923,7 @@
+ 	return read_metadata_block_header_(iterator);
+ }
+ 
++#if 0
+ FLAC__bool rewrite_whole_file_(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool append)
+ {
+ 	FILE *tempfile = NULL;
+@@ -2963,6 +2974,7 @@
+ 
+ 	return true;
+ }
++#endif
+ 
+ void simple_iterator_push_(FLAC__Metadata_SimpleIterator *iterator)
+ {
+@@ -3044,6 +3056,7 @@
+ 	return seek_to_first_metadata_block_cb_((FLAC__IOHandle)f, (FLAC__IOCallback_Read)fread, fseek_wrapper_);
+ }
+ 
++#if 0
+ FLAC__bool simple_iterator_copy_file_prefix_(FLAC__Metadata_SimpleIterator *iterator, FILE **tempfile, char **tempfilename, FLAC__bool append)
+ {
+ 	const FLAC__off_t offset_end = append? iterator->offset[iterator->depth] + (FLAC__off_t)FLAC__STREAM_METADATA_HEADER_LENGTH + (FLAC__off_t)iterator->length : iterator->offset[iterator->depth];
+@@ -3142,6 +3155,7 @@
+ 		return simple_iterator_pop_(iterator);
+ 	}
+ }
++#endif
+ 
+ FLAC__bool copy_n_bytes_from_file_(FILE *file, FILE *tempfile, FLAC__off_t bytes, FLAC__Metadata_SimpleIteratorStatus *status)
+ {
+@@ -3251,6 +3265,7 @@
+ 	return rc;
+ }
+ 
++#if 0
+ FLAC__bool open_tempfile_(const char *filename, const char *tempfile_path_prefix, FILE **tempfile, char **tempfilename, FLAC__Metadata_SimpleIteratorStatus *status)
+ {
+ 	static const char *tempfile_suffix = ".metadata_edit";
+@@ -3357,6 +3372,7 @@
+ 	FLAC_CHECK_RETURN(chown(filename, -1, stats->st_gid));
+ #endif
+ }
++#endif
+ 
+ int fseek_wrapper_(FLAC__IOHandle handle, FLAC__int64 offset, int whence)
+ {
+--- src/libFLAC++/metadata.cpp
++++ src/libFLAC++/metadata.cpp
+@@ -1328,6 +1328,7 @@
+ 		//
+ 		// ============================================================
+ 
++#if 0
+ 		FLACPP_API bool get_streaminfo(const char *filename, StreamInfo &streaminfo)
+ 		{
+ 			FLAC__ASSERT(0 != filename);
+@@ -1431,6 +1432,7 @@
+ 			else
+ 				return false;
+ 		}
++#endif
+ 
+ 
+ 		// ============================================================
+@@ -1455,12 +1457,14 @@
+ 			iterator_ = 0;
+ 		}
+ 
++#if 0
+ 		bool SimpleIterator::init(const char *filename, bool read_only, bool preserve_file_stats)
+ 		{
+ 			FLAC__ASSERT(0 != filename);
+ 			FLAC__ASSERT(is_valid());
+ 			return (bool)::FLAC__metadata_simple_iterator_init(iterator_, filename, read_only, preserve_file_stats);
+ 		}
++#endif
+ 
+ 		bool SimpleIterator::is_valid() const
+ 		{
+@@ -1531,6 +1535,7 @@
+ 			return local::construct_block(::FLAC__metadata_simple_iterator_get_block(iterator_));
+ 		}
+ 
++#if 0
+ 		bool SimpleIterator::set_block(Prototype *block, bool use_padding)
+ 		{
+ 			FLAC__ASSERT(0 != block);
+@@ -1550,6 +1555,7 @@
+ 			FLAC__ASSERT(is_valid());
+ 			return (bool)::FLAC__metadata_simple_iterator_delete_block(iterator_, use_padding);
+ 		}
++#endif
+ 
+ 
+ 		// ============================================================
+@@ -1585,6 +1591,7 @@
+ 			return Status(::FLAC__metadata_chain_status(chain_));
+ 		}
+ 
++#if 0
+ 		bool Chain::read(const char *filename, bool is_ogg)
+ 		{
+ 			FLAC__ASSERT(0 != filename);
+@@ -1594,6 +1601,7 @@
+ 				(bool)::FLAC__metadata_chain_read(chain_, filename)
+ 			;
+ 		}
++#endif
+ 
+ 		bool Chain::read(FLAC__IOHandle handle, ::FLAC__IOCallbacks callbacks, bool is_ogg)
+ 		{
+@@ -1610,11 +1618,13 @@
+ 			return (bool)::FLAC__metadata_chain_check_if_tempfile_needed(chain_, use_padding);
+ 		}
+ 
++#if 0
+ 		bool Chain::write(bool use_padding, bool preserve_file_stats)
+ 		{
+ 			FLAC__ASSERT(is_valid());
+ 			return (bool)::FLAC__metadata_chain_write(chain_, use_padding, preserve_file_stats);
+ 		}
++#endif
+ 
+ 		bool Chain::write(bool use_padding, ::FLAC__IOHandle handle, ::FLAC__IOCallbacks callbacks)
+ 		{
+--- src/libFLAC++/stream_decoder.cpp
++++ src/libFLAC++/stream_decoder.cpp
+@@ -350,6 +350,7 @@
+ 			return ::FLAC__stream_decoder_init_FILE(decoder_, file, write_callback_, metadata_callback_, error_callback_, /*client_data=*/(void*)this);
+ 		}
+ 
++#if 0
+ 		::FLAC__StreamDecoderInitStatus File::init(const char *filename)
+ 		{
+ 			FLAC__ASSERT(0 != decoder_);
+@@ -360,6 +361,7 @@
+ 		{
+ 			return init(filename.c_str());
+ 		}
++#endif
+ 
+ 		::FLAC__StreamDecoderInitStatus File::init_ogg(FILE *file)
+ 		{
+@@ -367,6 +369,7 @@
+ 			return ::FLAC__stream_decoder_init_ogg_FILE(decoder_, file, write_callback_, metadata_callback_, error_callback_, /*client_data=*/(void*)this);
+ 		}
+ 
++#if 0
+ 		::FLAC__StreamDecoderInitStatus File::init_ogg(const char *filename)
+ 		{
+ 			FLAC__ASSERT(0 != decoder_);
+@@ -377,6 +380,7 @@
+ 		{
+ 			return init_ogg(filename.c_str());
+ 		}
++#endif
+ 
+ 		// This is a dummy to satisfy the pure virtual from Stream; the
+ 		// read callback will never be called since we are initializing
+--- src/libFLAC++/stream_encoder.cpp
++++ src/libFLAC++/stream_encoder.cpp
+@@ -458,6 +458,7 @@
+ 			return ::FLAC__stream_encoder_init_FILE(encoder_, file, progress_callback_, /*client_data=*/(void*)this);
+ 		}
+ 
++#if 0
+ 		::FLAC__StreamEncoderInitStatus File::init(const char *filename)
+ 		{
+ 			FLAC__ASSERT(is_valid());
+@@ -468,6 +469,7 @@
+ 		{
+ 			return init(filename.c_str());
+ 		}
++#endif
+ 
+ 		::FLAC__StreamEncoderInitStatus File::init_ogg(FILE *file)
+ 		{
+@@ -475,6 +477,7 @@
+ 			return ::FLAC__stream_encoder_init_ogg_FILE(encoder_, file, progress_callback_, /*client_data=*/(void*)this);
+ 		}
+ 
++#if 0
+ 		::FLAC__StreamEncoderInitStatus File::init_ogg(const char *filename)
+ 		{
+ 			FLAC__ASSERT(is_valid());
+@@ -485,6 +488,7 @@
+ 		{
+ 			return init_ogg(filename.c_str());
+ 		}
++#endif
+ 
+ 		// This is a dummy to satisfy the pure virtual from Stream; the
+ 		// read callback will never be called since we are initializing
