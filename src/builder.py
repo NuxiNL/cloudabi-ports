@@ -112,7 +112,7 @@ class FileHandle:
             'HOME=' + os.getenv('HOME'),
             'LC_CTYPE=' + os.getenv('LC_CTYPE'),
             'TERM=' + os.getenv('TERM'),
-            '/usr/local/bin/bash',
+            'sh',
         ])
 
     def diff(self, filename):
