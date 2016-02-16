@@ -1,0 +1,170 @@
+--- src/cr-input.c
++++ src/cr-input.c
+@@ -192,6 +192,7 @@
+  *NULL otherwise.
+  */
+ 
++#if 0
+ CRInput *
+ cr_input_new_from_uri (const gchar * a_file_uri, enum CREncoding a_enc)
+ {
+@@ -272,6 +273,7 @@
+ 
+         return result;
+ }
++#endif
+ 
+ /**
+  * cr_input_destroy:
+--- src/cr-input.h
++++ src/cr-input.h
+@@ -63,9 +63,6 @@
+ CRInput *
+ cr_input_new_from_buf (guchar *a_buf, gulong a_len,
+                        enum CREncoding a_enc, gboolean a_free_buf) ;
+-CRInput *
+-cr_input_new_from_uri (const gchar *a_file_uri, 
+-                       enum CREncoding a_enc) ;
+ 
+ void
+ cr_input_destroy (CRInput *a_this) ;
+--- src/cr-om-parser.c
++++ src/cr-om-parser.c
+@@ -938,6 +938,7 @@
+  *
+  * Returns CR_OK upon succesful completion, an error code otherwise.
+  */
++#if 0
+ enum CRStatus
+ cr_om_parser_parse_file (CROMParser * a_this,
+                          const guchar * a_file_uri,
+@@ -1113,6 +1114,7 @@
+         }
+         return status;
+ }
++#endif
+ 
+ /**
+  * cr_om_parser_destroy:
+--- src/cr-om-parser.h
++++ src/cr-om-parser.h
+@@ -58,14 +58,7 @@
+ CROMParser * cr_om_parser_new (CRInput *a_input) ;
+ 
+ 
+-enum CRStatus cr_om_parser_simply_parse_file (const guchar *a_file_path,
+-                                              enum CREncoding a_enc,
+-                                              CRStyleSheet **a_result) ;
+-
+-enum CRStatus cr_om_parser_parse_file (CROMParser *a_this,
+-                                       const guchar *a_file_uri,
+-                                       enum CREncoding a_enc,
+-                                       CRStyleSheet **a_result) ;
++
+ 
+ enum CRStatus cr_om_parser_simply_parse_buf (const guchar *a_buf,
+                                              gulong a_len,
+@@ -78,18 +71,7 @@
+                                       enum CREncoding a_enc,
+                                       CRStyleSheet **a_result) ;
+ 
+-enum CRStatus cr_om_parser_parse_paths_to_cascade (CROMParser *a_this,
+-                                                   const guchar *a_author_path,
+-                                                   const guchar *a_user_path,
+-                                                   const guchar *a_ua_path,
+-                                                   enum CREncoding a_encoding,
+-                                                   CRCascade ** a_result) ;
+-
+-enum CRStatus cr_om_parser_simply_parse_paths_to_cascade (const guchar *a_author_path,
+-                                                          const guchar *a_user_path,
+-                                                          const guchar *a_ua_path,
+-                                                          enum CREncoding a_encoding,
+-                                                          CRCascade ** a_result) ;
++
+ 
+ void cr_om_parser_destroy (CROMParser *a_this) ;
+ 
+--- src/cr-parser.c
++++ src/cr-parser.c
+@@ -2833,6 +2833,7 @@
+  *
+  * Returns the newly built parser.
+  */
++#if 0
+ CRParser *
+ cr_parser_new_from_file (const guchar * a_file_uri, enum CREncoding a_enc)
+ {
+@@ -2849,6 +2850,7 @@
+         g_return_val_if_fail (result, NULL);
+         return result;
+ }
++#endif
+ 
+ /**
+  * cr_parser_set_sac_handler:
+@@ -2973,6 +2975,7 @@
+  *
+  *Returns CR_OK upon successfull completion, an error code otherwise.
+  */
++#if 0
+ enum CRStatus
+ cr_parser_parse_file (CRParser * a_this,
+                       const guchar * a_file_uri, enum CREncoding a_enc)
+@@ -2994,6 +2997,7 @@
+ 
+         return status;
+ }
++#endif
+ 
+ /**
+  * cr_parser_parse_expr:
+--- src/cr-parser.h
++++ src/cr-parser.h
+@@ -59,8 +59,6 @@
+                         enum CREncoding a_enc, 
+                         gboolean a_free_buf) ;
+ 
+-CRParser * cr_parser_new_from_file (const guchar *a_file_uri, 
+-                                    enum CREncoding a_enc) ;
+ 
+ CRParser * cr_parser_new_from_input (CRInput *a_input) ;
+ 
+@@ -86,9 +84,6 @@
+ 
+ enum CRStatus cr_parser_parse (CRParser *a_this) ;
+         
+-enum CRStatus cr_parser_parse_file (CRParser *a_this, 
+-                                    const guchar *a_file_uri, 
+-                                    enum CREncoding a_enc) ;
+ 
+ enum CRStatus cr_parser_parse_buf (CRParser *a_this, const guchar *a_buf, 
+                                    gulong a_len, enum CREncoding a_enc) ;
+--- src/cr-tknzr.c
++++ src/cr-tknzr.c
+@@ -1632,6 +1632,7 @@
+         return result;
+ }
+ 
++#if 0
+ CRTknzr *
+ cr_tknzr_new_from_uri (const guchar * a_file_uri, 
+                        enum CREncoding a_enc)
+@@ -1646,6 +1647,7 @@
+ 
+         return result;
+ }
++#endif
+ 
+ void
+ cr_tknzr_ref (CRTknzr * a_this)
+--- src/cr-tknzr.h
++++ src/cr-tknzr.h
+@@ -54,8 +54,6 @@
+ 
+ CRTknzr * cr_tknzr_new (CRInput *a_input) ;
+ 
+-CRTknzr * cr_tknzr_new_from_uri (const guchar *a_file_uri,
+-                                 enum CREncoding a_enc) ;
+ 
+ CRTknzr * cr_tknzr_new_from_buf (guchar *a_buf, gulong a_len,
+                                  enum CREncoding a_enc,
