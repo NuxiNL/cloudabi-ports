@@ -1,0 +1,11 @@
+--- libxslt/extensions.c
++++ libxslt/extensions.c
+@@ -2324,8 +2324,6 @@
+ void
+ xsltDebugDumpExtensions(FILE * output)
+ {
+-    if (output == NULL)
+-        output = stdout;
+     fprintf(output,
+             "Registered XSLT Extensions\n--------------------------\n");
+     if (!xsltFunctionsHash)

@@ -1,0 +1,31 @@
+--- libxslt/security.c
++++ libxslt/security.c
+@@ -342,8 +342,6 @@
+ 		}
+ 	    }
+ 	    ret = xsltCheckWritePath(sec, ctxt, directory);
+-	    if (ret == 1)
+-		ret = mkdir(directory, 0755);
+ 	}
+ 	xmlFree(directory);
+ 	if (ret < 0)
+--- libxslt/transform.c
++++ libxslt/transform.c
+@@ -3717,6 +3717,9 @@
+      * if we do not specify append.
+      * Note that append use will forbid use of remote URI target.
+      */
++#ifdef __CloudABI__
++    if (1) {
++#else
+     prop = xsltEvalAttrValueTemplate(ctxt, inst, (const xmlChar *)"append",
+ 				     NULL);
+     if (prop != NULL) {
+@@ -3740,6 +3743,7 @@
+ 	    fclose(f);
+ 	}
+     } else {
++#endif
+ 	ret = xsltSaveResultToFilename((const char *) filename, res, style, 0);
+     }
+     if (ret < 0) {
