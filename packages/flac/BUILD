@@ -7,11 +7,12 @@
 def build(ctx):
     build = ctx.extract().autoconf()
     build.make([
-        'bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=',
+        'bin_PROGRAMS=', 'man_MANS=',
+        'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=',
     ])
     build.make_install([
-        'bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=',
-        'install',
+        'bin_PROGRAMS=', 'man_MANS=',
+        'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=', 'install',
     ]).install()
 
 package(
