@@ -7,9 +7,11 @@
 def build(ctx):
     build = ctx.extract().autoconf(['--disable-Bsymbolic'])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    build.make_install([
+    stage = build.make_install([
         'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install',
-    ]).install()
+    ])
+    stage.path('bin/croco-0.6-config').unhardcode_paths()
+    stage.install()
 
 package(
     name='libcroco',
