@@ -230,6 +230,9 @@ class BuildHandle:
             self._builder._host_builder, self._name, self._version,
             self._distfiles, self._resource_directory)
 
+    def localbase(self):
+        return self._builder.get_localbase()
+
     def prefix(self):
         return self._builder.get_prefix()
 
@@ -396,6 +399,9 @@ class TargetBuilder:
 
     def get_cxxflags(self):
         return self._cflags
+
+    def get_localbase(self):
+        return self._localbase
 
     def get_prefix(self):
         return self._prefix
