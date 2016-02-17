@@ -6,10 +6,8 @@
 
 def build(ctx):
     build = ctx.extract().autoconf(['--disable-Bsymbolic'])
-    build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    stage = build.make_install([
-        'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install',
-    ])
+    build.make()
+    stage = build.make_install(['bin_PROGRAMS=', 'install'])
     stage.path('bin/croco-0.6-config').unhardcode_paths()
     stage.install()
 
