@@ -10,6 +10,7 @@ import math
 import os
 import stat
 import subprocess
+import time
 
 from . import config
 from . import util
@@ -183,7 +184,10 @@ class DebianCatalog(Catalog):
                 'Suite: cloudabi\n'
                 'Components: cloudabi\n'
                 'Architectures: %s\n'
-                'SHA256:\n' % ' '.join(sorted(self._architectures)))
+                'Date: %s\n'
+                'SHA256:\n' % (
+                ' '.join(sorted(self._architectures)),
+                time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime())))
             for arch in sorted(self._architectures):
                 append(' %s %d cloudabi/binary-%s/Packages\n' %
                        (checksum, size, arch))
