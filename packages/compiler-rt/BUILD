@@ -6,6 +6,7 @@
 
 def build(ctx):
     root = ctx.extract('%(name)s-3.8.0rc2.src')
+    headers = ctx.extract('cloudlibc-0.19').path('src/include')
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
         'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -48,7 +49,8 @@ def build(ctx):
         'x86_64/floatundixf.S',
     }
     srcdir = root.path('lib/builtins')
-    library = ctx.archive(srcdir.path(f).compile() for f in sources)
+    library = ctx.archive(srcdir.path(f).compile(['-I%s' % headers])
+                          for f in sources)
     library.install('lib/libcompiler_rt.a')
 
 package(
@@ -56,7 +58,6 @@ package(
     version='3.7.92',
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
-    lib_depends={'cloudlibc'},
     build_cmd=build,
 )
 
