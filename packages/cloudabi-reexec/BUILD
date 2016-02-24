@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='cloudabi-reexec',
-    version='0.6',
+    version='1.0',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
