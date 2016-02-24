@@ -20,10 +20,8 @@ def build(ctx):
         # not yet support this architecture completely.
         stage = build.make_install()
         filenames = {'bin/%s-readelf' % arch, 'bin/%s-strip' % arch}
-        # TODO(ed): Use GNU ld as long as LLVM bug 22906 is not fixed.
-        # if arch.startswith('aarch64-'):
-        #     filenames |= {'bin/%s-ld' % arch, '%s/lib/ldscripts' % arch}
-        filenames |= {'bin/%s-ld' % arch, '%s/lib/ldscripts' % arch}
+        if arch.startswith('aarch64-'):
+            filenames |= {'bin/%s-ld' % arch, '%s/lib/ldscripts' % arch}
         for filename in filenames:
             stage.path(filename).install(filename)
 

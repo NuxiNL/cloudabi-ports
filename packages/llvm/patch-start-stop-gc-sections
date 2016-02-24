@@ -1,0 +1,70 @@
+--- ELF/MarkLive.cpp
++++ ELF/MarkLive.cpp
+@@ -70,6 +70,12 @@
+     return true;
+   default:
+     StringRef S = Sec->getSectionName();
++
++    // We do not want to reclaim sections if they can be referred
++    // by __start_* and __stop_* symbols.
++    if (isValidCIdentifier(S))
++      return true;
++
+     return S.startswith(".ctors") || S.startswith(".dtors") ||
+            S.startswith(".init") || S.startswith(".fini") ||
+            S.startswith(".jcr");
+--- ELF/OutputSections.cpp
++++ ELF/OutputSections.cpp
+@@ -23,6 +23,19 @@
+ 
+ bool elf2::HasGotOffRel = false;
+ 
++static bool isAlpha(char C) {
++  return ('a' <= C && C <= 'z') || ('A' <= C && C <= 'Z') || C == '_';
++}
++
++static bool isAlnum(char C) { return isAlpha(C) || ('0' <= C && C <= '9'); }
++
++// Returns true if S is valid as a C language identifier.
++bool elf2::isValidCIdentifier(StringRef S) {
++  if (S.empty() || !isAlpha(S[0]))
++    return false;
++  return std::all_of(S.begin() + 1, S.end(), isAlnum);
++}
++
+ template <class ELFT>
+ OutputSectionBase<ELFT>::OutputSectionBase(StringRef Name, uint32_t Type,
+                                            uintX_t Flags)
+--- ELF/OutputSections.h
++++ ELF/OutputSections.h
+@@ -63,6 +63,8 @@
+ 
+ bool canBePreempted(const SymbolBody *Body, bool NeedsGot);
+ 
++bool isValidCIdentifier(StringRef S);
++
+ template <class ELFT>
+ bool shouldKeepInSymtab(
+     const ObjectFile<ELFT> &File, StringRef Name,
+--- ELF/Writer.cpp
++++ ELF/Writer.cpp
+@@ -934,19 +934,6 @@
+          Out<ELFT>::Dynamic->FiniArraySec);
+ }
+ 
+-static bool isAlpha(char C) {
+-  return ('a' <= C && C <= 'z') || ('A' <= C && C <= 'Z') || C == '_';
+-}
+-
+-static bool isAlnum(char C) { return isAlpha(C) || ('0' <= C && C <= '9'); }
+-
+-// Returns true if S is valid as a C language identifier.
+-static bool isValidCIdentifier(StringRef S) {
+-  if (S.empty() || !isAlpha(S[0]))
+-    return false;
+-  return std::all_of(S.begin() + 1, S.end(), isAlnum);
+-}
+-
+ // If a section name is valid as a C identifier (which is rare because of
+ // the leading '.'), linkers are expected to define __start_<secname> and
+ // __stop_<secname> symbols. They are at beginning and end of the section,

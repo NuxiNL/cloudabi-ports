@@ -32,15 +32,14 @@ def build(ctx):
     # Install ld, a tiny wrapper around LLD, invoking it in such a way
     # that it acts as the GNU linker. Don't use LLD on aarch64 yet, as
     # support for that platform is not yet complete.
-    # TODO(ed): Disable this as long as LLVM bug 22906 is not fixed.
-    # ld = ctx.executable({
-    #     ctx.resource('ld.c').compile([
-    #         '-DPATH_LLD="%s/bin/lld"' % ctx.prefix(),
-    #     ]),
-    # })
-    # for arch in ARCHITECTURES:
-    #     if not arch.startswith('aarch64-'):
-    #         ld.install('bin/%s-ld' % arch)
+    ld = ctx.executable({
+        ctx.resource('ld.c').compile([
+            '-DPATH_LLD="%s/bin/lld"' % ctx.prefix(),
+        ]),
+    })
+    for arch in ARCHITECTURES:
+        if not arch.startswith('aarch64-'):
+            ld.install('bin/%s-ld' % arch)
 
 host_package(
     name='llvm',
@@ -61,7 +60,7 @@ distfile(
     name='lld-3.8.0rc2.src.tar.xz',
     checksum='03c328d2d126b65dae2619b9195a4177818c8451d5b843bbc4110c300bcd1a23',
     master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
-    patches={},
+    patches={'start-stop-gc-sections'},
 )
 distfile(
     name='llvm-3.8.0rc2.src.tar.xz',
