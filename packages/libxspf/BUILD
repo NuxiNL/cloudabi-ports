@@ -6,7 +6,7 @@
 
 def build(ctx):
     root = ctx.extract()
-    build = root.autoconf(['--disable-test'])
+    build = root.gnu_configure(['--disable-test'])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
     build.make_install(
         ['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install']).install()

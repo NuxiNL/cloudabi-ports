@@ -48,7 +48,7 @@ class FileHandle:
     def __str__(self):
         return self._path
 
-    def autoconf(self, args=[], inplace=False):
+    def gnu_configure(self, args=[], inplace=False):
         for path in util.walk_files(self._path):
             filename = os.path.basename(path)
             if filename in {'config.guess', 'config.sub'}:
@@ -85,7 +85,7 @@ class FileHandle:
         builddir = (self._path
                     if inplace
                     else self._builder._build_directory.get_new_directory())
-        self._builder.autoconf(
+        self._builder.gnu_configure(
             builddir, os.path.join(self._path, 'configure'), args)
         return FileHandle(self._builder, builddir)
 
@@ -279,7 +279,7 @@ class HostBuilder:
             '-O2', '-I' + os.path.join(self.get_prefix(), 'include'),
         ]
 
-    def autoconf(self, builddir, script, args):
+    def gnu_configure(self, builddir, script, args):
         self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
     def cmake(self, builddir, sourcedir, args):
@@ -365,7 +365,7 @@ class TargetBuilder:
         subprocess.check_call([self._tool('ar'), 'rcs', output] + objs)
         return output
 
-    def autoconf(self, builddir, script, args):
+    def gnu_configure(self, builddir, script, args):
         self.run(builddir, [script, '--host=' + self._arch,
                             '--prefix=' + self.get_prefix()] + args)
 

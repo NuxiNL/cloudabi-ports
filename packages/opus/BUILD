@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['--disable-extra-programs'])
+    build = ctx.extract().gnu_configure(['--disable-extra-programs'])
     build.make()
     build.make_install().install()
 

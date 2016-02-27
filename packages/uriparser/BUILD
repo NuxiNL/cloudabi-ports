@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['--disable-doc', '--disable-test'])
+    build = ctx.extract().gnu_configure(['--disable-doc', '--disable-test'])
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'install']).install()
 

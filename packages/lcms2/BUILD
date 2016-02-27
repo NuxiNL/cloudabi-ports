@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['ac_cv_lib_tiff_TIFFOpen=yes'])
+    build = ctx.extract().gnu_configure(['ac_cv_lib_tiff_TIFFOpen=yes'])
     build.make()
     build.make_install().install()
 

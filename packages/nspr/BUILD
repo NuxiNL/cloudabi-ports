@@ -6,7 +6,7 @@
 
 def build(ctx):
     host_ctx = ctx.host()
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         'HOST_CC=' + host_ctx.cc(),
         'HOST_CFLAGS=' + host_ctx.cflags(),
         'MDCPUCFG_H=_cloudabi.cfg',

@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['gmp_prog_cc_works=yes'])
+    build = ctx.extract().gnu_configure(['gmp_prog_cc_works=yes'])
     build.make()
     build.make_install().install()
 

@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         '--without-debug', '--without-ftp',
         '--without-http', '--without-python',
     ])

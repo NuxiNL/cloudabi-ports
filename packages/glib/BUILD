@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         '--with-pcre=system',
         'ac_cv_func_posix_getgrgid_r=no',
         'ac_cv_func_posix_getpwuid_r=no',
@@ -31,7 +31,7 @@ package(
 
 
 def host_build(ctx):
-    build = ctx.extract().autoconf(['--disable-dtrace'])
+    build = ctx.extract().gnu_configure(['--disable-dtrace'])
     build.make()
     build.make_install().install()
 

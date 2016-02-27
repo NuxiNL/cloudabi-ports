@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['--disable-shared'])
+    build = ctx.extract().gnu_configure(['--disable-shared'])
     build.make(['SUBDIRS='])
     build.make_install(['SUBDIRS=', 'install']).install()
 

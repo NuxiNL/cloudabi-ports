@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         '--disable-file', '--disable-ftp', '--disable-ntlm-wb',
         '--disable-tftp', '--enable-ipv6',
     ])

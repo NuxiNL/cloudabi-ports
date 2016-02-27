@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract('%(name)s-2.09').autoconf()
+    build = ctx.extract('%(name)s-2.09').gnu_configure()
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 

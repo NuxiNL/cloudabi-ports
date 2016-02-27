@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         '--disable-lzmadec', '--disable-lzmainfo', '--disable-scripts',
         '--disable-xz', '--disable-xzdec',
 

@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf()
+    build = ctx.extract().gnu_configure()
     build.make([
         'bin_PROGRAMS=', 'man_MANS=',
         'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=',

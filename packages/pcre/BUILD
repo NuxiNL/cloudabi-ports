@@ -6,7 +6,7 @@
 
 def build(ctx):
     srcdir = ctx.extract()
-    build = srcdir.autoconf([
+    build = srcdir.gnu_configure([
         '--enable-jit', '--enable-pcre16', '--enable-pcre32',
     ])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])

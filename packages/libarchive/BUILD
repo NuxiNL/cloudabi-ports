@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(['--without-iconv'])
+    build = ctx.extract().gnu_configure(['--without-iconv'])
     build.make()
     build.make_install().install()
 

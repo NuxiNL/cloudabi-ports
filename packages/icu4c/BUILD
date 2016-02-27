@@ -10,12 +10,12 @@ def build(ctx):
     srcdir.path('config/mh-unknown').symlink('mh-linux')
 
     # Build a copy of ICU for the host system.
-    hostbuild = srcdir.host().autoconf()
+    hostbuild = srcdir.host().gnu_configure()
     hostbuild.make()
 
     # Build a copy of ICU for the target system, providing it the
     # directory for the host build.
-    build = srcdir.autoconf([
+    build = srcdir.gnu_configure([
         '--disable-dyload', '--disable-extras', '--disable-samples',
         '--disable-shared', '--disable-tools', '--enable-static',
         '--with-cross-build=%s' % hostbuild,

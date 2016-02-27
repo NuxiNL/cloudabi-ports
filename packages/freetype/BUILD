@@ -6,7 +6,7 @@
 
 def build(ctx):
     # Freetype uses CC_BUILD instead of CC_FOR_BUILD.
-    build = ctx.extract().autoconf(['CC_BUILD=' + ctx.host().cc()])
+    build = ctx.extract().gnu_configure(['CC_BUILD=' + ctx.host().cc()])
     build.make()
     stage = build.make_install()
     stage.path('bin/freetype-config').unhardcode_paths()

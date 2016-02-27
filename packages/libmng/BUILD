@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf(inplace=True)
+    build = ctx.extract().gnu_configure(inplace=True)
     build.make()
     build.make_install().install()
 

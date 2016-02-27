@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract('libsigc++-%(version)s').autoconf()
+    build = ctx.extract('libsigc++-%(version)s').gnu_configure()
     build.make(['noinst_PROGRAMS='])
     stage = build.make_install(['noinst_PROGRAMS=', 'install'])
     stage.path(

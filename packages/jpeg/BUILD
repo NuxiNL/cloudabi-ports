@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract('%(name)ssrc.v9b').autoconf()
+    build = ctx.extract('%(name)ssrc.v9b').gnu_configure()
     build.make(['bin_PROGRAMS='])
     build.make_install(['bin_PROGRAMS=', 'man_MANS=', 'install']).install()
 

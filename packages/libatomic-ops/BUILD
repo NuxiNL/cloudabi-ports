@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract('libatomic_ops-%(version)s').autoconf()
+    build = ctx.extract('libatomic_ops-%(version)s').gnu_configure()
     build.make()
     build.make_install().install()
 

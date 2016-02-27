@@ -7,7 +7,7 @@
 def build(ctx):
     root = ctx.extract()
     for arch in ARCHITECTURES:
-        build = root.autoconf([
+        build = root.gnu_configure([
             '--target=' + arch,
             '--disable-gdb',
             '--disable-nls',

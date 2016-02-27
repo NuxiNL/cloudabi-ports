@@ -6,7 +6,7 @@
 
 def build(ctx):
     srcdir = ctx.extract()
-    build = srcdir.autoconf(['--with-libxml-prefix=' + ctx.localbase()])
+    build = srcdir.gnu_configure(['--with-libxml-prefix=' + ctx.localbase()])
     build.make(['bin_PROGRAMS='])
     stage = build.make_install(['bin_PROGRAMS=', 'install'])
 

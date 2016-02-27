@@ -13,7 +13,7 @@ def build(ctx):
     # right copy, based on the host type.
     for arch in ARCHITECTURES:
         prefix = os.path.join(ctx.prefix(), arch)
-        build = ctx.extract().autoconf([
+        build = ctx.extract().gnu_configure([
             '--with-pkg-config-dir=' + os.path.join(prefix, 'lib/pkgconfig'),
             '--with-system-libdir=' + os.path.join(prefix, 'lib'),
             '--with-system-includedir=' + os.path.join(prefix, 'include'),

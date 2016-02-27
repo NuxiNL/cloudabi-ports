@@ -27,7 +27,7 @@ class Repository:
 
     def add_build_file(self, path, distdir):
         def op_build_autoconf_automake(ctx):
-            build = ctx.extract().autoconf()
+            build = ctx.extract().gnu_configure()
             build.make()
             build.make_install().install()
 

@@ -5,7 +5,8 @@
 
 
 def build(ctx):
-    build = ctx.extract('%(name)s-1.2rc2').autoconf(['--disable-binaries'])
+    build = ctx.extract(
+        '%(name)s-1.2rc2').gnu_configure(['--disable-binaries'])
     build.make()
     build.make_install().install()
 

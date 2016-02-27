@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         'ax_cv_c_float_words_bigendian=' + {
             'aarch64': 'no',
             'x86_64': 'no',

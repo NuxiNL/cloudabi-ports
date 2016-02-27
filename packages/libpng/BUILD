@@ -6,7 +6,7 @@
 
 def build(ctx):
     root = ctx.extract()
-    build = root.autoconf()
+    build = root.gnu_configure()
     build.make(['bin_PROGRAMS=', 'check_PROGRAMS='])
     stage = build.make_install(['bin_PROGRAMS=', 'check_PROGRAMS=', 'install'])
     stage.path('bin/libpng16-config').unhardcode_paths()

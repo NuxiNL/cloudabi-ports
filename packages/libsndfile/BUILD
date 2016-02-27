@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().autoconf([
+    build = ctx.extract().gnu_configure([
         'ac_cv_c_byte_order=' + {
             'aarch64': 'little',
             'x86_64': 'little',

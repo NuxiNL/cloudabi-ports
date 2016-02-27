@@ -6,7 +6,7 @@
 
 def build(ctx):
     # Also install Bash under the name 'sh'.
-    build = ctx.extract().autoconf()
+    build = ctx.extract().gnu_configure()
     build.make()
     stage = build.make_install()
     stage.path('bin/sh').symlink('bash')
