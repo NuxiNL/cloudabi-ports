@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc2.src')
+    root = ctx.extract('%(name)s-%(version)s.src')
     headers = ctx.extract('cloudlibc-0.21').path('src/include')
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
@@ -55,14 +55,14 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='3.7.92',
+    version='3.8.0',
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='compiler-rt-3.8.0rc2.src.tar.xz',
-    checksum='2bdda9d47e59b075eba87fa712625f1cb7013a3c529223442247288d92ca56ff',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    name='compiler-rt-3.8.0.src.tar.xz',
+    checksum='c8d3387e55f229543dac1941769120f24dc50183150bf19d1b070d53d29d56b0',
+    master_sites={'http://llvm.org/releases/3.8.0/'},
 )

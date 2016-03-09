@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc2.src')
-    ctx.extract('libcxxabi-3.8.0rc2.src').rename(root.path('libcxxabi'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('libcxxabi-%(version)s.src').rename(root.path('libcxxabi'))
 
     # Build libc++.a.
     sources = {
@@ -34,7 +34,7 @@ def build(ctx):
 
 package(
     name='libcxx',
-    version='3.7.92',
+    version='3.8.0',
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -42,7 +42,7 @@ package(
 )
 
 distfile(
-    name='libcxx-3.8.0rc2.src.tar.xz',
-    checksum='3737697457a1c1be96d653d5bca76caa0f3f4c97f0baaf232f706607399d9b91',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    name='libcxx-3.8.0.src.tar.xz',
+    checksum='36804511b940bc8a7cefc7cb391a6b28f5e3f53f6372965642020db91174237b',
+    master_sites={'http://llvm.org/releases/3.8.0/'},
 )

@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.8.0rc2.src')
-    ctx.extract('cfe-3.8.0rc2.src').rename(root.path('tools/clang'))
-    ctx.extract('lld-3.8.0rc2.src').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
+    ctx.extract('lld-%(version)s.src').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake()
@@ -43,7 +43,7 @@ def build(ctx):
 
 host_package(
     name='llvm',
-    version='3.7.92',
+    version='3.8.0',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -51,20 +51,20 @@ host_package(
 )
 
 distfile(
-    name='cfe-3.8.0rc2.src.tar.xz',
-    checksum='94b0e158a31573c4bb47b872fea08c49f4e6754a4de2bacdc20db231c9ace9b6',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    name='cfe-3.8.0.src.tar.xz',
+    checksum='04149236de03cf05232d68eb7cb9c50f03062e339b68f4f8a03b650a11536cf9',
+    master_sites={'http://llvm.org/releases/3.8.0/'},
     patches={'safestack'},
 )
 distfile(
-    name='lld-3.8.0rc2.src.tar.xz',
-    checksum='03c328d2d126b65dae2619b9195a4177818c8451d5b843bbc4110c300bcd1a23',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    name='lld-3.8.0.src.tar.xz',
+    checksum='94704dda228c9f75f4403051085001440b458501ec97192eee06e8e67f7f9f0c',
+    master_sites={'http://llvm.org/releases/3.8.0/'},
     patches={'start-stop-gc-sections'},
 )
 distfile(
-    name='llvm-3.8.0rc2.src.tar.xz',
-    checksum='8141ba68fde29e213fb82886b58b722d9c2aa2179116d1e7f8a7d6de23508047',
-    master_sites={'http://llvm.org/pre-releases/3.8.0/rc2/'},
+    name='llvm-3.8.0.src.tar.xz',
+    checksum='555b028e9ee0f6445ff8f949ea10e9cd8be0d084840e21fbbe1d31d51fc06e46',
+    master_sites={'http://llvm.org/releases/3.8.0/'},
     patches={},
 )
