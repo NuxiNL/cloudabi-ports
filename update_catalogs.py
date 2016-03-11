@@ -26,7 +26,7 @@ DIR_NETBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/net
 DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/openbsd'
 
 # Location of the catalog signing keys.
-ARCHLINUX_PRIVATE_KEY = None
+ARCHLINUX_PRIVATE_KEY = '31344B15'
 DEBIAN_PRIVATE_KEY = '31344B15'
 FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
 
