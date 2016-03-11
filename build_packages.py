@@ -9,7 +9,7 @@ import sys
 
 from src import config
 from src import util
-from src.catalog import DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.repository import Repository
 from src.version import FullVersion
 
@@ -17,6 +17,7 @@ from src.version import FullVersion
 DIR_ROOT = os.getcwd()
 DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_INSTALL = os.path.join(DIR_ROOT, '_obj/install')
+DIR_PACKAGES_ARCHLINUX = os.path.join(DIR_ROOT, '_obj/packages/archlinux')
 DIR_PACKAGES_DEBIAN = os.path.join(DIR_ROOT, '_obj/packages/debian')
 DIR_PACKAGES_FREEBSD = os.path.join(DIR_ROOT, '_obj/packages/freebsd')
 DIR_PACKAGES_NETBSD = os.path.join(DIR_ROOT, '_obj/packages/netbsd')
@@ -31,6 +32,7 @@ for filename in util.walk_files(DIR_REPOSITORY):
 target_packages = repo.get_target_packages()
 
 catalogs = {
+    ArchLinuxCatalog(None, DIR_PACKAGES_ARCHLINUX),
     DebianCatalog(None, DIR_PACKAGES_DEBIAN),
     FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),

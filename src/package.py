@@ -141,6 +141,9 @@ class TargetPackage:
     def get_arch(self):
         return self._arch
 
+    def get_archlinux_name(self):
+        return '%s-%s' % (self._arch, self._name)
+
     def get_debian_name(self):
         return '%s-%s' % (self._arch.replace('_', '-'), self._name)
 

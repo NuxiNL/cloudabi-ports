@@ -557,3 +557,106 @@ class OpenBSDCatalog(Catalog):
             '@' + listing,
         ])
         return output
+
+class ArchLinuxCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(ArchLinuxCatalog, self).__init__(old_path, new_path)
+
+        self._existing = collections.defaultdict(FullVersion)
+        if old_path:
+            for root, dirs, files in os.walk(old_path):
+                for filename in files:
+                    parts = filename.rsplit('-', 3)
+                    if len(parts) == 4 and parts[3] == 'any.pkg.tar.xz':
+                        name = parts[0]
+                        version = FullVersion.parse_archlinux(parts[1] + '-' + parts[2])
+                        if self._existing[name] < version:
+                            self._existing[name] = version
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s-%s-any.pkg.tar.xz' % (package.get_archlinux_name(),
+                                         version.get_archlinux_version())
+
+    @staticmethod
+    def _get_suggested_mode(path):
+        return Catalog._get_suggested_mode(path) | 0o200
+
+    def lookup_latest_version(self, package):
+        return self._existing[package.get_archlinux_name()]
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        arch = package.get_arch()
+        prefix = os.path.join('/usr', arch)
+        package.extract(os.path.join(installdir, prefix[1:]), prefix)
+        files = sorted(util.walk_files(installdir))
+
+        util.make_dir(installdir)
+        pkginfo = os.path.join(installdir, '.PKGINFO')
+        with open(pkginfo, 'w') as f:
+            f.write(
+                'pkgname = %(archlinux_name)s\n'
+                'pkgdesc = %(name)s for %(arch)s\n'
+                'pkgver = %(version)s\n'
+                'size = %(flatsize)s\n'
+                'arch = any\n' % {
+                    'arch': package.get_arch(),
+                    'archlinux_name': package.get_archlinux_name(),
+                    'flatsize': sum(os.lstat(path).st_size for path in files),
+                    'name': package.get_name(),
+                    'version': version.get_archlinux_version(),
+                }
+            )
+            lib_depends = package.get_lib_depends()
+            for dep in sorted(pkg.get_archlinux_name() for pkg in package.get_lib_depends()):
+                f.write('depend = %s\n' % dep)
+
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+        listing = os.path.join(config.DIR_BUILDROOT, 'listing')
+        with open(listing, 'w') as f:
+            f.write('.PKGINFO\n')
+            for path in files:
+                f.write(os.path.relpath(path, installdir) + '\n')
+
+        mtree = os.path.join(installdir, '.MTREE')
+
+        with open(listing, 'w') as f:
+            f.write('#mtree\n')
+            f.write(
+                '.PKGINFO type=file mode=0644 uname=root gname=root time=0 contents=%s\n' % pkginfo)
+            f.write(
+                '.MTREE type=file mode=0644 uname=root gname=root time=0 contents=%s\n' % mtree)
+            for path in files:
+                relpath = os.path.relpath(path, installdir)
+                if os.path.islink(path):
+                    f.write(
+                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n' %
+                        (relpath, os.readlink(path)))
+                else:
+                    f.write(
+                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n' %
+                        (relpath, self._get_suggested_mode(path), path))
+
+        self._run_tar([
+            '-czf', mtree,
+            '-C', installdir,
+            '--format=mtree',
+            '--options=gzip:!timestamp,!all,use-set,type,uid,gid,mode,time,size,md5,sha256,link',
+            '--exclude=.MTREE',
+            '@' + listing])
+
+        self._run_tar(['-cJf', output, '-C', installdir, '@' + listing])
+
+        return output
+
+    def finish(self, private_key):
+        #TODO(maurice): Sign stuff.
+        db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
+        packages = [os.path.join(self._new_path, self._get_filename(*p)) for p in self._packages]
+        subprocess.check_call(['repo-add', db_file] + packages)

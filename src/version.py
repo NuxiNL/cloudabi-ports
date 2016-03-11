@@ -56,6 +56,12 @@ class FullVersion:
     def bump_revision(self):
         return FullVersion(self._epoch, self._version, self._revision + 1)
 
+    def get_archlinux_version(self):
+        version = '%s-%d' % (self._version, self._revision + 1)
+        if self._epoch:
+            version = '%d:' % self._epoch + version
+        return version
+
     def get_debian_version(self):
         version = str(self._version)
         if self._epoch:
@@ -87,6 +93,22 @@ class FullVersion:
         if self._epoch:
             version += 'v%d' % self._epoch
         return version
+
+    @staticmethod
+    def parse_archlinux(string):
+        epoch = 0
+        revision = 0
+        # Parse leading Epoch number.
+        s = string.split(':', 1)
+        if len(s) == 2:
+            epoch = int(s[0])
+            string = s[1]
+        # Parse trailing revision number.
+        s = string.rsplit('-', 1)
+        if len(s) == 2:
+            string = s[0]
+            revision = int(s[1]) - 1
+        return FullVersion(epoch, SimpleVersion(string), revision)
 
     @staticmethod
     def parse_debian(string):
