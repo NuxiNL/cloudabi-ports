@@ -656,7 +656,11 @@ class ArchLinuxCatalog(Catalog):
         return output
 
     def finish(self, private_key):
-        #TODO(maurice): Sign stuff.
+        for package, version in self._packages:
+            package_file = self._get_filename(package, version)
+            subprocess.check_call([
+                'gpg', '--detach-sign', '--default-key', private_key, '--no-armor',
+                os.path.join(self._new_path, package_file)])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
         packages = [os.path.join(self._new_path, self._get_filename(*p)) for p in self._packages]
-        subprocess.check_call(['repo-add', db_file] + packages)
+        subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] + packages)
