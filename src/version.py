@@ -26,7 +26,7 @@ class SimpleVersion:
 
 class FullVersion:
 
-    def __init__(self, epoch=0, version=SimpleVersion('0'), revision=0):
+    def __init__(self, epoch=0, version=SimpleVersion('0'), revision=1):
         self._epoch = epoch
         self._version = version
         self._revision = revision
@@ -47,7 +47,7 @@ class FullVersion:
             # Version is decreasing. Increase the Epoch and reset the
             # revision number.
             self._epoch += 1
-            self._revision = 0
+            self._revision = 1
         elif (self._version == other._version and self._revision < other._revision):
             # Package of the same version already exists. Ensure that we
             # don't decrement the revision number.
@@ -57,7 +57,7 @@ class FullVersion:
         return FullVersion(self._epoch, self._version, self._revision + 1)
 
     def get_archlinux_version(self):
-        version = '%s-%d' % (self._version, self._revision + 1)
+        version = '%s-%d' % (self._version, self._revision)
         if self._epoch:
             version = '%d:' % self._epoch + version
         return version
@@ -66,14 +66,11 @@ class FullVersion:
         version = str(self._version)
         if self._epoch:
             version = '%d:' % self._epoch + version
-        if self._revision:
-            version += '-%d' % self._revision
+        version += '-%d' % self._revision
         return version
 
     def get_freebsd_version(self):
-        version = str(self._version)
-        if self._revision:
-            version += '_%d' % self._revision
+        version = '%s_%d' % (self._version, self._revision)
         if self._epoch:
             version += ',%d' % self._epoch
         return version
@@ -81,15 +78,10 @@ class FullVersion:
     def get_netbsd_version(self):
         # TODO(ed): NetBSD does not seem to support the Epoch numbers?
         assert self._epoch == 0
-        version = str(self._version)
-        if self._revision:
-            version += 'nb%d' % self._revision
-        return version
+        return '%snb%d' % (self._version, self._revision)
 
     def get_openbsd_version(self):
-        version = str(self._version)
-        if self._revision:
-            version += 'p%d' % self._revision
+        version = '%sp%d' % (self._version, self._revision)
         if self._epoch:
             version += 'v%d' % self._epoch
         return version
@@ -107,7 +99,7 @@ class FullVersion:
         s = string.rsplit('-', 1)
         if len(s) == 2:
             string = s[0]
-            revision = int(s[1]) - 1
+            revision = int(s[1])
         return FullVersion(epoch, SimpleVersion(string), revision)
 
     @staticmethod
