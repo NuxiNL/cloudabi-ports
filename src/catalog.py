@@ -663,4 +663,6 @@ class ArchLinuxCatalog(Catalog):
                 os.path.join(self._new_path, package_file)])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
         packages = [os.path.join(self._new_path, self._get_filename(*p)) for p in self._packages]
+        # Ensure that repo-add as a valid working directory.
+        os.chdir('/')
         subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] + packages)
