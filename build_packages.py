@@ -41,7 +41,7 @@ catalogs = {
 
 
 def build_package(package):
-    version = FullVersion(0, package.get_version(), 0)
+    version = FullVersion(version=package.get_version())
     for catalog in catalogs:
         catalog.insert(package, version, catalog.package(package, version))
 

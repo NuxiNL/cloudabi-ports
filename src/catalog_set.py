@@ -58,7 +58,7 @@ class CatalogSet:
         # Scan the existing catalogs to determine the Epoch and revision
         # numbers of the latest version of the package. At this version
         # we need to start building.
-        version = FullVersion(0, package.get_version(), 0)
+        version = FullVersion(version=package.get_version())
         for catalog in self._catalogs:
             version.bump_epoch_revision(catalog.lookup_latest_version(package))
 
