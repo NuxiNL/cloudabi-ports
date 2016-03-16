@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    root = ctx.extract()
+    root = ctx.extract('%(name)s/v%(version)s')
     root.run(['./build'])
 
     root.run(['DESTDIR=stage', 'PREFIX=/', './install'])
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='cloudlibc-0.22.tar.xz',
-    checksum='82de83621595fcb893de20dfcd6342f6d5591b35f9bccb42702add5342330da7',
-    master_sites={'https://nuxi.nl/distfiles/cloudlibc/'},
+    name='cloudlibc/v0.22.tar.gz',
+    checksum='8f6b8c3c28f03cf066eae36b92c1e2fa8e974a618e7a13809cc7c630dccabd65',
+    master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'},
 )
