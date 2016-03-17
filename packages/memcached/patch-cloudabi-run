@@ -34,7 +34,15 @@
  static int try_read_command(conn *c);
  
  enum try_read_result {
-@@ -4403,6 +4406,7 @@
+@@ -223,6 +226,7 @@
+     settings.oldest_cas = 0;          /* supplements accuracy of oldest_live */
+     settings.evict_to_free = 1;       /* push old items out of cache when memory runs out */
+     settings.socketpath = NULL;       /* by default, not using a unix socket */
++    settings.socketfd = -1;
+     settings.factor = 1.25;
+     settings.chunk_size = 48;         /* space for a modest key and value */
+     settings.num_threads = 4;         /* N workers */
+@@ -4403,6 +4407,7 @@
      return;
  }
  
@@ -42,7 +50,7 @@
  static int new_socket(struct addrinfo *ai) {
      int sfd;
      int flags;
-@@ -4749,6 +4753,7 @@
+@@ -4749,6 +4754,7 @@
  
      return 0;
  }
@@ -50,7 +58,7 @@
  
  /*
   * We keep the current time of day in a global variable that's updated by a
-@@ -4809,6 +4814,7 @@
+@@ -4809,6 +4815,7 @@
      }
  }
  
@@ -58,7 +66,7 @@
  static void usage(void) {
      printf(PACKAGE " " VERSION "\n");
      printf("-p <num>      TCP port number to listen on (default: 11211)\n"
-@@ -5073,6 +5079,7 @@
+@@ -5073,6 +5080,7 @@
      return -1;
  #endif
  }
@@ -66,16 +74,25 @@
  
  /**
   * Do basic sanity check of the runtime environment
-@@ -5096,6 +5103,134 @@
+@@ -5096,6 +5104,144 @@
      return true;
  }
  
 +#ifdef __CloudABI__
 +
++static bool process_argdata(const argdata_t *key, const argdata_t *value,
++                            void *thunk) {
++    const char *keystr;
++    if (argdata_get_str_c(key, &keystr) != 0)
++        return true;
++    if (strcmp(keystr, "socket") == 0)
++        argdata_get_fd(value, &settings.socketfd);
++    return true;
++}
++
 +void program_main(const argdata_t *ad) {
 +    bool preallocate = false;
 +    int retval = EXIT_SUCCESS;
-+    int sfd;
 +    int flags;
 +
 +    bool protocol_specified = false;
@@ -96,6 +113,8 @@
 +
 +    /* set stderr non-buffering (for running under, say, daemontools) */
 +    setbuf(stderr, NULL);
++
++    argdata_iterate_map(ad, process_argdata, NULL);
 +
 +    if (settings.lru_maintainer_thread && settings.hot_lru_pct + settings.warm_lru_pct > 80) {
 +        fprintf(stderr, "hot_lru_pct + warm_lru_pct cannot be more than 80%% combined\n");
@@ -167,15 +186,14 @@
 +    /* initialise clock event */
 +    clock_handler(0, 0, 0);
 +
-+    /* TODO(ed): Pass in the right file descriptor! */
-+    sfd = 0;
-+    if ((flags = fcntl(sfd, F_GETFL, 0)) < 0 ||
-+        fcntl(sfd, F_SETFL, flags | O_NONBLOCK) < 0) {
++    /* Listen on the provided network socket. */
++    if ((flags = fcntl(settings.socketfd, F_GETFL, 0)) < 0 ||
++        fcntl(settings.socketfd, F_SETFL, flags | O_NONBLOCK) < 0) {
 +        perror("setting O_NONBLOCK");
-+        close(sfd);
++        close(settings.socketfd);
 +        exit(EXIT_FAILURE);
 +    }
-+    if (!(listen_conn = conn_new(sfd, conn_listening,
++    if (!(listen_conn = conn_new(settings.socketfd, conn_listening,
 +                                 EV_READ | EV_PERSIST, 1,
 +                                 local_transport, main_base))) {
 +        fprintf(stderr, "failed to create listening connection\n");
@@ -201,7 +219,7 @@
  int main (int argc, char **argv) {
      int c;
      bool lock_memory = false;
-@@ -5791,3 +5926,5 @@
+@@ -5791,3 +5937,5 @@
  
      return retval;
  }
@@ -209,7 +227,15 @@
 +#endif
 --- memcached.h
 +++ memcached.h
-@@ -549,7 +549,9 @@
+@@ -315,6 +315,7 @@
+     int evict_to_free;
+     char *socketpath;   /* path to unix socket if using local socket */
+     int access;  /* access mask (a la chmod) for unix domain socket */
++    int socketfd;       /* socket file descriptor. */
+     double factor;          /* chunk size growth factor */
+     int chunk_size;
+     int num_threads;        /* number of worker (without dispatcher) libevent threads to run */
+@@ -549,7 +550,9 @@
                                      uint64_t *cas, const uint32_t hv);
  enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
  conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);
