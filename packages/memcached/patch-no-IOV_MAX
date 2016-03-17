@@ -1,0 +1,26 @@
+--- memcached.c
++++ memcached.c
+@@ -735,6 +735,14 @@
+     int leftover;
+     bool limit_to_mtu;
+ 
++#ifdef IOV_MAX
++    long iov_max = IOV_MAX;
++#else
++    static long iov_max = -1;
++    if (iov_max == -1)
++        iov_max = sysconf(_SC_IOV_MAX);
++#endif
++
+     assert(c != NULL);
+ 
+     do {
+@@ -747,7 +755,7 @@
+         limit_to_mtu = IS_UDP(c->transport) || (1 == c->msgused);
+ 
+         /* We may need to start a new msghdr if this one is full. */
+-        if (m->msg_iovlen == IOV_MAX ||
++        if (m->msg_iovlen == iov_max ||
+             (limit_to_mtu && c->msgbytes >= UDP_MAX_PAYLOAD_SIZE)) {
+             add_msghdr(c);
+             m = &c->msglist[c->msgused - 1];

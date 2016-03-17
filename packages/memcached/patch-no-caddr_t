@@ -1,0 +1,11 @@
+--- memcached.c
++++ memcached.c
+@@ -4017,7 +4017,7 @@
+             /* Might have written just part of the last iovec entry;
+                adjust it so the next write will do the rest. */
+             if (res > 0) {
+-                m->msg_iov->iov_base = (caddr_t)m->msg_iov->iov_base + res;
++                m->msg_iov->iov_base = (char *)m->msg_iov->iov_base + res;
+                 m->msg_iov->iov_len -= res;
+             }
+             return TRANSMIT_INCOMPLETE;

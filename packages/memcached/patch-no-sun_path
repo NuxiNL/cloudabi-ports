@@ -1,0 +1,17 @@
+--- memcached.c
++++ memcached.c
+@@ -2747,10 +2747,14 @@
+                 break;
+ 
+             case AF_UNIX:
++#ifdef __CloudABI__
++                strcpy(buf, "<unknown>");
++#else
+                 strncpy(addr_text,
+                         ((struct sockaddr_un *)addr)->sun_path,
+                         sizeof(addr_text) - 1);
+                 addr_text[sizeof(addr_text)-1] = '\0';
++#endif
+                 protoname = "unix";
+                 break;
+         }

@@ -1,0 +1,22 @@
+--- memcached.c
++++ memcached.c
+@@ -2562,7 +2562,9 @@
+ 
+ /* return server specific stats only */
+ static void server_stats(ADD_STAT add_stats, conn *c) {
++#ifndef __CloudABI__
+     pid_t pid = getpid();
++#endif
+     rel_time_t now = current_time;
+ 
+     struct thread_stats thread_stats;
+@@ -2577,7 +2579,9 @@
+ 
+     STATS_LOCK();
+ 
++#ifndef __CloudABI__
+     APPEND_STAT("pid", "%lu", (long)pid);
++#endif
+     APPEND_STAT("uptime", "%u", now - ITEM_UPDATE_INTERVAL);
+     APPEND_STAT("time", "%ld", now + (long)process_started);
+     APPEND_STAT("version", "%s", VERSION);

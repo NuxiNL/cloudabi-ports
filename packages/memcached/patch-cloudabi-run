@@ -1,0 +1,221 @@
+--- daemon.c
++++ daemon.c
+@@ -41,6 +41,7 @@
+ 
+ #include "memcached.h"
+ 
++#ifndef __CloudABI__
+ int daemonize(int nochdir, int noclose)
+ {
+     int fd;
+@@ -87,3 +88,4 @@
+     }
+     return (0);
+ }
++#endif
+--- memcached.c
++++ memcached.c
+@@ -47,6 +47,10 @@
+ #include <limits.h>
+ #include <sysexits.h>
+ #include <stddef.h>
++#ifdef __CloudABI__
++#include <argdata.h>
++#include <program.h>
++#endif
+ 
+ /* FreeBSD 4.x doesn't have IOV_MAX exposed. */
+ #ifndef IOV_MAX
+@@ -59,7 +63,6 @@
+  * forward declarations
+  */
+ static void drive_machine(conn *c);
+-static int new_socket(struct addrinfo *ai);
+ static int try_read_command(conn *c);
+ 
+ enum try_read_result {
+@@ -4403,6 +4406,7 @@
+     return;
+ }
+ 
++#ifndef __CloudABI__
+ static int new_socket(struct addrinfo *ai) {
+     int sfd;
+     int flags;
+@@ -4749,6 +4753,7 @@
+ 
+     return 0;
+ }
++#endif
+ 
+ /*
+  * We keep the current time of day in a global variable that's updated by a
+@@ -4809,6 +4814,7 @@
+     }
+ }
+ 
++#ifndef __CloudABI__
+ static void usage(void) {
+     printf(PACKAGE " " VERSION "\n");
+     printf("-p <num>      TCP port number to listen on (default: 11211)\n"
+@@ -5073,6 +5079,7 @@
+     return -1;
+ #endif
+ }
++#endif
+ 
+ /**
+  * Do basic sanity check of the runtime environment
+@@ -5096,6 +5103,134 @@
+     return true;
+ }
+ 
++#ifdef __CloudABI__
++
++void program_main(const argdata_t *ad) {
++    bool preallocate = false;
++    int retval = EXIT_SUCCESS;
++    int sfd;
++    int flags;
++
++    bool protocol_specified = false;
++    bool start_lru_maintainer = false;
++    bool start_lru_crawler = false;
++    enum hashfunc_type hash_type = JENKINS_HASH;
++
++    if (!sanitycheck()) {
++        exit(EXIT_FAILURE);
++    }
++
++    /* init settings */
++    settings_init();
++
++    /* Run regardless of initializing it later */
++    init_lru_crawler();
++    init_lru_maintainer();
++
++    /* set stderr non-buffering (for running under, say, daemontools) */
++    setbuf(stderr, NULL);
++
++    if (settings.lru_maintainer_thread && settings.hot_lru_pct + settings.warm_lru_pct > 80) {
++        fprintf(stderr, "hot_lru_pct + warm_lru_pct cannot be more than 80%% combined\n");
++        exit(EXIT_FAILURE);
++    }
++
++    if (hash_init(hash_type) != 0) {
++        fprintf(stderr, "Failed to initialize hash_algorithm!\n");
++        exit(EXIT_FAILURE);
++    }
++
++    /*
++     * Use one workerthread to serve each UDP port if the user specified
++     * multiple ports
++     */
++    if (settings.inter != NULL && strchr(settings.inter, ',')) {
++        settings.num_threads_per_udp = 1;
++    } else {
++        settings.num_threads_per_udp = settings.num_threads;
++    }
++
++    if (settings.sasl) {
++        if (!protocol_specified) {
++            settings.binding_protocol = binary_prot;
++        } else {
++            if (settings.binding_protocol != binary_prot) {
++                fprintf(stderr, "ERROR: You cannot allow the ASCII protocol while using SASL.\n");
++                exit(EXIT_FAILURE);
++            }
++        }
++    }
++
++    /* Initialize Sasl if -S was specified */
++    if (settings.sasl) {
++        init_sasl();
++    }
++
++    /* initialize main thread libevent instance */
++    main_base = event_init();
++
++    /* initialize other stuff */
++    stats_init();
++    assoc_init(settings.hashpower_init);
++    conn_init();
++    slabs_init(settings.maxbytes, settings.factor, preallocate);
++
++    /* start up worker threads if MT mode */
++    memcached_thread_init(settings.num_threads, main_base);
++
++    if (start_assoc_maintenance_thread() == -1) {
++        exit(EXIT_FAILURE);
++    }
++
++    if (start_lru_crawler && start_item_crawler_thread() != 0) {
++        fprintf(stderr, "Failed to enable LRU crawler thread\n");
++        exit(EXIT_FAILURE);
++    }
++
++    if (start_lru_maintainer && start_lru_maintainer_thread() != 0) {
++        fprintf(stderr, "Failed to enable LRU maintainer thread\n");
++        exit(EXIT_FAILURE);
++    }
++
++    if (settings.slab_reassign &&
++        start_slab_maintenance_thread() == -1) {
++        exit(EXIT_FAILURE);
++    }
++
++    /* initialise clock event */
++    clock_handler(0, 0, 0);
++
++    /* TODO(ed): Pass in the right file descriptor! */
++    sfd = 0;
++    if ((flags = fcntl(sfd, F_GETFL, 0)) < 0 ||
++        fcntl(sfd, F_SETFL, flags | O_NONBLOCK) < 0) {
++        perror("setting O_NONBLOCK");
++        close(sfd);
++        exit(EXIT_FAILURE);
++    }
++    if (!(listen_conn = conn_new(sfd, conn_listening,
++                                 EV_READ | EV_PERSIST, 1,
++                                 local_transport, main_base))) {
++        fprintf(stderr, "failed to create listening connection\n");
++        exit(EXIT_FAILURE);
++    }
++
++    /* enter the event loop */
++    if (event_base_loop(main_base, 0) != 0) {
++        retval = EXIT_FAILURE;
++    }
++
++    stop_assoc_maintenance_thread();
++
++    /* Clean up strdup() call for bind() address */
++    if (settings.inter)
++      free(settings.inter);
++
++    exit(retval);
++}
++
++#else
++
+ int main (int argc, char **argv) {
+     int c;
+     bool lock_memory = false;
+@@ -5791,3 +5926,5 @@
+ 
+     return retval;
+ }
++
++#endif
+--- memcached.h
++++ memcached.h
+@@ -549,7 +549,9 @@
+                                     uint64_t *cas, const uint32_t hv);
+ enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
+ conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);
++#ifndef __CloudABI__
+ extern int daemonize(int nochdir, int noclose);
++#endif
+ 
+ #define mutex_lock(x) pthread_mutex_lock(x)
+ #define mutex_unlock(x) pthread_mutex_unlock(x)

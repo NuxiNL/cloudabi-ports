@@ -1,0 +1,24 @@
+--- memcached.c
++++ memcached.c
+@@ -313,10 +313,13 @@
+     /* We're unlikely to see an FD much higher than maxconns. */
+     int next_fd = dup(1);
+     int headroom = 10;      /* account for extra unexpected open FDs */
++#ifndef __CloudABI__
+     struct rlimit rl;
++#endif
+ 
+     max_fds = settings.maxconns + headroom + next_fd;
+ 
++#ifndef __CloudABI__
+     /* But if possible, get the actual highest FD we can possibly ever see. */
+     if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
+         max_fds = rl.rlim_max;
+@@ -324,6 +327,7 @@
+         fprintf(stderr, "Failed to query maximum file descriptor; "
+                         "falling back to maxconns\n");
+     }
++#endif
+ 
+     close(next_fd);
+ 

@@ -1,0 +1,80 @@
+--- assoc.c
++++ assoc.c
+@@ -14,8 +14,10 @@
+ #include "memcached.h"
+ #include <sys/stat.h>
+ #include <sys/socket.h>
+-#include <sys/signal.h>
++#include <signal.h>
++#ifndef __CloudABI__
+ #include <sys/resource.h>
++#endif
+ #include <fcntl.h>
+ #include <netinet/in.h>
+ #include <errno.h>
+--- items.c
++++ items.c
+@@ -2,8 +2,10 @@
+ #include "memcached.h"
+ #include <sys/stat.h>
+ #include <sys/socket.h>
+-#include <sys/signal.h>
++#include <signal.h>
++#ifndef __CloudABI__
+ #include <sys/resource.h>
++#endif
+ #include <fcntl.h>
+ #include <netinet/in.h>
+ #include <errno.h>
+--- memcached.c
++++ memcached.c
+@@ -18,8 +18,10 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <signal.h>
++#ifndef __CloudABI__
+ #include <sys/param.h>
+ #include <sys/resource.h>
++#endif
+ #include <sys/uio.h>
+ #include <ctype.h>
+ #include <stdarg.h>
+@@ -33,10 +35,14 @@
+ #ifndef __need_IOV_MAX
+ #define __need_IOV_MAX
+ #endif
++#ifndef __CloudABI__
+ #include <pwd.h>
++#endif
+ #include <sys/mman.h>
+ #include <fcntl.h>
++#ifndef __CloudABI__
+ #include <netinet/tcp.h>
++#endif
+ #include <arpa/inet.h>
+ #include <errno.h>
+ #include <stdlib.h>
+@@ -45,7 +51,9 @@
+ #include <time.h>
+ #include <assert.h>
+ #include <limits.h>
++#ifndef __CloudABI__
+ #include <sysexits.h>
++#endif
+ #include <stddef.h>
+ 
+ /* FreeBSD 4.x doesn't have IOV_MAX exposed. */
+--- slabs.c
++++ slabs.c
+@@ -10,8 +10,10 @@
+ #include "memcached.h"
+ #include <sys/stat.h>
+ #include <sys/socket.h>
+-#include <sys/signal.h>
++#include <signal.h>
++#ifndef __CloudABI__
+ #include <sys/resource.h>
++#endif
+ #include <fcntl.h>
+ #include <netinet/in.h>
+ #include <errno.h>
