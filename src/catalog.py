@@ -176,7 +176,7 @@ class DebianCatalog(Catalog):
             os.path.join(self._new_path, 'dists/cloudabi/InRelease'), 'w'
         ) as f, subprocess.Popen([
             'gpg', '--default-key', private_key, '--armor',
-            '--sign', '--clearsign',
+            '--sign', '--clearsign', '--digest-algo', 'SHA256',
         ], stdin=subprocess.PIPE, stdout=f) as proc:
             def append(text):
                 proc.stdin.write(bytes(text, encoding='ASCII'))
@@ -659,7 +659,8 @@ class ArchLinuxCatalog(Catalog):
         for package, version in self._packages:
             package_file = self._get_filename(package, version)
             subprocess.check_call([
-                'gpg', '--detach-sign', '--default-key', private_key, '--no-armor',
+                'gpg', '--detach-sign', '--default-key', private_key,
+                '--no-armor', '--digest-algo', 'SHA256',
                 os.path.join(self._new_path, package_file)])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
         packages = [os.path.join(self._new_path, self._get_filename(*p)) for p in self._packages]
