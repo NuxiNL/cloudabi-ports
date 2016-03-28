@@ -667,3 +667,76 @@ class ArchLinuxCatalog(Catalog):
         # Ensure that repo-add as a valid working directory.
         os.chdir('/')
         subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] + packages)
+
+class CygwinCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(CygwinCatalog, self).__init__(old_path, new_path)
+
+        self._existing = collections.defaultdict(FullVersion)
+        if old_path:
+            for root, dirs, files in os.walk(old_path):
+                for filename in files:
+                    parts = filename.rsplit('-', 3)
+                    if len(parts) == 4 and parts[3] == '.tar.xz':
+                        name = parts[0]
+                        version = FullVersion.parse_cygwin(parts[1] + '-' + parts[2])
+                        if self._existing[name] < version:
+                            self._existing[name] = version
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s-%s.tar.xz' % (package.get_cygwin_name(),
+                                 version.get_cygwin_version())
+
+    def lookup_latest_version(self, package):
+        return self._existing[package.get_cygwin_name()]
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        arch = package.get_arch()
+        prefix = os.path.join('/usr', arch)
+        package.extract(os.path.join(installdir, prefix[1:]), prefix)
+        files = sorted(util.walk_files(installdir))
+
+        util.make_dir(installdir)
+
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+
+        self._run_tar(['-cJf', output, '-C', installdir, '.'])
+
+        return output
+
+    def finish(self):
+        for cygwin_arch in ('x86', 'x86_64'):
+            cygwin_arch_dir = os.path.join(self._new_path, 'x86')
+            util.make_dir(cygwin_arch_dir)
+            setup_file = os.path.join(cygwin_arch_dir, 'setup.ini')
+            with open(setup_file, 'w') as f:
+                f.write('release: cygwin\n')
+                f.write('arch: %s\n' % cygwin_arch)
+                for package, version in self._packages:
+                    package_file = self._get_filename(package, version)
+                    f.write(
+                        '\n'
+                        '@ %(name)s\n'
+                        'sdesc "%(name)s for %(arch)s"\n'
+                        'version: %(version)s\n'
+                        'category: CloudABI\n'
+                        'requires: %(deps)s\n'
+                        'install: %(filename)s %(size)s %(sha512)s\n' % {
+                            'arch': package.get_arch(),
+                            'name': package.get_name(),
+                            'filename': package_file,
+                            'size': os.lstat(package_file).st_size,
+                            'version': version.get_cygwin_version(),
+                            'sha512': util.sha512(os.join(self._new_path,
+                                package_file)).hexdigest(),
+                            'deps': ' '.join(sorted(pkg.name() for pkg in
+                                package.get_lib_depends()))
+                        }
+                    )

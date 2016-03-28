@@ -154,6 +154,10 @@ def sha256(path):
     return _hash_file(path, hashlib.sha256)
 
 
+def sha512(path):
+    return _hash_file(path, hashlib.sha512)
+
+
 def md5(path):
     return _hash_file(path, hashlib.md5)
 

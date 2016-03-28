@@ -8,7 +8,7 @@ import os
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.catalog_set import CatalogSet
 from src.repository import Repository
 
@@ -20,6 +20,7 @@ DIR_TMP = '/usr/local/www/nuxi.nl/repo.tmp'
 
 # Final location of the catalogs.
 DIR_ARCHLINUX_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/archlinux'
+DIR_CYGWIN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/cygwin'
 DIR_DEBIAN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/debian'
 DIR_FREEBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/freebsd'
 DIR_NETBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/netbsd'
@@ -44,6 +45,8 @@ target_packages = repo.get_target_packages()
 # The catalogs that we want to create.
 archlinux_path = os.path.join(DIR_TMP, 'archlinux')
 archlinux_catalog = ArchLinuxCatalog(DIR_ARCHLINUX_CATALOG, archlinux_path)
+cygwin_path = os.path.join(DIR_TMP, 'cygwin')
+cygwin_catalog = CygwinCatalog(DIR_CYGWIN_CATALOG, cygwin_path)
 debian_path = os.path.join(DIR_TMP, 'debian')
 debian_catalog = DebianCatalog(DIR_DEBIAN_CATALOG, debian_path)
 freebsd_path = os.path.join(DIR_TMP, 'freebsd')
@@ -55,18 +58,21 @@ openbsd_catalog = OpenBSDCatalog(DIR_OPENBSD_CATALOG, openbsd_path)
 
 # Build all packages.
 catalog_set = CatalogSet({
-    archlinux_catalog, debian_catalog, freebsd_catalog, netbsd_catalog, openbsd_catalog,
+    archlinux_catalog, cygwin_catalog, debian_catalog, freebsd_catalog, netbsd_catalog, openbsd_catalog,
 })
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
 
 archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
+cygwin_catalog.finish()
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_ARCHLINUX_CATALOG, os.path.join(DIR_TMP, 'archlinux.old'))
 os.rename(archlinux_path, DIR_ARCHLINUX_CATALOG)
+os.rename(DIR_CYGWIN_CATALOG, os.path.join(DIR_TMP, 'cygwin.old'))
+os.rename(cygwin_path, DIR_CYGWIN_CATALOG)
 os.rename(DIR_DEBIAN_CATALOG, os.path.join(DIR_TMP, 'debian.old'))
 os.rename(debian_path, DIR_DEBIAN_CATALOG)
 os.rename(DIR_FREEBSD_CATALOG, os.path.join(DIR_TMP, 'freebsd.old'))

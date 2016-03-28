@@ -62,6 +62,11 @@ class FullVersion:
             version = '%d:' % self._epoch + version
         return version
 
+    def get_cygwin_version(self):
+        # TODO: Cygwin does not seem to support epoch numbers
+        assert self._epoch == 0
+        return '%s-%d' % (self._version, self._revision)
+
     def get_debian_version(self):
         version = str(self._version)
         if self._epoch:
@@ -95,6 +100,16 @@ class FullVersion:
         if len(s) == 2:
             epoch = int(s[0])
             string = s[1]
+        # Parse trailing revision number.
+        s = string.rsplit('-', 1)
+        if len(s) == 2:
+            string = s[0]
+            revision = int(s[1])
+        return FullVersion(epoch, SimpleVersion(string), revision)
+
+    @staticmethod
+    def parse_cygwin(string):
+        revision = 0
         # Parse trailing revision number.
         s = string.rsplit('-', 1)
         if len(s) == 2:
