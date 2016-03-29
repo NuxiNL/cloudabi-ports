@@ -677,12 +677,13 @@ class CygwinCatalog(Catalog):
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
-                    parts = filename.rsplit('-', 3)
-                    if len(parts) == 4 and parts[3] == '.tar.xz':
-                        name = parts[0]
-                        version = FullVersion.parse_cygwin(parts[1] + '-' + parts[2])
-                        if self._existing[name] < version:
-                            self._existing[name] = version
+                    if filename.endswith('.tar.xz'):
+                        parts = filename[:-7].rsplit('-', 2)
+                        if len(parts) == 3:
+                            name = parts[0]
+                            version = FullVersion.parse_cygwin(parts[1] + '-' + parts[2])
+                            if self._existing[name] < version:
+                                self._existing[name] = version
 
     @staticmethod
     def _get_filename(package, version):
