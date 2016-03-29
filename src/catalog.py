@@ -721,7 +721,8 @@ class CygwinCatalog(Catalog):
                 f.write('release: cygwin\n')
                 f.write('arch: %s\n' % cygwin_arch)
                 f.write('setup-timestamp: %d\n' % int(time.time()))
-                for package, version in self._packages:
+                for package, version in sorted(self._packages,
+                    key=lambda p:p[0].get_cygwin_name()):
                     package_file_name = self._get_filename(package, version)
                     package_file = os.path.join(self._new_path, package_file_name)
                     f.write(
