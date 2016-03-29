@@ -175,7 +175,7 @@ class DebianCatalog(Catalog):
         with open(
             os.path.join(self._new_path, 'dists/cloudabi/InRelease'), 'w'
         ) as f, subprocess.Popen([
-            'gpg', '--default-key', private_key, '--armor',
+            'gpg', '--local-user', private_key, '--armor',
             '--sign', '--clearsign', '--digest-algo', 'SHA256',
         ], stdin=subprocess.PIPE, stdout=f) as proc:
             def append(text):
@@ -739,7 +739,7 @@ class ArchLinuxCatalog(Catalog):
         for package, version in self._packages:
             package_file = self._get_filename(package, version)
             subprocess.check_call([
-                'gpg', '--detach-sign', '--default-key', private_key,
+                'gpg', '--detach-sign', '--local-user', private_key,
                 '--no-armor', '--digest-algo', 'SHA256',
                 os.path.join(self._new_path, package_file)])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
@@ -792,7 +792,7 @@ class CygwinCatalog(Catalog):
 
         return output
 
-    def finish(self):
+    def finish(self, private_key):
         for cygwin_arch in ('x86', 'x86_64'):
             cygwin_arch_dir = os.path.join(self._new_path, cygwin_arch)
             util.make_dir(cygwin_arch_dir)
@@ -830,3 +830,7 @@ class CygwinCatalog(Catalog):
                             'sha512': util.sha512(package_file).hexdigest(),
                         }
                     )
+            subprocess.check_call([
+                'gpg', '--sign', '--detach-sign', '--local-user', private_key,
+                '--batch', '--yes', setup_file,
+            ])

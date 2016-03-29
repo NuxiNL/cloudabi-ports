@@ -29,6 +29,7 @@ DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/op
 
 # Location of the catalog signing keys.
 ARCHLINUX_PRIVATE_KEY = '31344B15'
+CYGWIN_PRIVATE_KEY = 'A4836F43'
 DEBIAN_PRIVATE_KEY = '31344B15'
 FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
 
@@ -71,7 +72,7 @@ for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
 
 archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
-cygwin_catalog.finish()
+cygwin_catalog.finish(CYGWIN_PRIVATE_KEY)
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
 homebrew_catalog.finish(HOMEBREW_URL)
