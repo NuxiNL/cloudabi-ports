@@ -431,9 +431,15 @@ class HomebrewCatalog(Catalog):
         extractdir = os.path.join(installdir, package.get_homebrew_name(),
                                   str(package.get_version()))
         util.make_dir(extractdir)
-        package.extract(extractdir,
+        package.extract(os.path.join(extractdir, package.get_arch()),
                         os.path.join('/usr/local', package.get_arch()))
 
+        # Add a placeholder install receipt file. Homebrew depends on it
+        # being present with at least these fields.
+        with open(os.path.join(extractdir, 'INSTALL_RECEIPT.json'), 'w') as f:
+            f.write('{"used_options":[],"unused_options":[]}\n')
+
+        # Archive the results.
         self._sanitize_permissions(installdir, directory_mode=0o755)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         self._run_tar([
