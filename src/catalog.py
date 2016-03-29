@@ -706,7 +706,7 @@ class CygwinCatalog(Catalog):
 
         util.make_dir(installdir)
 
-        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
 
         self._run_tar(['-cJf', output, '-C', installdir, '.'])
 
