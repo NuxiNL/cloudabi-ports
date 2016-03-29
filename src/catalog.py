@@ -714,30 +714,38 @@ class CygwinCatalog(Catalog):
 
     def finish(self):
         for cygwin_arch in ('x86', 'x86_64'):
-            cygwin_arch_dir = os.path.join(self._new_path, 'x86')
+            cygwin_arch_dir = os.path.join(self._new_path, cygwin_arch)
             util.make_dir(cygwin_arch_dir)
             setup_file = os.path.join(cygwin_arch_dir, 'setup.ini')
             with open(setup_file, 'w') as f:
                 f.write('release: cygwin\n')
                 f.write('arch: %s\n' % cygwin_arch)
+                f.write('setup-timestamp: %d\n' % int(time.time()))
                 for package, version in self._packages:
                     package_file_name = self._get_filename(package, version)
                     package_file = os.path.join(self._new_path, package_file_name)
                     f.write(
                         '\n'
-                        '@ %(name)s\n'
+                        '@ %(cygwinname)s\n'
                         'sdesc: "%(name)s for %(arch)s"\n'
                         'version: %(version)s\n'
-                        'category: CloudABI\n'
-                        'requires: %(deps)s\n'
-                        'install: %(filename)s %(size)s %(sha512)s\n' % {
+                        'category: CloudABI\n' % {
+                            'cygwinname': package.get_cygwin_name(),
                             'arch': package.get_arch(),
                             'name': package.get_name(),
-                            'filename': package_file_name,
-                            'size': os.lstat(package_file).st_size,
                             'version': version.get_cygwin_version(),
-                            'sha512': util.sha512(package_file).hexdigest(),
-                            'deps': ' '.join(sorted(pkg.name() for pkg in
+                        }
+                    )
+                    if len(package.get_lib_depends()) > 0:
+                        f.write('requires: %(deps)\n' % {
+                            'deps': ' '.join(sorted(pkg.get_cygwin_name() for pkg in
                                 package.get_lib_depends()))
+                            }
+                        );
+                    f.write(
+                        'install: %(filename)s %(size)s %(sha512)s\n' % {
+                            'size': os.lstat(package_file).st_size,
+                            'filename': package_file_name,
+                            'sha512': util.sha512(package_file).hexdigest(),
                         }
                     )
