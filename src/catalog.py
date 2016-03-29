@@ -721,22 +721,22 @@ class CygwinCatalog(Catalog):
                 f.write('release: cygwin\n')
                 f.write('arch: %s\n' % cygwin_arch)
                 for package, version in self._packages:
-                    package_file = self._get_filename(package, version)
+                    package_file_name = self._get_filename(package, version)
+                    package_file = os.path.join(self._new_path, package_file_name)
                     f.write(
                         '\n'
                         '@ %(name)s\n'
-                        'sdesc "%(name)s for %(arch)s"\n'
+                        'sdesc: "%(name)s for %(arch)s"\n'
                         'version: %(version)s\n'
                         'category: CloudABI\n'
                         'requires: %(deps)s\n'
                         'install: %(filename)s %(size)s %(sha512)s\n' % {
                             'arch': package.get_arch(),
                             'name': package.get_name(),
-                            'filename': package_file,
+                            'filename': package_file_name,
                             'size': os.lstat(package_file).st_size,
                             'version': version.get_cygwin_version(),
-                            'sha512': util.sha512(os.join(self._new_path,
-                                package_file)).hexdigest(),
+                            'sha512': util.sha512(package_file).hexdigest(),
                             'deps': ' '.join(sorted(pkg.name() for pkg in
                                 package.get_lib_depends()))
                         }
