@@ -118,7 +118,7 @@ class FullVersion:
         if len(s) == 2:
             string = s[0]
             revision = int(s[1])
-        return FullVersion(epoch, SimpleVersion(string), revision)
+        return FullVersion(0, SimpleVersion(string), revision)
 
     @staticmethod
     def parse_debian(string):
@@ -151,3 +151,8 @@ class FullVersion:
             string = s[0]
             revision = int(s[1])
         return FullVersion(epoch, SimpleVersion(string), revision)
+
+    @staticmethod
+    def parse_homebrew(string):
+        s = string.split('|', 2)
+        return FullVersion(int(s[0]), SimpleVersion(s[1]), int(s[2]))
