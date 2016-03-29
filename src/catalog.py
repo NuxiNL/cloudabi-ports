@@ -38,9 +38,9 @@ class Catalog:
             return 0o444
 
     @staticmethod
-    def _sanitize_permissions(directory):
+    def _sanitize_permissions(directory, directory_mode=0o555):
         for root, dirs, files in os.walk(directory):
-            util.lchmod(root, 0o555)
+            util.lchmod(root, directory_mode)
             for filename in files:
                 path = os.path.join(root, filename)
                 util.lchmod(path, Catalog._get_suggested_mode(path))
@@ -371,6 +371,8 @@ class FreeBSDCatalog(Catalog):
 
 class HomebrewCatalog(Catalog):
 
+    _OSX_VERSIONS = {'el_capitan', 'mavericks', 'yosemite'}
+
     def __init__(self, old_path, new_path):
         super(HomebrewCatalog, self).__init__(old_path, new_path)
 
@@ -398,6 +400,22 @@ class HomebrewCatalog(Catalog):
         # TODO(ed): Implement.
         pass
 
+    def insert(self, package, version, source):
+        super(HomebrewCatalog, self).insert(package, version, source)
+
+        # Create symbolic to the tarball for every supported version of
+        # Mac OS X.
+        filename = self._get_filename(package, version)
+        linksdir = os.path.join(self._new_path, 'links')
+        util.make_dir(linksdir)
+        for osx_version in self._OSX_VERSIONS:
+            link = os.path.join(linksdir,
+                '%s-%s.%s.bottle.%d.tar.gz' % (
+                    package.get_homebrew_name(), version.get_version(),
+                    osx_version, version.get_revision()))
+            util.remove(link)
+            os.symlink(os.path.join('..', filename), link)
+
     def lookup_latest_version(self, package):
         return self._existing[package.get_homebrew_name()]
 
@@ -416,7 +434,7 @@ class HomebrewCatalog(Catalog):
         package.extract(extractdir,
                         os.path.join('/usr/local', package.get_arch()))
 
-        self._sanitize_permissions(installdir)
+        self._sanitize_permissions(installdir, directory_mode=0o755)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         self._run_tar([
             '--options', 'gzip:!timestamp', '-czf', output, '-C', installdir,

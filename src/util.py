@@ -112,7 +112,7 @@ def _remove(path):
         shutil.rmtree(path)
     except FileNotFoundError:
         pass
-    except NotADirectoryError:
+    except (NotADirectoryError, OSError):
         os.unlink(path)
 
 

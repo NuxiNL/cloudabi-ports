@@ -38,6 +38,12 @@ class FullVersion:
     def __str__(self):
         return self.get_debian_version()
 
+    def get_version(self):
+        return self._version
+
+    def get_revision(self):
+        return self._revision
+
     def bump_epoch_revision(self, other):
         if self._epoch > other._epoch:
             # Epoch counter is already larger. Skip.
