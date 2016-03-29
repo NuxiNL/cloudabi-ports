@@ -737,7 +737,7 @@ class CygwinCatalog(Catalog):
                         }
                     )
                     if len(package.get_lib_depends()) > 0:
-                        f.write('requires: %(deps)\n' % {
+                        f.write('requires: %(deps)s\n' % {
                             'deps': ' '.join(sorted(pkg.get_cygwin_name() for pkg in
                                 package.get_lib_depends()))
                             }
