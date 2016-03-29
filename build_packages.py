@@ -9,7 +9,7 @@ import sys
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.repository import Repository
 from src.version import FullVersion
 
@@ -21,6 +21,7 @@ DIR_PACKAGES_ARCHLINUX = os.path.join(DIR_ROOT, '_obj/packages/archlinux')
 DIR_PACKAGES_CYGWIN = os.path.join(DIR_ROOT, '_obj/packages/cygwin')
 DIR_PACKAGES_DEBIAN = os.path.join(DIR_ROOT, '_obj/packages/debian')
 DIR_PACKAGES_FREEBSD = os.path.join(DIR_ROOT, '_obj/packages/freebsd')
+DIR_PACKAGES_HOMEBREW = os.path.join(DIR_ROOT, '_obj/packages/homebrew')
 DIR_PACKAGES_NETBSD = os.path.join(DIR_ROOT, '_obj/packages/netbsd')
 DIR_PACKAGES_OPENBSD = os.path.join(DIR_ROOT, '_obj/packages/openbsd')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
@@ -37,6 +38,7 @@ catalogs = {
     CygwinCatalog(None, DIR_PACKAGES_CYGWIN),
     DebianCatalog(None, DIR_PACKAGES_DEBIAN),
     FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
+    HomebrewCatalog(None, DIR_PACKAGES_HOMEBREW),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),
     OpenBSDCatalog(None, DIR_PACKAGES_OPENBSD),
 }

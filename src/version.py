@@ -80,6 +80,9 @@ class FullVersion:
             version += ',%d' % self._epoch
         return version
 
+    def get_homebrew_version(self):
+        return '%d|%s|%d' % (self._epoch, self._version, self._revision)
+
     def get_netbsd_version(self):
         # TODO(ed): NetBSD does not seem to support the Epoch numbers?
         assert self._epoch == 0

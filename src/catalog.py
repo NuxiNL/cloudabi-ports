@@ -369,6 +369,62 @@ class FreeBSDCatalog(Catalog):
         return output
 
 
+class HomebrewCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(HomebrewCatalog, self).__init__(old_path, new_path)
+
+        # Scan the existing directory hierarchy to find the latest
+        # version of all of the packages. We need to know this in order
+        # to determine the Epoch and revision number for any new
+        # packages we're going to build.
+        self._existing = collections.defaultdict(FullVersion)
+        if old_path:
+            for root, dirs, files in os.walk(old_path):
+                for filename in files:
+                    parts = filename.split('|', 1)
+                    if len(parts) == 2:
+                        name = parts[0]
+                        version = FullVersion.parse_homebrew(parts[1])
+                        if self._existing[name] < version:
+                            self._existing[name] = version
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s|%s' % (package.get_homebrew_name(),
+                          version.get_homebrew_version())
+
+    def finish(self, url):
+        # TODO(ed): Implement.
+        pass
+
+    def lookup_latest_version(self, package):
+        return self._existing[package.get_homebrew_name()]
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        # The package needs to be installed in /usr/local/<arch> on the
+        # Mac OS X system. In the tarball, pathnames need to be prefixed
+        # with <name>/<version>.
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        extractdir = os.path.join(installdir, package.get_homebrew_name(),
+                                  str(package.get_version()))
+        util.make_dir(extractdir)
+        package.extract(extractdir,
+                        os.path.join('/usr/local', package.get_arch()))
+
+        self._sanitize_permissions(installdir)
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+        self._run_tar([
+            '--options', 'gzip:!timestamp', '-czf', output, '-C', installdir,
+            package.get_homebrew_name(),
+        ])
+        return output
+
+
 class NetBSDCatalog(Catalog):
 
     def __init__(self, old_path, new_path):
@@ -617,7 +673,7 @@ class ArchLinuxCatalog(Catalog):
             for dep in sorted(pkg.get_archlinux_name() for pkg in package.get_lib_depends()):
                 f.write('depend = %s\n' % dep)
 
-        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
+        output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
         with open(listing, 'w') as f:
             f.write('.PKGINFO\n')

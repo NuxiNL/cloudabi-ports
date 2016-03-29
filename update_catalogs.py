@@ -8,7 +8,7 @@ import os
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog
 from src.catalog_set import CatalogSet
 from src.repository import Repository
 
@@ -23,6 +23,7 @@ DIR_ARCHLINUX_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/
 DIR_CYGWIN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/cygwin'
 DIR_DEBIAN_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/debian'
 DIR_FREEBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/freebsd'
+DIR_HOMEBREW_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/homebrew'
 DIR_NETBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/netbsd'
 DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/openbsd'
 
@@ -30,6 +31,9 @@ DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/op
 ARCHLINUX_PRIVATE_KEY = '31344B15'
 DEBIAN_PRIVATE_KEY = '31344B15'
 FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
+
+# The Homebrew repository needs to know its own URL.
+HOMEBREW_URL = 'https://nuxi.nl/distfiles/cloudabi-ports/homebrew/'
 
 # Zap the old temporary directory.
 util.remove_and_make_dir(DIR_TMP)
@@ -51,6 +55,8 @@ debian_path = os.path.join(DIR_TMP, 'debian')
 debian_catalog = DebianCatalog(DIR_DEBIAN_CATALOG, debian_path)
 freebsd_path = os.path.join(DIR_TMP, 'freebsd')
 freebsd_catalog = FreeBSDCatalog(DIR_FREEBSD_CATALOG, freebsd_path)
+homebrew_path = os.path.join(DIR_TMP, 'homebrew')
+homebrew_catalog = HomebrewCatalog(DIR_HOMEBREW_CATALOG, homebrew_path)
 netbsd_path = os.path.join(DIR_TMP, 'netbsd')
 netbsd_catalog = NetBSDCatalog(DIR_NETBSD_CATALOG, netbsd_path)
 openbsd_path = os.path.join(DIR_TMP, 'openbsd')
@@ -58,7 +64,8 @@ openbsd_catalog = OpenBSDCatalog(DIR_OPENBSD_CATALOG, openbsd_path)
 
 # Build all packages.
 catalog_set = CatalogSet({
-    archlinux_catalog, cygwin_catalog, debian_catalog, freebsd_catalog, netbsd_catalog, openbsd_catalog,
+    archlinux_catalog, cygwin_catalog, debian_catalog, freebsd_catalog,
+    homebrew_catalog, netbsd_catalog, openbsd_catalog,
 })
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
@@ -67,6 +74,7 @@ archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
 cygwin_catalog.finish()
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
+homebrew_catalog.finish(HOMEBREW_URL)
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_ARCHLINUX_CATALOG, os.path.join(DIR_TMP, 'archlinux.old'))
@@ -77,6 +85,8 @@ os.rename(DIR_DEBIAN_CATALOG, os.path.join(DIR_TMP, 'debian.old'))
 os.rename(debian_path, DIR_DEBIAN_CATALOG)
 os.rename(DIR_FREEBSD_CATALOG, os.path.join(DIR_TMP, 'freebsd.old'))
 os.rename(freebsd_path, DIR_FREEBSD_CATALOG)
+os.rename(DIR_HOMEBREW_CATALOG, os.path.join(DIR_TMP, 'homebrew.old'))
+os.rename(homebrew_path, DIR_HOMEBREW_CATALOG)
 os.rename(DIR_NETBSD_CATALOG, os.path.join(DIR_TMP, 'netbsd.old'))
 os.rename(netbsd_path, DIR_NETBSD_CATALOG)
 os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))

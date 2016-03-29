@@ -153,6 +153,9 @@ class TargetPackage:
     def get_freebsd_name(self):
         return '%s-%s' % (self._arch, self._name)
 
+    def get_homebrew_name(self):
+        return '%s-%s' % (self._arch, self._name)
+
     def get_netbsd_name(self):
         return '%s-%s' % (self._arch, self._name)
 
