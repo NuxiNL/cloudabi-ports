@@ -34,6 +34,7 @@ target_packages = repo.get_target_packages()
 
 catalogs = {
     ArchLinuxCatalog(None, DIR_PACKAGES_ARCHLINUX),
+    CygwinCatalog(None, DIR_PACKAGES_CYGWIN),
     DebianCatalog(None, DIR_PACKAGES_DEBIAN),
     FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),
