@@ -29,31 +29,29 @@
 #include <string.h>
 #include <unistd.h>
 
-static int fd = -1;
-
-static bool iterate(const argdata_t *ad, void *thunk) {
-  if (fd < 0) {
-    // First element in sequence: a file descriptor of the executable.
-    return argdata_get_fd(ad, &fd) == 0;
-  } else {
-    // Second element in sequence; arguments data for the executable.
-    int error = program_exec(fd, ad);
-
-    // Print error message without depending on stdio.
-    static const char prefix[] = "Failed to start executable: ";
-    struct iovec iov[3] = {
-        {.iov_base = (char *)prefix, .iov_len = sizeof(prefix) - 1},
-        {.iov_base = strerror(error), .iov_len = strlen(iov[1].iov_base)},
-        {.iov_base = (char *)"\n", .iov_len = 1},
-    };
-    writev(2, iov, __arraycount(iov));
+void program_main(const argdata_t *ad) {
+  // Extract executable file descriptor and argument data from sequence.
+  argdata_seq_iterator_t it;
+  argdata_seq_iterate(ad, &it);
+  const argdata_t *fdv, *argv;
+  int fd;
+  if (!argdata_seq_next(&it, &fdv) || argdata_get_fd(fdv, &fd) != 0 ||
+      !argdata_seq_next(&it, &argv)) {
+    static const char message[] = "Failed to parse argument data\n";
+    write(2, message, sizeof(message) - 1);
     _Exit(127);
   }
-}
 
-void program_main(const argdata_t *ad) {
-  argdata_iterate_seq(ad, iterate, NULL);
-  static const char message[] = "Failed to parse argument data\n";
-  write(2, message, sizeof(message) - 1);
+  // Execute the program.
+  int error = program_exec(fd, argv);
+
+  // Execution failed. Print error message without depending on stdio.
+  static const char prefix[] = "Failed to start executable: ";
+  struct iovec iov[3] = {
+      {.iov_base = (char *)prefix, .iov_len = sizeof(prefix) - 1},
+      {.iov_base = strerror(error), .iov_len = strlen(iov[1].iov_base)},
+      {.iov_base = (char *)"\n", .iov_len = 1},
+  };
+  writev(2, iov, __arraycount(iov));
   _Exit(127);
 }
