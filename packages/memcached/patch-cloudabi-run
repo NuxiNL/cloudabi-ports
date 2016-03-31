@@ -74,21 +74,11 @@
  
  /**
   * Do basic sanity check of the runtime environment
-@@ -5096,6 +5104,144 @@
+@@ -5096,6 +5104,142 @@
      return true;
  }
  
 +#ifdef __CloudABI__
-+
-+static bool process_argdata(const argdata_t *key, const argdata_t *value,
-+                            void *thunk) {
-+    const char *keystr;
-+    if (argdata_get_str_c(key, &keystr) != 0)
-+        return true;
-+    if (strcmp(keystr, "socket") == 0)
-+        argdata_get_fd(value, &settings.socketfd);
-+    return true;
-+}
 +
 +void program_main(const argdata_t *ad) {
 +    bool preallocate = false;
@@ -114,7 +104,15 @@
 +    /* set stderr non-buffering (for running under, say, daemontools) */
 +    setbuf(stderr, NULL);
 +
-+    argdata_iterate_map(ad, process_argdata, NULL);
++    argdata_map_iterator_t it;
++    argdata_map_iterate(ad, &it);
++    const argdata_t *key, *value;
++    while (argdata_map_next(&it, &key, &value)) {
++        const char *keystr;
++        if (argdata_get_str_c(key, &keystr) == 0 &&
++            strcmp(keystr, "socket") == 0)
++            argdata_get_fd(value, &settings.socketfd);
++    }
 +
 +    if (settings.lru_maintainer_thread && settings.hot_lru_pct + settings.warm_lru_pct > 80) {
 +        fprintf(stderr, "hot_lru_pct + warm_lru_pct cannot be more than 80%% combined\n");
@@ -219,7 +217,7 @@
  int main (int argc, char **argv) {
      int c;
      bool lock_memory = false;
-@@ -5791,3 +5937,5 @@
+@@ -5791,3 +5935,5 @@
  
      return retval;
  }
