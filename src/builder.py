@@ -276,7 +276,7 @@ class HostBuilder:
         self._install_directory = install_directory
 
         self._cflags = [
-            '-O2', '-I' + os.path.join(self.get_prefix(), 'include'),
+            '-O2', '-fpie', '-I' + os.path.join(self.get_prefix(), 'include'),
         ]
 
     def gnu_configure(self, builddir, script, args):
