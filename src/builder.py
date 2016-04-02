@@ -276,7 +276,7 @@ class HostBuilder:
         self._install_directory = install_directory
 
         self._cflags = [
-            '-O2', '-fpie', '-I' + os.path.join(self.get_prefix(), 'include'),
+            '-O2', '-I' + os.path.join(self.get_prefix(), 'include'),
         ]
 
     def gnu_configure(self, builddir, script, args):
@@ -349,6 +349,7 @@ class TargetBuilder:
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
         self._cflags = [
             '-O2', '-Werror=implicit-function-declaration', '-Werror=date-time',
+            '-fpie',
         ]
 
         # In case we need to build software for the host system.
