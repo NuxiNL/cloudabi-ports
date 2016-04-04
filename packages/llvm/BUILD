@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
-    ctx.extract('lld-%(version)s.src').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-%(version)s')
+    ctx.extract('cfe-%(version)s').rename(root.path('tools/clang'))
+    ctx.extract('lld-%(version)s').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake()
@@ -30,20 +30,18 @@ def build(ctx):
     stage.path('lib/clang').install('lib/clang')
 
     # Install ld, a tiny wrapper around LLD, invoking it in such a way
-    # that it acts as the GNU linker. Don't use LLD on aarch64 yet, as
-    # support for that platform is not yet complete.
+    # that it acts as the GNU linker.
     ld = ctx.executable({
         ctx.resource('ld.c').compile([
             '-DPATH_LLD="%s/bin/lld"' % ctx.prefix(),
         ]),
     })
     for arch in ARCHITECTURES:
-        if not arch.startswith('aarch64-'):
-            ld.install('bin/%s-ld' % arch)
+        ld.install('bin/%s-ld' % arch)
 
 host_package(
     name='llvm',
-    version='3.8.0',
+    version='0.265258',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -51,20 +49,20 @@ host_package(
 )
 
 distfile(
-    name='cfe-3.8.0.src.tar.xz',
-    checksum='04149236de03cf05232d68eb7cb9c50f03062e339b68f4f8a03b650a11536cf9',
-    master_sites={'http://llvm.org/releases/3.8.0/'},
-    patches={'safestack'},
+    name='cfe-0.265258.tar.xz',
+    checksum='19a036e7404aafce7d6ac1de68032f308c6af323149df330da74257744660c21',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches={'force-pie'},
 )
 distfile(
-    name='lld-3.8.0.src.tar.xz',
-    checksum='94704dda228c9f75f4403051085001440b458501ec97192eee06e8e67f7f9f0c',
-    master_sites={'http://llvm.org/releases/3.8.0/'},
-    patches={'start-stop-gc-sections'},
+    name='lld-0.265258.tar.xz',
+    checksum='9f2f3a1df110762689e32bd09453791110f230bee794fb43ac6d873b8ce2ee0f',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches={'relocations'},
 )
 distfile(
-    name='llvm-3.8.0.src.tar.xz',
-    checksum='555b028e9ee0f6445ff8f949ea10e9cd8be0d084840e21fbbe1d31d51fc06e46',
-    master_sites={'http://llvm.org/releases/3.8.0/'},
-    patches={},
+    name='llvm-0.265258.tar.xz',
+    checksum='9c528d30027eed5b48cb112e8a5985a7de32f8f5963ebefa90673d852c3c32cd',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches=set(),
 )

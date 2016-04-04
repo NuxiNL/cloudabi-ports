@@ -15,14 +15,9 @@ def build(ctx):
         ])
         build.make()
 
-        # We only need the readelf and strip utilities, except on
-        # aarch64. On aarch64, we also install the linker, as LLD does
-        # not yet support this architecture completely.
+        # We only need the readelf and strip utilities.
         stage = build.make_install()
-        filenames = {'bin/%s-readelf' % arch, 'bin/%s-strip' % arch}
-        if arch.startswith('aarch64-'):
-            filenames |= {'bin/%s-ld' % arch, '%s/lib/ldscripts' % arch}
-        for filename in filenames:
+        for filename in {'bin/%s-readelf' % arch, 'bin/%s-strip' % arch}:
             stage.path(filename).install(filename)
 
 host_package(

@@ -1,0 +1,34 @@
+--- ELF/Target.cpp
++++ ELF/Target.cpp
+@@ -818,6 +818,8 @@
+   switch (Type) {
+   default:
+     return false;
++  case R_X86_64_GOTTPOFF:
++  case R_X86_64_TPOFF32:
+   case R_X86_64_DTPOFF32:
+   case R_X86_64_DTPOFF64:
+   case R_X86_64_PC8:
+@@ -1251,6 +1253,10 @@
+   switch (Type) {
+   default:
+     return false;
++  case R_AARCH64_TLSLE_ADD_TPREL_HI12:
++  case R_AARCH64_TLSLE_ADD_TPREL_LO12_NC:
++  case R_AARCH64_TLSIE_ADR_GOTTPREL_PAGE21:
++  case R_AARCH64_TLSIE_LD64_GOTTPREL_LO12_NC:
+   case R_AARCH64_PREL32:
+   case R_AARCH64_ADR_PREL_LO21:
+   case R_AARCH64_ADR_PREL_PG_HI21:
+--- ELF/Writer.cpp
++++ ELF/Writer.cpp
+@@ -436,8 +436,7 @@
+         // ftp://www.linux-mips.org/pub/linux/mips/doc/ABI/mipsabi.pdf
+         continue;
+ 
+-      bool Dynrel = Config->Pic && !Target->isRelRelative(Type) &&
+-                    !Target->isSizeRel(Type);
++      bool Dynrel = Config->Pic && !Target->isSizeRel(Type);
+       if (Preemptible || Dynrel) {
+         uint32_t DynType;
+         if (Body.IsTls)

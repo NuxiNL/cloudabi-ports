@@ -349,7 +349,6 @@ class TargetBuilder:
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
         self._cflags = [
             '-O2', '-Werror=implicit-function-declaration', '-Werror=date-time',
-            '-fpie',
         ]
 
         # In case we need to build software for the host system.

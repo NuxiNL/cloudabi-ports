@@ -1,0 +1,26 @@
+--- lib/Driver/ToolChains.h
++++ lib/Driver/ToolChains.h
+@@ -617,7 +617,7 @@
+   void AddCXXStdlibLibArgs(const llvm::opt::ArgList &Args,
+                            llvm::opt::ArgStringList &CmdArgs) const override;
+ 
+-  bool isPIEDefault() const override { return false; }
++  bool isPIEDefault() const override { return true; }
+ 
+   SanitizerMask getSupportedSanitizers() const override;
+   SanitizerMask getDefaultSanitizers() const override;
+--- lib/Driver/Tools.cpp
++++ lib/Driver/Tools.cpp
+@@ -7106,6 +7106,12 @@
+ 
+   // CloudABI only supports static linkage.
+   CmdArgs.push_back("-Bstatic");
++
++  // CloudABI uses Position Independent Executables exclusively.
++  CmdArgs.push_back("-pie");
++  CmdArgs.push_back("--no-dynamic-linker");
++  CmdArgs.push_back("-zrelro");
++
+   CmdArgs.push_back("--eh-frame-hdr");
+   CmdArgs.push_back("--gc-sections");
+ 
