@@ -424,15 +424,15 @@ class HomebrewCatalog(Catalog):
         package.initialize_buildroot({'libarchive'})
         print('PKG', self._get_filename(package, version))
 
-        # The package needs to be installed in /usr/local/<arch> on the
-        # Mac OS X system. In the tarball, pathnames need to be prefixed
-        # with <name>/<version>.
+        # The package needs to be installed in /usr/local/share/<arch>
+        # on the Mac OS X system. In the tarball, pathnames need to be
+        # prefixed with <name>/<version>.
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
         extractdir = os.path.join(installdir, package.get_homebrew_name(),
                                   str(package.get_version()))
         util.make_dir(extractdir)
-        package.extract(os.path.join(extractdir, package.get_arch()),
-                        os.path.join('/usr/local', package.get_arch()))
+        package.extract(os.path.join(extractdir, package.get_arch(), 'share'),
+                        os.path.join('/usr/local/share', package.get_arch()))
 
         # Add a placeholder install receipt file. Homebrew depends on it
         # being present with at least these fields.
