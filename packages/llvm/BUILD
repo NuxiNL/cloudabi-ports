@@ -14,13 +14,14 @@ def build(ctx):
     build.ninja()
     stage = build.ninja_install()
 
-    # Create symbolic links for various LLVM and Clang utilities, so
-    # that it can act as a cross compiler.
+    # Create symbolic links for various utilities, so that they can act
+    # as cross build tools.
     bindir = stage.path('bin')
     for arch in ARCHITECTURES:
         bindir.path(arch + '-ar').symlink('llvm-ar')
         bindir.path(arch + '-c++').symlink('clang++')
         bindir.path(arch + '-cc').symlink('clang')
+        bindir.path(arch + '-ld').symlink('lld')
         bindir.path(arch + '-nm').symlink('llvm-nm')
         bindir.path(arch + '-objdump').symlink('llvm-objdump')
         bindir.path(arch + '-ranlib').symlink('llvm-ranlib')
@@ -28,16 +29,6 @@ def build(ctx):
     # Only install the parts of LLVM that we actually use.
     bindir.install('bin')
     stage.path('lib/clang').install('lib/clang')
-
-    # Install ld, a tiny wrapper around LLD, invoking it in such a way
-    # that it acts as the GNU linker.
-    ld = ctx.executable({
-        ctx.resource('ld.c').compile([
-            '-DPATH_LLD="%s/bin/lld"' % ctx.prefix(),
-        ]),
-    })
-    for arch in ARCHITECTURES:
-        ld.install('bin/%s-ld' % arch)
 
 host_package(
     name='llvm',
