@@ -431,7 +431,7 @@ class HomebrewCatalog(Catalog):
         extractdir = os.path.join(installdir, package.get_homebrew_name(),
                                   str(package.get_version()))
         util.make_dir(extractdir)
-        package.extract(os.path.join(extractdir, package.get_arch(), 'share'),
+        package.extract(os.path.join(extractdir, 'share', package.get_arch()),
                         os.path.join('/usr/local/share', package.get_arch()))
 
         # Add a placeholder install receipt file. Homebrew depends on it
