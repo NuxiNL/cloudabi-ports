@@ -8,6 +8,7 @@ import collections
 import lzma
 import math
 import os
+import re
 import stat
 import subprocess
 import time
@@ -373,8 +374,9 @@ class HomebrewCatalog(Catalog):
 
     _OSX_VERSIONS = {'el_capitan', 'mavericks', 'yosemite'}
 
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path, new_path, url):
         super(HomebrewCatalog, self).__init__(old_path, new_path)
+        self._url = url
 
         # Scan the existing directory hierarchy to find the latest
         # version of all of the packages. We need to know this in order
@@ -396,7 +398,11 @@ class HomebrewCatalog(Catalog):
         return '%s|%s' % (package.get_homebrew_name(),
                           version.get_homebrew_version())
 
-    def finish(self, url):
+    @staticmethod
+    def _get_classname(name):
+        return ''.join(part.capitalize() for part in re.split('[-_]', name))
+
+    def finish(self):
         # TODO(ed): Implement.
         pass
 
@@ -415,6 +421,45 @@ class HomebrewCatalog(Catalog):
                     osx_version, version.get_revision()))
             util.remove(link)
             os.symlink(os.path.join('..', filename), link)
+
+        # Create a formula.
+        formulaedir = os.path.join(self._new_path, 'formulae')
+        util.make_dir(formulaedir)
+        with open(os.path.join(formulaedir,
+                               package.get_homebrew_name() + '.rb'), 'w') as f:
+            # Header.
+            f.write("""class %(homebrew_class)s < Formula
+  desc "%(name)s for %(arch)s"
+  homepage "%(homepage)s"
+  url "http://this.package.cannot.be.built.from.source/"
+  version "%(version)s"
+""" % {
+                'arch': package.get_arch(),
+                'homebrew_class': self._get_classname(package.get_homebrew_name()),
+                'homepage': package.get_homepage(),
+                'name': package.get_name(),
+                'url': self._url,
+                'version': version.get_version(),
+            })
+
+            # Dependencies.
+            for dep in sorted(pkg.get_homebrew_name()
+                              for pkg in package.get_lib_depends()):
+                f.write('  depends_on "%s"\n' % dep)
+
+            # Bottles: links to binary packages.
+            f.write("""
+  bottle do
+    root_url "%(url)slinks"
+    revision %(revision)d
+""" % {
+                'revision': version.get_revision(),
+                'url': self._url,
+            })
+            sha256 = util.sha256(source).hexdigest()
+            for osx_version in sorted(self._OSX_VERSIONS):
+                f.write('    sha256 "%s" => :%s\n' % (sha256, osx_version))
+            f.write('  end\nend\n')
 
     def lookup_latest_version(self, package):
         return self._existing[package.get_homebrew_name()]

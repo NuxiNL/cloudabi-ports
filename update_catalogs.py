@@ -57,7 +57,8 @@ debian_catalog = DebianCatalog(DIR_DEBIAN_CATALOG, debian_path)
 freebsd_path = os.path.join(DIR_TMP, 'freebsd')
 freebsd_catalog = FreeBSDCatalog(DIR_FREEBSD_CATALOG, freebsd_path)
 homebrew_path = os.path.join(DIR_TMP, 'homebrew')
-homebrew_catalog = HomebrewCatalog(DIR_HOMEBREW_CATALOG, homebrew_path)
+homebrew_catalog = HomebrewCatalog(DIR_HOMEBREW_CATALOG, homebrew_path,
+                                   HOMEBREW_URL)
 netbsd_path = os.path.join(DIR_TMP, 'netbsd')
 netbsd_catalog = NetBSDCatalog(DIR_NETBSD_CATALOG, netbsd_path)
 openbsd_path = os.path.join(DIR_TMP, 'openbsd')
@@ -75,7 +76,7 @@ archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
 cygwin_catalog.finish(CYGWIN_PRIVATE_KEY)
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
-homebrew_catalog.finish(HOMEBREW_URL)
+homebrew_catalog.finish()
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_ARCHLINUX_CATALOG, os.path.join(DIR_TMP, 'archlinux.old'))

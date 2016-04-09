@@ -38,7 +38,7 @@ catalogs = {
     CygwinCatalog(None, DIR_PACKAGES_CYGWIN),
     DebianCatalog(None, DIR_PACKAGES_DEBIAN),
     FreeBSDCatalog(None, DIR_PACKAGES_FREEBSD),
-    HomebrewCatalog(None, DIR_PACKAGES_HOMEBREW),
+    HomebrewCatalog(None, DIR_PACKAGES_HOMEBREW, 'http://example.com/'),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),
     OpenBSDCatalog(None, DIR_PACKAGES_OPENBSD),
 }
