@@ -416,9 +416,9 @@ class HomebrewCatalog(Catalog):
         util.make_dir(linksdir)
         for osx_version in self._OSX_VERSIONS:
             link = os.path.join(linksdir,
-                '%s-%s.%s.bottle.%d.tar.gz' % (
-                    package.get_homebrew_name(), version.get_version(),
-                    osx_version, version.get_revision()))
+                '%s-%s.%s.bottle.tar.gz' % (
+                    package.get_homebrew_name(), version.get_homebrew_version(),
+                    osx_version))
             util.remove(link)
             os.symlink(os.path.join('..', filename), link)
 
@@ -433,11 +433,13 @@ class HomebrewCatalog(Catalog):
   homepage "%(homepage)s"
   url "http://this.package.cannot.be.built.from.source/"
   version "%(version)s"
+  revision %(revision)d
 """ % {
                 'arch': package.get_arch(),
                 'homebrew_class': self._get_classname(package.get_homebrew_name()),
                 'homepage': package.get_homepage(),
                 'name': package.get_name(),
+                'revision': version.get_revision(),
                 'url': self._url,
                 'version': version.get_version(),
             })
@@ -451,9 +453,7 @@ class HomebrewCatalog(Catalog):
             f.write("""
   bottle do
     root_url "%(url)slinks"
-    revision %(revision)d
 """ % {
-                'revision': version.get_revision(),
                 'url': self._url,
             })
             sha256 = util.sha256(source).hexdigest()
@@ -474,7 +474,7 @@ class HomebrewCatalog(Catalog):
         # prefixed with <name>/<version>.
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
         extractdir = os.path.join(installdir, package.get_homebrew_name(),
-                                  str(package.get_version()))
+                                  version.get_homebrew_version())
         util.make_dir(extractdir)
         package.extract(os.path.join(extractdir, 'share', package.get_arch()),
                         os.path.join('/usr/local/share', package.get_arch()))

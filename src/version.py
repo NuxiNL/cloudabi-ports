@@ -87,7 +87,9 @@ class FullVersion:
         return version
 
     def get_homebrew_version(self):
-        return '%d|%s|%d' % (self._epoch, self._version, self._revision)
+        # TODO(ed): Homebrew does not seem to support the Epoch numbers?
+        assert self._epoch == 0
+        return '%s_%d' % (self._version, self._revision)
 
     def get_netbsd_version(self):
         # TODO(ed): NetBSD does not seem to support the Epoch numbers?
@@ -160,5 +162,5 @@ class FullVersion:
 
     @staticmethod
     def parse_homebrew(string):
-        s = string.split('|', 2)
-        return FullVersion(int(s[0]), SimpleVersion(s[1]), int(s[2]))
+        s = string.split('_', 1)
+        return FullVersion(0, SimpleVersion(s[0]), int(s[1]))
