@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='nspr',
-    version='4.11',
+    version='4.12',
     homepage='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -26,9 +26,9 @@ package(
 )
 
 distfile(
-    name='nspr-4.11.tar.gz',
-    checksum='cb320a9eee7028275ac0fce7adc39dee36f14f02fd8432fce1b7e1aa5e3685c2',
-    master_sites={'https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.11/src/'},
+    name='nspr-4.12.tar.gz',
+    checksum='e0b10a1e569153668ff8bdea6c7e491b389fab69c2f18285a1ebf7c2ea4269de',
+    master_sites={'https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.12/src/'},
     unsafe_string_sources={
         'lib/libc/src/strcat.c',
         'lib/libc/src/strcpy.c',

@@ -159,23 +159,15 @@
  ** FUNCTION: PR_GetTraceEntries() -- Retreive trace entries from
 --- pr/src/io/prlog.c
 +++ pr/src/io/prlog.c
-@@ -238,13 +238,14 @@
-         }
+@@ -239,6 +239,7 @@
          PR_SetLogBuffering(isSync ? 0 : bufSize);
  
--#ifdef XP_UNIX
-+#if defined(XP_UNIX) && !defined(CLOUDABI)
-         if ((getuid() != geteuid()) || (getgid() != getegid())) {
-             return;
-         }
- #endif /* XP_UNIX */
- 
-         ev = PR_GetEnv("NSPR_LOG_FILE");
+         ev = PR_GetEnvSecure("NSPR_LOG_FILE");
 +#if 0
          if (ev && ev[0]) {
              if (!PR_SetLogFile(ev)) {
  #ifdef XP_PC
-@@ -258,12 +259,12 @@
+@@ -252,12 +253,12 @@
  #endif
              }
          } else {
@@ -189,7 +181,7 @@
      }
  }
  
-@@ -362,6 +363,7 @@
+@@ -356,6 +357,7 @@
      return lm;
  }
  
@@ -197,7 +189,7 @@
  PR_IMPLEMENT(PRBool) PR_SetLogFile(const char *file)
  {
  #ifdef _PR_USE_STDIO_FOR_LOGGING
-@@ -415,6 +417,7 @@
+@@ -409,6 +411,7 @@
      return (PRBool) (newLogFile != 0);
  #endif /* _PR_USE_STDIO_FOR_LOGGING */
  }
@@ -275,7 +267,7 @@
  static PRFileDesc * InitializeRecording( void )
  {
      char    *logFileName;
-@@ -683,6 +684,7 @@
+@@ -677,6 +678,7 @@
      }
      return logFile;
  } /* end InitializeRecording() */
@@ -283,7 +275,7 @@
  
  /*
  **
-@@ -751,6 +753,7 @@
+@@ -745,6 +747,7 @@
  /*
  **
  */
@@ -291,7 +283,7 @@
  PR_IMPLEMENT(void)
  	PR_RecordTraceEntries(
          void 
-@@ -826,6 +829,7 @@
+@@ -820,6 +823,7 @@
          ("RecordTraceEntries: exiting"));
      return;
  } /* end  PR_RecordTraceEntries() */

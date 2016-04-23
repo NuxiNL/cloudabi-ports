@@ -1,6 +1,6 @@
 --- pr/include/prenv.h
 +++ pr/include/prenv.h
-@@ -111,7 +111,6 @@
+@@ -125,7 +125,6 @@
  ** 
  ** 
  */
@@ -10,15 +10,15 @@
  ** PR_DuplicateEnvironment() -- Obtain a copy of the environment.
 --- pr/src/misc/prenv.c
 +++ pr/src/misc/prenv.c
-@@ -63,6 +63,7 @@
-     return ev;
+@@ -98,6 +98,7 @@
+ #endif /* HAVE_SECURE_GETENV */
  }
  
 +#if 0
  PR_IMPLEMENT(PRStatus) PR_SetEnv(const char *string)
  {
      PRIntn result;
-@@ -76,6 +77,7 @@
+@@ -111,6 +112,7 @@
      _PR_UNLOCK_ENV();
      return result ? PR_FAILURE : PR_SUCCESS;
  }

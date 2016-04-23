@@ -34,7 +34,7 @@
  ** FUNCTION:	PR_EnumerateHostEnt()	
 --- pr/src/misc/prnetdb.c
 +++ pr/src/misc/prnetdb.c
-@@ -484,6 +484,7 @@
+@@ -483,6 +483,7 @@
  ** Copy a hostent, and all of the memory that it refers to into
  ** (hopefully) stacked buffers.
  */
@@ -42,7 +42,7 @@
  static PRStatus CopyHostent(
      struct hostent *from,
      char **buf,
-@@ -564,6 +565,7 @@
+@@ -563,6 +564,7 @@
  	to->h_addr_list[na] = 0;
  	return PR_SUCCESS;
  }
@@ -50,7 +50,7 @@
  
  #ifdef SYMBIAN
  /* Set p_aliases by hand because Symbian's getprotobyname() returns NULL. */
-@@ -659,6 +661,7 @@
+@@ -658,6 +660,7 @@
  
  #endif  /* definition of GETHOSTBYXXX */
  
@@ -58,7 +58,7 @@
  PR_IMPLEMENT(PRStatus) PR_GetHostByName(
      const char *name, char *buf, PRIntn bufsize, PRHostEnt *hp)
  {
-@@ -708,6 +711,7 @@
+@@ -707,6 +710,7 @@
  #endif
  	return rv;
  }
@@ -66,7 +66,7 @@
  
  #if !defined(_PR_INET6) && \
          defined(_PR_INET6_PROBE) && defined(_PR_HAVE_GETIPNODEBYNAME)
-@@ -791,6 +795,7 @@
+@@ -790,6 +794,7 @@
  }
  #endif
  
@@ -74,7 +74,7 @@
  PR_IMPLEMENT(PRStatus) PR_GetIPNodeByName(
      const char *name, PRUint16 af, PRIntn flags,
      char *buf, PRIntn bufsize, PRHostEnt *hp)
-@@ -1137,6 +1142,7 @@
+@@ -1136,6 +1141,7 @@
  
  	return rv;
  }
