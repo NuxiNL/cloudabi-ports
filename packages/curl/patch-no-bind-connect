@@ -10,7 +10,7 @@
        /* we succeeded to bind */
        struct Curl_sockaddr_storage add;
        curl_socklen_t size = sizeof(add);
-@@ -1083,7 +1084,8 @@
+@@ -1089,7 +1090,8 @@
  
    /* Connect TCP sockets, bind UDP */
    if(!isconnected && (conn->socktype == SOCK_STREAM)) {

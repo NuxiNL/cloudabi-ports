@@ -732,7 +732,7 @@
  SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len)
 --- tls/tls.c
 +++ tls/tls.c
-@@ -155,9 +155,7 @@
+@@ -158,9 +158,7 @@
  
  	if (!required &&
  	    ctx->config->cert_mem == NULL &&
@@ -743,7 +743,7 @@
  		return(0);
  
  	if (ctx->config->cert_mem != NULL) {
-@@ -199,6 +197,7 @@
+@@ -202,6 +200,7 @@
  		pkey = NULL;
  	}
  
@@ -751,7 +751,7 @@
  	if (ctx->config->cert_file != NULL) {
  		if (SSL_CTX_use_certificate_chain_file(ctx->ssl_ctx,
  		    ctx->config->cert_file) != 1) {
-@@ -213,6 +212,7 @@
+@@ -216,6 +215,7 @@
  			goto err;
  		}
  	}
@@ -759,7 +759,7 @@
  
  	if (SSL_CTX_check_private_key(ctx->ssl_ctx) != 1) {
  		tls_set_errorx(ctx, "private/public key mismatch");
-@@ -284,10 +284,12 @@
+@@ -287,10 +287,12 @@
  			tls_set_errorx(ctx, "ssl verify memory setup failure");
  			goto err;
  		}
@@ -842,7 +842,7 @@
  tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
 --- tls/tls_internal.h
 +++ tls/tls_internal.h
-@@ -35,18 +35,14 @@
+@@ -37,18 +37,14 @@
  };
  
  struct tls_config {

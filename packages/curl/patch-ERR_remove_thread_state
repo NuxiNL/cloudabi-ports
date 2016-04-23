@@ -1,0 +1,11 @@
+--- lib/vtls/openssl.c
++++ lib/vtls/openssl.c
+@@ -735,7 +735,7 @@
+   ERR_free_strings();
+ 
+   /* Free thread local error state, destroying hash upon zero refcount */
+-#ifdef HAVE_ERR_REMOVE_THREAD_STATE_NOARG
++#if 0
+   ERR_remove_thread_state();
+ #elif defined(HAVE_ERR_REMOVE_THREAD_STATE)
+   ERR_remove_thread_state(NULL);
