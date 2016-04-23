@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -22,7 +22,7 @@ def build(ctx):
 
 package(
     name='glib',
-    version='2.46.2',
+    version='2.48.0',
     homepage='https://developer.gnome.org/glib/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libffi', 'pcre', 'zlib'},
@@ -37,7 +37,7 @@ def host_build(ctx):
 
 host_package(
     name='glib',
-    version='2.46.2',
+    version='2.48.0',
     homepage='https://developer.gnome.org/glib/',
     maintainer='info@nuxi.nl',
     lib_depends={'gettext'},
@@ -45,9 +45,9 @@ host_package(
 )
 
 distfile(
-    name='glib-2.46.2.tar.xz',
-    checksum='5031722e37036719c1a09163cc6cf7c326e4c4f1f1e074b433c156862bd733db',
-    master_sites={'http://ftp.gnome.org/pub/gnome/sources/glib/2.46/'},
+    name='glib-2.48.0.tar.xz',
+    checksum='744be6931ca914c68af98dc38ff6b0cf8381d65e335060faddfbf04c17147c34',
+    master_sites={'http://ftp.gnome.org/pub/gnome/sources/glib/2.48/'},
     unsafe_string_sources={
         'glib/gbacktrace.c',
         'glib/ggettext.c',

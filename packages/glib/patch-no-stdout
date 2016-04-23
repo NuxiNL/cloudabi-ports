@@ -1,6 +1,15 @@
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1536,6 +1536,7 @@
+@@ -930,7 +930,7 @@
+   if ((log_level & G_LOG_FLAG_FATAL) != 0 && !g_test_initialized ())
+     win32_keep_fatal_message = TRUE;
+ #endif
+-  return to_stdout ? stdout : stderr;
++  return stderr;
+ }
+ 
+ typedef struct {
+@@ -1551,6 +1551,7 @@
   * use g_log(), or the convenience functions g_message(), g_warning()
   * and g_error().
   */
@@ -8,7 +17,7 @@
  void
  g_print (const gchar *format,
           ...)
-@@ -1573,6 +1574,7 @@
+@@ -1588,6 +1589,7 @@
      }
    g_free (string);
  }
@@ -171,8 +180,8 @@
 +            g_printerr ("%s\n", error->message);
 +#endif
          }
- 
-       g_hash_table_insert (errors, GINT_TO_POINTER (errnum), (char *) msg);
+       else if (msg == (const gchar *)buf)
+         msg = g_strdup (buf);
 --- glib/gtestutils.c
 +++ glib/gtestutils.c
 @@ -805,6 +805,9 @@
@@ -197,7 +206,7 @@
                    "  %s [OPTION...]\n\n"
                    "Help Options:\n"
                    "  -h, --help                     Show help options\n\n"
-@@ -2669,7 +2676,11 @@
+@@ -2677,7 +2684,11 @@
      {
        g_string_append_len (data->stdout_str, buf, nread);
        if (data->echo_stdout)

@@ -1,6 +1,6 @@
 --- gio/gioenums.h
 +++ gio/gioenums.h
-@@ -844,9 +844,13 @@
+@@ -846,9 +846,13 @@
  typedef enum /*< flags >*/
  {
    G_SOCKET_MSG_NONE,

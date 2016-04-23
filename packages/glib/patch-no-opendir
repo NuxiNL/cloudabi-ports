@@ -33,16 +33,16 @@
  GLIB_AVAILABLE_IN_ALL
 --- glib/glib-private.c
 +++ glib/glib-private.c
-@@ -43,7 +43,9 @@
+@@ -44,7 +44,9 @@
      g_check_setuid,
      g_main_context_new_with_next_id,
  
 +#ifndef __CloudABI__
      g_dir_open_with_errno,
 +#endif
-     g_dir_new_from_dirp
-   };
+     g_dir_new_from_dirp,
  
+     glib_init,
 --- glib/glib-private.h
 +++ glib/glib-private.h
 @@ -37,7 +37,9 @@
@@ -65,4 +65,4 @@
 +#endif
    GDir *                (* g_dir_new_from_dirp)         (gpointer dirp);
  
-   /* Add other private functions here, initialize them in glib-private.c */
+   /* See glib-init.c */

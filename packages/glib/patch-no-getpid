@@ -1,6 +1,6 @@
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1279,7 +1279,7 @@
+@@ -1293,7 +1293,7 @@
  			 gpointer       unused_data)
  {
    gchar level_prefix[STRING_BUFFER_SIZE];
@@ -8,8 +8,8 @@
 +#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
    gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
  #endif
-   int fd;
-@@ -1295,7 +1295,7 @@
+   FILE *stream;
+@@ -1309,7 +1309,7 @@
    if (!message)
      message = "(NULL) message";
  
@@ -18,16 +18,16 @@
    format_unsigned (pid_string, getpid (), 10);
  #endif
  
-@@ -1304,7 +1304,7 @@
+@@ -1318,7 +1318,7 @@
    else
-     write_string (fd, "\n** ");
+     write_string (stream, "\n** ");
  
 -#ifndef G_OS_WIN32
 +#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
-   write_string (fd, "(process:");
-   write_string (fd, pid_string);
-   write_string (fd, "): ");
-@@ -1450,10 +1450,17 @@
+   write_string (stream, "(process:");
+   write_string (stream, pid_string);
+   write_string (stream, "): ");
+@@ -1465,10 +1465,17 @@
      {
        const gchar *prg_name = g_get_prgname ();
        
@@ -47,7 +47,7 @@
    if (log_domain)
 --- glib/gslice.c
 +++ glib/gslice.c
-@@ -1431,7 +1431,11 @@
+@@ -1457,7 +1457,11 @@
    /* at least, put out "MEMORY-ERROR", in case we segfault during the rest of the function */
    fputs ("\n***MEMORY-ERROR***: ", stderr);
    pname = g_get_prgname();

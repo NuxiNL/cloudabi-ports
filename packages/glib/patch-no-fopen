@@ -314,7 +314,7 @@
  gboolean
  g_key_file_load_from_dirs (GKeyFile       *key_file,
                             const gchar    *file,
-@@ -1057,6 +1064,7 @@
+@@ -1058,6 +1065,7 @@
  
    return found_file;
  }
@@ -322,7 +322,7 @@
  
  /**
   * g_key_file_ref: (skip)
-@@ -4411,6 +4419,7 @@
+@@ -4425,6 +4433,7 @@
   *
   * Since: 2.40
   */
@@ -330,7 +330,7 @@
  gboolean
  g_key_file_save_to_file (GKeyFile     *key_file,
                           const gchar  *filename,
-@@ -4432,3 +4441,4 @@
+@@ -4446,3 +4455,4 @@
  
    return success;
  }
@@ -491,7 +491,7 @@
      {
 --- glib/gutils.c
 +++ glib/gutils.c
-@@ -39,7 +39,9 @@
+@@ -40,7 +40,9 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #ifdef G_OS_UNIX
@@ -501,7 +501,7 @@
  #include <unistd.h>
  #endif
  #include <sys/types.h>
-@@ -325,6 +327,7 @@
+@@ -320,6 +322,7 @@
   *
   * Returns: a newly-allocated string with the absolute path, or %NULL
   **/
@@ -509,23 +509,23 @@
  #ifdef G_OS_WIN32
  static gchar *
  inner_find_program_in_path (const gchar *program)
-@@ -482,6 +485,7 @@
+@@ -477,6 +480,7 @@
  
    return NULL;
  }
 +#endif
  
- /**
-  * g_bit_nth_lsf:
-@@ -522,6 +526,7 @@
-  * Returns: the number of bits used to hold @number
-  */
+ /* The functions below are defined this way for compatibility reasons.
+  * See the note in gutils.h.
+@@ -539,6 +543,7 @@
+   return g_bit_storage_impl (number);
+ }
  
 +#ifndef __CloudABI__
  G_LOCK_DEFINE_STATIC (g_utils_global);
  
  typedef struct
-@@ -993,6 +998,7 @@
+@@ -992,6 +997,7 @@
  
    return hostname;
  }
@@ -533,7 +533,7 @@
  
  G_LOCK_DEFINE_STATIC (g_prgname);
  static gchar *g_prgname = NULL;
-@@ -1150,6 +1156,7 @@
+@@ -1149,6 +1155,7 @@
   *               or freed.
   * Since: 2.6
   **/
@@ -541,7 +541,7 @@
  const gchar *
  g_get_user_data_dir (void)
  {
-@@ -2015,6 +2022,7 @@
+@@ -2030,6 +2037,7 @@
  
    return (const gchar * const *) conf_dir_vector;
  }
@@ -551,15 +551,15 @@
   * g_nullify_pointer:
 --- glib/gutils.h
 +++ glib/gutils.h
-@@ -82,6 +82,7 @@
- #  define G_INLINE_FUNC _GLIB_EXTERN
- #endif /* !G_INLINE_FUNC */
+@@ -47,6 +47,7 @@
+ #  endif /* va_list is a pointer */
+ #endif /* !G_VA_COPY */
  
 +#ifndef __CloudABI__
  GLIB_AVAILABLE_IN_ALL
  const gchar *         g_get_user_name        (void);
  GLIB_AVAILABLE_IN_ALL
-@@ -92,6 +93,7 @@
+@@ -57,6 +58,7 @@
  const gchar *         g_get_tmp_dir          (void);
  GLIB_AVAILABLE_IN_ALL
  const gchar *         g_get_host_name	     (void);
@@ -567,7 +567,7 @@
  GLIB_AVAILABLE_IN_ALL
  const gchar *         g_get_prgname          (void);
  GLIB_AVAILABLE_IN_ALL
-@@ -101,6 +103,7 @@
+@@ -66,6 +68,7 @@
  GLIB_AVAILABLE_IN_ALL
  void                  g_set_application_name (const gchar *application_name);
  
@@ -575,7 +575,7 @@
  GLIB_AVAILABLE_IN_ALL
  void      g_reload_user_special_dirs_cache     (void);
  GLIB_AVAILABLE_IN_ALL
-@@ -111,6 +114,7 @@
+@@ -76,6 +79,7 @@
  const gchar *         g_get_user_cache_dir     (void);
  GLIB_AVAILABLE_IN_ALL
  const gchar * const * g_get_system_data_dirs   (void);
@@ -583,7 +583,7 @@
  
  #ifdef G_OS_WIN32
  /* This functions is not part of the public GLib API */
-@@ -131,11 +135,13 @@
+@@ -96,11 +100,13 @@
  #define g_get_system_data_dirs _g_win32_get_system_data_dirs
  #endif
  
@@ -597,7 +597,7 @@
  
  /**
   * GUserDirectory:
-@@ -172,8 +178,10 @@
+@@ -137,8 +143,10 @@
    G_USER_N_DIRECTORIES
  } GUserDirectory;
  
