@@ -1,6 +1,6 @@
 --- Makefile
 +++ Makefile
-@@ -52,7 +52,7 @@
+@@ -57,7 +57,7 @@
  MAKE_SHARED_LIBRARY=$(CXX) -shared -Wl,-soname,libre2.$(SOEXTVER),--version-script,libre2.symbols $(LDFLAGS)
  endif
  
@@ -9,7 +9,7 @@
  
  INSTALL_HFILES=\
  	re2/filtered_re2.h\
-@@ -259,13 +259,10 @@
+@@ -263,13 +263,10 @@
  
  benchmark: obj/test/regexp_benchmark
  

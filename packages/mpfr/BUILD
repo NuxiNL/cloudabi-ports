@@ -1,11 +1,11 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 package(
     name='mpfr',
-    version='3.1.3',
+    version='3.1.4',
     homepage='http://www.mpfr.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
@@ -13,8 +13,8 @@ package(
 )
 
 distfile(
-    name='mpfr-3.1.3.tar.xz',
-    checksum='6835a08bd992c8257641791e9a6a2b35b02336c8de26d0a8577953747e514a16',
+    name='mpfr-3.1.4.tar.xz',
+    checksum='761413b16d749c53e2bfd2b1dfaa3b027b0e793e404b90b5fbaeef60af6517f5',
     master_sites={'http://www.mpfr.org/mpfr-current/'},
     unsafe_string_sources={
         'src/get_str.c',
