@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libsigcxx',
-    version='2.6.2',
+    version='2.8.0',
     homepage='http://libsigc.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -23,7 +23,7 @@ package(
 )
 
 distfile(
-    name='libsigc++-2.6.2.tar.xz',
-    checksum='fdace7134c31de792c17570f9049ca0657909b28c4c70ec4882f91a03de54437',
-    master_sites={'http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.6/'},
+    name='libsigc++-2.8.0.tar.xz',
+    checksum='774980d027c52947cb9ee4fac6ffe2ca60cc2f753068a89dfd281c83dbff9651',
+    master_sites={'http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.8/'},
 )

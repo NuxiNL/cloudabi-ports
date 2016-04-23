@@ -18,12 +18,3 @@
      }
    };
  
-@@ -16525,7 +16525,7 @@
-       using std::bidirectional_iterator_tag;
-       using std::string;
-       using std::istream;
--      using std::cout;
-+      using std::cerr;
- 
-   ;
-   return 0;
