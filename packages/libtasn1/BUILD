@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -14,7 +14,7 @@ def build(ctx):
 
 package(
     name='libtasn1',
-    version='4.7',
+    version='4.8',
     homepage='https://www.gnu.org/software/libtasn1/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -22,8 +22,8 @@ package(
 )
 
 distfile(
-    name='libtasn1-4.7.tar.gz',
-    checksum='a40780dc93fc6d819170240e8ece25352058a85fd1d2347ce0f143667d8f11c9',
+    name='libtasn1-4.8.tar.gz',
+    checksum='fa802fc94d79baa00e7397cedf29eb6827d4bd8b4dd77b577373577c93a8c513',
     master_sites=sites_gnu('libtasn1'),
     unsafe_string_sources={
         'lib/decoding.c',

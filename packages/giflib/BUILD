@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='giflib',
-    version='5.1.2',
+    version='5.1.4',
     homepage='http://giflib.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,8 +21,8 @@ package(
 )
 
 distfile(
-    name='giflib-5.1.2.tar.bz2',
-    checksum='76c0a084c3b02f9315ff937b8be6096186002fea26f33e2123081ba2be6e2a7c',
+    name='giflib-5.1.4.tar.bz2',
+    checksum='df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5',
     master_sites=sites_sourceforge('giflib'),
     unsafe_string_sources={
         'lib/gif_font.c',

@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -6,7 +6,7 @@
 
 def build(ctx):
     # The Linux configuration works all right in our case.
-    srcdir = ctx.extract('%(name)s-56_1-src').path('source')
+    srcdir = ctx.extract('%(name)s-57_1-src').path('source')
     srcdir.path('config/mh-unknown').symlink('mh-linux')
 
     # Build a copy of ICU for the host system.
@@ -29,7 +29,7 @@ def build(ctx):
 
 package(
     name='icu4c',
-    version='56.1',
+    version='57.1',
     homepage='http://site.icu-project.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -37,9 +37,9 @@ package(
 )
 
 distfile(
-    name='icu4c-56_1-src.tgz',
-    checksum='3a64e9105c734dcf631c0b3ed60404531bce6c0f5a64bfe1a6402a4cc2314816',
-    master_sites={'http://download.icu-project.org/files/icu4c/56.1/'},
+    name='icu4c-57_1-src.tgz',
+    checksum='ff8c67cb65949b1e7808f2359f2b80f722697048e90e7cfc382ec1fe229e9581',
+    master_sites={'http://download.icu-project.org/files/icu4c/57.1/'},
     unsafe_string_sources={
         'source/common/cstring.h',
         'source/common/uloc.cpp',
