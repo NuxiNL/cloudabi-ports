@@ -1,6 +1,6 @@
 --- pr/src/md/unix/uxrng.c
 +++ pr/src/md/unix/uxrng.c
-@@ -6,12 +6,22 @@
+@@ -6,12 +6,23 @@
  
  #include "primpl.h"
  
@@ -16,6 +16,7 @@
 +extern PRSize _PR_MD_GetRandomNoise( void *buf, PRSize size )
 +{
 +    arc4random_buf(buf, size);
++    return size;
 +} /* end _PR_MD_GetRandomNoise() */
 +
 +#else
@@ -23,7 +24,7 @@
  #if defined(SOLARIS)
  
  static size_t
-@@ -250,3 +260,5 @@
+@@ -250,3 +261,5 @@
  
      return n;
  } /* end _PR_MD_GetRandomNoise() */
