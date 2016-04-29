@@ -1,10 +1,7 @@
 --- http.c
 +++ http.c
-@@ -42,10 +42,8 @@
- #endif
- 
- #ifndef WIN32
--#include <sys/resource.h>
+@@ -45,7 +45,6 @@
+ #include <sys/resource.h>
  #include <sys/socket.h>
  #include <sys/stat.h>
 -#include <sys/wait.h>

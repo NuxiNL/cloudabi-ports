@@ -8,11 +8,3 @@
  #include <sys/ioctl.h>
  #if defined(DARWIN)
  #include <sys/utsname.h> /* for uname */
-@@ -44,7 +43,6 @@
- #else
- /* To pick up getrlimit() etc. */
- #include <sys/time.h>
--#include <sys/resource.h>
- #endif
- 
- #ifdef SOLARIS
