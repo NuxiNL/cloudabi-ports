@@ -9,6 +9,7 @@ def build(ctx):
         '--with-pcre=system',
         'ac_cv_func_posix_getgrgid_r=no',
         'ac_cv_func_posix_getpwuid_r=no',
+        'ac_cv_header_sys_resource_h=no',
         'glib_cv_stack_grows=' + {'aarch64': 'no', 'x86_64': 'no'}[ctx.cpu()],
         'glib_cv_value_MSG_DONTROUTE=undefined',
         'glib_cv_value_MSG_OOB=undefined',
