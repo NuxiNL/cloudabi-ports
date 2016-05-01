@@ -35,15 +35,7 @@
  jas_stream_t *jas_stream_tmpfile()
  {
  	jas_stream_t *stream;
-@@ -361,7 +364,6 @@
- 	}
- 	obj->fd = -1;
- 	obj->flags = 0;
--	obj->pathname[0] = '\0';
- 	stream->obj_ = obj;
- 
- 	/* Choose a file name. */
-@@ -392,6 +394,7 @@
+@@ -392,6 +395,7 @@
  
  	return stream;
  }
@@ -51,7 +43,7 @@
  
  jas_stream_t *jas_stream_fdopen(int fd, const char *mode)
  {
-@@ -430,7 +433,6 @@
+@@ -430,7 +434,6 @@
  	}
  	obj->fd = fd;
  	obj->flags = 0;
@@ -59,7 +51,7 @@
  	stream->obj_ = (void *) obj;
  
  	/* Do not close the underlying file descriptor when the stream is
-@@ -553,7 +555,7 @@
+@@ -553,7 +556,7 @@
  	int ret;
  
  	va_start(ap, fmt);
@@ -68,7 +60,7 @@
  	jas_stream_puts(stream, buf);
  	va_end(ap);
  	return ret;
-@@ -1110,9 +1112,6 @@
+@@ -1110,9 +1113,6 @@
  	jas_stream_fileobj_t *fileobj = JAS_CAST(jas_stream_fileobj_t *, obj);
  	int ret;
  	ret = close(fileobj->fd);
