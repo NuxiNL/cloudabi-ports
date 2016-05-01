@@ -6,7 +6,7 @@
  	(void)strcpy(dup, (char *)legend);
 -	cp = strtok((char *)dup, "\r\n");
 +	char *lasts;
-+	cp = strtok_r((char *)dup, "\r\n", &lasts);
++	cp = strtok_r(dup, "\r\n", &lasts);
  	do {
  	    int leadspace = 0;
  
@@ -15,7 +15,7 @@
  	    GifDrawText8x8(Image, x + border + (leadspace * GIF_FONT_WIDTH),
  			   y + border + (GIF_FONT_HEIGHT * i++), cp, fg);
 -	    cp = strtok((char *)NULL, "\r\n");
-+	    cp = strtok_r((char *)NULL, "\r\n", &lasts);
++	    cp = strtok_r(NULL, "\r\n", &lasts);
  	} while (cp);
  	(void)free((void *)dup);
  
