@@ -963,7 +963,7 @@ class RedHatCatalog(Catalog):
                         (relpath, self._get_suggested_mode(path), path))
         data = os.path.join(config.DIR_BUILDROOT, 'data.cpio.xz')
         self._run_tar([
-            '-cJf', data, '--format=cpio', '-C', installdir, '@' + listing,
+            '-cJf', data, '--format=newc', '-C', installdir, '@' + listing,
         ])
 
         # The header, based on the following documentation:
