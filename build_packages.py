@@ -9,7 +9,7 @@ import sys
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog, RedHatCatalog
 from src.repository import Repository
 from src.version import FullVersion
 
@@ -24,6 +24,7 @@ DIR_PACKAGES_FREEBSD = os.path.join(DIR_ROOT, '_obj/packages/freebsd')
 DIR_PACKAGES_HOMEBREW = os.path.join(DIR_ROOT, '_obj/packages/homebrew')
 DIR_PACKAGES_NETBSD = os.path.join(DIR_ROOT, '_obj/packages/netbsd')
 DIR_PACKAGES_OPENBSD = os.path.join(DIR_ROOT, '_obj/packages/openbsd')
+DIR_PACKAGES_REDHAT = os.path.join(DIR_ROOT, '_obj/packages/redhat')
 DIR_REPOSITORY = os.path.join(DIR_ROOT, 'packages')
 
 # Parse all of the BUILD rules.
@@ -41,6 +42,7 @@ catalogs = {
     HomebrewCatalog(None, DIR_PACKAGES_HOMEBREW, 'http://example.com/'),
     NetBSDCatalog(None, DIR_PACKAGES_NETBSD),
     OpenBSDCatalog(None, DIR_PACKAGES_OPENBSD),
+    RedHatCatalog(None, DIR_PACKAGES_REDHAT),
 }
 
 

@@ -5,15 +5,18 @@
 
 import base64
 import collections
+import hashlib
 import lzma
 import math
 import os
 import re
+import shutil
 import stat
 import subprocess
 import time
 
 from . import config
+from . import rpm
 from . import util
 from .version import FullVersion, SimpleVersion
 
@@ -793,6 +796,7 @@ class ArchLinuxCatalog(Catalog):
         os.chdir('/')
         subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] + packages)
 
+
 class CygwinCatalog(Catalog):
 
     def __init__(self, old_path, new_path):
@@ -879,3 +883,169 @@ class CygwinCatalog(Catalog):
                 'gpg', '--sign', '--detach-sign', '--local-user', private_key,
                 '--batch', '--yes', setup_file,
             ])
+
+
+class RedHatCatalog(Catalog):
+
+    def __init__(self, old_path, new_path):
+        super(RedHatCatalog, self).__init__(old_path, new_path)
+
+        # TODO(ed): Add support for importing existing packages.
+
+    @staticmethod
+    def _get_filename(package, version):
+        return '%s-%s.noarch.rpm' % (package.get_redhat_name(),
+                                     version.get_redhat_version())
+
+    @staticmethod
+    def _file_linkto(filename):
+        try:
+            return os.readlink(filename)
+        except OSError:
+            return ''
+
+    @staticmethod
+    def _file_md5(filename):
+        if os.path.islink(filename):
+            return ''
+        else:
+            return util.md5(filename).hexdigest()
+
+    @staticmethod
+    def _file_mode(filename):
+        mode = os.lstat(filename).st_mode
+        if stat.S_ISLNK(mode):
+            # Symbolic links.
+            return 0o120777 - 65536
+        elif stat.S_ISDIR(mode) or (mode & 0o111) != 0:
+            # Directories and executable files.
+            return 0o100555 - 65536
+        else:
+            # Non-executable files.
+            return 0o100444 - 65536
+
+    @staticmethod
+    def _file_size(filename):
+        sb = os.lstat(filename)
+        if stat.S_ISREG(sb.st_mode):
+            return sb.st_size
+        return 0
+
+    def lookup_latest_version(self, package):
+        return self._existing[package.get_redhat_name()]
+
+    def package(self, package, version):
+        package.build()
+        package.initialize_buildroot({'libarchive'})
+        print('PKG', self._get_filename(package, version))
+
+        # The package needs to be installed in /usr/arch> on the Red Hat
+        # system.
+        installdir = os.path.join(config.DIR_BUILDROOT, 'install')
+        arch = package.get_arch()
+        prefix = os.path.join('/usr', arch)
+        package.extract(installdir, prefix)
+        files = sorted(util.walk_files(installdir))
+
+        # Create an xz compressed cpio payload containing all files.
+        listing = os.path.join(config.DIR_BUILDROOT, 'listing')
+        with open(listing, 'w') as f:
+            f.write('#mtree\n')
+            for path in files:
+                relpath = os.path.join(prefix, os.path.relpath(path, installdir))
+                if os.path.islink(path):
+                    f.write(
+                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n' %
+                        (relpath, os.readlink(path)))
+                else:
+                    f.write(
+                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n' %
+                        (relpath, self._get_suggested_mode(path), path))
+        data = os.path.join(config.DIR_BUILDROOT, 'data.cpio.xz')
+        self._run_tar([
+            '-cJf', data, '--format=cpio', '-C', installdir, '@' + listing,
+        ])
+
+        # The header, based on the following documentation:
+        # http://www.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
+        # http://refspecs.linux-foundation.org/LSB_5.0.0/LSB-Core-generic/LSB-Core-generic/pkgformat.html
+        name = package.get_redhat_name()
+        lib_depends = sorted(dep.get_redhat_name()
+                             for dep in package.get_lib_depends())
+        dirs = sorted({os.path.dirname(f) for f in files})
+        header = bytes(rpm.Header({
+            100: rpm.StringArray(['C']),
+            1000: rpm.String(name),
+            1001: rpm.String(str(version.get_version())),
+            1002: rpm.String(str(version.get_revision())),
+            1003: rpm.Int32([version.get_epoch()]),
+            1004: rpm.I18NString('%s for %s' % (name, arch)),
+            1005: rpm.I18NString('%s for %s' % (name, arch)),
+            1009: rpm.Int32([sum(self._file_size(f) for f in files)]),
+            1014: rpm.String('Unknown'),
+            1016: rpm.I18NString('Development/Libraries'),
+            1020: rpm.String(package.get_homepage()),
+            1021: rpm.String('linux'),
+            1022: rpm.String('noarch'),
+            1028: rpm.Int32(os.lstat(f).st_size for f in files),
+            1030: rpm.Int16(self._file_mode(f) for f in files),
+            1033: rpm.Int16(0 for f in files),
+            1034: rpm.Int32(0 for f in files),
+            1035: rpm.StringArray(self._file_md5(f) for f in files),
+            1036: rpm.StringArray(self._file_linkto(f) for f in files),
+            1037: rpm.Int32(0 for f in files),
+            1039: rpm.StringArray('root' for f in files),
+            1040: rpm.StringArray('root' for f in files),
+            1047: rpm.StringArray([name]),
+            1048: rpm.Int32(0 for dep in lib_depends),
+            1049: rpm.StringArray(lib_depends),
+            1050: rpm.StringArray('' for dep in lib_depends),
+            1095: rpm.Int32(1 for f in files),
+            1096: rpm.Int32(range(1, len(files) + 1)),
+            1097: rpm.StringArray('' for f in files),
+            1112: rpm.Int32(8 for dep in lib_depends),
+            1113: rpm.StringArray([version.get_redhat_version()]),
+            1116: rpm.Int32(dirs.index(os.path.dirname(f)) for f in files),
+            1117: rpm.StringArray(os.path.basename(f) for f in files),
+            1118: rpm.StringArray(os.path.join(prefix,
+                                               os.path.relpath(d, installdir)) +
+                                  '/'
+                                  for d in dirs),
+            1124: rpm.String('cpio'),
+            1125: rpm.String('xz'),
+            1126: rpm.String('9'),
+        }))
+
+        # The signature.
+        checksum = hashlib.md5()
+        checksum.update(header)
+        util.hash_file(data, checksum)
+        signature = bytes(rpm.Header({
+            1000: rpm.Int32([len(header) + os.stat(data).st_size]),
+            1004: rpm.Bin(checksum.digest()),
+        }))
+
+        # Create the RPM file.
+        output = os.path.join(config.DIR_BUILDROOT, 'output.rpm')
+        with open(output, 'wb') as f:
+            # The lead.
+            f.write(b'\xed\xab\xee\xdb\x03\x00\x00\x00\x00\x00')
+            fullname = '%s-%s' % (name, version.get_redhat_version())
+            f.write(bytes(fullname, encoding='ASCII')[:66].ljust(66, b'\0'))
+            f.write(b'\x00\x01\x00\x05')
+            f.write(b'\x00' * 16)
+
+            # The signature, aligned up to eight bytes in size.
+            f.write(signature)
+            f.write(b'\0' * ((8 - len(signature) % 8) % 8))
+
+            # The header.
+            f.write(header)
+
+            # The payload.
+            with open(data, 'rb') as fin:
+                shutil.copyfileobj(fin, f)
+        return output
+
+    def finish(self):
+        pass
