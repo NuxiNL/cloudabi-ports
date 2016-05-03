@@ -8,7 +8,7 @@ import os
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog
+from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog, RedHatCatalog
 from src.catalog_set import CatalogSet
 from src.repository import Repository
 
@@ -26,6 +26,7 @@ DIR_FREEBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/fr
 DIR_HOMEBREW_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/homebrew'
 DIR_NETBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/netbsd'
 DIR_OPENBSD_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/openbsd'
+DIR_REDHAT_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/redhat'
 
 # Location of the catalog signing keys.
 ARCHLINUX_PRIVATE_KEY = '31344B15'
@@ -63,11 +64,13 @@ netbsd_path = os.path.join(DIR_TMP, 'netbsd')
 netbsd_catalog = NetBSDCatalog(DIR_NETBSD_CATALOG, netbsd_path)
 openbsd_path = os.path.join(DIR_TMP, 'openbsd')
 openbsd_catalog = OpenBSDCatalog(DIR_OPENBSD_CATALOG, openbsd_path)
+redhat_path = os.path.join(DIR_TMP, 'redhat')
+redhat_catalog = RedHatCatalog(DIR_REDHAT_CATALOG, redhat_path)
 
 # Build all packages.
 catalog_set = CatalogSet({
     archlinux_catalog, cygwin_catalog, debian_catalog, freebsd_catalog,
-    homebrew_catalog, netbsd_catalog, openbsd_catalog,
+    homebrew_catalog, netbsd_catalog, openbsd_catalog, redhat_catalog,
 })
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))
@@ -93,6 +96,8 @@ os.rename(DIR_NETBSD_CATALOG, os.path.join(DIR_TMP, 'netbsd.old'))
 os.rename(netbsd_path, DIR_NETBSD_CATALOG)
 os.rename(DIR_OPENBSD_CATALOG, os.path.join(DIR_TMP, 'openbsd.old'))
 os.rename(openbsd_path, DIR_OPENBSD_CATALOG)
+os.rename(DIR_REDHAT_CATALOG, os.path.join(DIR_TMP, 'redhat.old'))
+os.rename(redhat_path, DIR_REDHAT_CATALOG)
 
 # Zap the temporary directories.
 util.remove(config.DIR_BUILDROOT)
