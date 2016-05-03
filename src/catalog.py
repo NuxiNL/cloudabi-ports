@@ -890,8 +890,6 @@ class RedHatCatalog(Catalog):
     def __init__(self, old_path, new_path):
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
-        # TODO(ed): Add support for importing existing packages.
-
     @staticmethod
     def _get_filename(package, version):
         return '%s-%s.noarch.rpm' % (package.get_redhat_name(),
@@ -932,7 +930,8 @@ class RedHatCatalog(Catalog):
         return 0
 
     def lookup_latest_version(self, package):
-        return self._existing[package.get_redhat_name()]
+        # TODO(ed): Implement repository scanning.
+        return FullVersion()
 
     def package(self, package, version):
         package.build()
@@ -1048,4 +1047,5 @@ class RedHatCatalog(Catalog):
         return output
 
     def finish(self):
+        # TODO(ed): Implement.
         pass
