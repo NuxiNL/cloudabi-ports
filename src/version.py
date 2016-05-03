@@ -38,6 +38,9 @@ class FullVersion:
     def __str__(self):
         return self.get_debian_version()
 
+    def get_epoch(self):
+        return self._epoch
+
     def get_version(self):
         return self._version
 
@@ -100,6 +103,12 @@ class FullVersion:
         version = '%sp%d' % (self._version, self._revision)
         if self._epoch:
             version += 'v%d' % self._epoch
+        return version
+
+    def get_redhat_version(self):
+        version = '%s-%d' % (self._version, self._revision)
+        if self._epoch:
+            version = '%d:' % self._epoch + version
         return version
 
     @staticmethod
