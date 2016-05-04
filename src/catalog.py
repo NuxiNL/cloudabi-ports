@@ -405,10 +405,6 @@ class HomebrewCatalog(Catalog):
     def _get_classname(name):
         return ''.join(part.capitalize() for part in re.split('[-_]', name))
 
-    def finish(self):
-        # TODO(ed): Implement.
-        pass
-
     def insert(self, package, version, source):
         super(HomebrewCatalog, self).insert(package, version, source)
 

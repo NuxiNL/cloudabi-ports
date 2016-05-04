@@ -79,7 +79,7 @@ archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
 cygwin_catalog.finish(CYGWIN_PRIVATE_KEY)
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
-homebrew_catalog.finish()
+redhat_catalog.finish()
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_ARCHLINUX_CATALOG, os.path.join(DIR_TMP, 'archlinux.old'))
