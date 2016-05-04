@@ -1047,5 +1047,4 @@ class RedHatCatalog(Catalog):
         return output
 
     def finish(self):
-        # TODO(ed): Implement.
-        pass
+        subprocess.check_call(['createrepo', self._new_path])
