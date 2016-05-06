@@ -26,11 +26,8 @@ that you're familiar with to install and manage CloudABI libraries.
 ## Accessing the CloudABI Ports Collection
 
 Nuxi provides prebuilt packages for a variety of operating systems that
-are updated periodically. The instructions below can be used to add the
-repository for your operating system to your system's configuration.
-
-Please refer to [Nuxi's website](https://nuxi.nl/) for documentation on
-how to configure access to the CloudABI Ports Collection on your
+are updated periodically. Please refer to [Nuxi's website](https://nuxi.nl/)
+for instructions on how to access these prebuilt packages on your
 operating system.
 
 ## Support
