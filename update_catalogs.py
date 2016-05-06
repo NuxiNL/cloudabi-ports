@@ -33,6 +33,7 @@ ARCHLINUX_PRIVATE_KEY = '31344B15'
 CYGWIN_PRIVATE_KEY = 'A4836F43'
 DEBIAN_PRIVATE_KEY = '31344B15'
 FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
+REDHAT_PRIVATE_KEY = '31344B15'
 
 # The Homebrew repository needs to know its own URL.
 HOMEBREW_URL = 'https://nuxi.nl/distfiles/cloudabi-ports/homebrew/'
@@ -79,7 +80,7 @@ archlinux_catalog.finish(ARCHLINUX_PRIVATE_KEY)
 cygwin_catalog.finish(CYGWIN_PRIVATE_KEY)
 debian_catalog.finish(DEBIAN_PRIVATE_KEY)
 freebsd_catalog.finish(FREEBSD_PRIVATE_KEY)
-redhat_catalog.finish()
+redhat_catalog.finish(REDHAT_PRIVATE_KEY)
 
 # Finish up and put the new catalogs in place.
 os.rename(DIR_ARCHLINUX_CATALOG, os.path.join(DIR_TMP, 'archlinux.old'))

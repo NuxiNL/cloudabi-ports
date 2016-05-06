@@ -1042,5 +1042,9 @@ class RedHatCatalog(Catalog):
                 shutil.copyfileobj(fin, f)
         return output
 
-    def finish(self):
+    def finish(self, private_key):
         subprocess.check_call(['createrepo', self._new_path])
+        subprocess.check_call([
+            'gpg', '--detach-sign', '--local-user', private_key,
+            '--armor', os.path.join(self._new_path, 'repodata/repomd.xml'),
+        ])
