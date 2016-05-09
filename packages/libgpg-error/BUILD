@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libgpg-error',
-    version='1.21',
+    version='1.22',
     homepage='https://www.gnupg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -23,8 +23,8 @@ package(
 )
 
 distfile(
-    name='libgpg-error-1.21.tar.bz2',
-    checksum='b7dbdb3cad63a740e9f0c632a1da32d4afdb694ec86c8625c98ea0691713b84d',
+    name='libgpg-error-1.22.tar.bz2',
+    checksum='f2a04ee6317bdb41a625bea23fdc7f0b5a63fb677f02447c647ed61fb9e69d7b',
     master_sites={'https://www.gnupg.org/ftp/gcrypt/libgpg-error/'},
     unsafe_string_sources={
         'src/estream.c',

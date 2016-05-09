@@ -1,7 +1,7 @@
 --- Makefile
 +++ Makefile
-@@ -57,7 +57,7 @@
- MAKE_SHARED_LIBRARY=$(CXX) -shared -Wl,-soname,libre2.$(SOEXTVER),--version-script,libre2.symbols $(LDFLAGS)
+@@ -60,7 +60,7 @@
+ MAKE_SHARED_LIBRARY=$(CXX) -shared -Wl,-soname,libre2.$(SOEXTVER),--version-script,libre2.symbols $(RE2_LDFLAGS) $(LDFLAGS)
  endif
  
 -all: obj/libre2.a obj/so/libre2.$(SOEXT)
@@ -9,7 +9,7 @@
  
  INSTALL_HFILES=\
  	re2/filtered_re2.h\
-@@ -263,13 +263,10 @@
+@@ -266,13 +266,10 @@
  
  benchmark: obj/test/regexp_benchmark
  
@@ -23,4 +23,4 @@
 -	ln -sf libre2.$(SOEXTVER00) $(DESTDIR)$(libdir)/libre2.$(SOEXT)
  	sed -e "s#@prefix@#${prefix}#" re2.pc >$(DESTDIR)$(libdir)/pkgconfig/re2.pc
  
- testinstall:
+ testinstall: static-testinstall shared-testinstall

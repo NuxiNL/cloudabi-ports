@@ -1,6 +1,6 @@
 --- bindings/c/tag_c.cpp
 +++ bindings/c/tag_c.cpp
-@@ -63,6 +63,7 @@
+@@ -90,6 +90,7 @@
  // TagLib::File wrapper
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -8,9 +8,9 @@
  TagLib_File *taglib_file_new(const char *filename)
  {
    return reinterpret_cast<TagLib_File *>(FileRef::create(filename));
-@@ -97,6 +98,7 @@
- 
-   return 0;
+@@ -122,6 +123,7 @@
+     return 0;
+   }
  }
 +#endif
  
@@ -34,7 +34,7 @@
   * Frees and closes the file.
 --- taglib/CMakeLists.txt
 +++ taglib/CMakeLists.txt
-@@ -48,7 +48,6 @@
+@@ -52,7 +52,6 @@
    toolkit/tbytevectorstream.h
    toolkit/tiostream.h
    toolkit/tfile.h
@@ -42,7 +42,7 @@
    toolkit/tmap.h
    toolkit/tmap.tcc
    toolkit/tpropertymap.h
-@@ -298,7 +297,6 @@
+@@ -304,7 +303,6 @@
    toolkit/tbytevectorstream.cpp
    toolkit/tiostream.cpp
    toolkit/tfile.cpp
@@ -52,7 +52,7 @@
    toolkit/trefcounter.cpp
 --- taglib/ape/apefile.cpp
 +++ taglib/ape/apefile.cpp
-@@ -97,14 +97,6 @@
+@@ -87,14 +87,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -108,32 +108,77 @@
         * Constructs an ASF file from \a stream.
 --- taglib/fileref.cpp
 +++ taglib/fileref.cpp
-@@ -77,12 +77,6 @@
-   d = new FileRefPrivate(0);
+@@ -61,6 +61,7 @@
+ 
+   // Templatized internal functions. T should be String or IOStream*.
+ 
++#if 0
+   template <typename T>
+   FileName toFileName(T arg)
+   {
+@@ -79,6 +80,7 @@
+   {
+     return arg;
+   }
++#endif
+ 
+   template <typename T>
+   File *resolveFileType(T arg, bool readProperties,
+@@ -95,6 +97,7 @@
+     return 0;
+   }
+ 
++#if 0
+   template <>
+   File *resolveFileType<FileName>(FileName arg, bool readProperties,
+                                   AudioProperties::ReadStyle style)
+@@ -108,6 +111,7 @@
+ 
+     return 0;
+   }
++#endif
+ 
+   template <typename T>
+   File* createInternal(T arg, bool readAudioProperties,
+@@ -117,6 +121,7 @@
+     if(file)
+       return file;
+ 
++#if 0
+ #ifdef _WIN32
+     const String s = toFileName(arg).toString();
+ #else
+@@ -178,6 +183,7 @@
+       return new IT::File(arg, readAudioProperties, audioPropertiesStyle);
+     if(ext == "XM")
+       return new XM::File(arg, readAudioProperties, audioPropertiesStyle);
++#endif
+ 
+     return 0;
+   }
+@@ -206,12 +212,6 @@
+ {
  }
  
 -FileRef::FileRef(FileName fileName, bool readAudioProperties,
--                 AudioProperties::ReadStyle audioPropertiesStyle)
+-                 AudioProperties::ReadStyle audioPropertiesStyle) :
+-  d(new FileRefPrivate(createInternal(fileName, readAudioProperties, audioPropertiesStyle)))
 -{
--  d = new FileRefPrivate(create(fileName, readAudioProperties, audioPropertiesStyle));
 -}
 -
- FileRef::FileRef(File *file)
+ FileRef::FileRef(IOStream* stream, bool readAudioProperties, AudioProperties::ReadStyle audioPropertiesStyle) :
+   d(new FileRefPrivate(createInternal(stream, readAudioProperties, audioPropertiesStyle)))
  {
-   d = new FileRefPrivate(file);
-@@ -201,6 +195,7 @@
-   return ref.d->file != d->file;
- }
- 
-+#if 0
- File *FileRef::create(FileName fileName, bool readAudioProperties,
-                       AudioProperties::ReadStyle audioPropertiesStyle) // static
+@@ -335,9 +335,3 @@
  {
-@@ -284,3 +279,4 @@
- 
-   return 0;
+   return (ref.d->file != d->file);
  }
-+#endif
+-
+-File *FileRef::create(FileName fileName, bool readAudioProperties,
+-                      AudioProperties::ReadStyle audioPropertiesStyle) // static
+-{
+-  return createInternal(fileName, readAudioProperties, audioPropertiesStyle);
+-}
 --- taglib/fileref.h
 +++ taglib/fileref.h
 @@ -102,10 +102,6 @@
@@ -157,8 +202,8 @@
 -                     audioPropertiesStyle = AudioProperties::Average);
  
      /*!
-      * Construct a FileRef using \a file.  The FileRef now takes ownership of the
-@@ -248,9 +240,6 @@
+      * Construct a FileRef from an opened \a IOStream.  If \a readAudioProperties
+@@ -270,9 +262,6 @@
       *
       * \deprecated
       */
@@ -170,7 +215,7 @@
    private:
 --- taglib/flac/flacfile.cpp
 +++ taglib/flac/flacfile.cpp
-@@ -101,6 +101,7 @@
+@@ -99,6 +99,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -178,7 +223,7 @@
  FLAC::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
    TagLib::File(file),
    d(new FilePrivate())
-@@ -119,6 +120,26 @@
+@@ -116,6 +117,26 @@
      read(readProperties);
  }
  
@@ -207,7 +252,7 @@
    TagLib::File(stream),
 --- taglib/flac/flacfile.h
 +++ taglib/flac/flacfile.h
-@@ -75,8 +75,6 @@
+@@ -92,8 +92,6 @@
         * \deprecated This constructor will be dropped in favor of the one below
         * in a future version.
         */
@@ -216,7 +261,7 @@
  
        /*!
         * Constructs an FLAC file from \a file.  If \a readProperties is true the
-@@ -88,9 +86,6 @@
+@@ -105,9 +103,6 @@
         * \note In the current implementation, \a propertiesStyle is ignored.
         */
        // BIC: merge with the above constructor
@@ -228,7 +273,7 @@
         * Constructs a FLAC file from \a stream.  If \a readProperties is true the
 --- taglib/it/itfile.cpp
 +++ taglib/it/itfile.cpp
-@@ -40,15 +40,6 @@
+@@ -45,15 +45,6 @@
    IT::Properties properties;
  };
  
@@ -258,7 +303,7 @@
           * Constructs a Impulse Tracker file from \a stream.
 --- taglib/mod/modfile.cpp
 +++ taglib/mod/modfile.cpp
-@@ -40,15 +40,6 @@
+@@ -45,15 +45,6 @@
    Mod::Properties properties;
  };
  
@@ -276,7 +321,7 @@
    Mod::FileBase(stream),
 --- taglib/mod/modfile.h
 +++ taglib/mod/modfile.h
-@@ -43,9 +43,6 @@
+@@ -47,9 +47,6 @@
         * \a propertiesStyle are ignored.  The audio properties are always
         * read.
         */
@@ -288,7 +333,7 @@
         * Constructs a Protracker file from \a stream.
 --- taglib/mod/modfilebase.cpp
 +++ taglib/mod/modfilebase.cpp
-@@ -25,10 +25,6 @@
+@@ -30,10 +30,6 @@
  using namespace TagLib;
  using namespace Mod;
  
@@ -301,14 +346,14 @@
  }
 --- taglib/mod/modfilebase.h
 +++ taglib/mod/modfilebase.h
-@@ -37,7 +37,6 @@
+@@ -41,7 +41,6 @@
      class TAGLIB_EXPORT FileBase : public TagLib::File
      {
      protected:
 -      FileBase(FileName file);
        FileBase(IOStream *stream);
  
-       void writeString(const String &s, ulong size, char padding = 0);
+       void writeString(const String &s, unsigned long size, char padding = 0);
 --- taglib/mp4/mp4file.cpp
 +++ taglib/mp4/mp4file.cpp
 @@ -69,14 +69,6 @@
@@ -339,7 +384,7 @@
         * Constructs an MP4 file from \a stream.  If \a readProperties is true the
 --- taglib/mpc/mpcfile.cpp
 +++ taglib/mpc/mpcfile.cpp
-@@ -88,14 +88,6 @@
+@@ -79,14 +79,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -367,7 +412,7 @@
         * Constructs an MPC file from \a stream.  If \a readProperties is true the
 --- taglib/mpeg/mpegfile.cpp
 +++ taglib/mpeg/mpegfile.cpp
-@@ -111,6 +111,7 @@
+@@ -80,6 +80,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -375,7 +420,7 @@
  MPEG::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
    TagLib::File(file),
    d(new FilePrivate())
-@@ -128,6 +129,26 @@
+@@ -97,6 +98,26 @@
      read(readProperties);
  }
  
@@ -453,18 +498,19 @@
         * Constructs an Ogg/FLAC file from \a stream.  If \a readProperties is true
 --- taglib/ogg/oggfile.cpp
 +++ taglib/ogg/oggfile.cpp
-@@ -208,11 +208,6 @@
+@@ -173,12 +173,6 @@
  // protected members
  ////////////////////////////////////////////////////////////////////////////////
  
--Ogg::File::File(FileName file) : TagLib::File(file)
+-Ogg::File::File(FileName file) :
+-  TagLib::File(file),
+-  d(new FilePrivate())
 -{
--  d = new FilePrivate;
 -}
 -
- Ogg::File::File(IOStream *stream) : TagLib::File(stream)
- {
-   d = new FilePrivate;
+ Ogg::File::File(IOStream *stream) :
+   TagLib::File(stream),
+   d(new FilePrivate())
 --- taglib/ogg/oggfile.h
 +++ taglib/ogg/oggfile.h
 @@ -88,7 +88,6 @@
@@ -561,7 +607,7 @@
         * Constructs a Vorbis file from \a stream.  If \a readProperties is true the
 --- taglib/riff/aiff/aifffile.cpp
 +++ taglib/riff/aiff/aifffile.cpp
-@@ -59,14 +59,6 @@
+@@ -57,14 +57,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -589,22 +635,21 @@
           * Constructs an AIFF file from \a stream.  If \a readProperties is true the
 --- taglib/riff/rifffile.cpp
 +++ taglib/riff/rifffile.cpp
-@@ -71,15 +71,6 @@
+@@ -72,14 +72,6 @@
  // protected members
  ////////////////////////////////////////////////////////////////////////////////
  
--RIFF::File::File(FileName file, Endianness endianness) : TagLib::File(file)
+-RIFF::File::File(FileName file, Endianness endianness) :
+-  TagLib::File(file),
+-  d(new FilePrivate(endianness))
 -{
--  d = new FilePrivate;
--  d->endianness = endianness;
--
 -  if(isOpen())
 -    read();
 -}
 -
- RIFF::File::File(IOStream *stream, Endianness endianness) : TagLib::File(stream)
- {
-   d = new FilePrivate;
+ RIFF::File::File(IOStream *stream, Endianness endianness) :
+   TagLib::File(stream),
+   d(new FilePrivate(endianness))
 --- taglib/riff/rifffile.h
 +++ taglib/riff/rifffile.h
 @@ -55,7 +55,6 @@
@@ -617,7 +662,7 @@
        /*!
 --- taglib/riff/wav/wavfile.cpp
 +++ taglib/riff/wav/wavfile.cpp
-@@ -70,14 +70,6 @@
+@@ -64,14 +64,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -645,7 +690,7 @@
           * Constructs a WAV file from \a stream.  If \a readProperties is true the
 --- taglib/s3m/s3mfile.cpp
 +++ taglib/s3m/s3mfile.cpp
-@@ -42,15 +42,6 @@
+@@ -47,15 +47,6 @@
    S3M::Properties properties;
  };
  
@@ -663,7 +708,7 @@
    Mod::FileBase(stream),
 --- taglib/s3m/s3mfile.h
 +++ taglib/s3m/s3mfile.h
-@@ -42,9 +42,6 @@
+@@ -46,9 +46,6 @@
           * \a propertiesStyle are ignored.  The audio properties are always
           * read.
           */
@@ -684,7 +729,7 @@
 -  return FileName(""); // XXX do we need a name?
 -}
 -
- ByteVector ByteVectorStream::readBlock(ulong length)
+ ByteVector ByteVectorStream::readBlock(unsigned long length)
  {
    if(length == 0)
 --- taglib/toolkit/tbytevectorstream.h
@@ -808,7 +853,7 @@
       * Reads a block of size \a length at the current get pointer.
 --- taglib/trueaudio/trueaudiofile.cpp
 +++ taglib/trueaudio/trueaudiofile.cpp
-@@ -84,6 +84,7 @@
+@@ -77,6 +77,7 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -816,7 +861,7 @@
  TrueAudio::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
    TagLib::File(file),
    d(new FilePrivate())
-@@ -100,6 +101,7 @@
+@@ -93,6 +94,7 @@
    if(isOpen())
      read(readProperties);
  }
@@ -847,7 +892,7 @@
         * Constructs a TrueAudio file from \a stream.  If \a readProperties is true
 --- taglib/wavpack/wavpackfile.cpp
 +++ taglib/wavpack/wavpackfile.cpp
-@@ -82,14 +82,6 @@
+@@ -75,14 +75,6 @@
  // public members
  ////////////////////////////////////////////////////////////////////////////////
  
@@ -875,7 +920,7 @@
         * Constructs an WavPack file from \a file.  If \a readProperties is true the
 --- taglib/xm/xmfile.cpp
 +++ taglib/xm/xmfile.cpp
-@@ -354,15 +354,6 @@
+@@ -355,15 +355,6 @@
    XM::Properties properties;
  };
  
@@ -893,7 +938,7 @@
    Mod::FileBase(stream),
 --- taglib/xm/xmfile.h
 +++ taglib/xm/xmfile.h
-@@ -42,9 +42,6 @@
+@@ -46,9 +46,6 @@
           * \a propertiesStyle are ignored.  The audio properties are always
           * read.
           */

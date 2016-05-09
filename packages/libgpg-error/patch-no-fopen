@@ -1,14 +1,14 @@
 --- src/estream.c
 +++ src/estream.c
-@@ -1491,6 +1491,7 @@
- /* Implementation of file I/O.  */
+@@ -1594,6 +1594,7 @@
+  */
  
  /* Create function for objects identified by a file name.  */
 +#if 0
  static int
  func_file_create (void **cookie, int *filedes,
                    const char *path, unsigned int modeflags, unsigned int cmode)
-@@ -1533,6 +1534,7 @@
+@@ -1636,6 +1637,7 @@
  
    return err;
  }
@@ -16,7 +16,7 @@
  
  
  
-@@ -2832,6 +2834,7 @@
+@@ -3008,6 +3010,7 @@
  
  /* API.  */
  
@@ -24,7 +24,7 @@
  estream_t
  _gpgrt_fopen (const char *_GPGRT__RESTRICT path,
                const char *_GPGRT__RESTRICT mode)
-@@ -2875,6 +2878,7 @@
+@@ -3050,6 +3053,7 @@
  
    return stream;
  }
@@ -32,7 +32,7 @@
  
  
  
-@@ -3281,11 +3285,13 @@
+@@ -3471,11 +3475,13 @@
        if (!stream)
          {
            /* Second try is to use the standard C streams.  */
@@ -46,7 +46,7 @@
              stream = do_fpopen (stderr, "a", 1, 1);
          }
  
-@@ -3316,6 +3322,7 @@
+@@ -3506,6 +3512,7 @@
  
  /* Note: A "samethread" keyword given in "mode" is ignored and the
     value used by STREAM is used instead. */
@@ -54,7 +54,7 @@
  estream_t
  _gpgrt_freopen (const char *_GPGRT__RESTRICT path,
                  const char *_GPGRT__RESTRICT mode,
-@@ -3383,6 +3390,7 @@
+@@ -3573,6 +3580,7 @@
  
    return stream;
  }
@@ -64,7 +64,7 @@
  int
 --- src/gpg-error.h.in
 +++ src/gpg-error.h.in
-@@ -551,8 +551,6 @@
+@@ -581,8 +581,6 @@
  typedef struct _gpgrt_poll_s es_poll_t;
  #endif
  
@@ -73,7 +73,7 @@
  gpgrt_stream_t gpgrt_mopen (void *_GPGRT__RESTRICT data,
                              size_t data_n, size_t data_len,
                              unsigned int grow,
-@@ -570,9 +568,6 @@
+@@ -600,9 +598,6 @@
  gpgrt_stream_t gpgrt_sysopen_nc (gpgrt_syshd_t *syshd, const char *mode);
  gpgrt_stream_t gpgrt_fpopen    (FILE *fp, const char *mode);
  gpgrt_stream_t gpgrt_fpopen_nc (FILE *fp, const char *mode);
