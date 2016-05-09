@@ -6,8 +6,6 @@
 
 def build(ctx):
     srcdir = ctx.extract()
-    with srcdir.diff('/home/edje/picosat.diff'):
-        srcdir.debug_shell()
     ctx.archive({
         srcdir.path('picosat.c').compile()
     }).install('lib/libpicosat.a')
