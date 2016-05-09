@@ -1,0 +1,60 @@
+--- src/asn1-parse.c
++++ src/asn1-parse.c
+@@ -2901,6 +2901,7 @@
+  *
+  * Return value: 0 for okay or an ASN_xx error code
+  **/
++#ifndef __CloudABI__
+ int
+ ksba_asn_parse_file (const char *file_name, ksba_asn_tree_t *result, int debug)
+ {
+@@ -2942,6 +2943,7 @@
+     fclose (parsectl.fp);
+   return parsectl.result_parse;
+ }
++#endif
+ 
+ void
+ ksba_asn_tree_release (ksba_asn_tree_t tree)
+--- src/ksba.h
++++ src/ksba.h
+@@ -498,8 +498,10 @@
+                                           int flush);
+ 
+ /*-- asn1-parse.y --*/
++#ifndef __CloudABI__
+ int ksba_asn_parse_file (const char *filename, ksba_asn_tree_t *result,
+                          int debug);
++#endif
+ void ksba_asn_tree_release (ksba_asn_tree_t tree);
+ 
+ /*-- asn1-func.c --*/
+--- src/visibility.c
++++ src/visibility.c
+@@ -1119,12 +1119,14 @@
+ 
+ 
+ /*-- asn1-parse.y --*/
++#ifndef __CloudABI__
+ int
+ ksba_asn_parse_file (const char *filename, ksba_asn_tree_t *result,
+                      int debug)
+ {
+   return _ksba_asn_parse_file (filename, result, debug);
+ }
++#endif
+ 
+ 
+ void
+--- src/visibility.h
++++ src/visibility.h
+@@ -398,7 +398,9 @@
+ MARK_VISIBLE (ksba_realloc)
+ MARK_VISIBLE (ksba_strdup)
+ MARK_VISIBLE (ksba_asn_create_tree)
++#ifndef __CloudABI__
+ MARK_VISIBLE (ksba_asn_parse_file)
++#endif
+ MARK_VISIBLE (ksba_asn_tree_dump)
+ MARK_VISIBLE (ksba_asn_tree_release)
+ MARK_VISIBLEX (ksba_asn_delete_structure) /* Dummy for ABI compatibility. */
