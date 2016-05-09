@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -11,14 +11,14 @@ def build(ctx):
 
 host_package(
     name='ninja',
-    version='1.6.0',
+    version='1.7.1',
     homepage='https://ninja-build.org/',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='ninja/v1.6.0.tar.gz',
-    checksum='b43e88fb068fe4d92a3dfd9eb4d19755dae5c33415db2e9b7b61b4659009cde7',
+    name='ninja/v1.7.1.tar.gz',
+    checksum='51581de53cf4705b89eb6b14a85baa73288ad08bff256e7d30d529155813be19',
     master_sites={'https://github.com/ninja-build/ninja/archive/'},
 )
