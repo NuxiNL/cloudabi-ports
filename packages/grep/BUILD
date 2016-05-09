@@ -5,7 +5,7 @@
 
 host_package(
     name='grep',
-    version='2.23',
+    version='2.25',
     homepage='https://www.gnu.org/software/grep/',
     maintainer='info@nuxi.nl',
     build_depends={'texinfo'},
@@ -13,7 +13,7 @@ host_package(
 )
 
 distfile(
-    name='grep-2.23.tar.xz',
-    checksum='54fc478ee1ce17780109820ef30730c9e18715a949f7d5c6afc673adb2a56ecf',
+    name='grep-2.25.tar.xz',
+    checksum='e21e83bac50450e0d0d61a42c154ee0dceaacdbf4f604ef6e79071cb8e596830',
     master_sites=sites_gnu('grep'),
 )
