@@ -1,0 +1,48 @@
+--- src/secmem.c
++++ src/secmem.c
+@@ -281,10 +281,8 @@
+     }
+ 
+ #elif defined(HAVE_MLOCK)
+-  uid_t uid;
+   int err;
+ 
+-  uid = getuid ();
+ 
+ #ifdef HAVE_BROKEN_MLOCK
+   /* Under HP/UX mlock segfaults if called by non-root.  Note, we have
+@@ -308,6 +306,7 @@
+     err = errno;
+ #endif /* !HAVE_BROKEN_MLOCK */
+ 
++#if 0
+   /* Test whether we are running setuid(0).  */
+   if (uid && ! geteuid ())
+     {
+@@ -320,6 +319,7 @@
+             log_fatal ("failed to reset uid: %s\n", strerror (errno));
+         }
+     }
++#endif
+ 
+   if (err)
+     {
+@@ -501,9 +501,9 @@
+         }
+ 
+ #elif !defined(HAVE_DOSISH_SYSTEM)
+-      uid_t uid;
+ 
+       disable_secmem = 1;
++#if 0
+       uid = getuid ();
+       if (uid != geteuid ())
+ 	{
+@@ -511,6 +511,7 @@
+ 	    log_fatal ("failed to drop setuid\n");
+ 	}
+ #endif
++#endif
+     }
+   else
+     {

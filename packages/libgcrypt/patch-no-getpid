@@ -1,0 +1,32 @@
+--- compat/getpid.c
++++ compat/getpid.c
+@@ -25,5 +25,28 @@
+ }
+ 
+ #else
+-# error No replacement function for getpid known
++
++#include <pthread.h>
++
++// Fake process ID, solely useful for tracking forks: every time we
++// fork, the child process gets a new process ID.
++static pid_t pid = 1;
++
++static void increment_pid(void) {
++  ++pid;
++}
++
++static void setup_atfork(void) {
++  pthread_atfork(NULL, NULL, increment_pid);
++}
++
++pid_t
++_gcry_getpid (void)
++{
++  static pthread_once_t once = PTHREAD_ONCE_INIT;
++  pthread_once(&once, setup_atfork);
++
++  return pid;
++}
++
+ #endif

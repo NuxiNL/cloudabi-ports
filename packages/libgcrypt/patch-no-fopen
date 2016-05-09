@@ -1,0 +1,380 @@
+--- cipher/md.c
++++ cipher/md.c
+@@ -123,7 +123,6 @@
+ static byte *md_read( gcry_md_hd_t a, int algo );
+ static int md_get_algo( gcry_md_hd_t a );
+ static int md_digest_length( int algo );
+-static void md_start_debug ( gcry_md_hd_t a, const char *suffix );
+ static void md_stop_debug ( gcry_md_hd_t a );
+ 
+ 
+@@ -510,8 +509,6 @@
+         }
+     }
+ 
+-  if (a->debug && !err)
+-    md_start_debug (bhd, "unknown");
+ 
+   if (!err)
+     *b_hd = bhd;
+@@ -777,9 +774,6 @@
+     case GCRYCTL_FINALIZE:
+       md_final (hd);
+       break;
+-    case GCRYCTL_START_DUMP:
+-      md_start_debug (hd, buffer);
+-      break;
+     case GCRYCTL_STOP_DUMP:
+       md_stop_debug ( hd );
+       break;
+@@ -806,6 +800,7 @@
+ /* The new debug interface.  If SUFFIX is a string it creates an debug
+    file for the context HD.  IF suffix is NULL, the file is closed and
+    debugging is stopped.  */
++#if 0
+ void
+ _gcry_md_debug (gcry_md_hd_t hd, const char *suffix)
+ {
+@@ -814,6 +809,7 @@
+   else
+     md_stop_debug (hd);
+ }
++#endif
+ 
+ 
+ /****************
+@@ -1193,6 +1189,7 @@
+ }
+ 
+ 
++#if 0
+ static void
+ md_start_debug ( gcry_md_hd_t md, const char *suffix )
+ {
+@@ -1213,6 +1210,7 @@
+   if ( !md->ctx->debug )
+     log_debug("md debug: can't open %s\n", buf );
+ }
++#endif
+ 
+ 
+ static void
+--- random/rand-internal.h
++++ random/rand-internal.h
+@@ -60,7 +60,6 @@
+ void _gcry_rngcsprng_randomize (void *buffer, size_t length,
+                                 enum gcry_random_level level);
+ void _gcry_rngcsprng_set_seed_file (const char *name);
+-void _gcry_rngcsprng_update_seed_file (void);
+ void _gcry_rngcsprng_fast_poll (void);
+ 
+ /*-- random-drbg.c --*/
+--- random/random-csprng.c
++++ random/random-csprng.c
+@@ -667,6 +667,7 @@
+    reasonable time to succeed.  With FOR_WRITE set to true a write
+    lock will be taken.  FNAME is used only for diagnostics. Returns 0
+    on success or -1 on error. */
++#if 0
+ static int
+ lock_seed_file (int fd, const char *fname, int for_write)
+ {
+@@ -703,6 +704,7 @@
+ #endif /*!LOCK_SEED_FILE*/
+   return 0;
+ }
++#endif
+ 
+ 
+ /* Read in a seed from the random_seed file and return true if this
+@@ -733,6 +735,7 @@
+   if (!seed_file_name)
+     return 0;
+ 
++#if 0
+ #ifdef HAVE_DOSISH_SYSTEM
+   fd = open( seed_file_name, O_RDONLY | O_BINARY );
+ #else
+@@ -819,9 +822,11 @@
+ 
+   allow_seed_file_update = 1;
+   return 1;
++#endif
+ }
+ 
+ 
++#if 0
+ void
+ _gcry_rngcsprng_update_seed_file (void)
+ {
+@@ -899,6 +904,7 @@
+ 
+   unlock_pool ();
+ }
++#endif
+ 
+ 
+ /* Read random out of the pool.  This function is the core of the
+@@ -1108,8 +1114,6 @@
+              enum random_origins, size_t, int);
+ 
+ #if USE_RNDLINUX
+-  if ( !access (NAME_OF_DEV_RANDOM, R_OK)
+-       && !access (NAME_OF_DEV_URANDOM, R_OK))
+     {
+       fnc = _gcry_rndlinux_gather_random;
+       return fnc;
+--- random/random.c
++++ random/random.c
+@@ -363,6 +363,7 @@
+ 
+ /* If a seed file has been setup, this function may be used to write
+    back the random numbers entropy pool.  */
++#if 0
+ void
+ _gcry_update_random_seed_file (void)
+ {
+@@ -377,6 +378,7 @@
+   else /* default */
+     _gcry_rngcsprng_update_seed_file ();
+ }
++#endif
+ 
+ 
+ 
+--- random/random.h
++++ random/random.h
+@@ -38,7 +38,6 @@
+ void _gcry_set_random_daemon_socket (const char *socketname);
+ int  _gcry_use_random_daemon (int onoff);
+ void _gcry_set_random_seed_file (const char *name);
+-void _gcry_update_random_seed_file (void);
+ 
+ byte *_gcry_get_random_bits( size_t nbits, int level, int secure );
+ void _gcry_fast_random_poll( void );
+--- random/rndlinux.c
++++ random/rndlinux.c
+@@ -36,7 +36,6 @@
+ #include "g10lib.h"
+ #include "rand-internal.h"
+ 
+-static int open_device (const char *name, int retry);
+ 
+ 
+ static int
+@@ -58,6 +57,7 @@
+  * exists)).  If RETRY is true, the function does not terminate with
+  * a fatal error but retries until it is able to reopen the device.
+  */
++#if 0
+ static int
+ open_device (const char *name, int retry)
+ {
+@@ -97,6 +97,7 @@
+   */
+   return fd;
+ }
++#endif
+ 
+ 
+ /* Note that the caller needs to make sure that this function is only
+@@ -109,10 +110,6 @@
+                               enum random_origins origin,
+                               size_t length, int level )
+ {
+-  static int fd_urandom = -1;
+-  static int fd_random = -1;
+-  static unsigned char ever_opened;
+-  int fd;
+   int n;
+   byte buffer[768];
+   size_t n_hw;
+@@ -124,6 +121,7 @@
+   if (!add)
+     {
+       /* Special mode to close the descriptors.  */
++#if 0
+       if (fd_random != -1)
+         {
+           close (fd_random);
+@@ -134,6 +132,7 @@
+           close (fd_urandom);
+           fd_urandom = -1;
+         }
++#endif
+       return 0;
+     }
+ 
+@@ -161,6 +160,7 @@
+      that we always require the device to be existent but want a more
+      graceful behaviour if the rarely needed close operation has been
+      used and the device needs to be re-opened later. */
++#if 0
+   if (level >= 2)
+     {
+       if (fd_random == -1)
+@@ -179,6 +179,7 @@
+         }
+       fd = fd_urandom;
+     }
++#endif
+ 
+   /* Enter the read loop.  */
+   delay = 0;  /* Start with 0 seconds so that we do no block on the
+@@ -187,6 +188,7 @@
+                  return with something we will actually use 100ms. */
+   while (length)
+     {
++#if 0
+       fd_set rfds;
+       struct timeval tv;
+       int rc;
+@@ -247,6 +249,9 @@
+       while (n == -1 && errno == EINTR);
+       if  (n == -1)
+         log_fatal("read error on random device: %s\n", strerror(errno));
++#endif
++      n = length < sizeof(buffer) ? length : sizeof(buffer);
++      arc4random_buf(buffer, n);
+       (*add)(buffer, n, origin);
+       length -= n;
+     }
+--- src/fips.c
++++ src/fips.c
+@@ -122,6 +122,7 @@
+       goto leave;
+     }
+ 
++#if 0
+   /* For testing the system it is useful to override the system
+      provided detection of the FIPS mode and force FIPS mode using a
+      file.  The filename is hardwired so that there won't be any
+@@ -169,6 +170,7 @@
+         abort ();
+       }
+   }
++#endif
+ 
+   /* Fips not not requested, set flag.  */
+   no_fips_mode_required = 1;
+@@ -197,6 +199,7 @@
+         }
+ 
+ 
++#if 0
+       /* If the FIPS force files exists, is readable and has a number
+          != 0 on its first line, we enable the enforced fips mode.  */
+       fp = fopen (FIPS_FORCE_FILE, "r");
+@@ -208,6 +211,7 @@
+             enforced_fips_mode = 1;
+           fclose (fp);
+         }
++#endif
+ 
+       /* Now get us into the INIT state.  */
+       fips_new_state (STATE_INIT);
+--- src/gcrypt-int.h
++++ src/gcrypt-int.h
+@@ -148,7 +148,6 @@
+ int _gcry_md_map_name (const char* name) _GCRY_GCC_ATTR_PURE;
+ gpg_err_code_t _gcry_md_setkey (gcry_md_hd_t hd,
+                                 const void *key, size_t keylen);
+-void _gcry_md_debug (gcry_md_hd_t hd, const char *suffix);
+ 
+ #define _gcry_md_test_algo(a) \
+             _gcry_md_algo_info ((a), GCRYCTL_TEST_ALGO, NULL, NULL)
+--- src/gcrypt.h.in
++++ src/gcrypt.h.in
+@@ -291,7 +291,6 @@
+     GCRYCTL_RESUME_SECMEM_WARN  = 29,
+     GCRYCTL_DROP_PRIVS          = 30,
+     GCRYCTL_ENABLE_M_GUARD      = 31,
+-    GCRYCTL_START_DUMP          = 32,
+     GCRYCTL_STOP_DUMP           = 33,
+     GCRYCTL_GET_ALGO_USAGE      = 34,
+     GCRYCTL_IS_ALGO_ENABLED     = 35,
+@@ -305,7 +304,6 @@
+     /* Note: 43 is not anymore used. */
+     GCRYCTL_ENABLE_QUICK_RANDOM = 44,
+     GCRYCTL_SET_RANDOM_SEED_FILE = 45,
+-    GCRYCTL_UPDATE_RANDOM_SEED_FILE = 46,
+     GCRYCTL_SET_THREAD_CBS = 47,
+     GCRYCTL_FAST_POLL = 48,
+     GCRYCTL_SET_RANDOM_DAEMON_SOCKET = 49,
+--- src/global.c
++++ src/global.c
+@@ -420,11 +420,13 @@
+       _gcry_set_random_seed_file (va_arg (arg_ptr, const char *));
+       break;
+ 
++#if 0
+     case GCRYCTL_UPDATE_RANDOM_SEED_FILE:
+       _gcry_set_preferred_rng_type (0);
+       if ( fips_is_operational () )
+         _gcry_update_random_seed_file ();
+       break;
++#endif
+ 
+     case GCRYCTL_SET_VERBOSITY:
+       _gcry_set_preferred_rng_type (0);
+--- src/hmac256.c
++++ src/hmac256.c
+@@ -447,6 +447,7 @@
+    On success the function returns the valid length of the result
+    buffer (which will be 32) or -1 on error.  On error ERRNO is set
+    appropriate.  */
++#if 0
+ int
+ _gcry_hmac256_file (void *result, size_t resultsize, const char *filename,
+                     const void *key, size_t keylen)
+@@ -509,6 +510,7 @@
+ 
+   return digestlen;
+ }
++#endif
+ 
+ 
+ 
+--- src/hmac256.h
++++ src/hmac256.h
+@@ -29,8 +29,6 @@
+ const void *_gcry_hmac256_finalize (hmac256_context_t hd, size_t *r_dlen);
+ void _gcry_hmac256_release (hmac256_context_t hd);
+ 
+-int _gcry_hmac256_file (void *result, size_t resultsize, const char *filename,
+-                        const void *key, size_t keylen);
+ 
+ 
+ #endif /*HMAC256_H*/
+--- src/hwfeatures.c
++++ src/hwfeatures.c
+@@ -117,6 +117,7 @@
+ static void
+ parse_hwf_deny_file (void)
+ {
++#if 0
+   const char *fname = HWF_DENY_FILE;
+   FILE *fp;
+   char buffer[256];
+@@ -172,6 +173,7 @@
+ #endif /*HAVE_SYSLOG*/
+         }
+     }
++#endif
+ }
+ 
+ 
+--- src/visibility.c
++++ src/visibility.c
+@@ -1275,11 +1275,6 @@
+   return gpg_error (_gcry_md_setkey (hd, key, keylen));
+ }
+ 
+-void
+-gcry_md_debug (gcry_md_hd_t hd, const char *suffix)
+-{
+-  _gcry_md_debug (hd, suffix);
+-}
+ 
+ gpg_error_t
+ gcry_kdf_derive (const void *passphrase, size_t passphraselen,
