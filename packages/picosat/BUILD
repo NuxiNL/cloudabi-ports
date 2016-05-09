@@ -7,7 +7,7 @@
 def build(ctx):
     srcdir = ctx.extract()
     ctx.archive({
-        srcdir.path('picosat.c').compile(['-DNGETRUSAGE'])
+        srcdir.path('picosat.c').compile()
     }).install('lib/libpicosat.a')
     srcdir.path('picosat.h').install('include/picosat.h')
 
