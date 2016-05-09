@@ -8,9 +8,9 @@ def build(ctx):
     build = ctx.extract().gnu_configure([
         'GPG_ERROR_CONFIG=%s/bin/gpg-error-config' % ctx.localbase(),
     ])
-    build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
+    build.make(['bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS='])
     stage = build.make_install([
-        'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install',
+        'bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS=', 'install',
     ])
     stage.path('bin/libgcrypt-config').unhardcode_paths()
     stage.install()
