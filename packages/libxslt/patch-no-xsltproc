@@ -1,0 +1,10 @@
+--- doc/Makefile.in
++++ doc/Makefile.in
+@@ -416,7 +416,6 @@
+ 	xsltproc.html			\
+ 	xsltproc.xml
+ 
+-man_MANS = xsltproc.1
+ wildcards = \
+ 	*.1			\
+ 	*.gif			\
