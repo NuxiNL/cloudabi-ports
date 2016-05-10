@@ -32,7 +32,7 @@ def build(ctx):
 
 host_package(
     name='llvm',
-    version='0.265577',
+    version='0.269026',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -40,17 +40,17 @@ host_package(
 )
 
 distfile(
-    name='cfe-0.265577.tar.xz',
-    checksum='0fa3762ff2711e18678c3a0d163f48ca60328135030eebe39c4d34bbef73ea4e',
+    name='cfe-0.269026.tar.xz',
+    checksum='95cfed38bfb950c41da8fe34983065e384703ea85350a1047141920dd4da9060',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
 distfile(
-    name='lld-0.265577.tar.xz',
-    checksum='c0a840c9079d71ccac7bee19d397f7454cb08e67fb832a7ffe667e84ddb7ec8e',
+    name='lld-0.269026.tar.xz',
+    checksum='9d1abbfadd967a52d43a3976fece2055ed34fe814d8a3e5a1d7af9aef14a48d6',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
 distfile(
-    name='llvm-0.265577.tar.xz',
-    checksum='312d830291d61ab0224f390bde5292a527fa7ff3b5ea879b2fb7472c24e43bc3',
+    name='llvm-0.269026.tar.xz',
+    checksum='7dfa48b8f8ab4d3e4c3eeb026cc4e0447950ba958fedc725bba8a9d8718a1b06',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
