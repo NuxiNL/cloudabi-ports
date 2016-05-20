@@ -1,6 +1,6 @@
 --- libs/context/src/asm/jump_arm64_aapcs_elf_gas.S
 +++ libs/context/src/asm/jump_arm64_aapcs_elf_gas.S
-@@ -51,7 +51,6 @@
+@@ -37,7 +37,6 @@
   *                                                     *
   *******************************************************/
  
@@ -10,7 +10,7 @@
  .global jump_fcontext
 --- libs/context/src/asm/make_arm64_aapcs_elf_gas.S
 +++ libs/context/src/asm/make_arm64_aapcs_elf_gas.S
-@@ -51,7 +51,6 @@
+@@ -37,7 +37,6 @@
   *                                                     *
   *******************************************************/
  

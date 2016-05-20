@@ -1,49 +1,46 @@
 --- libs/context/src/posix/stack_traits.cpp
 +++ libs/context/src/posix/stack_traits.cpp
-@@ -39,6 +39,7 @@
+@@ -42,10 +42,12 @@
      * size = ::sysconf( _SC_PAGESIZE);
  }
  
 +#if 0
- void stacksize_limit_( rlimit * limit)
- {
+ void stacksize_limit_( rlimit * limit) BOOST_NOEXCEPT_OR_NOTHROW {
      // conforming to POSIX.1-2001
-@@ -50,6 +51,7 @@
-     (void)result;
- #endif
+     ::getrlimit( RLIMIT_STACK, limit);
  }
 +#endif
  
- std::size_t pagesize()
- {
+ std::size_t pagesize() BOOST_NOEXCEPT_OR_NOTHROW {
+     static std::size_t size = 0;
 @@ -59,6 +61,7 @@
      return size;
  }
  
 +#if 0
- rlimit stacksize_limit()
- {
+ rlimit stacksize_limit() BOOST_NOEXCEPT_OR_NOTHROW {
      static rlimit limit;
-@@ -66,6 +69,7 @@
-     boost::call_once( flag, stacksize_limit_, & limit);
+ #if defined(BOOST_NO_CXX11_HDR_MUTEX)
+@@ -70,6 +73,7 @@
+ #endif
      return limit;
  }
 +#endif
  
  }
  
-@@ -74,7 +78,7 @@
+@@ -78,7 +82,7 @@
  
  bool
- stack_traits::is_unbounded() BOOST_NOEXCEPT
--{ return RLIM_INFINITY == stacksize_limit().rlim_max; }
-+{ return true; }
+ stack_traits::is_unbounded() BOOST_NOEXCEPT_OR_NOTHROW {
+-    return RLIM_INFINITY == stacksize_limit().rlim_max;
++    return true;
+ }
  
  std::size_t
- stack_traits::page_size() BOOST_NOEXCEPT
-@@ -100,7 +104,7 @@
- stack_traits::maximum_size() BOOST_NOEXCEPT
- {
+@@ -107,7 +111,7 @@
+ std::size_t
+ stack_traits::maximum_size() BOOST_NOEXCEPT_OR_NOTHROW {
      BOOST_ASSERT( ! is_unbounded() );
 -    return static_cast< std::size_t >( stacksize_limit().rlim_max);
 +    return SIZE_MAX;

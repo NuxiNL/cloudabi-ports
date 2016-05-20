@@ -75,10 +75,10 @@
                 return 0; // sprintf failed
 @@ -184,7 +184,7 @@
  #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
-       (::sprintf_s)(localbuf, 5, "%d", 0);
+       int r = (::sprintf_s)(localbuf, 5, "%d", 0);
  #else
--      (std::sprintf)(localbuf, "%d", 0);
-+      (std::snprintf)(localbuf, sizeof(localbuf), "%d", 0);
+-      int r = (std::sprintf)(localbuf, "%d", 0);
++      int r = (std::snprintf)(localbuf, sizeof(localbuf), "%d", 0);
  #endif
-       if(std::strlen(localbuf) < buf_size)
-          BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);
+       if(r < 0)
+          return 0; // sprintf failed

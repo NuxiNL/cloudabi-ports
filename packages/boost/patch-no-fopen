@@ -453,7 +453,7 @@
  
 --- libs/log/build/Jamfile.v2
 +++ libs/log/build/Jamfile.v2
-@@ -228,8 +228,6 @@
+@@ -236,8 +236,6 @@
      default_attribute_names.cpp
      default_sink.cpp
      text_ostream_backend.cpp
@@ -488,7 +488,7 @@
  template< typename CharT >
  class default_text_file_sink_factory :
      public basic_default_sink_factory< CharT >
-@@ -512,6 +515,7 @@
+@@ -518,6 +521,7 @@
          return base_type::init_sink(backend, params);
      }
  };
@@ -496,7 +496,7 @@
  
  #ifndef BOOST_LOG_WITHOUT_SYSLOG
  
-@@ -733,7 +737,6 @@
+@@ -739,7 +743,6 @@
      static void init_instance()
      {
          sinks_repository& instance = base_type::get_instance();
