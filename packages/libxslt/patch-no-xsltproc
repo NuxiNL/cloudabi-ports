@@ -1,6 +1,6 @@
 --- doc/Makefile.in
 +++ doc/Makefile.in
-@@ -416,7 +416,6 @@
+@@ -463,7 +463,6 @@
  	xsltproc.html			\
  	xsltproc.xml
  

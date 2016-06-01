@@ -1,6 +1,6 @@
 --- lib/curl_addrinfo.c
 +++ lib/curl_addrinfo.c
-@@ -262,7 +262,15 @@
+@@ -261,7 +261,15 @@
   *     #define h_addr  h_addr_list[0]
   */
  

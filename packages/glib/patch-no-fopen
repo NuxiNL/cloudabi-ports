@@ -87,15 +87,15 @@
  void           g_bookmark_file_set_title           (GBookmarkFile  *bookmark,
 --- glib/gcharset.c
 +++ glib/gcharset.c
-@@ -234,6 +234,7 @@
- static void
- read_aliases (gchar *file)
+@@ -233,6 +233,7 @@
+ read_aliases (gchar      *file,
+               GHashTable *alias_table)
  {
 +#ifndef __CloudABI__
    FILE *fp;
    char buf[256];
  
-@@ -281,6 +282,7 @@
+@@ -278,6 +279,7 @@
        }
      }
    fclose (fp);

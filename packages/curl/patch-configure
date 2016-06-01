@@ -8,9 +8,9 @@
 -  as_fn_error $? "couldn't find libraries for gethostbyname()" "$LINENO" 5
 -fi
  
- ac_fn_c_check_func "$LINENO" "strcasecmp" "ac_cv_func_strcasecmp"
- if test "x$ac_cv_func_strcasecmp" = xyes; then :
-@@ -20456,7 +20453,6 @@
+ 
+ curl_includes_winsock2="\
+@@ -20366,7 +20363,6 @@
      X-unknown)
        { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find connect" >&5
  $as_echo "cannot find connect" >&6; }

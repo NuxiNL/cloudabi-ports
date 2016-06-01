@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='libressl',
-    version='2.3.4',
+    version='2.4.0',
     homepage='http://www.libressl.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='libressl-2.3.4.tar.gz',
-    checksum='7a1135b2620f78928e89538c211a4df1d9415994001d1e7c9178c6b6d72de6a9',
+    name='libressl-2.4.0.tar.gz',
+    checksum='7e6000cfb9438fbfc7fe7fe0572af587e2f2a36bbdb95408e9874758d0c3382e',
     master_sites={'http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'},
 )

@@ -10,7 +10,7 @@
  struct curl_waitfd {
 --- lib/multi.c
 +++ lib/multi.c
-@@ -899,8 +899,6 @@
+@@ -1060,8 +1060,6 @@
      ufds[nfds].events = 0;
      if(extra_fds[i].events & CURL_WAIT_POLLIN)
        ufds[nfds].events |= POLLIN;
@@ -19,7 +19,7 @@
      if(extra_fds[i].events & CURL_WAIT_POLLOUT)
        ufds[nfds].events |= POLLOUT;
      ++nfds;
-@@ -926,8 +924,6 @@
+@@ -1087,8 +1085,6 @@
            mask |= CURL_WAIT_POLLIN;
          if(r & POLLOUT)
            mask |= CURL_WAIT_POLLOUT;

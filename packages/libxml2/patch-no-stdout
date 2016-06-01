@@ -106,7 +106,7 @@
          return;
 --- tree.c
 +++ tree.c
-@@ -7323,8 +7323,6 @@
+@@ -7324,8 +7324,6 @@
  #endif
  	return(0);
      }
@@ -145,7 +145,7 @@
  		ret = xmlRelaxNGValidateFullElement(reader->rngValidCtxt,
 --- xmlregexp.c
 +++ xmlregexp.c
-@@ -3000,7 +3000,6 @@
+@@ -3005,7 +3005,6 @@
  	    return(accept);
  	}
          case XML_REGEXP_STRING:

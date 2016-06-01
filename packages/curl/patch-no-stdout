@@ -1,6 +1,6 @@
 --- include/curl/mprintf.h
 +++ include/curl/mprintf.h
-@@ -31,12 +31,10 @@
+@@ -30,12 +30,10 @@
  extern "C" {
  #endif
  
@@ -15,7 +15,7 @@
  CURL_EXTERN int curl_mvsnprintf(char *buffer, size_t maxlength,
 --- lib/mprintf.c
 +++ lib/mprintf.c
-@@ -1102,6 +1102,7 @@
+@@ -1120,6 +1120,7 @@
    return retcode;
  }
  
@@ -23,7 +23,7 @@
  int curl_mprintf(const char *format, ...)
  {
    int retcode;
-@@ -1112,6 +1113,7 @@
+@@ -1130,6 +1131,7 @@
    va_end(ap_save);
    return retcode;
  }
@@ -31,7 +31,7 @@
  
  int curl_mfprintf(FILE *whereto, const char *format, ...)
  {
-@@ -1131,10 +1133,12 @@
+@@ -1149,10 +1151,12 @@
    return retcode;
  }
  
@@ -46,7 +46,7 @@
  {
 --- lib/url.c
 +++ lib/url.c
-@@ -499,8 +499,8 @@
+@@ -503,8 +503,8 @@
  {
    CURLcode result = CURLE_OK;
  

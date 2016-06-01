@@ -1,6 +1,6 @@
 --- configure
 +++ configure
-@@ -24048,7 +24048,7 @@
+@@ -24047,7 +24047,7 @@
  else
  
    # Android does not have C_IN in public headers, we define it wherever necessary
@@ -9,7 +9,7 @@
  
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking if arpa/nameser_compat.h is needed" >&5
  $as_echo_n "checking if arpa/nameser_compat.h is needed... " >&6; }
-@@ -24159,8 +24159,6 @@
+@@ -24158,8 +24158,6 @@
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: in -lbind" >&5
  $as_echo "in -lbind" >&6; }
                                           NETWORK_LIBS="-lbind $NETWORK_LIBS"

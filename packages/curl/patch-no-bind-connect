@@ -10,13 +10,13 @@
        /* we succeeded to bind */
        struct Curl_sockaddr_storage add;
        curl_socklen_t size = sizeof(add);
-@@ -1089,7 +1090,8 @@
+@@ -1115,7 +1116,8 @@
+ #endif
+     }
+     else {
+-      rc = connect(sockfd, &addr.sa_addr, addr.addrlen);
++      rc = -1;
++      errno = ENOTCAPABLE;
+     }
  
-   /* Connect TCP sockets, bind UDP */
-   if(!isconnected && (conn->socktype == SOCK_STREAM)) {
--    rc = connect(sockfd, &addr.sa_addr, addr.addrlen);
-+    rc = -1;
-+    errno = ENOTCAPABLE;
      if(-1 == rc)
-       error = SOCKERRNO;
-   }

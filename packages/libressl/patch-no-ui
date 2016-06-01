@@ -21,7 +21,7 @@
  
  	ret->strings = NULL;
  	ret->user_data = NULL;
-@@ -555,6 +550,7 @@
+@@ -556,6 +551,7 @@
  	return (CRYPTO_get_ex_data(&r->ex_data, idx));
  }
  
@@ -29,7 +29,7 @@
  void
  UI_set_default_method(const UI_METHOD *meth)
  {
-@@ -569,6 +565,7 @@
+@@ -570,6 +566,7 @@
  	}
  	return default_UI_meth;
  }

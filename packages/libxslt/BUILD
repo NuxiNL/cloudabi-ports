@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='libxslt',
-    version='1.1.28',
+    version='1.1.29',
     homepage='http://xmlsoft.org/libxslt/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libxml2'},
@@ -26,8 +26,8 @@ package(
 )
 
 distfile(
-    name='libxslt-1.1.28.tar.gz',
-    checksum='5fc7151a57b89c03d7b825df5a0fae0a8d5f05674c0e7cf2937ecec4d54a028c',
+    name='libxslt-1.1.29.tar.gz',
+    checksum='b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce',
     master_sites={'http://xmlsoft.org/sources/'},
     unsafe_string_sources={
         'libxslt/functions.c',

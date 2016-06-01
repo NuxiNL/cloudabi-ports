@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -19,7 +19,7 @@ def build(ctx):
 
 package(
     name='libxml2',
-    version='2.9.3',
+    version='2.9.4',
     homepage='http://www.xmlsoft.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -27,8 +27,8 @@ package(
 )
 
 distfile(
-    name='libxml2-2.9.3.tar.gz',
-    checksum='4de9e31f46b44d34871c22f54bfc54398ef124d6f7cafb1f4a5958fbcd3ba12d',
+    name='libxml2-2.9.4.tar.gz',
+    checksum='ffb911191e509b966deb55de705387f14156e1a56b21824357cdf0053233633c',
     master_sites={'ftp://xmlsoft.org/libxml2/'},
     unsafe_string_sources={
         'HTMLparser.c',
