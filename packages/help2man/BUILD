@@ -1,11 +1,11 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
 host_package(
     name='help2man',
-    version='1.47.3',
+    version='1.47.4',
     homepage='https://www.gnu.org/software/help2man/',
     maintainer='info@nuxi.nl',
     build_depends={'texinfo'},
@@ -13,7 +13,7 @@ host_package(
 )
 
 distfile(
-    name='help2man-1.47.3.tar.xz',
-    checksum='c232af6475ef65bee02770862a362f4c4c2e6c9967d39e987eb94cadcfc13856',
+    name='help2man-1.47.4.tar.xz',
+    checksum='d4ecf697d13f14dd1a78c5995f06459bff706fd1ce593d1c02d81667c0207753',
     master_sites=sites_gnu('help2man'),
 )
