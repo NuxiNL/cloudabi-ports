@@ -26,6 +26,14 @@
  using ::calloc;
  using ::free;
  using ::malloc;
+@@ -125,7 +124,6 @@
+ using ::exit;
+ using ::_Exit;
+ using ::getenv;
+-using ::system;
+ using ::bsearch;
+ using ::qsort;
+ using ::abs;
 --- include/cstring
 +++ include/cstring
 @@ -69,10 +69,7 @@
