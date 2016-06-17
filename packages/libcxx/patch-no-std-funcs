@@ -60,11 +60,3 @@
  using ::wcscmp;
  using ::wcscoll;
  using ::wcsncmp;
-@@ -192,7 +189,6 @@
- using ::wcsftime;
- using ::btowc;
- using ::wctob;
--using ::mbsinit;
- using ::mbrlen;
- using ::mbrtowc;
- using ::wcrtomb;
