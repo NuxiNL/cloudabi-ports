@@ -11,7 +11,7 @@ def build(ctx):
 
 host_package(
     name='libarchive',
-    version='3.2.0',
+    version='3.2.1',
     homepage='http://www.libarchive.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'xz'},
@@ -19,7 +19,7 @@ host_package(
 )
 
 distfile(
-    name='libarchive-3.2.0.tar.gz',
-    checksum='7bce45fd71ff01dc20d19edd78322d4965583d81b8bed8e26cacb65d6f5baa87',
+    name='libarchive-3.2.1.tar.gz',
+    checksum='72ee1a4e3fd534525f13a0ba1aa7b05b203d186e0c6072a8a4738649d0b3cfd2',
     master_sites={'http://www.libarchive.org/downloads/'},
 )

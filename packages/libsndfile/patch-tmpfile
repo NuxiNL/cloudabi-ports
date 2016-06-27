@@ -29,7 +29,7 @@
  
 --- src/common.c
 +++ src/common.c
-@@ -1629,6 +1629,7 @@
+@@ -1672,6 +1672,7 @@
  	return ;
  } /* psf_d2i_clip_array */
  
@@ -37,14 +37,14 @@
  FILE *
  psf_open_tmpfile (char * fname, size_t fnamelen)
  {	const char * tmpdir ;
-@@ -1654,3 +1655,4 @@
+@@ -1697,3 +1698,4 @@
  	memset (fname, 0, fnamelen) ;
  	return NULL ;
  } /* psf_open_tmpfile */
 +#endif
 --- src/common.h
 +++ src/common.h
-@@ -984,7 +984,6 @@
+@@ -998,7 +998,6 @@
  
  void	alac_get_desc_chunk_items (int subformat, uint32_t *fmt_flags, uint32_t *frames_per_packet) ;
  

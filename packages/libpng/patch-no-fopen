@@ -22,7 +22,7 @@
     int convert_to_8_bit, const void *buffer, png_int_32 row_stride,
 --- pngread.c
 +++ pngread.c
-@@ -1470,6 +1470,7 @@
+@@ -1480,6 +1480,7 @@
     return 0;
  }
  
@@ -30,7 +30,7 @@
  int PNGAPI
  png_image_begin_read_from_file(png_imagep image, const char *file_name)
  {
-@@ -1507,6 +1508,7 @@
+@@ -1517,6 +1518,7 @@
  
     return 0;
  }

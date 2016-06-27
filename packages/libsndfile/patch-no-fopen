@@ -10,7 +10,7 @@
  	{	SF_FORMAT_VOC,		"VOC (Creative Labs)",					"voc"	},
 --- src/common.c
 +++ src/common.c
-@@ -1416,7 +1416,6 @@
+@@ -1459,7 +1459,6 @@
  		CASE_NAME (SF_FORMAT_SDS) ;
  		CASE_NAME (SF_FORMAT_AVR) ;
  		CASE_NAME (SF_FORMAT_WAVEX) ;
@@ -20,7 +20,7 @@
  		CASE_NAME (SF_FORMAT_WVE) ;
 --- src/common.h
 +++ src/common.h
-@@ -794,14 +794,12 @@
+@@ -806,14 +806,12 @@
  /* Default seek function. Use for PCM and float encoded data. */
  sf_count_t	psf_default_seek (SF_PRIVATE *psf, int mode, sf_count_t samples_from_start) ;
  
@@ -35,7 +35,7 @@
  int psf_set_stdio (SF_PRIVATE *psf) ;
  int psf_file_valid (SF_PRIVATE *psf) ;
  void psf_set_file (SF_PRIVATE *psf, int fd) ;
-@@ -825,7 +823,6 @@
+@@ -837,7 +835,6 @@
  int psf_fclose (SF_PRIVATE *psf) ;
  
  /* Open and close the resource fork of a file. */
@@ -43,7 +43,7 @@
  int psf_close_rsrc (SF_PRIVATE *psf) ;
  
  /*
-@@ -848,7 +845,6 @@
+@@ -860,7 +857,6 @@
  int		paf_open	(SF_PRIVATE *psf) ;
  int		pvf_open	(SF_PRIVATE *psf) ;
  int		raw_open	(SF_PRIVATE *psf) ;
@@ -163,7 +163,7 @@
  
 --- src/sndfile.c
 +++ src/sndfile.c
-@@ -280,7 +280,6 @@
+@@ -284,7 +284,6 @@
  static int	copy_filename (SF_PRIVATE *psf, const char *path) ;
  static int	psf_close (SF_PRIVATE *psf) ;
  
@@ -171,7 +171,7 @@
  
  /*------------------------------------------------------------------------------
  ** Private (static) variables.
-@@ -315,6 +314,7 @@
+@@ -319,6 +318,7 @@
  **	Public functions.
  */
  
@@ -179,7 +179,7 @@
  SNDFILE*
  sf_open	(const char *path, int mode, SF_INFO *sfinfo)
  {	SF_PRIVATE 	*psf ;
-@@ -344,15 +344,18 @@
+@@ -348,15 +348,18 @@
  
  	return psf_open_file (psf, sfinfo) ;
  } /* sf_open */
@@ -198,7 +198,7 @@
  
  	if ((psf = calloc (1, sizeof (SF_PRIVATE))) == NULL)
  	{	sf_errno = SFE_MALLOC_FAILED ;
-@@ -801,6 +804,7 @@
+@@ -805,6 +808,7 @@
  					return 1 ;
  				break ;
  
@@ -206,7 +206,7 @@
  		case SF_FORMAT_SD2 :
  				/* SD2 is strictly big endian. */
  				if (endian == SF_ENDIAN_LITTLE || endian == SF_ENDIAN_CPU)
-@@ -808,6 +812,7 @@
+@@ -812,6 +816,7 @@
  				if (subformat == SF_FORMAT_PCM_S8 || subformat == SF_FORMAT_PCM_16 || subformat == SF_FORMAT_PCM_24 || subformat == SF_FORMAT_PCM_32)
  					return 1 ;
  				break ;
@@ -214,7 +214,7 @@
  
  		case SF_FORMAT_WVE :
  				if (info->channels > 1)
-@@ -2354,6 +2359,7 @@
+@@ -2396,6 +2401,7 @@
  ** Private functions.
  */
  
@@ -222,7 +222,7 @@
  static int
  try_resource_fork (SF_PRIVATE * psf)
  {	int old_error = psf->error ;
-@@ -2370,6 +2376,7 @@
+@@ -2412,6 +2418,7 @@
  
  	return SF_FORMAT_SD2 ;
  } /* try_resource_fork */
@@ -230,7 +230,7 @@
  
  static int
  format_from_extension (SF_PRIVATE *psf)
-@@ -2548,9 +2555,6 @@
+@@ -2590,9 +2597,6 @@
  	if (buffer [0] == MAKE_MARKER ('a', 'j', 'k', 'g'))
  		return 0 /*-SF_FORMAT_SHN-*/ ;
  
@@ -240,7 +240,7 @@
  
  	return 0 ;
  } /* guess_file_type */
-@@ -2913,9 +2917,6 @@
+@@ -2956,9 +2960,6 @@
  				error = htk_open (psf) ;
  				break ;
  
@@ -260,7 +260,7 @@
  	SF_FORMAT_FLAC			= 0x170000,		/* FLAC lossless file format */
  	SF_FORMAT_CAF			= 0x180000,		/* Core Audio File format */
  	SF_FORMAT_WVE			= 0x190000,		/* Psion WVE format */
-@@ -533,7 +532,6 @@
+@@ -559,7 +558,6 @@
  ** All calls to sf_open() should be matched with a call to sf_close().
  */
  

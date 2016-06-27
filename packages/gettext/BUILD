@@ -5,14 +5,14 @@
 
 host_package(
     name='gettext',
-    version='0.19.7',
+    version='0.19.8.1',
     homepage='https://www.gnu.org/software/gettext/',
     maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 
 distfile(
-    name='gettext-0.19.7.tar.xz',
-    checksum='378fa86a091cec3acdece3c961bb8d8c0689906287809a8daa79dc0c6398d934',
+    name='gettext-0.19.8.1.tar.xz',
+    checksum='105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4',
     master_sites=sites_gnu('gettext'),
 )

@@ -1,6 +1,6 @@
 --- configure
 +++ configure
-@@ -6531,9 +6531,9 @@
+@@ -6517,9 +6517,9 @@
     order for linking to succeed.  */
  
  #if defined (__GNUC__) && ! defined (__cplusplus)
@@ -12,7 +12,7 @@
  #else
  int dummy;
  #endif
-@@ -8148,9 +8148,9 @@
+@@ -8134,9 +8134,9 @@
     order for linking to succeed.  */
  
  #if defined (__GNUC__) && ! defined (__cplusplus)

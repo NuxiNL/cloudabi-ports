@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='libsndfile',
-    version='1.0.26',
+    version='1.0.27',
     homepage='http://www.mega-nerd.com/libsndfile/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'flac', 'libogg', 'libvorbis', 'speex'},
@@ -26,8 +26,8 @@ package(
 )
 
 distfile(
-    name='libsndfile-1.0.26.tar.gz',
-    checksum='cd6520ec763d1a45573885ecb1f8e4e42505ac12180268482a44b28484a25092',
+    name='libsndfile-1.0.27.tar.gz',
+    checksum='a391952f27f4a92ceb2b4c06493ac107896ed6c76be9a613a4731f076d30fac0',
     master_sites={'http://www.mega-nerd.com/libsndfile/files/'},
     unsafe_string_sources={'src/common.h'},
 )

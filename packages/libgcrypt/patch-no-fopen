@@ -154,7 +154,7 @@
  void _gcry_fast_random_poll( void );
 --- random/rndlinux.c
 +++ random/rndlinux.c
-@@ -36,7 +36,6 @@
+@@ -40,7 +40,6 @@
  #include "g10lib.h"
  #include "rand-internal.h"
  
@@ -162,7 +162,7 @@
  
  
  static int
-@@ -58,6 +57,7 @@
+@@ -62,6 +61,7 @@
   * exists)).  If RETRY is true, the function does not terminate with
   * a fatal error but retries until it is able to reopen the device.
   */
@@ -170,7 +170,7 @@
  static int
  open_device (const char *name, int retry)
  {
-@@ -97,6 +97,7 @@
+@@ -101,6 +101,7 @@
    */
    return fd;
  }
@@ -178,7 +178,7 @@
  
  
  /* Note that the caller needs to make sure that this function is only
-@@ -109,10 +110,6 @@
+@@ -113,10 +114,6 @@
                                enum random_origins origin,
                                size_t length, int level )
  {
@@ -189,7 +189,7 @@
    int n;
    byte buffer[768];
    size_t n_hw;
-@@ -124,6 +121,7 @@
+@@ -128,6 +125,7 @@
    if (!add)
      {
        /* Special mode to close the descriptors.  */
@@ -197,7 +197,7 @@
        if (fd_random != -1)
          {
            close (fd_random);
-@@ -134,6 +132,7 @@
+@@ -138,6 +136,7 @@
            close (fd_urandom);
            fd_urandom = -1;
          }
@@ -205,7 +205,7 @@
        return 0;
      }
  
-@@ -161,6 +160,7 @@
+@@ -165,6 +164,7 @@
       that we always require the device to be existent but want a more
       graceful behaviour if the rarely needed close operation has been
       used and the device needs to be re-opened later. */
@@ -213,7 +213,7 @@
    if (level >= 2)
      {
        if (fd_random == -1)
-@@ -179,6 +179,7 @@
+@@ -183,6 +183,7 @@
          }
        fd = fd_urandom;
      }
@@ -221,7 +221,7 @@
  
    /* Enter the read loop.  */
    delay = 0;  /* Start with 0 seconds so that we do no block on the
-@@ -187,6 +188,7 @@
+@@ -191,6 +192,7 @@
                   return with something we will actually use 100ms. */
    while (length)
      {
@@ -229,7 +229,7 @@
        fd_set rfds;
        struct timeval tv;
        int rc;
-@@ -247,6 +249,9 @@
+@@ -294,6 +296,9 @@
        while (n == -1 && errno == EINTR);
        if  (n == -1)
          log_fatal("read error on random device: %s\n", strerror(errno));

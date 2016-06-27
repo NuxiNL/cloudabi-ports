@@ -42,25 +42,7 @@
  			return SFE_UNSUPPORTED_ENCODING ;
  		} ;
  
-@@ -815,7 +814,7 @@
- 	chunk_info.id_size = 4 ;
- 
- 	if ((chunk_iterator = psf_get_chunk_iterator (psf, chunk_info.id)) == NULL)
--	{	printf ("%s %d : no chunk iterator found\n\n", __func__, __LINE__) ;
-+	{
- 		free (chunk_info.data) ;
- 		chunk_info.data = NULL ;
- 		return NULL ;
-@@ -827,7 +826,7 @@
- 	chunk_info.data = pakt_data = malloc (pakt_size + 5) ;
- 
- 	if ((bcount = psf->get_chunk_data (psf, chunk_iterator, &chunk_info)) != SF_ERR_NO_ERROR)
--	{	printf ("%s %d : %s\n\n", __func__, __LINE__, sf_error_number (bcount)) ;
-+	{
- 		while (chunk_iterator)
- 			chunk_iterator = psf->next_chunk_iterator (psf, chunk_iterator) ;
- 		free (chunk_info.data) ;
-@@ -852,7 +851,7 @@
+@@ -851,7 +850,7 @@
  
  			count ++ ;
  			if (count > 5 || bcount + count > pakt_size)
@@ -99,7 +81,7 @@
  psf_log_SF_INFO (SF_PRIVATE *psf)
 --- src/common.h
 +++ src/common.h
-@@ -990,7 +990,6 @@
+@@ -1004,7 +1004,6 @@
  ** Helper/debug functions.
  */
  
@@ -130,7 +112,7 @@
  
 --- src/rf64.c
 +++ src/rf64.c
-@@ -722,7 +722,7 @@
+@@ -750,7 +750,7 @@
  		return psf->error ;
  
  	if (has_data && psf->dataoffset != psf->headindex)
@@ -188,7 +170,7 @@
  		checksum ^= psds->read_data [k] ;
 --- src/sndfile.c
 +++ src/sndfile.c
-@@ -447,7 +447,7 @@
+@@ -451,7 +451,7 @@
  
  	if (errnum < 0 || errnum > SFE_MAX_ERROR)
  	{	/* This really shouldn't happen in release versions. */

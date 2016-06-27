@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libgpg-error',
-    version='1.22',
+    version='1.23',
     homepage='https://www.gnupg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -23,8 +23,8 @@ package(
 )
 
 distfile(
-    name='libgpg-error-1.22.tar.bz2',
-    checksum='f2a04ee6317bdb41a625bea23fdc7f0b5a63fb677f02447c647ed61fb9e69d7b',
+    name='libgpg-error-1.23.tar.bz2',
+    checksum='7f0c7f65b98c4048f649bfeebfa4d4c1559707492962504592b985634c939eaa',
     master_sites={'https://www.gnupg.org/ftp/gcrypt/libgpg-error/'},
     unsafe_string_sources={
         'src/estream.c',

@@ -17,7 +17,7 @@ def build(ctx):
 
 package(
     name='libgcrypt',
-    version='1.7.0',
+    version='1.7.1',
     homepage='https://www.gnupg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libgpg-error'},
@@ -25,8 +25,8 @@ package(
 )
 
 distfile(
-    name='libgcrypt-1.7.0.tar.bz2',
-    checksum='b0e67ea74474939913c4d9d9ef4ef5ec378efbe2bebe36389dee319c79bffa92',
+    name='libgcrypt-1.7.1.tar.bz2',
+    checksum='450d9cfcbf1611c64dbe3bd04b627b83379ef89f11406d94c8bba305e36d7a95',
     master_sites={'https://www.gnupg.org/ftp/gcrypt/libgcrypt/'},
     unsafe_string_sources={
         'cipher/ecc-curves.c',
