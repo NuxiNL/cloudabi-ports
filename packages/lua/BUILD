@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -12,7 +12,7 @@ def build(ctx):
 
 package(
     name='lua',
-    version='5.3.2',
+    version='5.3.3',
     homepage='http://www.lua.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -20,8 +20,8 @@ package(
 )
 
 distfile(
-    name='lua-5.3.2.tar.gz',
-    checksum='c740c7bb23a936944e1cc63b7c3c5351a8976d7867c5252c8854f7b2af9da68f',
+    name='lua-5.3.3.tar.gz',
+    checksum='5113c06884f7de453ce57702abaac1d618307f33f6789fa870e87a59d772aca2',
     master_sites={'http://www.lua.org/ftp/'},
     unsafe_string_sources={
         'src/lobject.c',

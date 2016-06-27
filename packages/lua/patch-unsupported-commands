@@ -1,6 +1,6 @@
 --- src/lauxlib.c
 +++ src/lauxlib.c
-@@ -240,6 +240,7 @@
+@@ -250,6 +250,7 @@
  }
  
  
@@ -8,7 +8,7 @@
  #if !defined(l_inspectstat)	/* { */
  
  #if defined(LUA_USE_POSIX)
-@@ -277,6 +278,7 @@
+@@ -287,6 +288,7 @@
      return 3;  /* return true/nil,what,code */
    }
  }
@@ -16,7 +16,7 @@
  
  /* }====================================================== */
  
-@@ -686,6 +688,7 @@
+@@ -701,6 +703,7 @@
  }
  
  
@@ -24,7 +24,7 @@
  LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
                                               const char *mode) {
    LoadF lf;
-@@ -720,6 +723,7 @@
+@@ -735,6 +738,7 @@
    lua_remove(L, fnameindex);
    return status;
  }
@@ -71,7 +71,7 @@
  
  
  #define SPACECHARS	" \f\n\r\t\v"
-@@ -285,6 +287,7 @@
+@@ -284,6 +286,7 @@
  }
  
  
@@ -79,7 +79,7 @@
  static int luaB_loadfile (lua_State *L) {
    const char *fname = luaL_optstring(L, 1, NULL);
    const char *mode = luaL_optstring(L, 2, NULL);
-@@ -292,6 +295,7 @@
+@@ -291,6 +294,7 @@
    int status = luaL_loadfilex(L, fname, mode);
    return load_aux(L, status, env);
  }
@@ -87,7 +87,7 @@
  
  
  /*
-@@ -354,6 +358,7 @@
+@@ -353,6 +357,7 @@
  /* }====================================================== */
  
  
@@ -95,7 +95,7 @@
  static int dofilecont (lua_State *L, int d1, lua_KContext d2) {
    (void)d1;  (void)d2;  /* only to match 'lua_Kfunction' prototype */
    return lua_gettop(L) - 1;
-@@ -368,6 +373,7 @@
+@@ -367,6 +372,7 @@
    lua_callk(L, 0, LUA_MULTRET, 0, dofilecont);
    return dofilecont(L, 0, 0);
  }
@@ -103,7 +103,7 @@
  
  
  static int luaB_assert (lua_State *L) {
-@@ -454,11 +460,9 @@
+@@ -453,11 +459,9 @@
  static const luaL_Reg base_funcs[] = {
    {"assert", luaB_assert},
    {"collectgarbage", luaB_collectgarbage},
@@ -115,7 +115,7 @@
    {"load", luaB_load},
  #if defined(LUA_COMPAT_LOADSTRING)
    {"loadstring", luaB_load},
-@@ -466,7 +470,6 @@
+@@ -465,7 +469,6 @@
    {"next", luaB_next},
    {"pairs", luaB_pairs},
    {"pcall", luaB_pcall},
@@ -210,7 +210,7 @@
  
  
  /*
-@@ -689,11 +695,6 @@
+@@ -692,11 +698,6 @@
  static const luaL_Reg iolib[] = {
    {"close", io_close},
    {"flush", io_flush},
@@ -222,7 +222,7 @@
    {"read", io_read},
    {"tmpfile", io_tmpfile},
    {"type", io_type},
-@@ -757,8 +758,6 @@
+@@ -760,8 +761,6 @@
    luaL_newlib(L, iolib);  /* new module */
    createmeta(L);
    /* create (and set) default files */
@@ -307,7 +307,7 @@
    /* set field 'cpath' */
 --- src/loslib.c
 +++ src/loslib.c
-@@ -127,6 +127,7 @@
+@@ -138,6 +138,7 @@
  
  
  
@@ -315,7 +315,7 @@
  static int os_execute (lua_State *L) {
    const char *cmd = luaL_optstring(L, 1, NULL);
    int stat = system(cmd);
-@@ -161,6 +162,7 @@
+@@ -172,6 +173,7 @@
    lua_pushstring(L, buff);
    return 1;
  }
@@ -323,7 +323,7 @@
  
  
  static int os_getenv (lua_State *L) {
-@@ -337,6 +339,7 @@
+@@ -352,6 +354,7 @@
  /* }====================================================== */
  
  
@@ -331,7 +331,7 @@
  static int os_setlocale (lua_State *L) {
    static const int cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY,
                        LC_NUMERIC, LC_TIME};
-@@ -347,6 +350,7 @@
+@@ -362,6 +365,7 @@
    lua_pushstring(L, setlocale(cat[op], l));
    return 1;
  }
@@ -339,7 +339,7 @@
  
  
  static int os_exit (lua_State *L) {
-@@ -366,14 +370,9 @@
+@@ -381,14 +385,9 @@
    {"clock",     os_clock},
    {"date",      os_date},
    {"difftime",  os_difftime},
