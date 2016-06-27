@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='expat',
-    version='2.1.1',
+    version='2.2.0',
     homepage='http://expat.sourceforge.net/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,7 +19,7 @@ package(
 )
 
 distfile(
-    name='expat-2.1.1.tar.bz2',
-    checksum='aff584e5a2f759dcfc6d48671e9529f6afe1e30b0cd6a4cec200cbe3f793de67',
-    master_sites=sites_sourceforge('expat/expat/2.1.1'),
+    name='expat-2.2.0.tar.bz2',
+    checksum='d9e50ff2d19b3538bd2127902a89987474e1a4db8e43a66a4d1a712ab9a504ff',
+    master_sites=sites_sourceforge('expat/expat/2.2.0'),
 )
