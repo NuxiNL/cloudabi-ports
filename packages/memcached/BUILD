@@ -16,7 +16,7 @@ def build(ctx):
 
 package(
     name='memcached',
-    version='1.4.25',
+    version='1.4.27',
     homepage='https://memcached.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libevent'},
@@ -24,8 +24,8 @@ package(
 )
 
 distfile(
-    name='memcached-1.4.25.tar.gz',
-    checksum='f058437b3c224d321919a9a6bb4e3eedb2312ed718c0caf087ff2f04ab795dda',
+    name='memcached-1.4.27.tar.gz',
+    checksum='96a90e7abec041a3c03258b6ce01ab21be16a9c594b7891a55567428392e8fe7',
     master_sites={'https://memcached.org/files/'},
     unsafe_string_sources={'memcached.c'},
 )

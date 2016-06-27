@@ -26,7 +26,7 @@
  
  /* FreeBSD 4.x doesn't have IOV_MAX exposed. */
  #ifndef IOV_MAX
-@@ -59,7 +63,6 @@
+@@ -64,7 +68,6 @@
   * forward declarations
   */
  static void drive_machine(conn *c);
@@ -34,7 +34,7 @@
  static int try_read_command(conn *c);
  
  enum try_read_result {
-@@ -223,6 +226,7 @@
+@@ -230,6 +233,7 @@
      settings.oldest_cas = 0;          /* supplements accuracy of oldest_live */
      settings.evict_to_free = 1;       /* push old items out of cache when memory runs out */
      settings.socketpath = NULL;       /* by default, not using a unix socket */
@@ -42,7 +42,7 @@
      settings.factor = 1.25;
      settings.chunk_size = 48;         /* space for a modest key and value */
      settings.num_threads = 4;         /* N workers */
-@@ -4403,6 +4407,7 @@
+@@ -4621,6 +4625,7 @@
      return;
  }
  
@@ -50,7 +50,7 @@
  static int new_socket(struct addrinfo *ai) {
      int sfd;
      int flags;
-@@ -4749,6 +4754,7 @@
+@@ -4967,6 +4972,7 @@
  
      return 0;
  }
@@ -58,7 +58,7 @@
  
  /*
   * We keep the current time of day in a global variable that's updated by a
-@@ -4809,6 +4815,7 @@
+@@ -5027,6 +5033,7 @@
      }
  }
  
@@ -66,7 +66,7 @@
  static void usage(void) {
      printf(PACKAGE " " VERSION "\n");
      printf("-p <num>      TCP port number to listen on (default: 11211)\n"
-@@ -5073,6 +5080,7 @@
+@@ -5297,6 +5304,7 @@
      return -1;
  #endif
  }
@@ -74,10 +74,20 @@
  
  /**
   * Do basic sanity check of the runtime environment
-@@ -5096,6 +5104,142 @@
+@@ -5320,6 +5328,7 @@
      return true;
  }
  
++#ifndef __CloudABI__
+ static bool _parse_slab_sizes(char *s, uint32_t *slab_sizes) {
+     char *b = NULL;
+     uint32_t size = 0;
+@@ -5357,6 +5366,148 @@
+     slab_sizes[i] = 0;
+     return true;
+ }
++#endif
++
 +#ifdef __CloudABI__
 +
 +void program_main(const argdata_t *ad) {
@@ -154,10 +164,11 @@
 +    main_base = event_init();
 +
 +    /* initialize other stuff */
++    logger_init();
 +    stats_init();
 +    assoc_init(settings.hashpower_init);
 +    conn_init();
-+    slabs_init(settings.maxbytes, settings.factor, preallocate);
++    slabs_init(settings.maxbytes, settings.factor, preallocate, NULL);
 +
 +    /* start up worker threads if MT mode */
 +    memcached_thread_init(settings.num_threads, main_base);
@@ -178,6 +189,10 @@
 +
 +    if (settings.slab_reassign &&
 +        start_slab_maintenance_thread() == -1) {
++        exit(EXIT_FAILURE);
++    }
++
++    if (settings.idle_timeout && start_conn_timeout_thread() == -1) {
 +        exit(EXIT_FAILURE);
 +    }
 +
@@ -213,11 +228,10 @@
 +}
 +
 +#else
-+
+ 
  int main (int argc, char **argv) {
      int c;
-     bool lock_memory = false;
-@@ -5791,3 +5935,5 @@
+@@ -6125,3 +6276,5 @@
  
      return retval;
  }
@@ -225,7 +239,7 @@
 +#endif
 --- memcached.h
 +++ memcached.h
-@@ -315,6 +315,7 @@
+@@ -326,6 +326,7 @@
      int evict_to_free;
      char *socketpath;   /* path to unix socket if using local socket */
      int access;  /* access mask (a la chmod) for unix domain socket */
@@ -233,7 +247,7 @@
      double factor;          /* chunk size growth factor */
      int chunk_size;
      int num_threads;        /* number of worker (without dispatcher) libevent threads to run */
-@@ -549,7 +550,9 @@
+@@ -564,7 +565,9 @@
                                      uint64_t *cas, const uint32_t hv);
  enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
  conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);

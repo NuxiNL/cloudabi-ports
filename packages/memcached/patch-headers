@@ -1,25 +1,3 @@
---- assoc.c
-+++ assoc.c
-@@ -14,7 +14,7 @@
- #include "memcached.h"
- #include <sys/stat.h>
- #include <sys/socket.h>
--#include <sys/signal.h>
-+#include <signal.h>
- #include <sys/resource.h>
- #include <fcntl.h>
- #include <netinet/in.h>
---- items.c
-+++ items.c
-@@ -2,7 +2,7 @@
- #include "memcached.h"
- #include <sys/stat.h>
- #include <sys/socket.h>
--#include <sys/signal.h>
-+#include <signal.h>
- #include <sys/resource.h>
- #include <fcntl.h>
- #include <netinet/in.h>
 --- memcached.c
 +++ memcached.c
 @@ -18,7 +18,9 @@
@@ -57,14 +35,3 @@
  #include <stddef.h>
  
  /* FreeBSD 4.x doesn't have IOV_MAX exposed. */
---- slabs.c
-+++ slabs.c
-@@ -10,7 +10,7 @@
- #include "memcached.h"
- #include <sys/stat.h>
- #include <sys/socket.h>
--#include <sys/signal.h>
-+#include <signal.h>
- #include <sys/resource.h>
- #include <fcntl.h>
- #include <netinet/in.h>

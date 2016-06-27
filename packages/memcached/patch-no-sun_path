@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -2747,10 +2747,14 @@
+@@ -2881,10 +2881,14 @@
                  break;
  
              case AF_UNIX:

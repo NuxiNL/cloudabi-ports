@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -735,6 +735,14 @@
+@@ -849,6 +849,14 @@
      int leftover;
      bool limit_to_mtu;
  
@@ -15,7 +15,7 @@
      assert(c != NULL);
  
      do {
-@@ -747,7 +755,7 @@
+@@ -861,7 +869,7 @@
          limit_to_mtu = IS_UDP(c->transport) || (1 == c->msgused);
  
          /* We may need to start a new msghdr if this one is full. */
