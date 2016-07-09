@@ -225,6 +225,9 @@ class BuildHandle:
             ].extract(self._builder._build_directory.get_new_directory())
         )
 
+    def gnu_triple(self):
+        return self._builder.get_gnu_triple()
+
     def host(self):
         return BuildHandle(
             self._builder._host_builder, self._name, self._version,
@@ -297,6 +300,14 @@ class HostBuilder:
     @staticmethod
     def get_cxx():
         return config.HOST_CXX
+
+    @staticmethod
+    def get_gnu_triple():
+        # Run config.guess to determine the GNU triple of the system
+        # we're running on.
+        config_guess = os.path.join(config.DIR_RESOURCES, 'config.guess')
+        triple = subprocess.check_output(config_guess)
+        return str(triple, encoding='ASCII').strip()
 
     @staticmethod
     def get_prefix():
@@ -398,6 +409,9 @@ class TargetBuilder:
 
     def get_cxxflags(self):
         return self._cflags
+
+    def get_gnu_triple(self):
+        return self._arch
 
     def get_localbase(self):
         return self._localbase
