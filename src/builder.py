@@ -420,6 +420,7 @@ class TargetBuilder:
         return self._prefix
 
     def _unhardcode(self, source, target):
+        assert not os.path.islink(source)
         with open(source, 'r') as f:
             contents = f.read()
         contents = (contents
@@ -441,7 +442,7 @@ class TargetBuilder:
             util.make_parent_dir(target_file)
             relpath = os.path.relpath(target_file, self._install_directory)
             ext = os.path.splitext(source_file)[1]
-            if ext in {'.la', '.pc'}:
+            if ext in {'.la', '.pc'} and not os.path.islink(source_file):
                 # Remove references to the installation prefix and the
                 # localbase directory from libtool archives and
                 # pkg-config files.
