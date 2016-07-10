@@ -1,3 +1,17 @@
+--- Modules/_posixsubprocess.c
++++ Modules/_posixsubprocess.c
+@@ -340,7 +340,11 @@
+         proc_fd_dir = NULL;
+     else
+ #endif
++#ifdef HAVE_OPENDIR
+         proc_fd_dir = opendir(FD_DIR);
++#else
++        proc_fd_dir = NULL;
++#endif /* HAVE_OPENDIR */
+     if (!proc_fd_dir) {
+         /* No way to get a list of open fds. */
+         _close_fds_by_brute_force(start_fd, py_fds_to_keep);
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
 @@ -3663,7 +3663,9 @@
@@ -20,17 +34,3 @@
      Py_END_ALLOW_THREADS
  
      if (!iterator->dirp) {
---- Modules/_posixsubprocess.c
-+++ Modules/_posixsubprocess.c
-@@ -340,7 +340,11 @@
-         proc_fd_dir = NULL;
-     else
- #endif
-+#ifdef HAVE_OPENDIR
-         proc_fd_dir = opendir(FD_DIR);
-+#else
-+        proc_fd_dir = NULL;
-+#endif /* HAVE_OPENDIR */
-     if (!proc_fd_dir) {
-         /* No way to get a list of open fds. */
-         _close_fds_by_brute_force(start_fd, py_fds_to_keep);

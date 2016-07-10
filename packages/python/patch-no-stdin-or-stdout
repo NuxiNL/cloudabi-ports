@@ -29,6 +29,18 @@
  PyAPI_FUNC(void) PySys_FormatStderr(const char *format, ...);
  
  PyAPI_FUNC(void) PySys_ResetWarnOptions(void);
+--- Modules/_sqlite/cache.c
++++ Modules/_sqlite/cache.c
+@@ -238,7 +238,9 @@
+         if (!display_str) {
+             return NULL;
+         }
++#ifndef __CloudABI__
+         PyObject_Print(display_str, stdout, Py_PRINT_RAW);
++#endif
+         Py_DECREF(display_str);
+ 
+         ptr = ptr->next;
 --- Modules/main.c
 +++ Modules/main.c
 @@ -106,7 +106,11 @@
@@ -121,18 +133,6 @@
      }
  
      if (Py_FinalizeEx() < 0) {
---- Modules/_sqlite/cache.c
-+++ Modules/_sqlite/cache.c
-@@ -238,7 +238,9 @@
-         if (!display_str) {
-             return NULL;
-         }
-+#ifndef __CloudABI__
-         PyObject_Print(display_str, stdout, Py_PRINT_RAW);
-+#endif
-         Py_DECREF(display_str);
- 
-         ptr = ptr->next;
 --- Objects/fileobject.c
 +++ Objects/fileobject.c
 @@ -356,7 +356,11 @@

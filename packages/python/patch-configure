@@ -1,3 +1,70 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -164,22 +164,10 @@
+ #define fsync _commit
+ #else
+ /* Unix functions that the configure script doesn't check for */
+-#define HAVE_EXECV      1
+-#define HAVE_FORK       1
+ #if defined(__USLC__) && defined(__SCO_VERSION__)       /* SCO UDK Compiler */
+ #define HAVE_FORK1      1
+ #endif
+-#define HAVE_GETEGID    1
+-#define HAVE_GETEUID    1
+-#define HAVE_GETGID     1
+-#define HAVE_GETPPID    1
+-#define HAVE_GETUID     1
+-#define HAVE_KILL       1
+-#define HAVE_OPENDIR    1
+ #define HAVE_PIPE       1
+-#define HAVE_SYSTEM     1
+-#define HAVE_WAIT       1
+-#define HAVE_TTYNAME    1
+ #endif  /* _MSC_VER */
+ #endif  /* ! __WATCOMC__ || __QNX__ */
+ 
+@@ -212,23 +200,41 @@
+ extern int chdir(char *);
+ extern int rmdir(char *);
+ #else
++#if defined(HAVE_CHDIR)
+ extern int chdir(const char *);
++#endif
++#if defined(HAVE_RMDIR)
+ extern int rmdir(const char *);
+ #endif
++#endif
++#if defined HAVE_CHMOD
+ extern int chmod(const char *, mode_t);
++#endif
+ /*#ifdef HAVE_FCHMOD
+ extern int fchmod(int, mode_t);
+ #endif*/
+ /*#ifdef HAVE_LCHMOD
+ extern int lchmod(const char *, mode_t);
+ #endif*/
++#if defined(HAVE_CHOWN)
+ extern int chown(const char *, uid_t, gid_t);
++#endif
++#if defined(HAVE_GETCWD)
+ extern char *getcwd(char *, int);
++#endif
+ extern char *strerror(int);
++#if defined(HAVE_LINK)
+ extern int link(const char *, const char *);
++#endif
++#if defined(HAVE_RENAME)
+ extern int rename(const char *, const char *);
++#endif
++#if defined(HAVE_STAT)
+ extern int stat(const char *, struct stat *);
++#endif
++#if defined(HAVE_UNLINK
+ extern int unlink(const char *);
++#endif
+ #ifdef HAVE_SYMLINK
+ extern int symlink(const char *, const char *);
+ #endif /* HAVE_SYMLINK */
 --- configure
 +++ configure
 @@ -776,6 +776,7 @@
@@ -225,73 +292,6 @@
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty)
  
  AC_CHECK_DECL(dirfd,
---- Modules/posixmodule.c
-+++ Modules/posixmodule.c
-@@ -164,22 +164,10 @@
- #define fsync _commit
- #else
- /* Unix functions that the configure script doesn't check for */
--#define HAVE_EXECV      1
--#define HAVE_FORK       1
- #if defined(__USLC__) && defined(__SCO_VERSION__)       /* SCO UDK Compiler */
- #define HAVE_FORK1      1
- #endif
--#define HAVE_GETEGID    1
--#define HAVE_GETEUID    1
--#define HAVE_GETGID     1
--#define HAVE_GETPPID    1
--#define HAVE_GETUID     1
--#define HAVE_KILL       1
--#define HAVE_OPENDIR    1
- #define HAVE_PIPE       1
--#define HAVE_SYSTEM     1
--#define HAVE_WAIT       1
--#define HAVE_TTYNAME    1
- #endif  /* _MSC_VER */
- #endif  /* ! __WATCOMC__ || __QNX__ */
- 
-@@ -212,23 +200,41 @@
- extern int chdir(char *);
- extern int rmdir(char *);
- #else
-+#if defined(HAVE_CHDIR)
- extern int chdir(const char *);
-+#endif
-+#if defined(HAVE_RMDIR)
- extern int rmdir(const char *);
- #endif
-+#endif
-+#if defined HAVE_CHMOD
- extern int chmod(const char *, mode_t);
-+#endif
- /*#ifdef HAVE_FCHMOD
- extern int fchmod(int, mode_t);
- #endif*/
- /*#ifdef HAVE_LCHMOD
- extern int lchmod(const char *, mode_t);
- #endif*/
-+#if defined(HAVE_CHOWN)
- extern int chown(const char *, uid_t, gid_t);
-+#endif
-+#if defined(HAVE_GETCWD)
- extern char *getcwd(char *, int);
-+#endif
- extern char *strerror(int);
-+#if defined(HAVE_LINK)
- extern int link(const char *, const char *);
-+#endif
-+#if defined(HAVE_RENAME)
- extern int rename(const char *, const char *);
-+#endif
-+#if defined(HAVE_STAT)
- extern int stat(const char *, struct stat *);
-+#endif
-+#if defined(HAVE_UNLINK
- extern int unlink(const char *);
-+#endif
- #ifdef HAVE_SYMLINK
- extern int symlink(const char *, const char *);
- #endif /* HAVE_SYMLINK */
 --- pyconfig.h.in
 +++ pyconfig.h.in
 @@ -40,6 +40,9 @@

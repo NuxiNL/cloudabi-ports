@@ -10,21 +10,6 @@
  
  Modules/signalmodule.o: $(srcdir)/Modules/signalmodule.c $(srcdir)/Modules/posixmodule.h
  
---- Modules/pwdmodule.c
-+++ Modules/pwdmodule.c
-@@ -4,6 +4,7 @@
- #include "Python.h"
- #include "posixmodule.h"
- 
-+#ifdef HAVE_PWD_H
- #include <pwd.h>
- 
- #include "clinic/pwdmodule.c.h"
-@@ -244,3 +245,4 @@
-     PyModule_AddObject(m, "struct_passwd", (PyObject *) &StructPwdType);
-     return m;
- }
-+#endif /* HAVE_PWD_H */
 --- Modules/Setup.dist
 +++ Modules/Setup.dist
 @@ -107,8 +107,11 @@
@@ -40,6 +25,21 @@
  _sre _sre.c			# Fredrik Lundh's new regular expressions
  _codecs _codecsmodule.c		# access to the builtin codecs and codec registry
  _weakref _weakref.c		# weak references
+--- Modules/pwdmodule.c
++++ Modules/pwdmodule.c
+@@ -4,6 +4,7 @@
+ #include "Python.h"
+ #include "posixmodule.h"
+ 
++#ifdef HAVE_PWD_H
+ #include <pwd.h>
+ 
+ #include "clinic/pwdmodule.c.h"
+@@ -244,3 +245,4 @@
+     PyModule_AddObject(m, "struct_passwd", (PyObject *) &StructPwdType);
+     return m;
+ }
++#endif /* HAVE_PWD_H */
 --- setup.py
 +++ setup.py
 @@ -667,7 +667,11 @@

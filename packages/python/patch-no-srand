@@ -1,6 +1,6 @@
 --- Modules/expat/xmlparse.c
 +++ Modules/expat/xmlparse.c
-@@ -693,8 +695,10 @@
+@@ -693,8 +693,10 @@
  static unsigned long
  generate_hash_secret_salt(void)
  {

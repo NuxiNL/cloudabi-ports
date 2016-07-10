@@ -70,6 +70,20 @@
          mpd_free(decstring);
      }
      else {
+--- Modules/_testcapimodule.c
++++ Modules/_testcapimodule.c
+@@ -2526,7 +2526,11 @@
+         e->tv_sec -=1;
+         e->tv_usec += 1000000;
+     }
++#ifdef HAVE_PRINTF
+     printf("Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
++#else
++    fprintf(stderr, "Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
++#endif
+ }
+ 
+ static PyObject *
 --- Modules/hashtable.c
 +++ Modules/hashtable.c
 @@ -238,12 +238,12 @@
@@ -102,20 +116,6 @@
          return 0;
      }
  
---- Modules/_testcapimodule.c
-+++ Modules/_testcapimodule.c
-@@ -2526,7 +2526,11 @@
-         e->tv_sec -=1;
-         e->tv_usec += 1000000;
-     }
-+#ifdef HAVE_PRINTF
-     printf("Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
-+#else
-+    fprintf(stderr, "Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
-+#endif
- }
- 
- static PyObject *
 --- Objects/unicodeobject.c
 +++ Objects/unicodeobject.c
 @@ -1165,12 +1165,12 @@

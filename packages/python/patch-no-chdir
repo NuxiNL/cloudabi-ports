@@ -1,3 +1,16 @@
+--- Modules/_posixsubprocess.c
++++ Modules/_posixsubprocess.c
+@@ -459,8 +459,10 @@
+     if (errwrite != c2pwrite && errwrite != p2cread && errwrite > 2)
+         POSIX_CALL(close(errwrite));
+ 
++#ifdef HAVE_CHDIR
+     if (cwd)
+         POSIX_CALL(chdir(cwd));
++#endif
+ 
+     if (restore_signals)
+         _Py_RestoreSignals();
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
 @@ -220,6 +220,7 @@
@@ -30,16 +43,3 @@
  #endif
      Py_END_ALLOW_THREADS
  
---- Modules/_posixsubprocess.c
-+++ Modules/_posixsubprocess.c
-@@ -459,8 +459,10 @@
-     if (errwrite != c2pwrite && errwrite != p2cread && errwrite > 2)
-         POSIX_CALL(close(errwrite));
- 
-+#ifdef HAVE_CHDIR
-     if (cwd)
-         POSIX_CALL(chdir(cwd));
-+#endif
- 
-     if (restore_signals)
-         _Py_RestoreSignals();

@@ -1,16 +1,3 @@
---- Include/pylifecycle.h
-+++ Include/pylifecycle.h
-@@ -50,6 +50,10 @@
- PyAPI_FUNC(int) Py_FdIsInteractive(FILE *, const char *);
- #endif
- 
-+#ifdef __CloudABI__
-+PyAPI_FUNC(void) Py_ProgramMain(const argdata_t *ad);
-+#endif
-+
- /* Bootstrap __main__ (defined in Modules/main.c) */
- PyAPI_FUNC(int) Py_Main(int argc, wchar_t **argv);
- 
 --- Include/Python.h
 +++ Include/Python.h
 @@ -41,6 +41,11 @@
@@ -25,6 +12,19 @@
  /* CAUTION:  Build setups should ensure that NDEBUG is defined on the
   * compiler command line when building Python in release mode; else
   * assert() calls won't be removed.
+--- Include/pylifecycle.h
++++ Include/pylifecycle.h
+@@ -50,6 +50,10 @@
+ PyAPI_FUNC(int) Py_FdIsInteractive(FILE *, const char *);
+ #endif
+ 
++#ifdef __CloudABI__
++PyAPI_FUNC(void) Py_ProgramMain(const argdata_t *ad);
++#endif
++
+ /* Bootstrap __main__ (defined in Modules/main.c) */
+ PyAPI_FUNC(int) Py_Main(int argc, wchar_t **argv);
+ 
 --- Include/sysmodule.h
 +++ Include/sysmodule.h
 @@ -16,7 +16,11 @@
