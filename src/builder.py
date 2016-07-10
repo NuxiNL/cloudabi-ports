@@ -447,6 +447,10 @@ class TargetBuilder:
                 # localbase directory from libtool archives and
                 # pkg-config files.
                 self._unhardcode(source_file, target_file + '.template')
+            elif ext == '.pyc':
+                # Don't install precompiled Python sources. These
+                # contain metadata that is non-deterministic.
+                pass
             elif relpath.startswith('share/man/') and ext != '.gz':
                 # Compress manual pages.
                 util.gzip_file(source_file, target_file + '.gz')
