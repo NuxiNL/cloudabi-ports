@@ -34,8 +34,8 @@
  	    ./Programs/_freeze_importlib \
  	        $(srcdir)/Lib/importlib/_bootstrap_external.py Python/importlib_external.h; \
 +	else \
-+	    ./Programs/_freeze_importlib < $(srcdir)/Lib/importlib/_bootstrap_external.py \
-+	                                 > Python/importlib_external.h; \
++	    $(FREEZE_IMPORTLIB_FOR_BUILD) \
++	        $(srcdir)/Lib/importlib/_bootstrap_external.py Python/importlib_external.h; \
  	fi
  
  Python/importlib.h: $(srcdir)/Lib/importlib/_bootstrap.py Programs/_freeze_importlib
@@ -43,8 +43,8 @@
  	    ./Programs/_freeze_importlib \
  	        $(srcdir)/Lib/importlib/_bootstrap.py Python/importlib.h; \
 +	else \
-+	    ./Programs/_freeze_importlib < $(srcdir)/Lib/importlib/_bootstrap.py \
-+	                                 > Python/importlib.h; \
++	    $(FREEZE_IMPORTLIB_FOR_BUILD) \
++	        $(srcdir)/Lib/importlib/_bootstrap.py Python/importlib.h; \
  	fi
  
  
