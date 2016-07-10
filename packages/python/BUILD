@@ -31,17 +31,29 @@ def build(ctx):
         'CPPFLAGS=-static',
         'LDFLAGS=-static',
         'PYTHON_FOR_BUILD=_PYTHON_PROJECT_BASE=$(abs_builddir) '
-                         '_PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) '
-                         'PYTHONPATH=$(shell test -f pybuilddir.txt '
-                                            '&& echo $(abs_builddir)/`cat pybuilddir.txt`:)'
-                                    '$(srcdir)/Lib:'
-                                    '$(srcdir)/Lib/$(PLATDIR) '
-                         '%s' % hostbuild.path('python'),
+        '_PYTHON_HOST_PLATFORM=$(_PYTHON_HOST_PLATFORM) '
+        'PYTHONPATH=$(shell test -f pybuilddir.txt '
+        '&& echo $(abs_builddir)/`cat pybuilddir.txt`:)'
+        '$(srcdir)/Lib:'
+        '$(srcdir)/Lib/$(PLATDIR) '
+        '%s' % hostbuild.path('python'),
     ])
-
     build.make()
-    install = build.make_install()
-    install.install()
+    stage = build.make_install()
+
+    # Fix up pathnames in shebangs and build configurations.
+    for f in {'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
+              'bin/python3.6dm-config', 'bin/pyvenv-3.6',
+              'lib/python3.6/_sysconfigdata.py',
+              'lib/python3.6/config-3.6dm/Makefile',
+              'lib/python3.6/config-3.6dm/python-config.py'}:
+        stage.path(f).unhardcode_paths()
+
+    # Remove Pickle files, as they don't seem to be stable.
+    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.alpha.2.pickle',
+              'lib/python3.6/lib2to3/PatternGrammar3.6.0.alpha.2.pickle'}:
+        stage.path(f).remove()
+    stage.install()
 
 package(
     name='python',
