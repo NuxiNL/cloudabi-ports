@@ -1,0 +1,29 @@
+--- Python/sysmodule.c
++++ Python/sysmodule.c
+@@ -1787,6 +1787,7 @@
+                         PyUnicode_FromString(Py_GetCopyright()));
+     SET_SYS_FROM_STRING("platform",
+                         PyUnicode_FromString(Py_GetPlatform()));
++#ifndef __CloudABI__
+     SET_SYS_FROM_STRING("executable",
+                         PyUnicode_FromWideChar(
+                                Py_GetProgramFullPath(), -1));
+@@ -1798,6 +1799,18 @@
+                         PyUnicode_FromWideChar(Py_GetPrefix(), -1));
+     SET_SYS_FROM_STRING("base_exec_prefix",
+                         PyUnicode_FromWideChar(Py_GetExecPrefix(), -1));
++#else
++    res = PyDict_SetItemString(sysdict, "executable", Py_None);
++    if (res < 0) return NULL;
++    res = PyDict_SetItemString(sysdict, "prefix", Py_None);
++    if (res < 0) return NULL;
++    res = PyDict_SetItemString(sysdict, "exec_prefix", Py_None);
++    if (res < 0) return NULL;
++    res = PyDict_SetItemString(sysdict, "base_prefix", Py_None);
++    if (res < 0) return NULL;
++    res = PyDict_SetItemString(sysdict, "base_exec_prefix", Py_None);
++    if (res < 0) return NULL;
++#endif
+     SET_SYS_FROM_STRING("maxsize",
+                         PyLong_FromSsize_t(PY_SSIZE_T_MAX));
+     SET_SYS_FROM_STRING("float_info",

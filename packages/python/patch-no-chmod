@@ -1,0 +1,14 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -2870,7 +2870,11 @@
+     }
+     else
+ #endif
++#ifdef HAVE_CHMOD
+         result = chmod(path->narrow, mode);
++#else
++        {result= -1; errno = ENOSYS;}
++#endif /* HAVE_CHMOD */
+     Py_END_ALLOW_THREADS
+ 
+     if (result) {

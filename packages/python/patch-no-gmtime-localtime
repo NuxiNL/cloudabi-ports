@@ -1,0 +1,188 @@
+--- Modules/_datetimemodule.c
++++ Modules/_datetimemodule.c
+@@ -2456,17 +2456,17 @@
+     return self;
+ }
+ 
+-/* Return new date from localtime(t). */
++/* Return new date from localtime_r(t). */
+ static PyObject *
+ date_local_from_object(PyObject *cls, PyObject *obj)
+ {
+-    struct tm *tm;
++    struct tm *tm, tmbuf;
+     time_t t;
+ 
+     if (_PyTime_ObjectToTime_t(obj, &t, _PyTime_ROUND_FLOOR) == -1)
+         return NULL;
+ 
+-    tm = localtime(&t);
++    tm = localtime_r(&t, &tmbuf);
+     if (tm == NULL) {
+         /* unconvertible time */
+ #ifdef EINVAL
+@@ -4077,20 +4077,20 @@
+     return self;
+ }
+ 
+-/* TM_FUNC is the shared type of localtime() and gmtime(). */
+-typedef struct tm *(*TM_FUNC)(const time_t *timer);
++/* TM_FUNC is the shared type of localtime_r() and gmtime_r(). */
++typedef struct tm *(*TM_FUNC)(const time_t *timer, struct tm *result);
+ 
+ /* Internal helper.
+  * Build datetime from a time_t and a distinct count of microseconds.
+- * Pass localtime or gmtime for f, to control the interpretation of timet.
++ * Pass localtime_r or gmtime_r for f, to control the interpretation of timet.
+  */
+ static PyObject *
+ datetime_from_timet_and_us(PyObject *cls, TM_FUNC f, time_t timet, int us,
+                            PyObject *tzinfo)
+ {
+-    struct tm *tm;
++    struct tm *tm, tmbuf;
+ 
+-    tm = f(&timet);
++    tm = f(&timet, &tmbuf);
+     if (tm == NULL) {
+ #ifdef EINVAL
+         if (errno == 0)
+@@ -4099,7 +4099,7 @@
+         return PyErr_SetFromErrno(PyExc_OSError);
+     }
+ 
+-    /* The platform localtime/gmtime may insert leap seconds,
++    /* The platform localtime_r/gmtime_r may insert leap seconds,
+      * indicated by tm->tm_sec > 59.  We don't care about them,
+      * except to the extent that passing them on to the datetime
+      * constructor would raise ValueError for a reason that
+@@ -4119,7 +4119,7 @@
+ }
+ 
+ /* Internal helper.
+- * Build datetime from a Python timestamp.  Pass localtime or gmtime for f,
++ * Build datetime from a Python timestamp.  Pass localtime_r or gmtime_r for f,
+  * to control the interpretation of the timestamp.  Since a double doesn't
+  * have enough bits to cover a datetime's full range of precision, it's
+  * better to call datetime_from_timet_and_us provided you have a way
+@@ -4140,8 +4140,8 @@
+ }
+ 
+ /* Internal helper.
+- * Build most accurate possible datetime for current time.  Pass localtime or
+- * gmtime for f as appropriate.
++ * Build most accurate possible datetime for current time.  Pass localtime_r or
++ * gmtime_r for f as appropriate.
+  */
+ static PyObject *
+ datetime_best_possible(PyObject *cls, TM_FUNC f, PyObject *tzinfo)
+@@ -4183,7 +4183,7 @@
+         return NULL;
+ 
+     self = datetime_best_possible((PyObject *)type,
+-                                  tz == Py_None ? localtime : gmtime,
++                                  tz == Py_None ? localtime_r : gmtime_r,
+                                   tz);
+     if (self != NULL && tz != Py_None) {
+         /* Convert UTC to tzinfo's zone. */
+@@ -4198,7 +4198,7 @@
+ static PyObject *
+ datetime_utcnow(PyObject *cls, PyObject *dummy)
+ {
+-    return datetime_best_possible(cls, gmtime, Py_None);
++    return datetime_best_possible(cls, gmtime_r, Py_None);
+ }
+ 
+ /* Return new local datetime from timestamp (Python timestamp -- a double). */
+@@ -4217,7 +4217,7 @@
+         return NULL;
+ 
+     self = datetime_from_timestamp(cls,
+-                                   tzinfo == Py_None ? localtime : gmtime,
++                                   tzinfo == Py_None ? localtime_r : gmtime_r,
+                                    timestamp,
+                                    tzinfo);
+     if (self != NULL && tzinfo != Py_None) {
+@@ -4235,7 +4235,7 @@
+     PyObject *result = NULL;
+ 
+     if (PyArg_ParseTuple(args, "O:utcfromtimestamp", &timestamp))
+-        result = datetime_from_timestamp(cls, gmtime, timestamp,
++        result = datetime_from_timestamp(cls, gmtime_r, timestamp,
+                                          Py_None);
+     return result;
+ }
+@@ -4745,7 +4745,7 @@
+ local_timezone(PyDateTime_DateTime *utc_time)
+ {
+     PyObject *result = NULL;
+-    struct tm *timep;
++    struct tm *timep, timebuf;
+     time_t timestamp;
+     PyObject *delta;
+     PyObject *one_second;
+@@ -4774,7 +4774,7 @@
+     Py_DECREF(seconds);
+     if (timestamp == -1 && PyErr_Occurred())
+         return NULL;
+-    timep = localtime(&timestamp);
++    timep = localtime_r(&timestamp, &timebuf);
+ #ifdef HAVE_STRUCT_TM_TM_ZONE
+     zone = timep->tm_zone;
+     delta = new_delta(0, timep->tm_gmtoff, 0, 1);
+--- Modules/timemodule.c
++++ Modules/timemodule.c
+@@ -339,7 +339,7 @@
+         return NULL;
+ 
+     errno = 0;
+-    local = gmtime(&when);
++    local = gmtime_r(&when, &buf);
+     if (local == NULL) {
+ #ifdef EINVAL
+         if (errno == 0)
+@@ -347,7 +347,6 @@
+ #endif
+         return PyErr_SetFromErrno(PyExc_OSError);
+     }
+-    buf = *local;
+     return tmtotuple(&buf);
+ }
+ 
+@@ -367,7 +366,7 @@
+     struct tm *local;
+ 
+     assert (timep != NULL);
+-    local = localtime(timep);
++    local = localtime_r(timep, result);
+     if (local == NULL) {
+         /* unconvertible time */
+ #ifdef EINVAL
+@@ -377,7 +376,6 @@
+         PyErr_SetFromErrno(PyExc_OSError);
+         return -1;
+     }
+-    *result = *local;
+     return 0;
+ }
+ 
+@@ -1180,16 +1178,16 @@
+     {
+ #define YEAR ((time_t)((365 * 24 + 6) * 3600))
+         time_t t;
+-        struct tm *p;
++        struct tm *p, tmbuf;
+         long janzone, julyzone;
+         char janname[10], julyname[10];
+         t = (time((time_t *)0) / YEAR) * YEAR;
+-        p = localtime(&t);
++        p = localtime_r(&t, &tmbuf);
+         janzone = -p->tm_gmtoff;
+         strncpy(janname, p->tm_zone ? p->tm_zone : "   ", 9);
+         janname[9] = '\0';
+         t += YEAR/2;
+-        p = localtime(&t);
++        p = localtime_r(&t, &tmbuf);
+         julyzone = -p->tm_gmtoff;
+         strncpy(julyname, p->tm_zone ? p->tm_zone : "   ", 9);
+         julyname[9] = '\0';

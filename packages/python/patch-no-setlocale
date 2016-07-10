@@ -1,0 +1,259 @@
+--- Modules/_localemodule.c
++++ Modules/_localemodule.c
+@@ -44,8 +44,10 @@
+ 
+ /* support functions for formatting floating point numbers */
+ 
++#ifdef HAVE_SETLOCALE
+ PyDoc_STRVAR(setlocale__doc__,
+ "(integer,string=None) -> string. Activates/queries locale processing.");
++#endif /* HAVE_LOCALE */
+ 
+ /* the grouping is terminated by either 0 or CHAR_MAX */
+ static PyObject*
+@@ -86,6 +88,7 @@
+     return result;
+ }
+ 
++#ifdef HAVE_SETLOCALE
+ static PyObject*
+ PyLocale_setlocale(PyObject* self, PyObject* args)
+ {
+@@ -126,6 +129,7 @@
+     }
+     return result_object;
+ }
++#endif /* HAVE_LOCALE */
+ 
+ PyDoc_STRVAR(localeconv__doc__,
+ "() -> dict. Returns numeric and monetary locale-specific parameters.");
+@@ -480,6 +484,7 @@
+     return PyUnicode_DecodeLocale(dgettext(domain, in), NULL);
+ }
+ 
++#ifdef HAVE_DCGETTEXT
+ PyDoc_STRVAR(dcgettext__doc__,
+ "dcgettext(domain, msg, category) -> string\n"
+ "Return translation of msg in domain and category.");
+@@ -493,7 +498,9 @@
+         return 0;
+     return PyUnicode_DecodeLocale(dcgettext(domain,msgid,category), NULL);
+ }
++#endif /* HAVE_DCGETTEXT */
+ 
++#ifdef HAVE_TEXTDOMAIN
+ PyDoc_STRVAR(textdomain__doc__,
+ "textdomain(domain) -> string\n"
+ "Set the C library's textdmain to domain, returning the new domain.");
+@@ -511,7 +518,9 @@
+     }
+     return PyUnicode_DecodeLocale(domain, NULL);
+ }
++#endif /* HAVE_TEXTDOMAIN */
+ 
++#ifdef HAVE_BINDTEXTDOMAIN
+ PyDoc_STRVAR(bindtextdomain__doc__,
+ "bindtextdomain(domain, dir) -> string\n"
+ "Bind the C library's domain to dir.");
+@@ -545,6 +554,7 @@
+     Py_XDECREF(dirname_bytes);
+     return result;
+ }
++#endif /* HAVE_BINDTEXTDOMAIN */
+ 
+ #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+ PyDoc_STRVAR(bind_textdomain_codeset__doc__,
+@@ -567,8 +577,10 @@
+ #endif
+ 
+ static struct PyMethodDef PyLocale_Methods[] = {
++#ifdef HAVE_SETLOCALE
+   {"setlocale", (PyCFunction) PyLocale_setlocale,
+    METH_VARARGS, setlocale__doc__},
++#endif
+   {"localeconv", (PyCFunction) PyLocale_localeconv,
+    METH_NOARGS, localeconv__doc__},
+ #ifdef HAVE_WCSCOLL
+@@ -591,12 +603,18 @@
+     gettext__doc__},
+   {"dgettext",(PyCFunction)PyIntl_dgettext,METH_VARARGS,
+    dgettext__doc__},
++#ifdef HAVE_DCGETTEXT
+   {"dcgettext",(PyCFunction)PyIntl_dcgettext,METH_VARARGS,
+     dcgettext__doc__},
++#endif
++#ifdef HAVE_TEXTDOMAIN
+   {"textdomain",(PyCFunction)PyIntl_textdomain,METH_VARARGS,
+    textdomain__doc__},
++#endif
++#ifdef HAVE_BINDTEXTDOMAIN
+   {"bindtextdomain",(PyCFunction)PyIntl_bindtextdomain,METH_VARARGS,
+    bindtextdomain__doc__},
++#endif
+ #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+   {"bind_textdomain_codeset",(PyCFunction)PyIntl_bind_textdomain_codeset,
+    METH_VARARGS, bind_textdomain_codeset__doc__},
+@@ -632,21 +650,29 @@
+ 
+     d = PyModule_GetDict(m);
+ 
++#ifdef LC_CTYPE
+     x = PyLong_FromLong(LC_CTYPE);
+     PyDict_SetItemString(d, "LC_CTYPE", x);
+     Py_XDECREF(x);
++#endif
+ 
++#ifdef LC_TIME
+     x = PyLong_FromLong(LC_TIME);
+     PyDict_SetItemString(d, "LC_TIME", x);
+     Py_XDECREF(x);
++#endif
+ 
++#ifdef LC_COLLATE
+     x = PyLong_FromLong(LC_COLLATE);
+     PyDict_SetItemString(d, "LC_COLLATE", x);
+     Py_XDECREF(x);
++#endif
+ 
++#ifdef LC_MONETARY
+     x = PyLong_FromLong(LC_MONETARY);
+     PyDict_SetItemString(d, "LC_MONETARY", x);
+     Py_XDECREF(x);
++#endif
+ 
+ #ifdef LC_MESSAGES
+     x = PyLong_FromLong(LC_MESSAGES);
+@@ -654,13 +680,17 @@
+     Py_XDECREF(x);
+ #endif /* LC_MESSAGES */
+ 
++#ifdef LC_NUMERIC
+     x = PyLong_FromLong(LC_NUMERIC);
+     PyDict_SetItemString(d, "LC_NUMERIC", x);
+     Py_XDECREF(x);
++#endif
+ 
++#ifdef LC_ALL
+     x = PyLong_FromLong(LC_ALL);
+     PyDict_SetItemString(d, "LC_ALL", x);
+     Py_XDECREF(x);
++#endif
+ 
+     x = PyLong_FromLong(CHAR_MAX);
+     PyDict_SetItemString(d, "CHAR_MAX", x);
+--- Programs/python.c
++++ Programs/python.c
+@@ -22,7 +22,9 @@
+     /* We need a second copy, as Python might modify the first one. */
+     wchar_t **argv_copy2;
+     int i, res;
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+     char *oldloc;
++#endif
+ 
+     /* Force malloc() allocator to bootstrap Python */
+     (void)_PyMem_SetupAllocators("malloc");
+@@ -43,6 +45,7 @@
+     fedisableexcept(FE_OVERFLOW);
+ #endif
+ 
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
+     if (!oldloc) {
+         fprintf(stderr, "out of memory\n");
+@@ -50,10 +53,13 @@
+     }
+ 
+     setlocale(LC_ALL, "");
++#endif
+     for (i = 0; i < argc; i++) {
+         argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
+         if (!argv_copy[i]) {
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+             PyMem_RawFree(oldloc);
++#endif
+             fprintf(stderr, "Fatal Python error: "
+                             "unable to decode the command line argument #%i\n",
+                             i + 1);
+@@ -63,8 +69,10 @@
+     }
+     argv_copy2[argc] = argv_copy[argc] = NULL;
+ 
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+     setlocale(LC_ALL, oldloc);
+     PyMem_RawFree(oldloc);
++#endif
+ 
+     res = Py_Main(argc, argv_copy);
+ 
+--- Python/fileutils.c
++++ Python/fileutils.c
+@@ -101,7 +101,9 @@
+ static int
+ check_force_ascii(void)
+ {
++#ifdef HAVE_SETLOCALE
+     char *loc;
++#endif /* HAVE_SETLOCALE */
+ #if defined(HAVE_LANGINFO_H) && defined(CODESET)
+     char *codeset, **alias;
+     char encoding[100];
+@@ -125,6 +127,7 @@
+     };
+ #endif
+ 
++#ifdef HAVE_SETLOCALE
+     loc = setlocale(LC_CTYPE, NULL);
+     if (loc == NULL)
+         goto error;
+@@ -132,6 +135,7 @@
+         /* the LC_CTYPE locale is different than C */
+         return 0;
+     }
++#endif /* HAVE_SETLOCALE */
+ 
+ #if defined(HAVE_LANGINFO_H) && defined(CODESET)
+     codeset = nl_langinfo(CODESET);
+--- Python/frozenmain.c
++++ Python/frozenmain.c
+@@ -46,6 +46,7 @@
+         setbuf(stderr, (char *)NULL);
+     }
+ 
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
+     if (!oldloc) {
+         fprintf(stderr, "out of memory\n");
+@@ -53,6 +54,7 @@
+     }
+ 
+     setlocale(LC_ALL, "");
++#endif
+     for (i = 0; i < argc; i++) {
+         argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
+         argv_copy2[i] = argv_copy[i];
+@@ -63,9 +65,11 @@
+             goto error;
+         }
+     }
++#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
+     setlocale(LC_ALL, oldloc);
+     PyMem_RawFree(oldloc);
+     oldloc = NULL;
++#endif
+ 
+ #ifdef MS_WINDOWS
+     PyInitFrozenExtensions();
+--- Python/pylifecycle.c
++++ Python/pylifecycle.c
+@@ -1192,8 +1192,10 @@
+             /* When the LC_CTYPE locale is the POSIX locale ("C locale"),
+                stdin and stdout use the surrogateescape error handler by
+                default, instead of the strict error handler. */
++#ifdef HAVE_SETLOCALE
+             char *loc = setlocale(LC_CTYPE, NULL);
+             if (loc != NULL && strcmp(loc, "C") == 0)
++#endif /* HAVE_SETLOCALE */
+                 errors = "surrogateescape";
+         }
+     }

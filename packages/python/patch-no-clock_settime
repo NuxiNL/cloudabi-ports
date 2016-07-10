@@ -1,0 +1,28 @@
+--- Modules/timemodule.c
++++ Modules/timemodule.c
+@@ -161,6 +161,7 @@
+ \n\
+ Return the time of the specified clock clk_id.");
+ 
++#if defined(HAVE_CLOCK_SETTIME)
+ static PyObject *
+ time_clock_settime(PyObject *self, PyObject *args)
+ {
+@@ -186,6 +187,7 @@
+     }
+     Py_RETURN_NONE;
+ }
++#endif /* defined(HAVE_CLOCK_SETTIME) */
+ 
+ PyDoc_STRVAR(clock_settime_doc,
+ "clock_settime(clk_id, time)\n\
+@@ -1253,7 +1255,9 @@
+ #endif
+ #ifdef HAVE_CLOCK_GETTIME
+     {"clock_gettime",   time_clock_gettime, METH_VARARGS, clock_gettime_doc},
++#if defined(HAVE_CLOCK_SETTIME)
+     {"clock_settime",   time_clock_settime, METH_VARARGS, clock_settime_doc},
++#endif /* defined(HAVE_CLOCK_SETTIME) */
+     {"clock_getres",    time_clock_getres, METH_VARARGS, clock_getres_doc},
+ #endif
+     {"sleep",           time_sleep, METH_O, sleep_doc},

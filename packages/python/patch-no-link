@@ -1,0 +1,43 @@
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -812,7 +812,7 @@
+     return os_getcwdb_impl(module);
+ }
+ 
+-#if defined(HAVE_LINK)
++#if defined(HAVE_LINK) || defined(HAVE_LINKAT)
+ 
+ PyDoc_STRVAR(os_link__doc__,
+ "link($module, /, src, dst, *, src_dir_fd=None, dst_dir_fd=None,\n"
+@@ -864,7 +864,7 @@
+     return return_value;
+ }
+ 
+-#endif /* defined(HAVE_LINK) */
++#endif /* defined(HAVE_LINK) || defined(HAVE_LINKAT) */
+ 
+ PyDoc_STRVAR(os_listdir__doc__,
+ "listdir($module, /, path=None)\n"
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -3388,7 +3388,7 @@
+ #define HAVE_LINK 1
+ #endif
+ 
+-#ifdef HAVE_LINK
++#if defined(HAVE_LINK) || defined(HAVE_LINKAT)
+ /*[clinic input]
+ 
+ os.link
+@@ -3458,7 +3458,11 @@
+             follow_symlinks ? AT_SYMLINK_FOLLOW : 0);
+     else
+ #endif
++#if defined(HAVE_LINK)
+         result = link(src->narrow, dst->narrow);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif /* defined(HAVE_LINK) */
+     Py_END_ALLOW_THREADS
+ 
+     if (result)

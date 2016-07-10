@@ -1,0 +1,24 @@
+--- Modules/selectmodule.c
++++ Modules/selectmodule.c
+@@ -400,7 +400,11 @@
+ {
+     PyObject *o, *key, *value;
+     int fd;
++#ifdef POLLPRI
+     unsigned short events = POLLIN | POLLPRI | POLLOUT;
++#else
++    unsigned short events = POLLIN | POLLOUT;
++#endif
+     int err;
+ 
+     if (!PyArg_ParseTuple(args, "O|O&:register", &o, ushort_converter, &events))
+@@ -2431,7 +2435,9 @@
+         if (PyType_Ready(&poll_Type) < 0)
+             return NULL;
+         PyModule_AddIntMacro(m, POLLIN);
++#ifdef POLLPRI
+         PyModule_AddIntMacro(m, POLLPRI);
++#endif
+         PyModule_AddIntMacro(m, POLLOUT);
+         PyModule_AddIntMacro(m, POLLERR);
+         PyModule_AddIntMacro(m, POLLHUP);

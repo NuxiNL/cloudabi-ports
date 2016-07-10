@@ -1,0 +1,13 @@
+--- Include/Python.h
++++ Include/Python.h
+@@ -36,6 +36,10 @@
+ #include <unistd.h>
+ #endif
+ 
++#if defined(__CloudABI__)
++#define isatty(fd) ((int) 0)
++#endif
++
+ /* For size_t? */
+ #ifdef HAVE_STDDEF_H
+ #include <stddef.h>

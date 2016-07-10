@@ -1,0 +1,118 @@
+--- Modules/faulthandler.c
++++ Modules/faulthandler.c
+@@ -907,6 +907,7 @@
+ #endif
+ 
+ #ifdef HAVE_SYS_RESOURCE_H
++#ifndef __CloudABI__
+     struct rlimit rl;
+ 
+     /* Disable creation of core dump */
+@@ -915,6 +916,7 @@
+         setrlimit(RLIMIT_CORE, &rl);
+     }
+ #endif
++#endif
+ 
+ #ifdef _MSC_VER
+     /* Visual Studio: configure abort() to not display an error message nor
+--- Modules/resource.c
++++ Modules/resource.c
+@@ -28,6 +28,7 @@
+ static PyStructSequence_Field struct_rusage_fields[] = {
+     {"ru_utime",        "user time used"},
+     {"ru_stime",        "system time used"},
++#if !defined(__CloudABI__)
+     {"ru_maxrss",       "max. resident set size"},
+     {"ru_ixrss",        "shared memory size"},
+     {"ru_idrss",        "unshared data size"},
+@@ -42,6 +43,7 @@
+     {"ru_nsignals",     "signals received"},
+     {"ru_nvcsw",        "voluntary context switches"},
+     {"ru_nivcsw",       "involuntary context switches"},
++#endif
+     {0}
+ };
+ 
+@@ -83,6 +85,7 @@
+                     PyFloat_FromDouble(doubletime(ru.ru_utime)));
+     PyStructSequence_SET_ITEM(result, 1,
+                     PyFloat_FromDouble(doubletime(ru.ru_stime)));
++#if !defined(__CloudABI__)
+     PyStructSequence_SET_ITEM(result, 2, PyLong_FromLong(ru.ru_maxrss));
+     PyStructSequence_SET_ITEM(result, 3, PyLong_FromLong(ru.ru_ixrss));
+     PyStructSequence_SET_ITEM(result, 4, PyLong_FromLong(ru.ru_idrss));
+@@ -97,6 +100,7 @@
+     PyStructSequence_SET_ITEM(result, 13, PyLong_FromLong(ru.ru_nsignals));
+     PyStructSequence_SET_ITEM(result, 14, PyLong_FromLong(ru.ru_nvcsw));
+     PyStructSequence_SET_ITEM(result, 15, PyLong_FromLong(ru.ru_nivcsw));
++#endif
+ 
+     if (PyErr_Occurred()) {
+         Py_DECREF(result);
+@@ -106,6 +110,7 @@
+     return result;
+ }
+ 
++#if !defined(__CloudABI__)
+ static int
+ py2rlimit(PyObject *curobj, PyObject *maxobj, struct rlimit *rl_out)
+ {
+@@ -219,6 +224,7 @@
+     Py_DECREF(limits);
+     return NULL;
+ }
++#endif /* !defined(__CloudABI__) */
+ 
+ #ifdef HAVE_PRLIMIT
+ static PyObject *
+@@ -285,11 +291,15 @@
+ static struct PyMethodDef
+ resource_methods[] = {
+     {"getrusage",    resource_getrusage,   METH_VARARGS},
++#if !defined(__CloudABI__)
+     {"getrlimit",    resource_getrlimit,   METH_VARARGS},
++#endif
+ #ifdef HAVE_PRLIMIT
+     {"prlimit",      resource_prlimit,     METH_VARARGS},
+ #endif
++#if !defined(__CloudABI__)
+     {"setrlimit",    resource_setrlimit,   METH_VARARGS},
++#endif
+     {"getpagesize",  resource_getpagesize, METH_NOARGS},
+     {NULL, NULL}                             /* sentinel */
+ };
+@@ -438,6 +448,7 @@
+     PyModule_AddIntMacro(m, RLIMIT_NPTS);
+ #endif
+ 
++#if defined(RLIM_INFINITY)
+ #if defined(HAVE_LONG_LONG)
+     if (sizeof(RLIM_INFINITY) > sizeof(long)) {
+         v = PyLong_FromLongLong((PY_LONG_LONG) RLIM_INFINITY);
+@@ -449,6 +460,7 @@
+     if (v) {
+         PyModule_AddObject(m, "RLIM_INFINITY", v);
+     }
++#endif /* defined(RLIM_INFINITY) */
+     initialized = 1;
+     return m;
+ }
+--- Modules/selectmodule.c
++++ Modules/selectmodule.c
+@@ -1064,6 +1064,7 @@
+     devpollObject *self;
+     int fd_devpoll, limit_result;
+     struct pollfd *fds;
++#ifndef __CloudABI__
+     struct rlimit limit;
+ 
+     /*
+@@ -1077,6 +1078,7 @@
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+     }
++#endif
+ 
+     fd_devpoll = _Py_open("/dev/poll", O_RDWR);
+     if (fd_devpoll == -1)

@@ -1,0 +1,915 @@
+--- Doc/includes/run-func.c
++++ Doc/includes/run-func.c
+@@ -39,7 +39,9 @@
+             pValue = PyObject_CallObject(pFunc, pArgs);
+             Py_DECREF(pArgs);
+             if (pValue != NULL) {
++#ifdef HAVE_PRINTF
+                 printf("Result of call: %ld\n", PyLong_AsLong(pValue));
++#endif
+                 Py_DECREF(pValue);
+             }
+             else {
+--- Modules/_ctypes/_ctypes_test.c
++++ Modules/_ctypes/_ctypes_test.c
+@@ -10,6 +10,10 @@
+ #define EXPORT(x) x
+ #endif
+ 
++#if defined(__CloudABI__)
++#define printf(...) fprintf(stderr, __VA_ARGS__)
++#endif
++
+ /* some functions handy for testing */
+ 
+ EXPORT(int)
+@@ -63,14 +67,26 @@
+     int result;
+     va_list argptr;
+     va_start(argptr, fmt);
++#if !defined(__CloudABI__)
+     result = vprintf(fmt, argptr);
++#else
++    result = vfprintf(stderr, fmt, argptr);
++#endif
+     va_end(argptr);
+     return result;
+ }
+ 
++#if defined(__CloudABI__)
++char *__my_strtok_saveptr;
++#endif
++
+ EXPORT(char *)my_strtok(char *token, const char *delim)
+ {
++#if !defined(__CloudABI__)
+     return strtok(token, delim);
++#else
++    return strtok_r(token, delim, &__my_strtok_saveptr);
++#endif
+ }
+ 
+ EXPORT(char *)my_strchr(const char *s, int c)
+@@ -657,3 +673,7 @@
+ {
+     return PyModule_Create(&_ctypes_testmodule);
+ }
++
++#if defined(__CloudABI__)
++#undef printf
++#endif
+--- Modules/_decimal/libmpdec/io.c
++++ Modules/_decimal/libmpdec/io.c
+@@ -1566,7 +1566,9 @@
+ 
+     decstring = mpd_to_sci(dec, 1);
+     if (decstring != NULL) {
++#ifdef HAVE_PRINTF
+         printf("%s\n", decstring);
++#endif
+         mpd_free(decstring);
+     }
+     else {
+--- Modules/hashtable.c
++++ Modules/hashtable.c
+@@ -238,12 +238,12 @@
+             nchains++;
+         }
+     }
+-    printf("hash table %p: entries=%"
++    fprintf(stderr, "hash table %p: entries=%"
+            PY_FORMAT_SIZE_T "u/%" PY_FORMAT_SIZE_T "u (%.0f%%), ",
+            ht, ht->entries, ht->num_buckets, load * 100.0);
+     if (nchains)
+-        printf("avg_chain_len=%.1f, ", (double)total_chain_len / nchains);
+-    printf("max_chain_len=%" PY_FORMAT_SIZE_T "u, %" PY_FORMAT_SIZE_T "u kB\n",
++        fprintf(stderr, "avg_chain_len=%.1f, ", (double)total_chain_len / nchains);
++    fprintf(stderr, "max_chain_len=%" PY_FORMAT_SIZE_T "u, %" PY_FORMAT_SIZE_T "u kB\n",
+            max_chain_len, size / 1024);
+ }
+ #endif
+--- Modules/main.c
++++ Modules/main.c
+@@ -511,7 +511,11 @@
+         return usage(0, argv[0]);
+ 
+     if (version) {
++#ifdef HAVE_PRINTF
+         printf("Python %s\n", PY_VERSION);
++#else
++        fprintf(stderr, "Python %s\n", PY_VERSION);
++#endif
+         return 0;
+     }
+ 
+--- Modules/_testcapimodule.c
++++ Modules/_testcapimodule.c
+@@ -2526,7 +2526,11 @@
+         e->tv_sec -=1;
+         e->tv_usec += 1000000;
+     }
++#ifdef HAVE_PRINTF
+     printf("Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
++#else
++    fprintf(stderr, "Test %d: %d.%06ds\n", test, (int)e->tv_sec, (int)e->tv_usec);
++#endif
+ }
+ 
+ static PyObject *
+--- Objects/unicodeobject.c
++++ Objects/unicodeobject.c
+@@ -1165,12 +1165,12 @@
+     return _PyUnicode_COMPACT_DATA(unicode);
+ }
+ void *_PyUnicode_data(void *unicode){
+-    printf("obj %p\n", unicode);
+-    printf("compact %d\n", PyUnicode_IS_COMPACT(unicode));
+-    printf("compact ascii %d\n", PyUnicode_IS_COMPACT_ASCII(unicode));
+-    printf("ascii op %p\n", ((void*)((PyASCIIObject*)(unicode) + 1)));
+-    printf("compact op %p\n", ((void*)((PyCompactUnicodeObject*)(unicode) + 1)));
+-    printf("compact data %p\n", _PyUnicode_COMPACT_DATA(unicode));
++    fprintf(stderr, "obj %p\n", unicode);
++    fprintf(stderr, "compact %d\n", PyUnicode_IS_COMPACT(unicode));
++    fprintf(stderr, "compact ascii %d\n", PyUnicode_IS_COMPACT_ASCII(unicode));
++    fprintf(stderr, "ascii op %p\n", ((void*)((PyASCIIObject*)(unicode) + 1)));
++    fprintf(stderr, "compact op %p\n", ((void*)((PyCompactUnicodeObject*)(unicode) + 1)));
++    fprintf(stderr, "compact data %p\n", _PyUnicode_COMPACT_DATA(unicode));
+     return PyUnicode_DATA(unicode);
+ }
+ 
+@@ -1191,21 +1191,21 @@
+     }
+     else
+         data = unicode->data.any;
+-    printf("%s: len=%" PY_FORMAT_SIZE_T "u, ",
++    fprintf(stderr, "%s: len=%" PY_FORMAT_SIZE_T "u, ",
+            unicode_kind_name(op), ascii->length);
+ 
+     if (ascii->wstr == data)
+-        printf("shared ");
+-    printf("wstr=%p", ascii->wstr);
++        fprintf(stderr, "shared ");
++    fprintf(stderr, "wstr=%p", ascii->wstr);
+ 
+     if (!(ascii->state.ascii == 1 && ascii->state.compact == 1)) {
+-        printf(" (%" PY_FORMAT_SIZE_T "u), ", compact->wstr_length);
++        fprintf(stderr, " (%" PY_FORMAT_SIZE_T "u), ", compact->wstr_length);
+         if (!ascii->state.compact && compact->utf8 == unicode->data.any)
+-            printf("shared ");
+-        printf("utf8=%p (%" PY_FORMAT_SIZE_T "u)",
++            fprintf(stderr, "shared ");
++        fprintf(stderr, "utf8=%p (%" PY_FORMAT_SIZE_T "u)",
+                compact->utf8, compact->utf8_length);
+     }
+-    printf(", data=%p\n", data);
++    fprintf(stderr, ", data=%p\n", data);
+ }
+ #endif
+ 
+--- Parser/acceler.c
++++ Parser/acceler.c
+@@ -81,20 +81,33 @@
+         label *l = &g->g_ll.ll_label[lbl];
+         int type = l->lb_type;
+         if (a->a_arrow >= (1 << 7)) {
++#ifdef HAVE_PRINTF
+             printf("XXX too many states!\n");
++#else
++            fprintf(stderr, "XXX too many states!\n");
++#endif
+             continue;
+         }
+         if (ISNONTERMINAL(type)) {
+             dfa *d1 = PyGrammar_FindDFA(g, type);
+             int ibit;
+             if (type - NT_OFFSET >= (1 << 7)) {
++#ifdef HAVE_PRINTF
+                 printf("XXX too high nonterminal number!\n");
++#else
++                fprintf(stderr, "XXX too high nonterminal number!\n");
++#endif
+                 continue;
+             }
+             for (ibit = 0; ibit < g->g_ll.ll_nlabels; ibit++) {
+                 if (testbit(d1->d_first, ibit)) {
+-                    if (accel[ibit] != -1)
++                    if (accel[ibit] != -1) {
++#ifdef HAVE_PRINTF
+                         printf("XXX ambiguity!\n");
++#else
++                        fprintf(stderr, "XXX ambiguity!\n");
++#endif
++                    }
+                     accel[ibit] = a->a_arrow | (1 << 7) |
+                         ((type - NT_OFFSET) << 8);
+                 }
+--- Parser/firstsets.c
++++ Parser/firstsets.c
+@@ -17,7 +17,7 @@
+     dfa *d;
+ 
+     if (Py_DebugFlag)
+-        printf("Adding FIRST sets ...\n");
++        fprintf(stderr, "Adding FIRST sets ...\n");
+     for (i = 0; i < g->g_ndfas; i++) {
+         d = &g->g_dfa[i];
+         if (d->d_first == NULL)
+@@ -41,7 +41,7 @@
+     label *l0;
+ 
+     if (Py_DebugFlag)
+-        printf("Calculate FIRST set for '%s'\n", d->d_name);
++        fprintf(stderr, "Calculate FIRST set for '%s'\n", d->d_name);
+ 
+     if (dummy == NULL)
+         dummy = newbitset(1);
+@@ -101,12 +101,12 @@
+     }
+     d->d_first = result;
+     if (Py_DebugFlag) {
+-        printf("FIRST set for '%s': {", d->d_name);
++        fprintf(stderr, "FIRST set for '%s': {", d->d_name);
+         for (i = 0; i < nbits; i++) {
+             if (testbit(result, i))
+-                printf(" %s", PyGrammar_LabelRepr(&l0[i]));
++                fprintf(stderr, " %s", PyGrammar_LabelRepr(&l0[i]));
+         }
+-        printf(" }\n");
++        fprintf(stderr, " }\n");
+     }
+ 
+     PyObject_FREE(sym);
+--- Parser/grammar.c
++++ Parser/grammar.c
+@@ -103,7 +103,7 @@
+     lb->lb_type = type;
+     lb->lb_str = strdup(str);
+     if (Py_DebugFlag)
+-        printf("Label @ %8p, %d: %s\n", ll, ll->ll_nlabels,
++        fprintf(stderr, "Label @ %8p, %d: %s\n", ll, ll->ll_nlabels,
+                PyGrammar_LabelRepr(lb));
+     return Py_SAFE_DOWNCAST(lb - ll->ll_label, Py_intptr_t, int);
+ }
+@@ -134,7 +134,7 @@
+     int i;
+ 
+ #ifdef Py_DEBUG
+-    printf("Translating labels ...\n");
++    fprintf(stderr, "Translating labels ...\n");
+ #endif
+     /* Don't translate EMPTY */
+     for (i = EMPTY+1; i < g->g_ll.ll_nlabels; i++)
+@@ -147,13 +147,13 @@
+     int i;
+ 
+     if (Py_DebugFlag)
+-        printf("Translating label %s ...\n", PyGrammar_LabelRepr(lb));
++        fprintf(stderr, "Translating label %s ...\n", PyGrammar_LabelRepr(lb));
+ 
+     if (lb->lb_type == NAME) {
+         for (i = 0; i < g->g_ndfas; i++) {
+             if (strcmp(lb->lb_str, g->g_dfa[i].d_name) == 0) {
+                 if (Py_DebugFlag)
+-                    printf(
++                    fprintf(stderr,
+                         "Label %s is non-terminal %d.\n",
+                         lb->lb_str,
+                         g->g_dfa[i].d_type);
+@@ -166,7 +166,7 @@
+         for (i = 0; i < (int)N_TOKENS; i++) {
+             if (strcmp(lb->lb_str, _PyParser_TokenNames[i]) == 0) {
+                 if (Py_DebugFlag)
+-                    printf("Label %s is terminal %d.\n",
++                    fprintf(stderr, "Label %s is terminal %d.\n",
+                         lb->lb_str, i);
+                 lb->lb_type = i;
+                 free(lb->lb_str);
+@@ -174,7 +174,7 @@
+                 return;
+             }
+         }
+-        printf("Can't translate NAME label '%s'\n", lb->lb_str);
++        fprintf(stderr, "Can't translate NAME label '%s'\n", lb->lb_str);
+         return;
+     }
+ 
+@@ -186,7 +186,7 @@
+             char *dest;
+             size_t name_len;
+             if (Py_DebugFlag)
+-                printf("Label %s is a keyword\n", lb->lb_str);
++                fprintf(stderr, "Label %s is a keyword\n", lb->lb_str);
+             lb->lb_type = NAME;
+             src = lb->lb_str + 1;
+             p = strchr(src, '\'');
+@@ -196,7 +196,11 @@
+                 name_len = strlen(src);
+             dest = (char *)malloc(name_len + 1);
+             if (!dest) {
++#ifdef HAVE_PRINTF
+                 printf("Can't alloc dest '%s'\n", src);
++#else
++                fprintf(stderr, "Can't alloc dest '%s'\n", src);
++#endif
+                 return;
+             }
+             strncpy(dest, src, name_len);
+@@ -212,8 +216,12 @@
+                 lb->lb_str = NULL;
+             }
+             else
++#ifdef HAVE_PRINTF
+                 printf("Unknown OP label %s\n",
+                     lb->lb_str);
++#else
++                fprintf(stderr, "Unknown OP label %s\n", lb->lb_str);
++#endif
+         }
+         else if (lb->lb_str[2] && lb->lb_str[3] == lb->lb_str[0]) {
+             int type = (int) PyToken_TwoChars(lb->lb_str[1],
+@@ -224,8 +232,12 @@
+                 lb->lb_str = NULL;
+             }
+             else
++#ifdef HAVE_PRINTF
+                 printf("Unknown OP label %s\n",
+                     lb->lb_str);
++#else
++                fprintf(stderr, "Unknown OP label %s\n", lb->lb_str);
++#endif
+         }
+         else if (lb->lb_str[2] && lb->lb_str[3] && lb->lb_str[4] == lb->lb_str[0]) {
+             int type = (int) PyToken_ThreeChars(lb->lb_str[1],
+@@ -237,14 +249,27 @@
+                 lb->lb_str = NULL;
+             }
+             else
++#ifdef HAVE_PRINTF
+                 printf("Unknown OP label %s\n",
+                     lb->lb_str);
++#else
++                fprintf(stderr, "Unknown OP label %s\n", lb->lb_str);
++#endif
+         }
+         else
++#ifdef HAVE_PRINTF
+             printf("Can't translate STRING label %s\n",
+                 lb->lb_str);
++#else
++            fprintf(stderr, "Can't translate STRING label %s\n", lb->lb_str);
++#endif
+     }
+     else
++#ifdef HAVE_PRINTF
+         printf("Can't translate label '%s'\n",
+                PyGrammar_LabelRepr(lb));
++#else
++        fprintf(stderr, "Can't translate label '%s'\n",
++                PyGrammar_LabelRepr(lb));
++#endif
+ }
+--- Parser/parser.c
++++ Parser/parser.c
+@@ -158,7 +158,7 @@
+             }
+ #endif
+ #endif
+-            D(printf("It's a keyword\n"));
++            D(fprintf(stderr, "It's a keyword\n"));
+             return n - i;
+         }
+     }
+@@ -168,13 +168,13 @@
+         int i;
+         for (i = n; i > 0; i--, l++) {
+             if (l->lb_type == type && l->lb_str == NULL) {
+-                D(printf("It's a token we know\n"));
++                D(fprintf(stderr, "It's a token we know\n"));
+                 return n - i;
+             }
+         }
+     }
+ 
+-    D(printf("Illegal token\n"));
++    D(fprintf(stderr, "Illegal token\n"));
+     return -1;
+ }
+ 
+@@ -230,7 +230,7 @@
+     int ilabel;
+     int err;
+ 
+-    D(printf("Token %s/'%s' ... ", _PyParser_TokenNames[type], str));
++    D(fprintf(stderr, "Token %s/'%s' ... ", _PyParser_TokenNames[type], str));
+ 
+     /* Find out which label this token is */
+     ilabel = classify(ps, type, str);
+@@ -243,7 +243,7 @@
+         dfa *d = ps->p_stack.s_top->s_dfa;
+         state *s = &d->d_state[ps->p_stack.s_top->s_state];
+ 
+-        D(printf(" DFA '%s', state %d:",
++        D(fprintf(stderr, " DFA '%s', state %d:",
+             d->d_name, ps->p_stack.s_top->s_state));
+ 
+         /* Check accelerator */
+@@ -258,25 +258,25 @@
+                         ps->p_grammar, nt);
+                     if ((err = push(&ps->p_stack, nt, d1,
+                         arrow, lineno, col_offset)) > 0) {
+-                        D(printf(" MemError: push\n"));
++                        D(fprintf(stderr, " MemError: push\n"));
+                         return err;
+                     }
+-                    D(printf(" Push ...\n"));
++                    D(fprintf(stderr, " Push ...\n"));
+                     continue;
+                 }
+ 
+                 /* Shift the token */
+                 if ((err = shift(&ps->p_stack, type, str,
+                                 x, lineno, col_offset)) > 0) {
+-                    D(printf(" MemError: shift.\n"));
++                    D(fprintf(stderr, " MemError: shift.\n"));
+                     return err;
+                 }
+-                D(printf(" Shift.\n"));
++                D(fprintf(stderr, " Shift.\n"));
+                 /* Pop while we are in an accept-only state */
+                 while (s = &d->d_state
+                                 [ps->p_stack.s_top->s_state],
+                     s->s_accept && s->s_narcs == 1) {
+-                    D(printf("  DFA '%s', state %d: "
++                    D(fprintf(stderr, "  DFA '%s', state %d: "
+                              "Direct pop.\n",
+                              d->d_name,
+                              ps->p_stack.s_top->s_state));
+@@ -290,7 +290,7 @@
+ #endif
+                     s_pop(&ps->p_stack);
+                     if (s_empty(&ps->p_stack)) {
+-                        D(printf("  ACCEPT.\n"));
++                        D(fprintf(stderr, "  ACCEPT.\n"));
+                         return E_DONE;
+                     }
+                     d = ps->p_stack.s_top->s_dfa;
+@@ -309,16 +309,16 @@
+ #endif
+             /* Pop this dfa and try again */
+             s_pop(&ps->p_stack);
+-            D(printf(" Pop ...\n"));
++            D(fprintf(stderr, " Pop ...\n"));
+             if (s_empty(&ps->p_stack)) {
+-                D(printf(" Error: bottom of stack.\n"));
++                D(fprintf(stderr, " Error: bottom of stack.\n"));
+                 return E_SYNTAX;
+             }
+             continue;
+         }
+ 
+         /* Stuck, report syntax error */
+-        D(printf(" Error.\n"));
++        D(fprintf(stderr, " Error.\n"));
+         if (expected_ret) {
+             if (s->s_lower == s->s_upper - 1) {
+                 /* Only one possible expected token */
+@@ -343,20 +343,20 @@
+     int i;
+ 
+     if (n == NULL)
+-        printf("NIL");
++        fprintf(stderr, "NIL");
+     else {
+         label l;
+         l.lb_type = TYPE(n);
+         l.lb_str = STR(n);
+-        printf("%s", PyGrammar_LabelRepr(&l));
++        fprintf(stderr, "%s", PyGrammar_LabelRepr(&l));
+         if (ISNONTERMINAL(TYPE(n))) {
+-            printf("(");
++            fprintf(stderr, "(");
+             for (i = 0; i < NCH(n); i++) {
+                 if (i > 0)
+-                    printf(",");
++                    fprintf(stderr, ",");
+                 dumptree(g, CHILD(n, i));
+             }
+-            printf(")");
++            fprintf(stderr, ")");
+         }
+     }
+ }
+@@ -373,29 +373,29 @@
+             showtree(g, CHILD(n, i));
+     }
+     else if (ISTERMINAL(TYPE(n))) {
+-        printf("%s", _PyParser_TokenNames[TYPE(n)]);
++        fprintf(stderr, "%s", _PyParser_TokenNames[TYPE(n)]);
+         if (TYPE(n) == NUMBER || TYPE(n) == NAME)
+-            printf("(%s)", STR(n));
+-        printf(" ");
++            fprintf(stderr, "(%s)", STR(n));
++        fprintf(stderr, " ");
+     }
+     else
+-        printf("? ");
++        fprintf(stderr, "? ");
+ }
+ 
+ void
+ printtree(parser_state *ps)
+ {
+     if (Py_DebugFlag) {
+-        printf("Parse tree:\n");
++        fprintf(stderr, "Parse tree:\n");
+         dumptree(ps->p_grammar, ps->p_tree);
+-        printf("\n");
+-        printf("Tokens:\n");
++        fprintf(stderr, "\n");
++        fprintf(stderr, "Tokens:\n");
+         showtree(ps->p_grammar, ps->p_tree);
+-        printf("\n");
++        fprintf(stderr, "\n");
+     }
+-    printf("Listing:\n");
++    fprintf(stderr, "Listing:\n");
+     PyNode_ListTree(ps->p_tree);
+-    printf("\n");
++    fprintf(stderr, "\n");
+ }
+ 
+ #endif /* Py_DEBUG */
+--- Parser/pgen.c
++++ Parser/pgen.c
+@@ -154,7 +154,7 @@
+     int i;
+ 
+     if (Py_DebugFlag)
+-        printf("Compiling (meta-) parse tree into NFA grammar\n");
++        fprintf(stderr, "Compiling (meta-) parse tree into NFA grammar\n");
+     gr = newnfagrammar();
+     REQ(n, MSTART);
+     i = n->n_nchildren - 1; /* Last child is ENDMARKER */
+@@ -311,6 +311,7 @@
+     int i;
+     nfaarc *ar;
+ 
++#ifdef HAVE_PRINTF
+     printf("%c%2d%c",
+         istate == nf->nf_start ? '*' : ' ',
+         istate,
+@@ -325,6 +326,7 @@
+         ar++;
+     }
+     printf("\n");
++#endif
+ }
+ 
+ static void
+@@ -332,8 +334,10 @@
+ {
+     int i;
+ 
++#ifdef HAVE_PRINTF
+     printf("NFA '%s' has %d states; start %d, finish %d\n",
+         nf->nf_name, nf->nf_nstates, nf->nf_start, nf->nf_finish);
++#endif
+     for (i = 0; i < nf->nf_nstates; i++)
+         dumpstate(ll, nf, i);
+ }
+@@ -408,8 +412,13 @@
+     yy->ss_deleted = 0;
+     yy->ss_finish = testbit(ss, nf->nf_finish);
+     if (yy->ss_finish)
++#ifdef HAVE_PRINTF
+         printf("Error: nonterminal '%s' may produce empty.\n",
+             nf->nf_name);
++#else
++        fprintf(stderr, "Error: nonterminal '%s' may produce empty.\n",
++            nf->nf_name);
++#endif
+ 
+     /* This algorithm is from a book written before
+        the invention of structured programming... */
+@@ -500,6 +509,7 @@
+     ss_state *yy;
+     ss_arc *zz;
+ 
++#ifdef HAVE_PRINTF
+     printf("Subset DFA %s\n", msg);
+     for (i = 0; i < xx_nstates; i++) {
+         yy = &xx_state[i];
+@@ -522,6 +532,7 @@
+                     &ll->ll_label[zz->sa_label]));
+         }
+     }
++#endif /* HAVE_PRINTF */
+ }
+ 
+ 
+@@ -555,7 +566,7 @@
+     int i, j;
+ 
+     if (Py_DebugFlag)
+-        printf("Rename state %d to %d.\n", from, to);
++        fprintf(stderr, "Rename state %d to %d.\n", from, to);
+     for (i = 0; i < xx_nstates; i++) {
+         if (xx_state[i].ss_deleted)
+             continue;
+@@ -648,9 +659,9 @@
+     for (i = 0; i < gr->gr_nnfas; i++) {
+         nf = gr->gr_nfa[i];
+         if (Py_DebugFlag) {
+-            printf("Dump of NFA for '%s' ...\n", nf->nf_name);
++            fprintf(stderr, "Dump of NFA for '%s' ...\n", nf->nf_name);
+             dumpnfa(&gr->gr_ll, nf);
+-            printf("Making DFA for '%s' ...\n", nf->nf_name);
++            fprintf(stderr, "Making DFA for '%s' ...\n", nf->nf_name);
+         }
+         d = adddfa(g, nf->nf_type, nf->nf_name);
+         makedfa(gr, gr->gr_nfa[i], d);
+--- Parser/pgenmain.c
++++ Parser/pgenmain.c
+@@ -67,7 +67,7 @@
+         Py_Exit(1);
+     }
+     if (Py_DebugFlag)
+-        printf("Writing %s ...\n", graminit_c);
++        fprintf(stderr, "Writing %s ...\n", graminit_c);
+     printgrammar(g, fp);
+     fclose(fp);
+     fp = fopen(graminit_h, "w");
+@@ -76,7 +76,7 @@
+         Py_Exit(1);
+     }
+     if (Py_DebugFlag)
+-        printf("Writing %s ...\n", graminit_h);
++        fprintf(stderr, "Writing %s ...\n", graminit_h);
+     printnonterminals(g, fp);
+     fclose(fp);
+     Py_Exit(0);
+@@ -124,7 +124,7 @@
+     g = pgen(n);
+     PyNode_Free(n);
+     if (g == NULL) {
+-        printf("Bad grammar.\n");
++        fprintf(stderr, "Bad grammar.\n");
+         Py_Exit(1);
+     }
+     return g;
+--- Parser/tokenizer.c
++++ Parser/tokenizer.c
+@@ -1881,9 +1881,9 @@
+ void
+ tok_dump(int type, char *start, char *end)
+ {
+-    printf("%s", _PyParser_TokenNames[type]);
++    fprintf(stderr, "%s", _PyParser_TokenNames[type]);
+     if (type == NAME || type == NUMBER || type == STRING || type == OP)
+-        printf("(%.*s)", (int)(end - start), start);
++        fprintf(stderr, "(%.*s)", (int)(end - start), start);
+ }
+ 
+ #endif
+--- Python/ceval.c
++++ Python/ceval.c
+@@ -1343,11 +1343,11 @@
+ 
+         if (lltrace) {
+             if (HAS_ARG(opcode)) {
+-                printf("%d: %d, %d\n",
++                fprintf(stderr, "%d: %d, %d\n",
+                        f->f_lasti, opcode, oparg);
+             }
+             else {
+-                printf("%d: %d\n",
++                fprintf(stderr, "%d: %d\n",
+                        f->f_lasti, opcode);
+             }
+         }
+@@ -4315,10 +4315,10 @@
+ static int
+ prtrace(PyObject *v, const char *str)
+ {
+-    printf("%s ", str);
+-    if (PyObject_Print(v, stdout, 0) != 0)
++    fprintf(stderr, "%s ", str);
++    if (PyObject_Print(v, stderr, 0) != 0)
+         PyErr_Clear(); /* Don't know what else to do */
+-    printf("\n");
++    fprintf(stderr, "\n");
+     return 1;
+ }
+ #endif
+--- Python/thread.c
++++ Python/thread.c
+@@ -45,8 +45,8 @@
+ 
+ #ifdef Py_DEBUG
+ static int thread_debug = 0;
+-#define dprintf(args)   (void)((thread_debug & 1) && printf args)
+-#define d2printf(args)  ((thread_debug & 8) && printf args)
++#define dprintf(args)   (void)((thread_debug & 1) && fprintf args)
++#define d2printf(args)  ((thread_debug & 8) && fprintf args)
+ #else
+ #define dprintf(args)
+ #define d2printf(args)
+@@ -72,7 +72,7 @@
+     if (initialized)
+         return;
+     initialized = 1;
+-    dprintf(("PyThread_init_thread called\n"));
++    dprintf((stderr, "PyThread_init_thread called\n"));
+     PyThread__init_thread();
+ }
+ 
+--- Python/thread_foobar.h
++++ Python/thread_foobar.h
+@@ -15,7 +15,7 @@
+     int success = 0;            /* init not needed when SOLARIS_THREADS and */
+                 /* C_THREADS implemented properly */
+ 
+-    dprintf(("PyThread_start_new_thread called\n"));
++    dprintf((stderr, "PyThread_start_new_thread called\n"));
+     if (!initialized)
+         PyThread_init_thread();
+     return success < 0 ? -1 : 0;
+@@ -31,7 +31,7 @@
+ void
+ PyThread_exit_thread(void)
+ {
+-    dprintf(("PyThread_exit_thread called\n"));
++    dprintf((stderr, "PyThread_exit_thread called\n"));
+     if (!initialized)
+         exit(0);
+ }
+@@ -43,18 +43,18 @@
+ PyThread_allocate_lock(void)
+ {
+ 
+-    dprintf(("PyThread_allocate_lock called\n"));
++    dprintf((stderr, "PyThread_allocate_lock called\n"));
+     if (!initialized)
+         PyThread_init_thread();
+ 
+-    dprintf(("PyThread_allocate_lock() -> %p\n", lock));
++    dprintf((stderr, "PyThread_allocate_lock() -> %p\n", lock));
+     return (PyThread_type_lock) lock;
+ }
+ 
+ void
+ PyThread_free_lock(PyThread_type_lock lock)
+ {
+-    dprintf(("PyThread_free_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_free_lock(%p) called\n", lock));
+ }
+ 
+ int
+@@ -69,8 +69,8 @@
+ {
+     int success;
+ 
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) called\n", lock, microseconds, intr_flag));
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) called\n", lock, microseconds, intr_flag));
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
+ 	     lock, microseconds, intr_flag, success));
+     return success;
+ }
+@@ -78,7 +78,7 @@
+ void
+ PyThread_release_lock(PyThread_type_lock lock)
+ {
+-    dprintf(("PyThread_release_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_release_lock(%p) called\n", lock));
+ }
+ 
+ /* The following are only needed if native TLS support exists */
+--- Python/thread_pthread.h
++++ Python/thread_pthread.h
+@@ -194,7 +194,7 @@
+     size_t      tss;
+ #endif
+ 
+-    dprintf(("PyThread_start_new_thread called\n"));
++    dprintf((stderr, "PyThread_start_new_thread called\n"));
+     if (!initialized)
+         PyThread_init_thread();
+ 
+@@ -260,7 +260,7 @@
+ void
+ PyThread_exit_thread(void)
+ {
+-    dprintf(("PyThread_exit_thread called\n"));
++    dprintf((stderr, "PyThread_exit_thread called\n"));
+     if (!initialized)
+         exit(0);
+     pthread_exit(0);
+@@ -278,7 +278,7 @@
+     sem_t *lock;
+     int status, error = 0;
+ 
+-    dprintf(("PyThread_allocate_lock called\n"));
++    dprintf((stderr, "PyThread_allocate_lock called\n"));
+     if (!initialized)
+         PyThread_init_thread();
+ 
+@@ -294,7 +294,7 @@
+         }
+     }
+ 
+-    dprintf(("PyThread_allocate_lock() -> %p\n", lock));
++    dprintf((stderr, "PyThread_allocate_lock() -> %p\n", lock));
+     return (PyThread_type_lock)lock;
+ }
+ 
+@@ -305,7 +305,7 @@
+     int status, error = 0;
+ 
+     (void) error; /* silence unused-but-set-variable warning */
+-    dprintf(("PyThread_free_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_free_lock(%p) called\n", lock));
+ 
+     if (!thelock)
+         return;
+@@ -338,7 +338,7 @@
+     struct timespec ts;
+ 
+     (void) error; /* silence unused-but-set-variable warning */
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) called\n",
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) called\n",
+              lock, microseconds, intr_flag));
+ 
+     if (microseconds > 0)
+@@ -377,7 +377,7 @@
+         success = PY_LOCK_FAILURE;
+     }
+ 
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
+              lock, microseconds, intr_flag, success));
+     return success;
+ }
+@@ -389,7 +389,7 @@
+     int status, error = 0;
+ 
+     (void) error; /* silence unused-but-set-variable warning */
+-    dprintf(("PyThread_release_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_release_lock(%p) called\n", lock));
+ 
+     status = sem_post(thelock);
+     CHECK_STATUS("sem_post");
+@@ -406,7 +406,7 @@
+     pthread_lock *lock;
+     int status, error = 0;
+ 
+-    dprintf(("PyThread_allocate_lock called\n"));
++    dprintf((stderr, "PyThread_allocate_lock called\n"));
+     if (!initialized)
+         PyThread_init_thread();
+ 
+@@ -435,7 +435,7 @@
+         }
+     }
+ 
+-    dprintf(("PyThread_allocate_lock() -> %p\n", lock));
++    dprintf((stderr, "PyThread_allocate_lock() -> %p\n", lock));
+     return (PyThread_type_lock) lock;
+ }
+ 
+@@ -446,7 +446,7 @@
+     int status, error = 0;
+ 
+     (void) error; /* silence unused-but-set-variable warning */
+-    dprintf(("PyThread_free_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_free_lock(%p) called\n", lock));
+ 
+     /* some pthread-like implementations tie the mutex to the cond
+      * and must have the cond destroyed first.
+@@ -468,7 +468,7 @@
+     pthread_lock *thelock = (pthread_lock *)lock;
+     int status, error = 0;
+ 
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) called\n",
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) called\n",
+              lock, microseconds, intr_flag));
+ 
+     status = pthread_mutex_lock( &thelock->mut );
+@@ -521,7 +521,7 @@
+     CHECK_STATUS("pthread_mutex_unlock[1]");
+ 
+     if (error) success = PY_LOCK_FAILURE;
+-    dprintf(("PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
++    dprintf((stderr, "PyThread_acquire_lock_timed(%p, %lld, %d) -> %d\n",
+              lock, microseconds, intr_flag, success));
+     return success;
+ }
+@@ -533,7 +533,7 @@
+     int status, error = 0;
+ 
+     (void) error; /* silence unused-but-set-variable warning */
+-    dprintf(("PyThread_release_lock(%p) called\n", lock));
++    dprintf((stderr, "PyThread_release_lock(%p) called\n", lock));
+ 
+     status = pthread_mutex_lock( &thelock->mut );
+     CHECK_STATUS("pthread_mutex_lock[3]");

@@ -1,0 +1,45 @@
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -220,6 +220,7 @@
+ 
+ #endif /* defined(HAVE_CTERMID) */
+ 
++#ifdef HAVE_CHDIR
+ PyDoc_STRVAR(os_chdir__doc__,
+ "chdir($module, /, path)\n"
+ "--\n"
+@@ -255,6 +256,7 @@
+ 
+     return return_value;
+ }
++#endif /* HAVE_CHDIR */
+ 
+ #if defined(HAVE_FCHDIR)
+ 
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -2724,7 +2724,11 @@
+         result = fchdir(path->fd);
+     else
+ #endif
++#ifdef HAVE_CHDIR
+         result = chdir(path->narrow);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif
+ #endif
+     Py_END_ALLOW_THREADS
+ 
+--- Modules/_posixsubprocess.c
++++ Modules/_posixsubprocess.c
+@@ -459,8 +459,10 @@
+     if (errwrite != c2pwrite && errwrite != p2cread && errwrite > 2)
+         POSIX_CALL(close(errwrite));
+ 
++#ifdef HAVE_CHDIR
+     if (cwd)
+         POSIX_CALL(chdir(cwd));
++#endif
+ 
+     if (restore_signals)
+         _Py_RestoreSignals();

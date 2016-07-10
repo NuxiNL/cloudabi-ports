@@ -1,0 +1,714 @@
+--- configure
++++ configure
+@@ -776,6 +776,7 @@
+ docdir
+ oldincludedir
+ includedir
++runstatedir
+ localstatedir
+ sharedstatedir
+ sysconfdir
+@@ -886,6 +887,7 @@
+ sysconfdir='${prefix}/etc'
+ sharedstatedir='${prefix}/com'
+ localstatedir='${prefix}/var'
++runstatedir='${localstatedir}/run'
+ includedir='${prefix}/include'
+ oldincludedir='/usr/include'
+ docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
+@@ -1138,6 +1140,15 @@
+   | -silent | --silent | --silen | --sile | --sil)
+     silent=yes ;;
+ 
++  -runstatedir | --runstatedir | --runstatedi | --runstated \
++  | --runstate | --runstat | --runsta | --runst | --runs \
++  | --run | --ru | --r)
++    ac_prev=runstatedir ;;
++  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
++  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
++  | --run=* | --ru=* | --r=*)
++    runstatedir=$ac_optarg ;;
++
+   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
+     ac_prev=sbindir ;;
+   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
+@@ -1275,7 +1286,7 @@
+ for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
+ 		datadir sysconfdir sharedstatedir localstatedir includedir \
+ 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
+-		libdir localedir mandir
++		libdir localedir mandir runstatedir
+ do
+   eval ac_val=\$$ac_var
+   # Remove trailing slashes.
+@@ -1428,6 +1439,7 @@
+   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
++  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
+   --libdir=DIR            object code libraries [EPREFIX/lib]
+   --includedir=DIR        C header files [PREFIX/include]
+   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+@@ -3314,6 +3326,9 @@
+        # a lot of different things including 'define_xopen_source'
+        # in the case statement below.
+ 	case "$host" in
++	*-*-cloudabi*)
++		ac_sys_system=CloudABI
++		;;
+ 	*-*-linux*)
+ 		ac_sys_system=Linux
+ 		;;
+@@ -3353,7 +3368,7 @@
+ 
+ if test "$cross_compiling" = yes; then
+ 	case "$host" in
+-	*-*-linux*)
++	*-*-cloudabi*|*-*-linux*)
+ 		case "$host_cpu" in
+ 		arm*)
+ 			_host_cpu=arm
+@@ -7559,13 +7574,13 @@
+ 
+ for ac_header in asm/types.h conio.h direct.h dlfcn.h errno.h \
+ fcntl.h grp.h \
+-ieeefp.h io.h langinfo.h libintl.h process.h pthread.h \
+-sched.h shadow.h signal.h stdint.h stropts.h termios.h \
++ieeefp.h io.h langinfo.h libintl.h process.h pthread.h pwd.h \
++sched.h semaphore.h shadow.h signal.h stdint.h stropts.h termios.h \
+ unistd.h utime.h \
+-poll.h sys/devpoll.h sys/epoll.h sys/poll.h \
++poll.h rpc/rpc.h sys/devpoll.h sys/epoll.h sys/poll.h \
+ sys/audioio.h sys/xattr.h sys/bsdtty.h sys/event.h sys/file.h sys/ioctl.h \
+ sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
+-sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
++sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
+ sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
+ sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
+ libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
+@@ -11148,27 +11163,35 @@
+ fi
+ 
+ # checks for library functions
+-for ac_func in alarm accept4 setitimer getitimer bind_textdomain_codeset chown \
+- clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
+- fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
++for ac_func in alarm accept4 access setitimer getitimer bind bindtextdomain bind_textdomain_codeset chdir chmod chown \
++ clock clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
++ fexecve fdopendir fopen fork fpathconf freehostent fstatat ftime ftruncate futimesat \
+  futimens futimes gai_strerror getentropy \
+- getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
+- getpriority getresuid getresgid getpwent getspnam getspent getsid getwd \
++ getcwd \
++ getgid \
++ getgrouplist getgroups gethostbyaddr getlogin getloadavg getpeername getpgid getpid \
++ getppid \
++ getpriority getresuid getresgid getpwent getspnam getspent getsid getuid getwd \
++ gmtime \
+  if_nameindex \
+- initgroups kill killpg lchmod lchown lockf linkat lstat lutimes mmap \
+- memrchr mbrtowc mkdirat mkfifo \
+- mkfifoat mknod mknodat mktime mremap nice openat pathconf pause pipe2 plock poll \
++ inet_addr \
++ initgroups kill killpg lchmod lchown localtime lockf linkat lstat lutimes mmap \
++ memrchr mbrtowc mkdir mkdirat mkfifo \
++ mkfifoat mknod mknodat mktime mremap nice open openat opendir pathconf pause pipe2 plock poll \
+  posix_fallocate posix_fadvise pread \
+- pthread_init pthread_kill putenv pwrite readlink readlinkat readv realpath renameat \
+- select sem_open sem_timedwait sem_getvalue sem_unlink sendfile setegid seteuid \
++ printf \
++ pthread_init pthread_kill putenv pwrite readlink readlinkat readv realpath rename renameat \
++ rmdir \
++ select sem_open sem_timedwait sem_getvalue sem_unlink sendfile sendto setegid seteuid \
+  setgid sethostname \
+  setlocale setregid setreuid setresuid setresgid setsid setpgid setpgrp setpriority setuid setvbuf \
+  sched_get_priority_max sched_setaffinity sched_setscheduler sched_setparam \
+  sched_rr_get_interval \
+- sigaction sigaltstack siginterrupt sigpending sigrelse \
+- sigtimedwait sigwait sigwaitinfo snprintf strftime strlcpy symlinkat sync \
+- sysconf tcgetpgrp tcsetpgrp tempnam timegm times tmpfile tmpnam tmpnam_r \
+- truncate uname unlinkat unsetenv utimensat utimes waitid waitpid wait3 wait4 \
++ setsockopt \
++ sigaction sigaltstack siginterrupt signal sigpending sigrelse \
++ sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
++ sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
++ truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
+  wcscoll wcsftime wcsxfrm wmemcmp writev _getpty
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+--- configure.ac
++++ configure.ac
+@@ -368,6 +368,9 @@
+        # a lot of different things including 'define_xopen_source'
+        # in the case statement below.
+ 	case "$host" in
++	*-*-cloudabi*)
++		ac_sys_system=CloudABI
++		;;
+ 	*-*-linux*)
+ 		ac_sys_system=Linux
+ 		;;
+@@ -407,7 +410,7 @@
+ AC_SUBST(_PYTHON_HOST_PLATFORM)
+ if test "$cross_compiling" = yes; then
+ 	case "$host" in
+-	*-*-linux*)
++	*-*-cloudabi*|*-*-linux*)
+ 		case "$host_cpu" in
+ 		arm*)
+ 			_host_cpu=arm
+@@ -1871,13 +1874,13 @@
+ AC_HEADER_STDC
+ AC_CHECK_HEADERS(asm/types.h conio.h direct.h dlfcn.h errno.h \
+ fcntl.h grp.h \
+-ieeefp.h io.h langinfo.h libintl.h process.h pthread.h \
+-sched.h shadow.h signal.h stdint.h stropts.h termios.h \
++ieeefp.h io.h langinfo.h libintl.h process.h pthread.h pwd.h \
++sched.h semaphore.h shadow.h signal.h stdint.h stropts.h termios.h \
+ unistd.h utime.h \
+-poll.h sys/devpoll.h sys/epoll.h sys/poll.h \
++poll.h rpc/rpc.h sys/devpoll.h sys/epoll.h sys/poll.h \
+ sys/audioio.h sys/xattr.h sys/bsdtty.h sys/event.h sys/file.h sys/ioctl.h \
+ sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
+-sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
++sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
+ sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
+ sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
+ libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
+@@ -3269,27 +3272,35 @@
+ fi
+ 
+ # checks for library functions
+-AC_CHECK_FUNCS(alarm accept4 setitimer getitimer bind_textdomain_codeset chown \
+- clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
+- fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
++AC_CHECK_FUNCS(alarm accept4 access setitimer getitimer bind bindtextdomain bind_textdomain_codeset chdir chmod chown \
++ clock clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
++ fexecve fdopendir fopen fork fpathconf freehostent fstatat ftime ftruncate futimesat \
+  futimens futimes gai_strerror getentropy \
+- getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
+- getpriority getresuid getresgid getpwent getspnam getspent getsid getwd \
++ getcwd \
++ getgid \
++ getgrouplist getgroups gethostbyaddr getlogin getloadavg getpeername getpgid getpid \
++ getppid \
++ getpriority getresuid getresgid getpwent getspnam getspent getsid getuid getwd \
++ gmtime \
+  if_nameindex \
+- initgroups kill killpg lchmod lchown lockf linkat lstat lutimes mmap \
+- memrchr mbrtowc mkdirat mkfifo \
+- mkfifoat mknod mknodat mktime mremap nice openat pathconf pause pipe2 plock poll \
++ inet_addr \
++ initgroups kill killpg lchmod lchown localtime lockf linkat lstat lutimes mmap \
++ memrchr mbrtowc mkdir mkdirat mkfifo \
++ mkfifoat mknod mknodat mktime mremap nice open openat opendir pathconf pause pipe2 plock poll \
+  posix_fallocate posix_fadvise pread \
+- pthread_init pthread_kill putenv pwrite readlink readlinkat readv realpath renameat \
+- select sem_open sem_timedwait sem_getvalue sem_unlink sendfile setegid seteuid \
++ printf \
++ pthread_init pthread_kill putenv pwrite readlink readlinkat readv realpath rename renameat \
++ rmdir \
++ select sem_open sem_timedwait sem_getvalue sem_unlink sendfile sendto setegid seteuid \
+  setgid sethostname \
+  setlocale setregid setreuid setresuid setresgid setsid setpgid setpgrp setpriority setuid setvbuf \
+  sched_get_priority_max sched_setaffinity sched_setscheduler sched_setparam \
+  sched_rr_get_interval \
+- sigaction sigaltstack siginterrupt sigpending sigrelse \
+- sigtimedwait sigwait sigwaitinfo snprintf strftime strlcpy symlinkat sync \
+- sysconf tcgetpgrp tcsetpgrp tempnam timegm times tmpfile tmpnam tmpnam_r \
+- truncate uname unlinkat unsetenv utimensat utimes waitid waitpid wait3 wait4 \
++ setsockopt \
++ sigaction sigaltstack siginterrupt signal sigpending sigrelse \
++ sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
++ sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
++ truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
+  wcscoll wcsftime wcsxfrm wmemcmp writev _getpty)
+ 
+ AC_CHECK_DECL(dirfd,
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -164,22 +164,10 @@
+ #define fsync _commit
+ #else
+ /* Unix functions that the configure script doesn't check for */
+-#define HAVE_EXECV      1
+-#define HAVE_FORK       1
+ #if defined(__USLC__) && defined(__SCO_VERSION__)       /* SCO UDK Compiler */
+ #define HAVE_FORK1      1
+ #endif
+-#define HAVE_GETEGID    1
+-#define HAVE_GETEUID    1
+-#define HAVE_GETGID     1
+-#define HAVE_GETPPID    1
+-#define HAVE_GETUID     1
+-#define HAVE_KILL       1
+-#define HAVE_OPENDIR    1
+ #define HAVE_PIPE       1
+-#define HAVE_SYSTEM     1
+-#define HAVE_WAIT       1
+-#define HAVE_TTYNAME    1
+ #endif  /* _MSC_VER */
+ #endif  /* ! __WATCOMC__ || __QNX__ */
+ 
+@@ -212,23 +200,41 @@
+ extern int chdir(char *);
+ extern int rmdir(char *);
+ #else
++#if defined(HAVE_CHDIR)
+ extern int chdir(const char *);
++#endif
++#if defined(HAVE_RMDIR)
+ extern int rmdir(const char *);
+ #endif
++#endif
++#if defined HAVE_CHMOD
+ extern int chmod(const char *, mode_t);
++#endif
+ /*#ifdef HAVE_FCHMOD
+ extern int fchmod(int, mode_t);
+ #endif*/
+ /*#ifdef HAVE_LCHMOD
+ extern int lchmod(const char *, mode_t);
+ #endif*/
++#if defined(HAVE_CHOWN)
+ extern int chown(const char *, uid_t, gid_t);
++#endif
++#if defined(HAVE_GETCWD)
+ extern char *getcwd(char *, int);
++#endif
+ extern char *strerror(int);
++#if defined(HAVE_LINK)
+ extern int link(const char *, const char *);
++#endif
++#if defined(HAVE_RENAME)
+ extern int rename(const char *, const char *);
++#endif
++#if defined(HAVE_STAT)
+ extern int stat(const char *, struct stat *);
++#endif
++#if defined(HAVE_UNLINK
+ extern int unlink(const char *);
++#endif
+ #ifdef HAVE_SYMLINK
+ extern int symlink(const char *, const char *);
+ #endif /* HAVE_SYMLINK */
+--- pyconfig.h.in
++++ pyconfig.h.in
+@@ -40,6 +40,9 @@
+ /* Define to 1 if you have the `accept4' function. */
+ #undef HAVE_ACCEPT4
+ 
++/* Define to 1 if you have the `access' function. */
++#undef HAVE_ACCESS
++
+ /* Define to 1 if you have the `acosh' function. */
+ #undef HAVE_ACOSH
+ 
+@@ -67,6 +70,12 @@
+ /* Define to 1 if you have the `atanh' function. */
+ #undef HAVE_ATANH
+ 
++/* Define to 1 if you have the `bind' function. */
++#undef HAVE_BIND
++
++/* Define to 1 if you have the `bindtextdomain' function. */
++#undef HAVE_BINDTEXTDOMAIN
++
+ /* Define to 1 if you have the `bind_textdomain_codeset' function. */
+ #undef HAVE_BIND_TEXTDOMAIN_CODESET
+ 
+@@ -107,9 +116,15 @@
+ /* Define this if you have the type _Bool. */
+ #undef HAVE_C99_BOOL
+ 
++/* Define to 1 if you have the `chdir' function. */
++#undef HAVE_CHDIR
++
+ /* Define to 1 if you have the 'chflags' function. */
+ #undef HAVE_CHFLAGS
+ 
++/* Define to 1 if you have the `chmod' function. */
++#undef HAVE_CHMOD
++
+ /* Define to 1 if you have the `chown' function. */
+ #undef HAVE_CHOWN
+ 
+@@ -125,6 +140,9 @@
+ /* Define to 1 if you have the `clock_gettime' function. */
+ #undef HAVE_CLOCK_GETTIME
+ 
++/* Define to 1 if you have the `clock_settime' function. */
++#undef HAVE_CLOCK_SETTIME
++
+ /* Define if the C compiler supports computed gotos. */
+ #undef HAVE_COMPUTED_GOTOS
+ 
+@@ -134,6 +152,9 @@
+ /* Define to 1 if you have the <conio.h> header file. */
+ #undef HAVE_CONIO_H
+ 
++/* Define to 1 if you have the `connect' function. */
++#undef HAVE_CONNECT
++
+ /* Define to 1 if you have the `copysign' function. */
+ #undef HAVE_COPYSIGN
+ 
+@@ -155,6 +176,9 @@
+ /* Define if you have the 'resize_term' function. */
+ #undef HAVE_CURSES_RESIZE_TERM
+ 
++/* Define to 1 if you have the `dcgettext' function. */
++#undef HAVE_DCGETTEXT
++
+ /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
+    don't. */
+ #undef HAVE_DECL_ISFINITE
+@@ -257,6 +281,9 @@
+ /* Define to 1 if you have the `execv' function. */
+ #undef HAVE_EXECV
+ 
++/* Define to 1 if you have the `execve' function. */
++#undef HAVE_EXECVE
++
+ /* Define to 1 if you have the `expm1' function. */
+ #undef HAVE_EXPM1
+ 
+@@ -296,6 +323,9 @@
+ /* Define to 1 if you have the `flock' function. */
+ #undef HAVE_FLOCK
+ 
++/* Define to 1 if you have the `fopen' function. */
++#undef HAVE_FOPEN
++
+ /* Define to 1 if you have the `fork' function. */
+ #undef HAVE_FORK
+ 
+@@ -305,6 +335,9 @@
+ /* Define to 1 if you have the `fpathconf' function. */
+ #undef HAVE_FPATHCONF
+ 
++/* Define to 1 if you have the `freehostent' function. */
++#undef HAVE_FREEHOSTENT
++
+ /* Define to 1 if you have the `fseek64' function. */
+ #undef HAVE_FSEEK64
+ 
+@@ -363,18 +396,27 @@
+ /* Define if you have the getaddrinfo function. */
+ #undef HAVE_GETADDRINFO
+ 
++/* Define to 1 if you have the `getcwd' function. */
++#undef HAVE_GETCWD
++
+ /* Define this if you have flockfile(), getc_unlocked(), and funlockfile() */
+ #undef HAVE_GETC_UNLOCKED
+ 
+ /* Define to 1 if you have the `getentropy' function. */
+ #undef HAVE_GETENTROPY
+ 
++/* Define to 1 if you have the `getgid' function. */
++#undef HAVE_GETGID
++
+ /* Define to 1 if you have the `getgrouplist' function. */
+ #undef HAVE_GETGROUPLIST
+ 
+ /* Define to 1 if you have the `getgroups' function. */
+ #undef HAVE_GETGROUPS
+ 
++/* Define to 1 if you have the `gethostbyaddr' function. */
++#undef HAVE_GETHOSTBYADDR
++
+ /* Define to 1 if you have the `gethostbyname' function. */
+ #undef HAVE_GETHOSTBYNAME
+ 
+@@ -417,6 +459,9 @@
+ /* Define to 1 if you have the `getpid' function. */
+ #undef HAVE_GETPID
+ 
++/* Define to 1 if you have the `getppid' function. */
++#undef HAVE_GETPPID
++
+ /* Define to 1 if you have the `getpriority' function. */
+ #undef HAVE_GETPRIORITY
+ 
+@@ -447,6 +492,9 @@
+ /* Define to 1 if you have the `gettimeofday' function. */
+ #undef HAVE_GETTIMEOFDAY
+ 
++/* Define to 1 if you have the `getuid' function. */
++#undef HAVE_GETUID
++
+ /* Define to 1 if you have the `getwd' function. */
+ #undef HAVE_GETWD
+ 
+@@ -454,6 +502,9 @@
+    bcopy. */
+ #undef HAVE_GLIBC_MEMMOVE_BUG
+ 
++/* Define to 1 if you have the `gmtime' function. */
++#undef HAVE_GMTIME
++
+ /* Define to 1 if you have the <grp.h> header file. */
+ #undef HAVE_GRP_H
+ 
+@@ -472,6 +523,9 @@
+ /* Define to 1 if you have the `if_nameindex' function. */
+ #undef HAVE_IF_NAMEINDEX
+ 
++/* Define to 1 if you have the `inet_addr' function. */
++#undef HAVE_INET_ADDR
++
+ /* Define if you have the 'inet_aton' function. */
+ #undef HAVE_INET_ATON
+ 
+@@ -571,11 +625,14 @@
+ /* Define to 1 if you have the <linux/netlink.h> header file. */
+ #undef HAVE_LINUX_NETLINK_H
+ 
++/* Define to 1 if you have the <linux/random.h> header file. */
++#undef HAVE_LINUX_RANDOM_H
++
+ /* Define to 1 if you have the <linux/tipc.h> header file. */
+ #undef HAVE_LINUX_TIPC_H
+ 
+-/* Define to 1 if you have the <linux/random.h> header file. */
+-#undef HAVE_LINUX_RANDOM_H
++/* Define to 1 if you have the `localtime' function. */
++#undef HAVE_LOCALTIME
+ 
+ /* Define to 1 if you have the `lockf' function. */
+ #undef HAVE_LOCKF
+@@ -613,6 +670,9 @@
+ /* Define to 1 if you have the `memrchr' function. */
+ #undef HAVE_MEMRCHR
+ 
++/* Define to 1 if you have the `mkdir' function. */
++#undef HAVE_MKDIR
++
+ /* Define to 1 if you have the `mkdirat' function. */
+ #undef HAVE_MKDIRAT
+ 
+@@ -652,9 +712,15 @@
+ /* Define to 1 if you have the `nice' function. */
+ #undef HAVE_NICE
+ 
++/* Define to 1 if you have the `open' function. */
++#undef HAVE_OPEN
++
+ /* Define to 1 if you have the `openat' function. */
+ #undef HAVE_OPENAT
+ 
++/* Define to 1 if you have the `opendir' function. */
++#undef HAVE_OPENDIR
++
+ /* Define to 1 if you have the `openpty' function. */
+ #undef HAVE_OPENPTY
+ 
+@@ -688,6 +754,9 @@
+ /* Define to 1 if you have the `pread' function. */
+ #undef HAVE_PREAD
+ 
++/* Define to 1 if you have the `printf' function. */
++#undef HAVE_PRINTF
++
+ /* Define if you have the 'prlimit' functions. */
+ #undef HAVE_PRLIMIT
+ 
+@@ -721,6 +790,9 @@
+ /* Define to 1 if you have the `putenv' function. */
+ #undef HAVE_PUTENV
+ 
++/* Define to 1 if you have the <pwd.h> header file. */
++#undef HAVE_PWD_H
++
+ /* Define to 1 if you have the `pwrite' function. */
+ #undef HAVE_PWRITE
+ 
+@@ -739,6 +811,9 @@
+ /* Define to 1 if you have the `realpath' function. */
+ #undef HAVE_REALPATH
+ 
++/* Define to 1 if you have the `rename' function. */
++#undef HAVE_RENAME
++
+ /* Define to 1 if you have the `renameat' function. */
+ #undef HAVE_RENAMEAT
+ 
+@@ -769,9 +844,15 @@
+ /* Define if you have readline 4.0 */
+ #undef HAVE_RL_RESIZE_TERMINAL
+ 
++/* Define to 1 if you have the `rmdir' function. */
++#undef HAVE_RMDIR
++
+ /* Define to 1 if you have the `round' function. */
+ #undef HAVE_ROUND
+ 
++/* Define to 1 if you have the <rpc/rpc.h> header file. */
++#undef HAVE_RPC_RPC_H
++
+ /* Define to 1 if you have the `sched_get_priority_max' function. */
+ #undef HAVE_SCHED_GET_PRIORITY_MAX
+ 
+@@ -793,6 +874,9 @@
+ /* Define to 1 if you have the `select' function. */
+ #undef HAVE_SELECT
+ 
++/* Define to 1 if you have the <semaphore.h> header file. */
++#undef HAVE_SEMAPHORE_H
++
+ /* Define to 1 if you have the `sem_getvalue' function. */
+ #undef HAVE_SEM_GETVALUE
+ 
+@@ -808,6 +892,9 @@
+ /* Define to 1 if you have the `sendfile' function. */
+ #undef HAVE_SENDFILE
+ 
++/* Define to 1 if you have the `sendto' function. */
++#undef HAVE_SENDTO
++
+ /* Define to 1 if you have the `setegid' function. */
+ #undef HAVE_SETEGID
+ 
+@@ -853,6 +940,9 @@
+ /* Define to 1 if you have the `setsid' function. */
+ #undef HAVE_SETSID
+ 
++/* Define to 1 if you have the `setsockopt' function. */
++#undef HAVE_SETSOCKOPT
++
+ /* Define to 1 if you have the `setuid' function. */
+ #undef HAVE_SETUID
+ 
+@@ -871,6 +961,9 @@
+ /* Define to 1 if you have the `siginterrupt' function. */
+ #undef HAVE_SIGINTERRUPT
+ 
++/* Define to 1 if you have the `signal' function. */
++#undef HAVE_SIGNAL
++
+ /* Define to 1 if you have the <signal.h> header file. */
+ #undef HAVE_SIGNAL_H
+ 
+@@ -907,6 +1000,9 @@
+ /* Define if your compiler provides ssize_t */
+ #undef HAVE_SSIZE_T
+ 
++/* Define to 1 if you have the `stat' function. */
++#undef HAVE_STAT
++
+ /* Define to 1 if you have the `statvfs' function. */
+ #undef HAVE_STATVFS
+ 
+@@ -989,6 +1085,9 @@
+ /* Define to 1 if you have the <sysexits.h> header file. */
+ #undef HAVE_SYSEXITS_H
+ 
++/* Define to 1 if you have the `system' function. */
++#undef HAVE_SYSTEM
++
+ /* Define to 1 if you have the <sys/audioio.h> header file. */
+ #undef HAVE_SYS_AUDIOIO_H
+ 
+@@ -1054,6 +1153,9 @@
+ /* Define to 1 if you have the <sys/socket.h> header file. */
+ #undef HAVE_SYS_SOCKET_H
+ 
++/* Define to 1 if you have the <sys/soundcard.h> header file. */
++#undef HAVE_SYS_SOUNDCARD_H
++
+ /* Define to 1 if you have the <sys/statvfs.h> header file. */
+ #undef HAVE_SYS_STATVFS_H
+ 
+@@ -1108,6 +1210,9 @@
+ /* Define to 1 if you have the <term.h> header file. */
+ #undef HAVE_TERM_H
+ 
++/* Define to 1 if you have the `textdomain' function. */
++#undef HAVE_TEXTDOMAIN
++
+ /* Define to 1 if you have the `tgamma' function. */
+ #undef HAVE_TGAMMA
+ 
+@@ -1133,6 +1238,9 @@
+ /* Define to 1 if you have the `truncate' function. */
+ #undef HAVE_TRUNCATE
+ 
++/* Define to 1 if you have the `ttyname' function. */
++#undef HAVE_TTYNAME
++
+ /* Define to 1 if you don't have `tm_zone' but do have the external array
+    `tzname'. */
+ #undef HAVE_TZNAME
+@@ -1149,12 +1257,18 @@
+ /* Define to 1 if the system has the type `uintptr_t'. */
+ #undef HAVE_UINTPTR_T
+ 
++/* Define to 1 if you have the `umask' function. */
++#undef HAVE_UMASK
++
+ /* Define to 1 if you have the `uname' function. */
+ #undef HAVE_UNAME
+ 
+ /* Define to 1 if you have the <unistd.h> header file. */
+ #undef HAVE_UNISTD_H
+ 
++/* Define to 1 if you have the `unlink' function. */
++#undef HAVE_UNLINK
++
+ /* Define to 1 if you have the `unlinkat' function. */
+ #undef HAVE_UNLINKAT
+ 
+@@ -1178,6 +1292,9 @@
+ /* Define to 1 if you have the <utime.h> header file. */
+ #undef HAVE_UTIME_H
+ 
++/* Define to 1 if you have the `wait' function. */
++#undef HAVE_WAIT
++
+ /* Define to 1 if you have the `wait3' function. */
+ #undef HAVE_WAIT3
+ 
+--- setup.py
++++ setup.py
+@@ -1296,26 +1296,27 @@
+         else:
+             missing.append('_gdbm')
+ 
+-        # Unix-only modules
+-        if host_platform != 'win32':
++        if config_h_vars.get('HAVE_TERMIOS_H', False):
+             # Steen Lumholt's termios module
+             exts.append( Extension('termios', ['termios.c']) )
++        else:
++            missing.append('termios')
++
++        if config_h_vars.get('HAVE_SYS_RESOURCE_H', False):
+             # Jeremy Hylton's rlimit interface
+             exts.append( Extension('resource', ['resource.c']) )
++        else:
++            missing.append('resource')
+ 
+-            # Sun yellow pages. Some systems have the functions in libc.
+-            if (host_platform not in ['cygwin', 'qnx6'] and
+-                find_file('rpcsvc/yp_prot.h', inc_dirs, []) is not None):
+-                if (self.compiler.find_library_file(lib_dirs, 'nsl')):
+-                    libs = ['nsl']
+-                else:
+-                    libs = []
+-                exts.append( Extension('nis', ['nismodule.c'],
+-                                       libraries = libs) )
++        if config_h_vars.get('HAVE_RPC_RPC_H', False):
++            if (self.compiler.find_library_file(lib_dirs, 'nsl')):
++                libs = ['nsl']
+             else:
+-                missing.append('nis')
++                libs = []
++            exts.append( Extension('nis', ['nismodule.c'],
++                                   libraries=libs))
+         else:
+-            missing.extend(['nis', 'resource', 'termios'])
++            missing.append('nis')
+ 
+         # Curses support, requiring the System V version of curses, often
+         # provided by the ncurses library.

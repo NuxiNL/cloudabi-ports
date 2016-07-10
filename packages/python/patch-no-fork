@@ -1,0 +1,15 @@
+--- Modules/_posixsubprocess.c
++++ Modules/_posixsubprocess.c
+@@ -670,7 +670,12 @@
+         cwd_obj2 = NULL;
+     }
+ 
++#ifdef HAVE_FORK
+     pid = fork();
++#else
++    pid = -1;
++    errno = ENOSYS;
++#endif
+     if (pid == 0) {
+         /* Child process */
+         /*

@@ -1,0 +1,17 @@
+--- Modules/nismodule.c
++++ Modules/nismodule.c
+@@ -12,6 +12,8 @@
+ 
+ #include "Python.h"
+ 
++#ifdef HAVE_RPC_RPC_H
++
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <rpc/rpc.h>
+@@ -465,3 +467,5 @@
+         PyDict_SetItemString(d, "error", NisError);
+     return m;
+ }
++
++#endif /* HAVE_RPC_RPC_H */

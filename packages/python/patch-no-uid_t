@@ -1,0 +1,53 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -409,6 +409,7 @@
+ 
+ 
+ #ifndef MS_WINDOWS
++# if defined(HAVE_GETUID)
+ PyObject *
+ _PyLong_FromUid(uid_t uid)
+ {
+@@ -637,6 +638,7 @@
+     Py_DECREF(index);
+     return 0;
+ }
++# endif /* defined(HAVE_GETUID) */
+ #endif /* MS_WINDOWS */
+ 
+ 
+@@ -2023,6 +2025,11 @@
+ #if defined(MS_WINDOWS)
+     PyStructSequence_SET_ITEM(v, 4, PyLong_FromLong(0));
+     PyStructSequence_SET_ITEM(v, 5, PyLong_FromLong(0));
++#elif !defined(HAVE_GETUID)
++    Py_INCREF(Py_None);
++    PyStructSequence_SET_ITEM(v, 4, Py_None);
++    Py_INCREF(Py_None);
++    PyStructSequence_SET_ITEM(v, 5, Py_None);
+ #else
+     PyStructSequence_SET_ITEM(v, 4, _PyLong_FromUid(st->st_uid));
+     PyStructSequence_SET_ITEM(v, 5, _PyLong_FromGid(st->st_gid));
+@@ -12356,14 +12363,22 @@
+ static PyMethodDef posix_methods[] = {
+ 
+     OS_STAT_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
+     OS_ACCESS_METHODDEF
++#endif
+     OS_TTYNAME_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_CHDIR)
+     OS_CHDIR_METHODDEF
++#endif
+     OS_CHFLAGS_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_CHMOD)
+     OS_CHMOD_METHODDEF
++#endif
+     OS_FCHMOD_METHODDEF
+     OS_LCHMOD_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_CHOWN)
+     OS_CHOWN_METHODDEF
++#endif
+     OS_FCHOWN_METHODDEF
+     OS_LCHOWN_METHODDEF
+     OS_LCHFLAGS_METHODDEF

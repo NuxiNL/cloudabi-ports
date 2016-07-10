@@ -1,0 +1,20 @@
+--- Modules/_posixsubprocess.c
++++ Modules/_posixsubprocess.c
+@@ -499,9 +499,17 @@
+     for (i = 0; exec_array[i] != NULL; ++i) {
+         const char *executable = exec_array[i];
+         if (envp) {
++#ifdef HAVE_EXECVE
+             execve(executable, argv, envp);
++#else
++            errno = ENOSYS;
++#endif
+         } else {
++#ifdef HAVE_EXECV
+             execv(executable, argv);
++#else
++            errno = ENOSYS;
++#endif
+         }
+         if (errno != ENOENT && errno != ENOTDIR && saved_errno == 0) {
+             saved_errno = errno;

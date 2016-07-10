@@ -1,0 +1,15 @@
+--- Modules/_cryptmodule.c
++++ Modules/_cryptmodule.c
+@@ -3,6 +3,7 @@
+ 
+ #include "Python.h"
+ 
++#if !defined(__CloudABI__)
+ #include <sys/types.h>
+ 
+ /* Module crypt */
+@@ -63,3 +64,4 @@
+ {
+     return PyModule_Create(&cryptmodule);
+ }
++#endif /* !defined(__CloudABI__) */

@@ -1,0 +1,214 @@
+--- Modules/getpath.c
++++ Modules/getpath.c
+@@ -404,7 +404,11 @@
+     exec_prefix[MAXPATHLEN] = L'\0';
+     joinpath(exec_prefix, L"pybuilddir.txt");
+     if (isfile(exec_prefix)) {
++#ifdef HAVE_FOPEN
+         FILE *f = _Py_wfopen(exec_prefix, L"rb");
++#else
++        FILE *f = NULL;
++#endif
+         if (f == NULL)
+             errno = 0;
+         else {
+@@ -643,13 +647,21 @@
+         wcscpy(tmpbuffer, argv0_path);
+ 
+         joinpath(tmpbuffer, env_cfg);
++#ifdef HAVE_FOPEN
+         env_file = _Py_wfopen(tmpbuffer, L"r");
++#else
++        env_file = NULL;
++#endif
+         if (env_file == NULL) {
+             errno = 0;
+             reduce(tmpbuffer);
+             reduce(tmpbuffer);
+             joinpath(tmpbuffer, env_cfg);
++#ifdef HAVE_FOPEN
+             env_file = _Py_wfopen(tmpbuffer, L"r");
++#else
++            env_file = NULL;
++#endif
+             if (env_file == NULL) {
+                 errno = 0;
+             }
+--- Modules/main.c
++++ Modules/main.c
+@@ -126,7 +126,11 @@
+ {
+     char *startup = Py_GETENV("PYTHONSTARTUP");
+     if (startup != NULL && startup[0] != '\0') {
++#ifdef HAVE_FOPEN
+         FILE *fp = _Py_fopen(startup, "r");
++#else
++        FILE *fp = NULL;
++#endif
+         if (fp != NULL) {
+             (void) PyRun_SimpleFileExFlags(fp, startup, 0, cf);
+             PyErr_Clear();
+@@ -733,7 +737,11 @@
+         }
+ 
+         if (sts==-1 && filename!=NULL) {
++#ifdef HAVE_FOPEN
+             fp = _Py_wfopen(filename, L"r");
++#else
++            fp = NULL;
++#endif
+             if (fp == NULL) {
+                 char *cfilename_buffer;
+                 const char *cfilename;
+--- Modules/_testcapimodule.c
++++ Modules/_testcapimodule.c
+@@ -3518,7 +3518,11 @@
+                           &value, &filename, &version))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "wb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+@@ -3544,7 +3548,11 @@
+                           &obj, &filename, &version))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "wb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+@@ -3569,7 +3577,11 @@
+     if (!PyArg_ParseTuple(args, "s:pymarshal_read_short_from_file", &filename))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "rb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+@@ -3594,7 +3606,11 @@
+     if (!PyArg_ParseTuple(args, "s:pymarshal_read_long_from_file", &filename))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "rb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+@@ -3620,7 +3636,11 @@
+     if (!PyArg_ParseTuple(args, "s:pymarshal_read_last_object_from_file", &filename))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "rb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+@@ -3644,7 +3664,11 @@
+     if (!PyArg_ParseTuple(args, "s:pymarshal_read_object_from_file", &filename))
+         return NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "rb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         PyErr_SetFromErrno(PyExc_OSError);
+         return NULL;
+--- Modules/zipimport.c
++++ Modules/zipimport.c
+@@ -904,7 +904,11 @@
+     int bootstrap;
+     const char *errmsg = NULL;
+ 
++#ifdef HAVE_FOPEN
+     fp = _Py_fopen_obj(archive, "rb");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         if (PyErr_ExceptionMatches(PyExc_OSError)) {
+             PyObject *exc, *val, *tb;
+@@ -1151,7 +1155,11 @@
+         return NULL;
+     }
+ 
++#ifdef HAVE_FOPEN
+     fp = _Py_fopen_obj(archive, "rb");
++#else
++    fp = NULL;
++#endif
+     if (!fp) {
+         return NULL;
+     }
+--- Parser/pgenmain.c
++++ Parser/pgenmain.c
+@@ -61,7 +61,11 @@
+     graminit_h = argv[2];
+     graminit_c = argv[3];
+     g = getgrammar(filename);
++#ifdef HAVE_FOPEN
+     fp = fopen(graminit_c, "w");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         perror(graminit_c);
+         Py_Exit(1);
+@@ -70,7 +74,11 @@
+         printf("Writing %s ...\n", graminit_c);
+     printgrammar(g, fp);
+     fclose(fp);
++#ifdef HAVE_FOPEN
+     fp = fopen(graminit_h, "w");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         perror(graminit_h);
+         Py_Exit(1);
+@@ -91,7 +99,11 @@
+     grammar *g0, *g;
+     perrdetail err;
+ 
++#ifdef HAVE_FOPEN
+     fp = fopen(filename, "r");
++#else
++    fp = NULL;
++#endif
+     if (fp == NULL) {
+         perror(filename);
+         Py_Exit(1);
+--- Python/pythonrun.c
++++ Python/pythonrun.c
+@@ -372,7 +372,11 @@
+         /* Try to run a pyc file. First, re-open in binary */
+         if (closeit)
+             fclose(fp);
++#ifdef HAVE_FOPEN
+         if ((pyc_fp = _Py_fopen(filename, "rb")) == NULL) {
++#else
++        if ((pyc_fp = NULL) == NULL) {
++#endif
+             fprintf(stderr, "python: Can't reopen .pyc file\n");
+             goto done;
+         }

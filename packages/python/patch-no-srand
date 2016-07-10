@@ -1,0 +1,13 @@
+--- Modules/expat/xmlparse.c
++++ Modules/expat/xmlparse.c
+@@ -693,8 +695,10 @@
+ static unsigned long
+ generate_hash_secret_salt(void)
+ {
++#if !defined(__CloudABI__)
+   unsigned int seed = time(NULL) % UINT_MAX;
+   srand(seed);
++#endif
+   return rand();
+ }
+ 

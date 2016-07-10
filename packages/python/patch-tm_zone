@@ -1,0 +1,14 @@
+--- Modules/timemodule.c
++++ Modules/timemodule.c
+@@ -430,7 +430,11 @@
+     if (Py_TYPE(args) == &StructTimeType) {
+         PyObject *item;
+         item = PyTuple_GET_ITEM(args, 9);
++#ifdef __CloudABI__
++        strlcpy(p->tm_zone, item == Py_None ? "" : _PyUnicode_AsString(item), sizeof(p->tm_zone));
++#else
+         p->tm_zone = item == Py_None ? NULL : _PyUnicode_AsString(item);
++#endif
+         item = PyTuple_GET_ITEM(args, 10);
+         p->tm_gmtoff = item == Py_None ? 0 : PyLong_AsLong(item);
+         if (PyErr_Occurred())

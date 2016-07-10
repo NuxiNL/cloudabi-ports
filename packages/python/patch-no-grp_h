@@ -1,0 +1,30 @@
+--- Modules/grpmodule.c
++++ Modules/grpmodule.c
+@@ -4,6 +4,7 @@
+ #include "Python.h"
+ #include "posixmodule.h"
+ 
++#ifdef HAVE_GRP_H
+ #include <grp.h>
+ 
+ #include "clinic/grpmodule.c.h"
+@@ -253,3 +254,4 @@
+     initialized = 1;
+     return m;
+ }
++#endif /* HAVE_GRP_H */
+--- setup.py
++++ setup.py
+@@ -669,7 +669,11 @@
+         # pwd(3)
+         exts.append( Extension('pwd', ['pwdmodule.c']) )
+         # grp(3)
+-        exts.append( Extension('grp', ['grpmodule.c']) )
++        if config_h_vars.get('HAVE_GRP_H', False):
++            exts.append( Extension('grp', ['grpmodule.c']) )
++        else:
++            missing.append('grp')
++
+         # spwd, shadow passwords
+         if (config_h_vars.get('HAVE_GETSPNAM', False) or
+                 config_h_vars.get('HAVE_GETSPENT', False)):

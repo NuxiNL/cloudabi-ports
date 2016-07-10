@@ -1,0 +1,76 @@
+--- Modules/getpath.c
++++ Modules/getpath.c
+@@ -126,8 +126,13 @@
+         errno = EINVAL;
+         return -1;
+     }
++#ifdef HAVE_STAT
+     err = stat(fname, buf);
++#else
++    {err = -1; errno = ENOSYS;}
++#endif
+     PyMem_Free(fname);
++    
+     return err;
+ }
+ 
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -362,8 +362,12 @@
+ #       define FSTAT _Py_fstat_noraise
+ #       define STRUCT_STAT struct _Py_stat_struct
+ #else
++#   ifdef HAVE_STAT
+ #       define STAT stat
++#   endif
++#   ifdef HAVE_LSTAT
+ #       define LSTAT lstat
++#   endif
+ #       define FSTAT fstat
+ #       define STRUCT_STAT struct stat
+ #endif
+@@ -2149,7 +2153,11 @@
+                          follow_symlinks ? 0 : AT_SYMLINK_NOFOLLOW);
+     else
+ #endif
++#ifdef HAVE_STAT
+         result = STAT(path->narrow, &st);
++#else
++        {result = -1; errno = ENAMETOOLONG;}
++#endif
+     Py_END_ALLOW_THREADS
+ 
+     if (result != 0) {
+@@ -11510,9 +11518,17 @@
+     path = PyBytes_AS_STRING(bytes);
+ 
+     if (follow_symlinks)
++#ifdef HAVE_STAT
+         result = STAT(path, &st);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif /* HAVE_STAT */
+     else
++#ifdef HAVE_LSTAT
+         result = LSTAT(path, &st);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif /* HAVE_LSTAT */
+     Py_DECREF(bytes);
+ 
+     if (result != 0)
+--- Modules/zipimport.c
++++ Modules/zipimport.c
+@@ -100,7 +100,12 @@
+         struct stat statbuf;
+         int rv;
+ 
++#ifdef HAVE_STAT
+         rv = _Py_stat(filename, &statbuf);
++#else
++        rv = -1;
++        errno = ENOSYS;
++#endif /* HAVE_STAT */
+         if (rv == -2)
+             goto error;
+         if (rv == 0) {

@@ -1,0 +1,14 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -2620,7 +2620,11 @@
+     }
+     else
+ #endif
++#ifdef HAVE_ACCESS
+         result = access(path->narrow, mode);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif /* HAVE_ACCESS */
+     Py_END_ALLOW_THREADS
+     return_value = !result;
+ #endif

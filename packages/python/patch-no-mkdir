@@ -1,0 +1,14 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -4012,7 +4012,11 @@
+ #if ( defined(__WATCOMC__) || defined(PYCC_VACPP) ) && !defined(__QNX__)
+         result = mkdir(path->narrow);
+ #else
++#ifdef HAVE_MKDIR
+         result = mkdir(path->narrow, mode);
++#else
++        {result = -1; errno = ENOSYS;}
++#endif /* HAVE_MKDIR */
+ #endif
+     Py_END_ALLOW_THREADS
+     if (result < 0)

@@ -1,0 +1,63 @@
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -776,6 +776,7 @@
+ 
+ #endif /* defined(HAVE_LCHOWN) */
+ 
++#ifdef HAVE_GETCWD
+ PyDoc_STRVAR(os_getcwd__doc__,
+ "getcwd($module, /)\n"
+ "--\n"
+@@ -811,6 +812,7 @@
+ {
+     return os_getcwdb_impl(module);
+ }
++#endif /* HAVE_GETCWD */
+ 
+ #if defined(HAVE_LINK)
+ 
+--- Modules/getpath.c
++++ Modules/getpath.c
+@@ -231,11 +231,13 @@
+     if (p[0] == SEP)
+         wcscpy(path, p);
+     else {
++#ifdef HAVE_GETCWD
+         if (!_Py_wgetcwd(path, pathlen)) {
+             /* unable to get the current directory */
+             wcscpy(path, p);
+             return;
+         }
++#endif
+         if (p[0] == '.' && p[1] == SEP)
+             p += 2;
+         joinpath(path, p);
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -3273,6 +3273,7 @@
+ #endif /* HAVE_LCHOWN */
+ 
+ 
++#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
+ static PyObject *
+ posix_getcwd(int use_bytes)
+ {
+@@ -3382,6 +3383,7 @@
+ {
+     return posix_getcwd(1);
+ }
++#endif /* defined(MS_WINDOWS) || defined(HAVE_GETCWD) */
+ 
+ 
+ #if ((!defined(HAVE_LINK)) && defined(MS_WINDOWS))
+@@ -12369,8 +12371,10 @@
+     OS_LCHFLAGS_METHODDEF
+     OS_CHROOT_METHODDEF
+     OS_CTERMID_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
+     OS_GETCWD_METHODDEF
+     OS_GETCWDB_METHODDEF
++#endif
+     OS_LINK_METHODDEF
+     OS_LISTDIR_METHODDEF
+     OS_LSTAT_METHODDEF
