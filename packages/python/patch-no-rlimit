@@ -34,6 +34,18 @@
      {0}
  };
  
+@@ -51,7 +51,11 @@
+     "resource.struct_rusage",           /* name */
+     struct_rusage__doc__,       /* doc */
+     struct_rusage_fields,       /* fields */
++#if !defined(__CloudABI__)
+     16          /* n_in_sequence */
++#else
++    2           /* n_in_sequence */
++#endif
+ };
+ 
+ static int initialized;
 @@ -83,6 +85,7 @@
                      PyFloat_FromDouble(doubletime(ru.ru_utime)));
      PyStructSequence_SET_ITEM(result, 1,

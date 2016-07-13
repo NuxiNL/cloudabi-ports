@@ -65,7 +65,8 @@
  # socket line above, and possibly edit the SSL variable:
 @@ -224,7 +224,7 @@
  #termios termios.c	# Steen Lumholt's termios module
- #resource resource.c	# Jeremy Hylton's rlimit interface
+-#resource resource.c	# Jeremy Hylton's rlimit interface
++resource resource.c	# Jeremy Hylton's rlimit interface
  
 -#_posixsubprocess _posixsubprocess.c  # POSIX subprocess module helper
 +_posixsubprocess _posixsubprocess.c  # POSIX subprocess module helper
