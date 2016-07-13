@@ -6,7 +6,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract('Python-3.6.0a2')
+    srcdir = ctx.extract('Python-3.6.0a3')
 
     # Delete the in-tree copy of these, to make certain the out-of-tree
     # versions are used, i.e. those generated from our patched importlib
@@ -44,14 +44,14 @@ def build(ctx):
     # Fix up pathnames in shebangs and build configurations.
     for f in {'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
               'bin/python3.6dm-config', 'bin/pyvenv-3.6',
-              'lib/python3.6/_sysconfigdata.py',
+              'lib/python3.6/lib-dynload/_sysconfigdata_m.py',
               'lib/python3.6/config-3.6dm/Makefile',
               'lib/python3.6/config-3.6dm/python-config.py'}:
         stage.path(f).unhardcode_paths()
 
     # Remove Pickle files, as they don't seem to be stable.
-    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.alpha.2.pickle',
-              'lib/python3.6/lib2to3/PatternGrammar3.6.0.alpha.2.pickle'}:
+    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.alpha.3.pickle',
+              'lib/python3.6/lib2to3/PatternGrammar3.6.0.alpha.3.pickle'}:
         stage.path(f).remove()
     stage.install()
 
@@ -65,8 +65,8 @@ package(
 )
 
 distfile(
-    name='Python-3.6.0a2.tar.xz',
-    checksum='2dd2ddf22a63ef9642a20b1f5a40983209e8d7a8ad8371a881fde520edc9ff86',
+    name='Python-3.6.0a3.tar.xz',
+    checksum='2cd0611c3456a83737d99d8ffd36d4094b3d44c29dd3a4185f1146be502a8321',
     master_sites={'https://www.python.org/ftp/python/3.6.0/'},
     unsafe_string_sources={
         'Modules/_ctypes/_ctypes.c',

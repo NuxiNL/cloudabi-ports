@@ -403,17 +403,6 @@
  
      if (ferr != NULL && ferr != Py_None && !file_is_closed(ferr)) {
          tmp = _PyObject_CallMethodId(ferr, &PyId_flush, "");
-@@ -626,8 +634,10 @@
- 
-     /* Debugging stuff */
- #ifdef COUNT_ALLOCS
-+#ifndef __CloudABI__
-     dump_counts(stdout);
- #endif
-+#endif
-     /* dump hash stats */
-     _PyHash_Fini();
- 
 @@ -1198,6 +1208,7 @@
          }
      }

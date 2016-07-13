@@ -165,8 +165,8 @@
  
 +#ifdef HAVE_SIGNAL
  static PyObject *
- signal_signal_impl(PyModuleDef *module, int signalnum, PyObject *handler)
- /*[clinic end generated code: output=622d7d0beebea546 input=deee84af5fa0432c]*/
+ signal_signal_impl(PyObject *module, int signalnum, PyObject *handler)
+ /*[clinic end generated code: output=b44cfda43780f3a1 input=deee84af5fa0432c]*/
 @@ -454,6 +468,7 @@
      else
          Py_RETURN_NONE;
@@ -181,8 +181,8 @@
  
 +#ifdef HAVE_SIGNAL
  static PyObject *
- signal_getsignal_impl(PyModuleDef *module, int signalnum)
- /*[clinic end generated code: output=d50ec355757e360c input=ac23a00f19dfa509]*/
+ signal_getsignal_impl(PyObject *module, int signalnum)
+ /*[clinic end generated code: output=35b3e0e796fd555e input=ac23a00f19dfa509]*/
 @@ -490,6 +506,7 @@
          Py_RETURN_NONE;
      }
