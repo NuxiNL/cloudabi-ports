@@ -175,7 +175,7 @@
  		case "$host_cpu" in
  		arm*)
  			_host_cpu=arm
-@@ -1871,13 +1874,13 @@
+@@ -1897,13 +1900,13 @@
  AC_HEADER_STDC
  AC_CHECK_HEADERS(asm/types.h conio.h direct.h dlfcn.h errno.h \
  fcntl.h grp.h \
@@ -193,7 +193,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -3269,27 +3272,35 @@
+@@ -3297,27 +3300,35 @@
  fi
  
  # checks for library functions

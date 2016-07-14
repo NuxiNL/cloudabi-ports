@@ -1,6 +1,6 @@
 --- Modules/_posixsubprocess.c
 +++ Modules/_posixsubprocess.c
-@@ -670,7 +670,12 @@
+@@ -669,7 +669,12 @@
          cwd_obj2 = NULL;
      }
  

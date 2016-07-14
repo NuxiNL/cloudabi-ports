@@ -21,7 +21,7 @@
                  pai->ai_protocol != GAI_ANY)
 --- Modules/socketmodule.c
 +++ Modules/socketmodule.c
-@@ -6486,7 +6486,9 @@
+@@ -6495,7 +6495,9 @@
      PyModule_AddIntMacro(m, SOCK_STREAM);
      PyModule_AddIntMacro(m, SOCK_DGRAM);
  /* We have incomplete socket support. */

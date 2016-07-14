@@ -1,6 +1,6 @@
 --- Modules/_posixsubprocess.c
 +++ Modules/_posixsubprocess.c
-@@ -459,8 +459,10 @@
+@@ -458,8 +458,10 @@
      if (errwrite != c2pwrite && errwrite != p2cread && errwrite > 2)
          POSIX_CALL(close(errwrite));
  
@@ -13,7 +13,7 @@
          _Py_RestoreSignals();
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -220,6 +220,7 @@
+@@ -219,6 +219,7 @@
  
  #endif /* defined(HAVE_CTERMID) */
  
@@ -21,7 +21,7 @@
  PyDoc_STRVAR(os_chdir__doc__,
  "chdir($module, /, path)\n"
  "--\n"
-@@ -255,6 +256,7 @@
+@@ -254,6 +255,7 @@
  
      return return_value;
  }
@@ -31,7 +31,7 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2724,7 +2724,11 @@
+@@ -2723,7 +2723,11 @@
          result = fchdir(path->fd);
      else
  #endif

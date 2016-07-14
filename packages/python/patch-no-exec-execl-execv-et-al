@@ -1,6 +1,6 @@
 --- Modules/_posixsubprocess.c
 +++ Modules/_posixsubprocess.c
-@@ -499,9 +499,17 @@
+@@ -498,9 +498,17 @@
      for (i = 0; exec_array[i] != NULL; ++i) {
          const char *executable = exec_array[i];
          if (envp) {

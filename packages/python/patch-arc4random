@@ -11,7 +11,7 @@
      Py_ssize_t n;
  
 @@ -257,6 +260,7 @@
-         size -= (Py_ssize_t)n;
+         size -= n;
      }
      close(fd);
 +#endif

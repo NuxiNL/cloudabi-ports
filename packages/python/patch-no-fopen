@@ -162,7 +162,7 @@
      }
 --- Parser/pgenmain.c
 +++ Parser/pgenmain.c
-@@ -61,7 +61,11 @@
+@@ -62,7 +62,11 @@
      graminit_h = argv[2];
      graminit_c = argv[3];
      g = getgrammar(filename);
@@ -174,7 +174,7 @@
      if (fp == NULL) {
          perror(graminit_c);
          Py_Exit(1);
-@@ -70,7 +74,11 @@
+@@ -71,7 +75,11 @@
          printf("Writing %s ...\n", graminit_c);
      printgrammar(g, fp);
      fclose(fp);
@@ -186,7 +186,7 @@
      if (fp == NULL) {
          perror(graminit_h);
          Py_Exit(1);
-@@ -91,7 +99,11 @@
+@@ -92,7 +100,11 @@
      grammar *g0, *g;
      perrdetail err;
  

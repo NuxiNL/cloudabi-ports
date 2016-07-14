@@ -630,7 +630,7 @@
          makedfa(gr, gr->gr_nfa[i], d);
 --- Parser/pgenmain.c
 +++ Parser/pgenmain.c
-@@ -67,7 +67,7 @@
+@@ -68,7 +68,7 @@
          Py_Exit(1);
      }
      if (Py_DebugFlag)
@@ -639,7 +639,7 @@
      printgrammar(g, fp);
      fclose(fp);
      fp = fopen(graminit_h, "w");
-@@ -76,7 +76,7 @@
+@@ -77,7 +77,7 @@
          Py_Exit(1);
      }
      if (Py_DebugFlag)
@@ -648,7 +648,7 @@
      printnonterminals(g, fp);
      fclose(fp);
      Py_Exit(0);
-@@ -124,7 +124,7 @@
+@@ -125,7 +125,7 @@
      g = pgen(n);
      PyNode_Free(n);
      if (g == NULL) {
@@ -673,7 +673,7 @@
  #endif
 --- Python/ceval.c
 +++ Python/ceval.c
-@@ -1343,11 +1343,11 @@
+@@ -1342,11 +1342,11 @@
  
          if (lltrace) {
              if (HAS_ARG(opcode)) {
@@ -687,7 +687,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4315,10 +4315,10 @@
+@@ -4317,10 +4317,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

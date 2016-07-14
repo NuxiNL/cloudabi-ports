@@ -1,6 +1,6 @@
 --- Makefile.pre.in
 +++ Makefile.pre.in
-@@ -767,7 +767,8 @@
+@@ -768,7 +768,8 @@
  
  Modules/grpmodule.o: $(srcdir)/Modules/grpmodule.c $(srcdir)/Modules/posixmodule.h
  

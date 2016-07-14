@@ -343,7 +343,7 @@
  void
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
-@@ -1491,6 +1491,7 @@
+@@ -1493,6 +1493,7 @@
  static void
  initsigs(void)
  {
@@ -351,7 +351,7 @@
  #ifdef SIGPIPE
      PyOS_setsig(SIGPIPE, SIG_IGN);
  #endif
-@@ -1500,6 +1501,7 @@
+@@ -1502,6 +1503,7 @@
  #ifdef SIGXFSZ
      PyOS_setsig(SIGXFSZ, SIG_IGN);
  #endif
@@ -359,7 +359,7 @@
      PyOS_InitInterrupts(); /* May imply initsignal() */
      if (PyErr_Occurred()) {
          Py_FatalError("Py_Initialize: can't import signal");
-@@ -1516,6 +1518,7 @@
+@@ -1518,6 +1520,7 @@
  void
  _Py_RestoreSignals(void)
  {
@@ -367,7 +367,7 @@
  #ifdef SIGPIPE
      PyOS_setsig(SIGPIPE, SIG_DFL);
  #endif
-@@ -1525,6 +1528,7 @@
+@@ -1527,6 +1530,7 @@
  #ifdef SIGXFSZ
      PyOS_setsig(SIGXFSZ, SIG_DFL);
  #endif
@@ -375,7 +375,7 @@
  }
  
  
-@@ -1557,7 +1561,7 @@
+@@ -1559,7 +1563,7 @@
      if (sigaction(sig, NULL, &context) == -1)
          return SIG_ERR;
      return context.sa_handler;
@@ -384,7 +384,7 @@
      PyOS_sighandler_t handler;
  /* Special signal handling for the secure CRT in Visual Studio 2005 */
  #if defined(_MSC_VER) && _MSC_VER >= 1400
-@@ -1603,7 +1607,7 @@
+@@ -1605,7 +1609,7 @@
      if (sigaction(sig, &context, &ocontext) == -1)
          return SIG_ERR;
      return ocontext.sa_handler;

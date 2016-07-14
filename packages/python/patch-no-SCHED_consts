@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -12927,9 +12927,15 @@
+@@ -12932,9 +12932,15 @@
  #endif
  
  #ifdef HAVE_SCHED_H

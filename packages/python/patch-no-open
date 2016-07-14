@@ -89,7 +89,7 @@
                       !(async_err = PyErr_CheckSignals()));
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -7745,7 +7745,11 @@
+@@ -7742,7 +7742,11 @@
              fd = openat(dir_fd, path->narrow, flags, mode);
          else
  #endif
@@ -117,7 +117,7 @@
          loc = Py_None;
 --- Python/compile.c
 +++ Python/compile.c
-@@ -4275,7 +4275,11 @@
+@@ -4289,7 +4289,11 @@
      PyObject *loc;
      PyObject *u = NULL, *v = NULL;
  
@@ -214,7 +214,7 @@
     non-inheritable. Return a new file descriptor on success, raise an OSError
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
-@@ -1753,7 +1753,7 @@
+@@ -1763,7 +1763,7 @@
      crashing the Python interpreter. Catch this common mistake here
      and output a useful error message. Note that under MS Windows,
      the shell already prevents that. */

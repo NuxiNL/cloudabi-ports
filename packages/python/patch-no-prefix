@@ -1,6 +1,6 @@
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
-@@ -1787,6 +1787,7 @@
+@@ -1797,6 +1797,7 @@
                          PyUnicode_FromString(Py_GetCopyright()));
      SET_SYS_FROM_STRING("platform",
                          PyUnicode_FromString(Py_GetPlatform()));
@@ -8,7 +8,7 @@
      SET_SYS_FROM_STRING("executable",
                          PyUnicode_FromWideChar(
                                 Py_GetProgramFullPath(), -1));
-@@ -1798,6 +1799,18 @@
+@@ -1808,6 +1809,18 @@
                          PyUnicode_FromWideChar(Py_GetPrefix(), -1));
      SET_SYS_FROM_STRING("base_exec_prefix",
                          PyUnicode_FromWideChar(Py_GetExecPrefix(), -1));

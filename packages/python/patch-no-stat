@@ -41,7 +41,7 @@
      Py_END_ALLOW_THREADS
  
      if (result != 0) {
-@@ -11510,9 +11518,17 @@
+@@ -11506,9 +11514,17 @@
      path = PyBytes_AS_STRING(bytes);
  
      if (follow_symlinks)

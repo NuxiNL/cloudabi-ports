@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -4164,7 +4164,11 @@
+@@ -4163,7 +4163,11 @@
          result = renameat(src_dir_fd, src->narrow, dst_dir_fd, dst->narrow);
      else
  #endif

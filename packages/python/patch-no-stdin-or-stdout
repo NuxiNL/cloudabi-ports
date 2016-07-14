@@ -274,7 +274,7 @@
  _Py_IDENTIFIER(stderr);
  
  #include "clinic/bltinmodule.c.h"
-@@ -1722,7 +1726,11 @@
+@@ -1721,7 +1725,11 @@
                                       kwlist, &sep, &end, &file, &flush))
          return NULL;
      if (file == NULL || file == Py_None) {
@@ -286,9 +286,9 @@
          if (file == NULL) {
              PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
              return NULL;
-@@ -1822,8 +1830,16 @@
- builtin_input_impl(PyModuleDef *module, PyObject *prompt)
- /*[clinic end generated code: output=b77731f59e1515c4 input=5e8bb70c2908fe3c]*/
+@@ -1821,8 +1829,16 @@
+ builtin_input_impl(PyObject *module, PyObject *prompt)
+ /*[clinic end generated code: output=83db5a191e7a0d60 input=5e8bb70c2908fe3c]*/
  {
 +#ifndef __CloudABI__
      PyObject *fin = _PySys_GetObjectId(&PyId_stdin);
@@ -303,7 +303,7 @@
      PyObject *ferr = _PySys_GetObjectId(&PyId_stderr);
      PyObject *tmp;
      long fd;
-@@ -1866,7 +1882,11 @@
+@@ -1865,7 +1881,11 @@
          Py_DECREF(tmp);
          if (fd < 0 && PyErr_Occurred())
              return NULL;
@@ -315,7 +315,7 @@
      }
      if (tty) {
          tmp = _PyObject_CallMethodId(fout, &PyId_fileno, "");
-@@ -1879,7 +1899,11 @@
+@@ -1878,7 +1898,11 @@
              Py_DECREF(tmp);
              if (fd < 0 && PyErr_Occurred())
                  return NULL;
@@ -327,7 +327,7 @@
          }
      }
  
-@@ -1938,7 +1962,11 @@
+@@ -1937,7 +1961,11 @@
              po = NULL;
              promptstr = "";
          }
@@ -403,7 +403,7 @@
  
      if (ferr != NULL && ferr != Py_None && !file_is_closed(ferr)) {
          tmp = _PyObject_CallMethodId(ferr, &PyId_flush, "");
-@@ -1198,6 +1208,7 @@
+@@ -1200,6 +1208,7 @@
          }
      }
  
@@ -411,7 +411,7 @@
      /* Set sys.stdin */
      fd = fileno(stdin);
      /* Under some conditions stdin, stdout and stderr may not be connected
-@@ -1210,7 +1221,9 @@
+@@ -1212,7 +1221,9 @@
      PySys_SetObject("__stdin__", std);
      _PySys_SetObjectId(&PyId_stdin, std);
      Py_DECREF(std);
@@ -421,7 +421,7 @@
      /* Set sys.stdout */
      fd = fileno(stdout);
      std = create_stdio(iomod, fd, 1, "<stdout>", encoding, errors);
-@@ -1219,6 +1232,7 @@
+@@ -1221,6 +1232,7 @@
      PySys_SetObject("__stdout__", std);
      _PySys_SetObjectId(&PyId_stdout, std);
      Py_DECREF(std);
@@ -429,7 +429,7 @@
  
  #if 1 /* Disable this if you have trouble debugging bootstrap stuff */
      /* Set sys.stderr, replaces the preliminary stderr */
-@@ -1474,7 +1488,9 @@
+@@ -1476,7 +1488,9 @@
      while (nexitfuncs > 0)
          (*exitfuncs[--nexitfuncs])();
  
@@ -540,7 +540,7 @@
      if (outf == NULL || outf == Py_None) {
          PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
          return NULL;
-@@ -2211,6 +2217,7 @@
+@@ -2221,6 +2227,7 @@
      PyErr_Restore(error_type, error_value, error_traceback);
  }
  
@@ -548,7 +548,7 @@
  void
  PySys_WriteStdout(const char *format, ...)
  {
-@@ -2220,6 +2227,7 @@
+@@ -2230,6 +2237,7 @@
      sys_write(&PyId_stdout, stdout, format, va);
      va_end(va);
  }
@@ -556,7 +556,7 @@
  
  void
  PySys_WriteStderr(const char *format, ...)
-@@ -2253,6 +2261,7 @@
+@@ -2263,6 +2271,7 @@
      PyErr_Restore(error_type, error_value, error_traceback);
  }
  
@@ -564,7 +564,7 @@
  void
  PySys_FormatStdout(const char *format, ...)
  {
-@@ -2262,6 +2271,7 @@
+@@ -2272,6 +2281,7 @@
      sys_format(&PyId_stdout, stdout, format, va);
      va_end(va);
  }

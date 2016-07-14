@@ -16,7 +16,7 @@
  
  PyDoc_STRVAR(clock_settime_doc,
  "clock_settime(clk_id, time)\n\
-@@ -1253,7 +1255,9 @@
+@@ -1254,7 +1256,9 @@
  #endif
  #ifdef HAVE_CLOCK_GETTIME
      {"clock_gettime",   time_clock_gettime, METH_VARARGS, clock_gettime_doc},

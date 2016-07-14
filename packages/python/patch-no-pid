@@ -1,6 +1,6 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -2316,6 +2316,7 @@
+@@ -2314,6 +2314,7 @@
  
  #endif /* defined(HAVE_GETGID) */
  
@@ -8,7 +8,7 @@
  PyDoc_STRVAR(os_getpid__doc__,
  "getpid($module, /)\n"
  "--\n"
-@@ -2333,6 +2334,7 @@
+@@ -2331,6 +2332,7 @@
  {
      return os_getpid_impl(module);
  }
@@ -18,7 +18,7 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -6055,6 +6055,7 @@
+@@ -6053,6 +6053,7 @@
  #endif /* HAVE_GETGID */
  
  
@@ -26,7 +26,7 @@
  /*[clinic input]
  os.getpid
  
-@@ -6067,6 +6068,7 @@
+@@ -6065,6 +6066,7 @@
  {
      return PyLong_FromPid(getpid());
  }
@@ -34,7 +34,7 @@
  
  #ifdef HAVE_GETGROUPLIST
  
-@@ -12426,7 +12428,9 @@
+@@ -12431,7 +12433,9 @@
      {"getgrouplist",    posix_getgrouplist, METH_VARARGS, posix_getgrouplist__doc__},
  #endif
      OS_GETGROUPS_METHODDEF

@@ -34,7 +34,7 @@
      {0}
  };
  
-@@ -51,7 +51,11 @@
+@@ -49,7 +51,11 @@
      "resource.struct_rusage",           /* name */
      struct_rusage__doc__,       /* doc */
      struct_rusage_fields,       /* fields */
@@ -46,7 +46,7 @@
  };
  
  static int initialized;
-@@ -83,6 +85,7 @@
+@@ -83,6 +89,7 @@
                      PyFloat_FromDouble(doubletime(ru.ru_utime)));
      PyStructSequence_SET_ITEM(result, 1,
                      PyFloat_FromDouble(doubletime(ru.ru_stime)));
@@ -54,7 +54,7 @@
      PyStructSequence_SET_ITEM(result, 2, PyLong_FromLong(ru.ru_maxrss));
      PyStructSequence_SET_ITEM(result, 3, PyLong_FromLong(ru.ru_ixrss));
      PyStructSequence_SET_ITEM(result, 4, PyLong_FromLong(ru.ru_idrss));
-@@ -97,6 +100,7 @@
+@@ -97,6 +104,7 @@
      PyStructSequence_SET_ITEM(result, 13, PyLong_FromLong(ru.ru_nsignals));
      PyStructSequence_SET_ITEM(result, 14, PyLong_FromLong(ru.ru_nvcsw));
      PyStructSequence_SET_ITEM(result, 15, PyLong_FromLong(ru.ru_nivcsw));
@@ -62,7 +62,7 @@
  
      if (PyErr_Occurred()) {
          Py_DECREF(result);
-@@ -106,6 +110,7 @@
+@@ -106,6 +114,7 @@
      return result;
  }
  
@@ -70,7 +70,7 @@
  static int
  py2rlimit(PyObject *curobj, PyObject *maxobj, struct rlimit *rl_out)
  {
-@@ -219,6 +224,7 @@
+@@ -219,6 +228,7 @@
      Py_DECREF(limits);
      return NULL;
  }
@@ -78,7 +78,7 @@
  
  #ifdef HAVE_PRLIMIT
  static PyObject *
-@@ -285,11 +291,15 @@
+@@ -285,11 +295,15 @@
  static struct PyMethodDef
  resource_methods[] = {
      {"getrusage",    resource_getrusage,   METH_VARARGS},
@@ -94,7 +94,7 @@
      {"getpagesize",  resource_getpagesize, METH_NOARGS},
      {NULL, NULL}                             /* sentinel */
  };
-@@ -438,6 +448,7 @@
+@@ -438,6 +452,7 @@
      PyModule_AddIntMacro(m, RLIMIT_NPTS);
  #endif
  
@@ -102,7 +102,7 @@
  #if defined(HAVE_LONG_LONG)
      if (sizeof(RLIM_INFINITY) > sizeof(long)) {
          v = PyLong_FromLongLong((PY_LONG_LONG) RLIM_INFINITY);
-@@ -449,6 +460,7 @@
+@@ -449,6 +464,7 @@
      if (v) {
          PyModule_AddObject(m, "RLIM_INFINITY", v);
      }

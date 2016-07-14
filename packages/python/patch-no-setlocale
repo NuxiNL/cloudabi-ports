@@ -246,7 +246,7 @@
      PyInitFrozenExtensions();
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
-@@ -1192,8 +1192,10 @@
+@@ -1194,8 +1194,10 @@
              /* When the LC_CTYPE locale is the POSIX locale ("C locale"),
                 stdin and stdout use the surrogateescape error handler by
                 default, instead of the strict error handler. */
