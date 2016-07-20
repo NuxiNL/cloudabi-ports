@@ -14,7 +14,7 @@ def build(ctx):
 
 package(
     name='x265',
-    version='1.9',
+    version='2.0',
     homepage='http://x265.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -22,8 +22,8 @@ package(
 )
 
 distfile(
-    name='x265_1.9.tar.gz',
-    checksum='3e4654133ed957a98708fdb4cb9a154d9e80922b84e26e43fc462a101c5b15c8',
-    master_sites={'http://ftp.videolan.org/pub/videolan/x265/'},
+    name='x265_2.0.tar.gz',
+    checksum='5a7f6797bee33310c690be5d9a6c63125f36663ac3478e98ac6b6142a70bce1f',
+    master_sites={'https://bitbucket.org/multicoreware/x265/downloads/'},
     unsafe_string_sources={'source/common/common.h'},
 )
