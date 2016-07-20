@@ -104,11 +104,10 @@ class TargetPackage:
         # Perform the build inside a buildroot with its dependencies
         # installed in place.
         self.initialize_buildroot({
-            'autoconf', 'automake', 'bash', 'binutils', 'bison',
-            'cmake', 'coreutils', 'diffutils', 'findutils', 'flex',
-            'gawk', 'gettext', 'grep', 'help2man', 'libarchive',
-            'libtool', 'llvm', 'm4', 'make', 'ninja', 'pkgconf', 'sed',
-            'texinfo',
+            'autoconf', 'automake', 'bash', 'bison', 'cmake',
+            'coreutils', 'diffutils', 'findutils', 'flex', 'gawk',
+            'gettext', 'grep', 'help2man', 'libarchive', 'libtool',
+            'llvm', 'm4', 'make', 'ninja', 'pkgconf', 'sed', 'texinfo',
         }, self._lib_depends)
         print('BUILD', self._name)
         self._build_cmd(
