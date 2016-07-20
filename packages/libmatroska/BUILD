@@ -5,7 +5,7 @@
 
 package(
     name='libmatroska',
-    version='1.4.4',
+    version='1.4.5',
     homepage='http://www.matroska.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime', 'libebml'},
@@ -13,7 +13,7 @@ package(
 )
 
 distfile(
-    name='libmatroska-1.4.4.tar.bz2',
-    checksum='d3efaa9f6d3964351a05bea0f848a8d5dc570e4791f179816ce9a93730296bd7',
+    name='libmatroska-1.4.5.tar.bz2',
+    checksum='79023fa46901e5562b27d93a9dd168278fa101361d7fd11a35e84e58e11557bc',
     master_sites={'http://dl.matroska.org/downloads/libmatroska/'},
 )

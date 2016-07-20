@@ -5,7 +5,7 @@
 
 package(
     name='libebml',
-    version='1.3.3',
+    version='1.3.4',
     homepage='http://www.matroska.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -13,7 +13,7 @@ package(
 )
 
 distfile(
-    name='libebml-1.3.3.tar.bz2',
-    checksum='35fb44daa41961f94a0ac1b8f06801e88cc9bf2ad6f562ced8ab7c1f1a875499',
+    name='libebml-1.3.4.tar.bz2',
+    checksum='c50d3ecf133742c6549c0669c3873f968e11a365a5ba17b2f4dc339bbe51f387',
     master_sites={'http://dl.matroska.org/downloads/libebml/'},
 )
