@@ -24,6 +24,8 @@ def build(ctx):
         '--without-ensurepip',
         '--with-pydebug',
         '--without-threads',
+        '--with-system-expat',
+        '--with-system-ffi',
         'ac_cv_buggy_getaddrinfo=no',
         'ac_cv_file__dev_ptc=no',
         'ac_cv_file__dev_ptmx=no',
@@ -61,7 +63,15 @@ package(
     version='3.6.0',
     homepage='https://www.python.org/',
     maintainer='alex@moreati.org.uk',
-    lib_depends={'c-runtime'},
+    lib_depends={
+        'bzip2',
+        'c-runtime',
+        'expat',
+        'libffi',
+        'libressl',
+        'xz',
+        'zlib'
+    },
     build_cmd=build,
 )
 
