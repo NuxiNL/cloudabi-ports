@@ -6,6 +6,7 @@
 import base64
 import collections
 import hashlib
+import logging
 import lzma
 import math
 import os
@@ -20,6 +21,7 @@ from . import rpm
 from . import util
 from .version import FullVersion, SimpleVersion
 
+log = logging.getLogger(__name__)
 
 class Catalog:
 
@@ -204,7 +206,7 @@ class DebianCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive', 'llvm'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         rootdir = config.DIR_BUILDROOT
         debian_binary = os.path.join(rootdir, 'debian-binary')
@@ -287,7 +289,7 @@ class FreeBSDCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/local/<arch> on the
         # FreeBSD system.
@@ -466,7 +468,7 @@ class HomebrewCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/local/share/<arch>
         # on the Mac OS X system. In the tarball, pathnames need to be
@@ -510,7 +512,7 @@ class NetBSDCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/pkg/<arch> on the
         # NetBSD system.
@@ -590,7 +592,7 @@ class OpenBSDCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/local/<arch> on the
         # OpenBSD system.
@@ -713,7 +715,7 @@ class ArchLinuxCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
         arch = package.get_arch()
@@ -821,7 +823,7 @@ class CygwinCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
         arch = package.get_arch()
@@ -932,7 +934,7 @@ class RedHatCatalog(Catalog):
     def package(self, package, version):
         package.build()
         package.initialize_buildroot({'libarchive'})
-        print('PKG', self._get_filename(package, version))
+        log.info('PKG %s', self._get_filename(package, version))
 
         # The package needs to be installed in /usr/arch> on the Red Hat
         # system.

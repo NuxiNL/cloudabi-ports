@@ -3,6 +3,7 @@
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import logging
 import os
 import shutil
 import stat
@@ -12,6 +13,7 @@ from . import config
 from . import util
 from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 
+log = logging.getLogger(__name__)
 
 class HostPackage:
 
@@ -55,7 +57,7 @@ class HostPackage:
 
         # Perform the build inside an empty buildroot.
         self._initialize_buildroot()
-        print('BUILD', self._name)
+        log.info('BUILD %s', self._name)
         self._build_cmd(
             BuildHandle(
                 HostBuilder(BuildDirectory(), self._install_directory),
@@ -109,7 +111,7 @@ class TargetPackage:
             'gettext', 'grep', 'help2man', 'libarchive', 'libtool',
             'llvm', 'm4', 'make', 'ninja', 'pkgconf', 'sed', 'texinfo',
         }, self._lib_depends)
-        print('BUILD', self._name)
+        log.info('BUILD %s', self._name)
         self._build_cmd(
             BuildHandle(
                 TargetBuilder(BuildDirectory(),
