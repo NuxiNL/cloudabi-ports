@@ -170,3 +170,16 @@
 +_testbuffer _testbuffer.c
 +_testimportmultiple _testimportmultiple.c
 +_testmultiphase _testmultiphase.c
+--- setup.py
++++ setup.py
+@@ -246,6 +246,10 @@
+             if ext.name in sys.builtin_module_names:
+                 self.extensions.remove(ext)
+ 
++        for ext_name in missing:
++            if ext_name in sys.builtin_module_names:
++                missing.remove(ext_name)
++
+         # Parse Modules/Setup and Modules/Setup.local to figure out which
+         # modules are turned on in the file.
+         remove_modules = []
