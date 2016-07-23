@@ -3,6 +3,7 @@
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import logging
 import os
 import random
 import shutil
@@ -12,6 +13,7 @@ import subprocess
 from . import config
 from . import util
 
+log = logging.getLogger(__name__)
 
 def _chdir(path):
     util.make_dir(path)
@@ -94,12 +96,12 @@ class FileHandle:
         os.chdir(os.path.dirname(self._path))
         ext = os.path.splitext(self._path)[1]
         if ext in {'.c', '.S'}:
-            print('CC', self._path)
+            log.info('CC %s', self._path)
             subprocess.check_call(
                 [self._builder.get_cc()] + self._builder.get_cflags() +
                 args + ['-c', '-o', output, self._path])
         elif ext == '.cpp':
-            print('CXX', self._path)
+            log.info('CXX %s', self._path)
             subprocess.check_call(
                 [self._builder.get_cxx()] + self._builder.get_cxxflags() +
                 args + ['-c', '-o', output, self._path])
@@ -213,7 +215,7 @@ class BuildHandle:
     def executable(self, objects):
         objs = sorted(obj._path for obj in objects)
         output = self._builder._build_directory.get_new_executable()
-        print('LD', output)
+        log.info('LD %s', output)
         subprocess.check_call([self._builder.get_cc(), '-o', output] + objs)
         return FileHandle(self._builder, output)
 
@@ -314,7 +316,7 @@ class HostBuilder:
         return config.DIR_BUILDROOT
 
     def install(self, source, target):
-        print('INSTALL', source, '->', target)
+        log.info('INSTALL %s->%s', source, target)
         target = os.path.join(self._install_directory, target)
         for source_file, target_file in util.walk_files_concurrently(
                 source, target):
@@ -371,7 +373,7 @@ class TargetBuilder:
     def archive(self, object_files):
         objs = sorted(object_files)
         output = self._build_directory.get_new_archive()
-        print('AR', output)
+        log.info('AR %s', output)
         subprocess.check_call([self._tool('ar'), 'rcs', output] + objs)
         return output
 
@@ -435,7 +437,7 @@ class TargetBuilder:
         os.unlink(path)
 
     def install(self, source, target):
-        print('INSTALL', source, '->', target)
+        log.info('INSTALL %s->%s', source, target)
         target = os.path.join(self._install_directory, target)
         for source_file, target_file in util.walk_files_concurrently(
                 source, target):

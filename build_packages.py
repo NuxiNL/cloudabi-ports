@@ -4,6 +4,7 @@
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import logging
 import os
 import sys
 
@@ -12,6 +13,10 @@ from src import util
 from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog, RedHatCatalog
 from src.repository import Repository
 from src.version import FullVersion
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 # Locations relative to the source tree.
 DIR_ROOT = os.getcwd()

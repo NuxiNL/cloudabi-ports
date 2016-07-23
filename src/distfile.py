@@ -3,6 +3,7 @@
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
 
+import logging
 import os
 import random
 import shutil
@@ -12,6 +13,7 @@ import urllib
 from . import config
 from . import util
 
+log = logging.getLogger(__name__)
 
 class Distfile:
 
@@ -91,24 +93,24 @@ class Distfile:
 
     def _fetch(self):
         for i in range(10):
-            print('CHECKSUM', self._pathname)
+            log.info('CHECKSUM %s', self._pathname)
             # Validate the existing file on disk.
             try:
                 if util.sha256(self._pathname).hexdigest() == self._checksum:
                     return
             except FileNotFoundError as e:
-                print(e)
+                log.warning(e)
 
             url = random.sample(self._urls, 1)[0]
-            print('FETCH', url)
+            log.info('FETCH %s', url)
             try:
                 util.make_parent_dir(self._pathname)
                 with util.unsafe_fetch(url) as fin, open(self._pathname, 'wb') as fout:
                     shutil.copyfileobj(fin, fout)
             except ConnectionResetError as e:
-                print(e)
+                log.warning(e)
             except urllib.error.URLError as e:
-                print(e)
+                log.warning(e)
         raise Exception('Failed to fetch %s' % self._name)
 
     def extract(self, target):
@@ -137,7 +139,7 @@ class Distfile:
                 os.unlink(path)
 
         for patch in self._patches:
-            print('FIXUP', patch)
+            log.info('FIXUP %s', patch)
             # Apply individual patches to the code.
             patched_dir = os.path.join(tmpdir, 'patched')
             util.remove(patched_dir)
