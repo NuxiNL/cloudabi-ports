@@ -24,12 +24,13 @@
  #_weakref _weakref.c	# basic weak reference support
  #_testcapi _testcapimodule.c    # Python C API test module
 -#_random _randommodule.c	# Random number generator
-+_random _randommodule.c	# Random number generator
- #_elementtree -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c	# elementtree accelerator
+-#_elementtree -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c	# elementtree accelerator
 -#_pickle _pickle.c	# pickle accelerator
 -#_datetime _datetimemodule.c	# datetime accelerator
 -#_bisect _bisectmodule.c	# Bisection algorithms
 -#_heapq _heapqmodule.c	# Heap queue algorithm
++_random _randommodule.c	# Random number generator
++_elementtree -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c	# elementtree accelerator
 +_pickle _pickle.c	# pickle accelerator
 +_datetime _datetimemodule.c	# datetime accelerator
 +_bisect _bisectmodule.c	# Bisection algorithms
@@ -51,7 +52,8 @@
 +select selectmodule.c	# select(2); not on ancient System V
  
  # Memory-mapped files (also works on Win32).
- #mmap mmapmodule.c
+-#mmap mmapmodule.c
++mmap mmapmodule.c
  
  # CSV file helper
 -#_csv _csv.c
@@ -94,6 +96,15 @@
  
  
  # The _tkinter module.
+@@ -294,7 +294,7 @@
+ #	-lX11
+ 
+ # Lance Ellinghaus's syslog module
+-#syslog syslogmodule.c		# syslog daemon interface
++syslog syslogmodule.c		# syslog daemon interface
+ 
+ 
+ # Curses support, requiring the System V version of curses, often
 @@ -332,10 +332,10 @@
  
  
@@ -107,7 +118,22 @@
  
  
  # Lee Busby's SIGFPE modules.
-@@ -376,14 +376,14 @@
+@@ -358,7 +358,7 @@
+ # Andrew Kuchling's zlib module.
+ # This require zlib 1.1.3 (or later).
+ # See http://www.gzip.org/zlib/
+-#zlib zlibmodule.c -I$(prefix)/include -L$(exec_prefix)/lib -lz
++zlib zlibmodule.c -I$(prefix)/include -L$(exec_prefix)/lib -lz
+ 
+ # Interface to the Expat XML parser
+ #
+@@ -371,22 +371,34 @@
+ #
+ # More information on Expat can be found at www.libexpat.org.
+ #
+-#pyexpat expat/xmlparse.c expat/xmlrole.c expat/xmltok.c pyexpat.c -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI
++pyexpat expat/xmlparse.c expat/xmlrole.c expat/xmltok.c pyexpat.c -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI
+ 
  # Hye-Shik Chang's CJKCodecs
  
  # multibytecodec is required for all the other CJK codec modules
@@ -129,3 +155,18 @@
  
  # Example -- included for reference only:
  # xx xxmodule.c
+ 
+ # Another example -- the 'xxsubtype' module shows C-level subtyping in action
+ xxsubtype xxsubtype.c
++
++audioop audioop.c
++_decimal _decimal/_decimal.c _decimal/libmpdec/basearith.c _decimal/libmpdec/constants.c _decimal/libmpdec/context.c _decimal/libmpdec/convolute.c _decimal/libmpdec/crt.c _decimal/libmpdec/difradix2.c _decimal/libmpdec/fnt.c _decimal/libmpdec/fourstep.c _decimal/libmpdec/io.c _decimal/libmpdec/memory.c _decimal/libmpdec/mpdecimal.c _decimal/libmpdec/numbertheory.c _decimal/libmpdec/sixstep.c _decimal/libmpdec/transpose.c -I$(srcdir)/Modules/_decimal -I$(srcdir)/Modules/_decimal/libmpdec -DCONFIG_64 -DASM
++_json _json.c
++_bz2 _bz2module.c -lbz2
++_lzma _lzmamodule.c -llzma
++_lsprof _lsprof.c rotatingtree.c
++_opcode _opcode.c
++#_testcapi _testcapimodule.c
++_testbuffer _testbuffer.c
++_testimportmultiple _testimportmultiple.c
++_testmultiphase _testmultiphase.c
