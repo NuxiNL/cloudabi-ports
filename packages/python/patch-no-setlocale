@@ -1,3 +1,31 @@
+--- Lib/locale.py
++++ Lib/locale.py
+@@ -340,7 +340,6 @@
+ 
+ # store away the low-level version of setlocale (it's
+ # overridden below)
+-_setlocale = setlocale
+ 
+ def _replace_encoding(code, encoding):
+     if '.' in code:
+@@ -562,7 +561,7 @@
+     return _parse_localename(localename)
+ 
+ 
+-def getlocale(category=LC_CTYPE):
++def getlocale(category):
+ 
+     """ Returns the current setting for the given locale category as
+         tuple (language code, encoding).
+@@ -597,7 +596,7 @@
+         locale = normalize(_build_localename(locale))
+     return _setlocale(category, locale)
+ 
+-def resetlocale(category=LC_ALL):
++def resetlocale(category):
+ 
+     """ Sets the locale for category to the default setting.
+ 
 --- Modules/_localemodule.c
 +++ Modules/_localemodule.c
 @@ -44,8 +44,10 @@
