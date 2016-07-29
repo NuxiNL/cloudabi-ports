@@ -1,3 +1,13 @@
+--- Lib/gettext.py
++++ Lib/gettext.py
+@@ -57,7 +57,6 @@
+            'ldngettext', 'lngettext', 'ngettext',
+            ]
+ 
+-_default_localedir = os.path.join(sys.base_prefix, 'share', 'locale')
+ 
+ 
+ def c2py(plural):
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
 @@ -1797,6 +1797,7 @@
