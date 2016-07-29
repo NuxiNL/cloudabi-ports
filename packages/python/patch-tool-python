@@ -526,7 +526,7 @@
  #define COPYRIGHT \
      "Type \"help\", \"copyright\", \"credits\" or \"license\" " \
      "for more information."
-@@ -32,6 +38,172 @@
+@@ -32,6 +38,168 @@
  extern "C" {
  #endif
  
@@ -578,10 +578,10 @@
 +
 +        if (strcmp(keystr, "stderr") == 0) {
 +            int fd;
-+            FILE *fp;
 +            if (argdata_get_fd(val, &fd) == 0) {
-+                fp = fdopen(fd, "w");
-+                fswap(stderr, fp);
++                FILE *fp = fdopen(fd, "w");
++                if (fp != NULL)
++                    fswap(stderr, fp);
 +            }
 +        }
 +        else if (strcmp(keystr, "path") == 0) {
@@ -638,12 +638,6 @@
 +        else if (strcmp(keystr, "dontwritebytecode") == 0) {
 +            Py_DontWriteBytecodeFlag++;
 +        }
-+        else if (strcmp(keystr, "nousersite") == 0) {
-+            Py_NoUserSiteDirectory++;
-+        }
-+        else if (strcmp(keystr, "nosite") == 0) {
-+            Py_NoSiteFlag++;
-+        }
 +        else if (strcmp(keystr, "unbufferedstdio") == 0) {
 +            Py_UnbufferedStdioFlag = 1;
 +            saw_unbuffered_flag = 1;
@@ -656,6 +650,8 @@
 +        }
 +    }
 +
++    Py_NoUserSiteDirectory = 1;
++    Py_NoSiteFlag = 1;
 +    Py_Initialize();
 +    Py_XDECREF(warning_options);
 +
@@ -699,7 +695,7 @@
  /* For Py_GetArgcArgv(); set by main() */
  static wchar_t **orig_argv;
  static int  orig_argc;
-@@ -546,6 +718,7 @@
+@@ -546,6 +714,7 @@
  #else
      if ((p = Py_GETENV("PYTHONWARNINGS")) && *p != '\0') {
          char *buf, *oldloc;
@@ -707,7 +703,7 @@
          PyObject *unicode;
  
          /* settle for strtok here as there's no one standard
-@@ -555,9 +728,13 @@
+@@ -555,9 +724,13 @@
              Py_FatalError(
                 "not enough memory to copy PYTHONWARNINGS");
          strcpy(buf, p);
@@ -722,7 +718,7 @@
  #ifdef __APPLE__
              /* Use utf-8 on Mac OS X */
              unicode = PyUnicode_FromString(p);
-@@ -572,8 +749,10 @@
+@@ -572,8 +745,10 @@
              PySys_AddWarnOptionUnicode(unicode);
              Py_DECREF(unicode);
          }
@@ -749,19 +745,6 @@
  #ifdef MS_WINDOWS
  int
  wmain(int argc, wchar_t **argv)
-@@ -18,6 +25,12 @@
- int
- main(int argc, char **argv)
- {
-+#ifdef __CloudABI__
-+    FILE *fp0 = fdopen(0, "r");
-+    FILE *fp1 = fdopen(1, "w");
-+    FILE *fp2 = fdopen(2, "w");
-+    fswap(stderr, fp2);
-+#endif
-     wchar_t **argv_copy;
-     /* We need a second copy, as Python might modify the first one. */
-     wchar_t **argv_copy2;
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
 @@ -45,6 +45,11 @@
