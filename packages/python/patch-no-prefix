@@ -1,10 +1,14 @@
 --- Lib/gettext.py
 +++ Lib/gettext.py
-@@ -57,7 +57,6 @@
+@@ -57,7 +57,10 @@
             'ldngettext', 'lngettext', 'ngettext',
             ]
  
 -_default_localedir = os.path.join(sys.base_prefix, 'share', 'locale')
++try:
++    _default_localedir = os.path.join(sys.base_prefix, 'share', 'locale')
++except TypeError:
++    pass
  
  
  def c2py(plural):
