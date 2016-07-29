@@ -27,13 +27,14 @@
  
 --- Include/sysmodule.h
 +++ Include/sysmodule.h
-@@ -16,7 +16,11 @@
+@@ -16,7 +16,12 @@
  
  PyAPI_FUNC(void) PySys_SetArgv(int, wchar_t **);
  PyAPI_FUNC(void) PySys_SetArgvEx(int, wchar_t **, int);
 +#ifndef __CloudABI__
  PyAPI_FUNC(void) PySys_SetPath(const wchar_t *);
 +#else
++PyAPI_FUNC(void) PySys_SetArgdata(const argdata_t *);
 +PyAPI_FUNC(void) PySys_SetPath(const int);
 +#endif
  
@@ -525,13 +526,13 @@
  #define COPYRIGHT \
      "Type \"help\", \"copyright\", \"credits\" or \"license\" " \
      "for more information."
-@@ -32,6 +38,162 @@
+@@ -32,6 +38,172 @@
  extern "C" {
  #endif
  
 +#ifdef __CloudABI__
 +
-+int stdlibfd;
++int stdlibfd = -1;
 +
 +static int run_command(wchar_t *, PyCompilerFlags *);
 +
@@ -658,6 +659,16 @@
 +    Py_Initialize();
 +    Py_XDECREF(warning_options);
 +
++    /* Extract the "args" key and expose it as sys.argdata. */
++    argdata_map_iterate(ad, &it);
++    while (argdata_map_next(&it, &key, &val)) {
++        const char *keystr;
++        argdata_get_str_c(key, &keystr);
++        if (strcmp(keystr, "args") == 0) {
++            PySys_SetArgdata(val);
++        }
++    }
++
 +    if (!Py_QuietFlag && (Py_VerboseFlag ||
 +                        (command == NULL && filename == NULL &&
 +                         module == NULL && stdin_is_interactive))) {
@@ -688,7 +699,7 @@
  /* For Py_GetArgcArgv(); set by main() */
  static wchar_t **orig_argv;
  static int  orig_argc;
-@@ -546,6 +708,7 @@
+@@ -546,6 +718,7 @@
  #else
      if ((p = Py_GETENV("PYTHONWARNINGS")) && *p != '\0') {
          char *buf, *oldloc;
@@ -696,7 +707,7 @@
          PyObject *unicode;
  
          /* settle for strtok here as there's no one standard
-@@ -555,9 +718,13 @@
+@@ -555,9 +728,13 @@
              Py_FatalError(
                 "not enough memory to copy PYTHONWARNINGS");
          strcpy(buf, p);
@@ -711,7 +722,7 @@
  #ifdef __APPLE__
              /* Use utf-8 on Mac OS X */
              unicode = PyUnicode_FromString(p);
-@@ -572,8 +739,10 @@
+@@ -572,8 +749,10 @@
              PySys_AddWarnOptionUnicode(unicode);
              Py_DECREF(unicode);
          }
@@ -779,19 +790,206 @@
  
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
-@@ -1920,6 +1920,7 @@
+@@ -20,6 +20,7 @@
+ #include "pythread.h"
+ 
+ #include "osdefs.h"
++#include <fcntl.h>
+ #include <locale.h>
+ 
+ #ifdef MS_WINDOWS
+@@ -1920,6 +1921,8 @@
      return m;
  }
  
 +#if !defined(__CloudABI__)
++
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -1964,6 +1965,40 @@
+@@ -1964,6 +1967,219 @@
      Py_DECREF(v);
  }
  
 +#else /* defined(__CloudABI__) */
++
++static PyObject *
++convertargdata(const argdata_t *ad)
++{
++    /* Byte strings. */
++    {
++        const void *buf;
++        size_t buflen;
++        if (argdata_get_binary(ad, &buf, &buflen) == 0)
++            return PyBytes_FromStringAndSize(buf, buflen);
++    }
++
++    /* Booleans. */
++    {
++        _Bool value;
++        if (argdata_get_bool(ad, &value) == 0) {
++            PyObject *o = value ? Py_True : Py_False;
++            Py_INCREF(o);
++            return o;
++        }
++    }
++
++    /* File descriptors. */
++    {
++        int value;
++        if (argdata_get_fd(ad, &value) == 0) {
++            struct stat sb;
++            if (fstat(value, &sb) == 0 && S_ISSOCK(sb.st_mode)) {
++                /*
++                 * File descriptor corresponds to a socket. Create a
++                 * socket.socket object.
++                 */
++                PyObject *module = PyImport_ImportModule("socket");
++                if (module == NULL)
++                    return NULL;
++                PyObject *function = PyObject_GetAttrString(module, "socket");
++                Py_DECREF(module);
++                if (function == NULL)
++                    return NULL;
++                PyObject *args = PyTuple_New(0);
++                if (args == NULL) {
++                    Py_DECREF(function);
++                    return NULL;
++                }
++                PyObject *kwargs = Py_BuildValue("{s:i}", "fileno", value);
++                if (args == NULL) {
++                    Py_DECREF(args);
++                    Py_DECREF(function);
++                    return NULL;
++                }
++                PyObject *o = PyObject_Call(function, args, kwargs);
++                Py_DECREF(kwargs);
++                Py_DECREF(args);
++                Py_DECREF(function);
++                return o;
++            } else {
++                /* Create an object using io.open(). */
++                int mode = fcntl(value, F_GETFL);
++                const char *modestr;
++                switch (mode & O_ACCMODE) {
++                case O_RDWR:
++                    modestr = (mode & O_APPEND) != 0 ? "a+b" : "w+b";
++                    break;
++                case O_WRONLY:
++                    modestr = (mode & O_APPEND) != 0 ? "ab" : "wb";
++                    break;
++                default:
++                    modestr = "r";
++                    break;
++                }
++                return PyFile_FromFd(value, NULL, modestr, 0,
++                                     NULL, NULL, NULL, 0);
++            }
++        }
++    }
++
++    /* Floating-point values. */
++    {
++        double value;
++        if (argdata_get_float(ad, &value) == 0)
++            return PyFloat_FromDouble(value);
++    }
++
++    /* Integers. */
++    {
++        long long value;
++        if (argdata_get_int(ad, &value) == 0)
++            return PyLong_FromLongLong(value);
++    }
++    {
++        unsigned long long value;
++        if (argdata_get_int(ad, &value) == 0)
++            return PyLong_FromUnsignedLongLong(value);
++    }
++
++    /* Unicode strings. */
++    {
++
++        const char *buf;
++        size_t buflen;
++        if (argdata_get_str(ad, &buf, &buflen) == 0)
++            return PyUnicode_FromStringAndSize(buf, buflen);
++    }
++
++    /* Dictionaries. */
++    {
++        argdata_map_iterator_t it;
++        if (argdata_map_iterate(ad, &it) == 0) {
++            PyObject *v = PyDict_New();
++            if (v == NULL)
++                return NULL;
++            const argdata_t *key, *value;
++            while (argdata_map_next(&it, &key, &value)) {
++                PyObject *keyv = convertargdata(key);
++                if (keyv == NULL) {
++                    Py_DECREF(v);
++                    return NULL;
++                }
++                PyObject *valuev = convertargdata(value);
++                if (valuev == NULL) {
++                    Py_DECREF(keyv);
++                    Py_DECREF(v);
++                    return NULL;
++                }
++                if (PyDict_SetItem(v, keyv, valuev) != 0) {
++                    Py_DECREF(valuev);
++                    Py_DECREF(keyv);
++                    Py_DECREF(v);
++                    return NULL;
++                }
++            }
++            return v;
++        }
++    }
++
++    /* Lists. */
++    {
++        argdata_seq_iterator_t it;
++        if (argdata_seq_iterate(ad, &it) == 0) {
++            PyObject *v = PyList_New(0);
++            if (v == NULL)
++                return NULL;
++            const argdata_t *value;
++            while (argdata_seq_next(&it, &value)) {
++                PyObject *valuev = convertargdata(value);
++                if (valuev == NULL) {
++                    Py_DECREF(v);
++                    return NULL;
++                }
++                if (PyList_Append(v, valuev) != 0) {
++                    Py_DECREF(valuev);
++                    Py_DECREF(v);
++                    return NULL;
++                }
++            }
++            return v;
++        }
++    }
++
++    /* Unknown or unsupported type. */
++    Py_INCREF(Py_None);
++    return Py_None;
++}
++
++void
++PySys_SetArgdata(const argdata_t *ad)
++{
++    PyObject *v;
++
++    v = convertargdata(ad);
++    if (v == NULL) {
++        Py_FatalError("can't create sys.argdata");
++        return;
++    }
++    if (PySys_SetObject("argdata", v) != 0)
++        Py_FatalError("can't assign sys.argdata");
++    Py_DECREF(v);
++}
 +
 +static PyObject *
 +makepathobject(const int dirfd)
@@ -823,6 +1021,7 @@
 +    }
 +    Py_DECREF(v);
 +}
++
 +#endif
 +
  static PyObject *
