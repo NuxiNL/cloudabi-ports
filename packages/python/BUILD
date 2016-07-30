@@ -41,8 +41,9 @@ def build(ctx):
         '$(srcdir)/Lib/$(PLATDIR) '
         '%s' % hostbuild.path('python'),
     ])
-    build.make()
-    stage = build.make_install()
+    make_env = ['FREEZE_IMPORTLIB=%s/Programs/_freeze_importlib' % hostbuild]
+    build.make(make_env)
+    stage = build.make_install(make_env + ['install'])
 
     # Fix up pathnames in shebangs and build configurations.
     for f in {'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
