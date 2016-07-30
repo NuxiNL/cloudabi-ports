@@ -1,0 +1,77 @@
+DESTLIB=$(LIBDEST)
+MACHDESTLIB=$(BINLIBDEST)
+DESTPATH=
+SITEPATH=
+TESTPATH=
+MACHDEPPATH=:$(PLATDIR)
+EXTRAMACHDEPPATH=
+COREPYTHONPATH=$(DESTPATH)$(SITEPATH)$(TESTPATH)$(MACHDEPPATH)$(EXTRAMACHDEPPATH)
+PYTHONPATH=$(COREPYTHONPATH)
+
+*static*
+
+_bisect _bisectmodule.c
+_bz2 _bz2module.c -lbz2
+_codecs _codecsmodule.c
+_codecs_cn cjkcodecs/_codecs_cn.c
+_codecs_hk cjkcodecs/_codecs_hk.c
+_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+_codecs_jp cjkcodecs/_codecs_jp.c
+_codecs_kr cjkcodecs/_codecs_kr.c
+_codecs_tw cjkcodecs/_codecs_tw.c
+_collections _collectionsmodule.c
+_crypt _cryptmodule.c
+_csv _csv.c
+_datetime _datetimemodule.c
+_decimal _decimal/_decimal.c _decimal/libmpdec/basearith.c _decimal/libmpdec/constants.c _decimal/libmpdec/context.c _decimal/libmpdec/convolute.c _decimal/libmpdec/crt.c _decimal/libmpdec/difradix2.c _decimal/libmpdec/fnt.c _decimal/libmpdec/fourstep.c _decimal/libmpdec/io.c _decimal/libmpdec/memory.c _decimal/libmpdec/mpdecimal.c _decimal/libmpdec/numbertheory.c _decimal/libmpdec/sixstep.c _decimal/libmpdec/transpose.c -I$(srcdir)/Modules/_decimal -I$(srcdir)/Modules/_decimal/libmpdec -DCONFIG_64 -DANSI
+_elementtree _elementtree.c -lexpat
+_functools _functoolsmodule.c
+_heapq _heapqmodule.c
+_io -I$(srcdir)/Modules/_io _io/_iomodule.c _io/iobase.c _io/fileio.c _io/bytesio.c _io/bufferedio.c _io/textio.c _io/stringio.c
+_json _json.c
+_locale _localemodule.c
+_lsprof _lsprof.c rotatingtree.c
+_lzma _lzmamodule.c -llzma
+_md5 md5module.c
+_multibytecodec cjkcodecs/multibytecodec.c
+_opcode _opcode.c
+_operator _operator.c
+_pickle _pickle.c
+_posixsubprocess _posixsubprocess.c
+_random _randommodule.c
+_sha1 sha1module.c
+_sha256 sha256module.c
+_sha512 sha512module.c
+_socket socketmodule.c
+_sre _sre.c
+_stat _stat.c
+_struct _struct.c
+_symtable symtablemodule.c
+_testbuffer _testbuffer.c
+_testimportmultiple _testimportmultiple.c
+_testmultiphase _testmultiphase.c
+_tracemalloc _tracemalloc.c hashtable.c
+_weakref _weakref.c
+
+array arraymodule.c
+atexit atexitmodule.c
+audioop audioop.c
+binascii binascii.c
+cmath cmathmodule.c _math.c
+errno errnomodule.c
+faulthandler faulthandler.c
+fcntl fcntlmodule.c
+itertools itertoolsmodule.c
+math mathmodule.c
+mmap mmapmodule.c
+parser parsermodule.c
+posix posixmodule.c
+pyexpat pyexpat.c -lexpat
+resource resource.c
+select selectmodule.c
+syslog syslogmodule.c
+time timemodule.c
+unicodedata unicodedata.c
+xxsubtype xxsubtype.c
+zipimport zipimport.c
+zlib zlibmodule.c -lz

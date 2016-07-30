@@ -14,10 +14,11 @@ def build(ctx):
     srcdir.path('Python/importlib_external.h').remove()
 
     # First build a native binary, this will be used by the cross-build
-    # to generate some files (see also patch-makefile-regen)
+    # to generate some files.
     hostbuild = srcdir.host().gnu_configure()
     hostbuild.make()
 
+    ctx.resource('Setup.dist').rename(srcdir.path('Modules/Setup.dist'))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
         '--disable-shared',
