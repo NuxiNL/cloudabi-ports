@@ -13,13 +13,12 @@
  {
      /* On some platforms (AtheOS) crypt returns NULL for an invalid
         salt. Return None in that case. XXX Maybe raise an exception?  */
--    return Py_BuildValue("s", crypt(word, salt));
 +#ifdef __CloudABI__
 +    struct crypt_data data;
 +    data.initialized = 0;
 +    return Py_BuildValue("s", crypt_r(word, salt, &data));
 +#else
-+    return Py_BuildValue("s", "crypt() not available during bootstrap");
+     return Py_BuildValue("s", crypt(word, salt));
 +#endif
  }
  
