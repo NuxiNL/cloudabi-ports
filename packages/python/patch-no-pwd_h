@@ -1,0 +1,15 @@
+--- setup.py
++++ setup.py
+@@ -667,7 +667,11 @@
+             libs = ['bsd']
+         exts.append( Extension('fcntl', ['fcntlmodule.c'], libraries=libs) )
+         # pwd(3)
+-        exts.append( Extension('pwd', ['pwdmodule.c']) )
++        if config_h_vars.get('HAVE_PWD_H', False):
++            exts.append( Extension('pwd', ['pwdmodule.c']) )
++        else:
++            missing.append('pwd')
++
+         # grp(3)
+         exts.append( Extension('grp', ['grpmodule.c']) )
+         # spwd, shadow passwords
