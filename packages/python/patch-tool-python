@@ -790,7 +790,7 @@
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -1964,6 +1967,219 @@
+@@ -1964,6 +1967,240 @@
      Py_DECREF(v);
  }
  
@@ -897,6 +897,27 @@
 +        size_t buflen;
 +        if (argdata_get_str(ad, &buf, &buflen) == 0)
 +            return PyUnicode_FromStringAndSize(buf, buflen);
++    }
++
++    /* Timestamp values. */
++    {
++        struct timespec ts;
++        if (argdata_get_timestamp(ad, &ts) == 0) {
++            struct tm tmbuf, *tm;
++            tm = gmtime_r(&ts.tv_sec, &tmbuf);
++            if (tm == NULL)
++                return NULL;
++
++            PyObject *module = PyImport_ImportModule("datetime");
++            if (module == NULL)
++                return NULL;
++            PyObject *o = PyObject_CallMethod(
++                module, "datetime", "iiiiiil", tm->tm_year + 1900,
++                tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min,
++                tm->tm_sec, ts.tv_nsec / 1000);
++            Py_DECREF(module);
++            return o;
++        }
 +    }
 +
 +    /* Dictionaries. */
