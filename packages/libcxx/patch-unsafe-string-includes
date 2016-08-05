@@ -1,0 +1,11 @@
+--- include/string.h
++++ include/string.h
+@@ -8,6 +8,8 @@
+ //
+ //===----------------------------------------------------------------------===//
+ 
++#include_next <string.h>
++
+ #ifndef _LIBCPP_STRING_H
+ #define _LIBCPP_STRING_H
+ 
