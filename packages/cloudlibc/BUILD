@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='cloudlibc',
-    version='0.46',
+    version='0.47',
     homepage='https://github.com/NuxiNL/cloudlibc',
     maintainer='info@nuxi.nl',
     lib_depends={'cloudabi', 'compiler-rt'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='cloudlibc/v0.46.tar.gz',
-    checksum='d4060416ccaa8bf085dacb5bc4a71e126cdf7c4230891f77b9ab53cfda33d888',
+    name='cloudlibc/v0.47.tar.gz',
+    checksum='9bd83370e93f685cc27456874a2dbbf15cd62abb387e1ab0cbe8735f9bf91795',
     master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'},
 )
