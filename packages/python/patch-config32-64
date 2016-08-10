@@ -1,0 +1,15 @@
+--- Modules/_decimal/libmpdec/mpdecimal.h
++++ Modules/_decimal/libmpdec/mpdecimal.h
+@@ -123,6 +123,12 @@
+ /*                              Configuration                                 */
+ /******************************************************************************/
+ 
++#if defined(__i386__)
++#define CONFIG_32
++#elif defined(__aarch64__) || defined(__x86_64__)
++#define CONFIG_64
++#endif
++
+ #if defined(UNIVERSAL)
+   #if defined(CONFIG_64) || defined(CONFIG_32)
+     #error "cannot use CONFIG_64 or CONFIG_32 with UNIVERSAL."
