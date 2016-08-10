@@ -19,6 +19,7 @@ def build(ctx):
         '--without-python', '--prefix=%s' % stage, 'install',
     ] + {
         'aarch64': ['abi=aapcs', 'address-model=64', 'architecture=arm'],
+        'i686': ['abi=sysv', 'address-model=32', 'architecture=x86'],
         'x86_64': ['abi=sysv', 'address-model=64', 'architecture=x86'],
     }[ctx.cpu()])
     stage.install()

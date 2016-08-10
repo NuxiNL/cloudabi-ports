@@ -8,6 +8,7 @@ def build(ctx):
     build = ctx.extract().gnu_configure([
         'ac_cv_c_byte_order=' + {
             'aarch64': 'little',
+            'i686': 'little',
             'x86_64': 'little',
         }[ctx.cpu()],
     ])
