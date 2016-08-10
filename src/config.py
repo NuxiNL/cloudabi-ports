@@ -7,7 +7,11 @@ import platform
 import os
 
 # Architectures for which we can build packages.
-ARCHITECTURES = {'aarch64-unknown-cloudabi', 'x86_64-unknown-cloudabi'}
+ARCHITECTURES = {
+    'aarch64-unknown-cloudabi',
+    'i686-unknown-cloudabi',
+    'x86_64-unknown-cloudabi',
+}
 
 # Temporary directory where packages will be built. This directory has
 # to be fixed, as the compilation process tends to hardcode paths to the
