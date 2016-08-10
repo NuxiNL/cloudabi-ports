@@ -43,14 +43,17 @@ distfile(
     name='cfe-0.269026.tar.xz',
     checksum='95cfed38bfb950c41da8fe34983065e384703ea85350a1047141920dd4da9060',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches={'omit-frame-pointer'},
 )
 distfile(
     name='lld-0.269026.tar.xz',
     checksum='9d1abbfadd967a52d43a3976fece2055ed34fe814d8a3e5a1d7af9aef14a48d6',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches=set(),
 )
 distfile(
     name='llvm-0.269026.tar.xz',
     checksum='7dfa48b8f8ab4d3e4c3eeb026cc4e0447950ba958fedc725bba8a9d8718a1b06',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    patches=set(),
 )
