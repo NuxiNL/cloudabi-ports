@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s')
-    ctx.extract('cfe-%(version)s').rename(root.path('tools/clang'))
-    ctx.extract('lld-%(version)s').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-3.9.0rc1.src')
+    ctx.extract('cfe-3.9.0rc1.src').rename(root.path('tools/clang'))
+    ctx.extract('lld-3.9.0rc1.src').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake(['-DLLVM_TARGETS_TO_BUILD=AArch64;X86'])
@@ -32,7 +32,7 @@ def build(ctx):
 
 host_package(
     name='llvm',
-    version='0.269026',
+    version='3.8.91',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -40,23 +40,26 @@ host_package(
 )
 
 distfile(
-    name='cfe-0.269026.tar.xz',
-    checksum='95cfed38bfb950c41da8fe34983065e384703ea85350a1047141920dd4da9060',
-    master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    name='cfe-3.9.0rc1.src.tar.xz',
+    checksum='56adfce2c14e0b90fade6ce4349e90120f12ea650832e80b95f4cb3b59510a1d',
+    master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
     patches={
         'i686-no-pie',
         'omit-frame-pointer',
     },
 )
 distfile(
-    name='lld-0.269026.tar.xz',
-    checksum='9d1abbfadd967a52d43a3976fece2055ed34fe814d8a3e5a1d7af9aef14a48d6',
-    master_sites={'https://nuxi.nl/distfiles/third_party/'},
+    name='lld-3.9.0rc1.src.tar.xz',
+    checksum='d6d3dea1455ead52c17766d8560af11f3b9a712258f0a4eb7f3aaa9629225ff5',
+    master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
     patches=set(),
 )
 distfile(
-    name='llvm-0.269026.tar.xz',
-    checksum='7dfa48b8f8ab4d3e4c3eeb026cc4e0447950ba958fedc725bba8a9d8718a1b06',
-    master_sites={'https://nuxi.nl/distfiles/third_party/'},
-    patches=set(),
+    name='llvm-3.9.0rc1.src.tar.xz',
+    checksum='2b11e3e2221dc2844d341597abff9d1218caf9649f0e7cc87a1d6f1f92b9aa35',
+    master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
+    patches={
+        'bug-28617',
+        'bug-28863',
+    },
 )

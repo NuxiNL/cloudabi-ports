@@ -1,6 +1,6 @@
 --- lib/Driver/Tools.cpp
 +++ lib/Driver/Tools.cpp
-@@ -3079,7 +3079,7 @@
+@@ -3258,7 +3258,7 @@
      break;
    }
  

@@ -12,20 +12,3 @@
  using ::mbstowcs;
  using ::wcstombs;
  #ifdef _LIBCPP_HAS_QUICK_EXIT
---- src/locale.cpp
-+++ src/locale.cpp
-@@ -1713,14 +1713,12 @@
- int
- codecvt<wchar_t, char, mbstate_t>::do_encoding() const  _NOEXCEPT
- {
--#ifndef __CloudABI__
- #ifdef _LIBCPP_LOCALE__L_EXTENSIONS
-     if (mbtowc_l(nullptr, nullptr, MB_LEN_MAX, __l) != 0)
- #else
-     if (__mbtowc_l(nullptr, nullptr, MB_LEN_MAX, __l) != 0)
- #endif
-         return -1;
--#endif
- 
-     // stateless encoding
- #ifdef _LIBCPP_LOCALE__L_EXTENSIONS
