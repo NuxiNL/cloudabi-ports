@@ -44,8 +44,8 @@ distfile(
     checksum='56adfce2c14e0b90fade6ce4349e90120f12ea650832e80b95f4cb3b59510a1d',
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
     patches={
-        'i686-no-pie',
-        'omit-frame-pointer',
+        'r278393',
+        'r278395',
     },
 )
 distfile(
