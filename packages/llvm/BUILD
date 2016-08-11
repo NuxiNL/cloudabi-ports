@@ -43,7 +43,10 @@ distfile(
     name='cfe-0.269026.tar.xz',
     checksum='95cfed38bfb950c41da8fe34983065e384703ea85350a1047141920dd4da9060',
     master_sites={'https://nuxi.nl/distfiles/third_party/'},
-    patches={'omit-frame-pointer'},
+    patches={
+        'i686-no-pie',
+        'omit-frame-pointer',
+    },
 )
 distfile(
     name='lld-0.269026.tar.xz',

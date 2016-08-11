@@ -1,8 +1,6 @@
-Index: lib/Driver/Tools.cpp
-===================================================================
---- lib/Driver/Tools.cpp	(revision 276675)
-+++ lib/Driver/Tools.cpp	(working copy)
-@@ -3287,7 +3287,7 @@
+--- lib/Driver/Tools.cpp
++++ lib/Driver/Tools.cpp
+@@ -3079,7 +3079,7 @@
      break;
    }
  
