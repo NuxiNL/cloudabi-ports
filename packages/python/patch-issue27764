@@ -1,0 +1,86 @@
+--- Modules/clinic/fcntlmodule.c.h
++++ Modules/clinic/fcntlmodule.c.h
+@@ -101,6 +101,8 @@
+     return return_value;
+ }
+ 
++#if (defined(HAVE_FLOCK) || defined(F_SETLK))
++
+ PyDoc_STRVAR(fcntl_flock__doc__,
+ "flock($module, fd, operation, /)\n"
+ "--\n"
+@@ -133,6 +135,10 @@
+     return return_value;
+ }
+ 
++#endif /* (defined(HAVE_FLOCK) || defined(F_SETLK)) */
++
++#if defined(F_SETLK)
++
+ PyDoc_STRVAR(fcntl_lockf__doc__,
+ "lockf($module, fd, cmd, len=0, start=0, whence=0, /)\n"
+ "--\n"
+@@ -186,4 +192,14 @@
+ exit:
+     return return_value;
+ }
+-/*[clinic end generated code: output=36cff76a8fb2c9a6 input=a9049054013a1b77]*/
++
++#endif /* defined(F_SETLK) */
++
++#ifndef FCNTL_FLOCK_METHODDEF
++    #define FCNTL_FLOCK_METHODDEF
++#endif /* !defined(FCNTL_FLOCK_METHODDEF) */
++
++#ifndef FCNTL_LOCKF_METHODDEF
++    #define FCNTL_LOCKF_METHODDEF
++#endif /* !defined(FCNTL_LOCKF_METHODDEF) */
++/*[clinic end generated code: output=e0e74fdd07a73222 input=a9049054013a1b77]*/
+--- Modules/fcntlmodule.c
++++ Modules/fcntlmodule.c
+@@ -265,6 +265,7 @@
+ #undef IOCTL_BUFSZ
+ }
+ 
++#if defined(HAVE_FLOCK) || defined(F_SETLK)
+ /*[clinic input]
+ fcntl.flock
+ 
+@@ -321,8 +322,10 @@
+     }
+     Py_RETURN_NONE;
+ }
++#endif /* HAVE_FLOCK || F_SETLK */
+ 
+ 
++#if defined(F_SETLK)
+ /*[clinic input]
+ fcntl.lockf
+ 
+@@ -417,6 +420,7 @@
+     }
+     Py_RETURN_NONE;
+ }
++#endif /* F_SETLK */
+ 
+ /* List of functions */
+ 
+@@ -441,10 +445,18 @@
+ static int
+ all_ins(PyObject* m)
+ {
++#ifdef LOCK_SH
+     if (PyModule_AddIntMacro(m, LOCK_SH)) return -1;
++#endif
++#ifdef LOCK_EX
+     if (PyModule_AddIntMacro(m, LOCK_EX)) return -1;
++#endif
++#ifdef LOCK_NB
+     if (PyModule_AddIntMacro(m, LOCK_NB)) return -1;
++#endif
++#ifdef LOCK_UN
+     if (PyModule_AddIntMacro(m, LOCK_UN)) return -1;
++#endif
+ /* GNU extensions, as of glibc 2.2.4 */
+ #ifdef LOCK_MAND
+     if (PyModule_AddIntMacro(m, LOCK_MAND)) return -1;
