@@ -9,14 +9,14 @@ def build(ctx):
 
 package(
     name='cloudabi',
-    version='0.7',
+    version='0.8',
     homepage='https://github.com/NuxiNL/cloudabi',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='cloudabi/v0.7.tar.gz',
-    checksum='a6e9fc8aa8c9ca70be5842e8097b4f260461ad2d00c683d84df88c6eb54caa52',
+    name='cloudabi/v0.8.tar.gz',
+    checksum='dcde2eefad9ba3a56063e0c8af369f806ff16671a1a54d6a7d1d506031263ac8',
     master_sites={'https://github.com/NuxiNL/cloudabi/archive/'},
 )
