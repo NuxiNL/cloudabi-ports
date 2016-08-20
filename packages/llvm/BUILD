@@ -52,7 +52,7 @@ distfile(
     name='lld-3.9.0rc1.src.tar.xz',
     checksum='d6d3dea1455ead52c17766d8560af11f3b9a712258f0a4eb7f3aaa9629225ff5',
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
-    patches=set(),
+    patches={'bug-29068'},
 )
 distfile(
     name='llvm-3.9.0rc1.src.tar.xz',
