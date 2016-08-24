@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.9.0rc1.src')
-    cxxabi = ctx.extract('libcxxabi-3.9.0rc1.src')
+    root = ctx.extract('%(name)s-3.9.0rc2.src')
+    cxxabi = ctx.extract('libcxxabi-3.9.0rc2.src')
 
     # Install header files.
     headers = root.path('include')
@@ -37,7 +37,7 @@ def build(ctx):
 
 package(
     name='libcxx',
-    version='3.8.91',
+    version='3.8.92',
     homepage='http://libcxx.llvm.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -45,7 +45,7 @@ package(
 )
 
 distfile(
-    name='libcxx-3.9.0rc1.src.tar.xz',
-    checksum='33a6f90e807d20a8ee9bbd700deca97193db99e02dbcf578d97928fe1153175b',
-    master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
+    name='libcxx-3.9.0rc2.src.tar.xz',
+    checksum='3bda7b35226efaa7616cfc3dd23f147c89a7b6565553e9fc9907d434aa013560',
+    master_sites={'http://llvm.org/pre-releases/3.9.0/rc2/'},
 )
