@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-3.9.0rc1.src')
-    headers = ctx.extract('cloudlibc/v0.52').path('src/include')
+    root = ctx.extract('%(name)s-3.9.0rc2.src')
+    headers = ctx.extract('cloudlibc/v0.53').path('src/include')
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
         'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -56,14 +56,14 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='3.8.91',
+    version='3.8.92',
     homepage='http://compiler-rt.llvm.org/',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='compiler-rt-3.9.0rc1.src.tar.xz',
-    checksum='d5cd31bf622e2b056dd5c0bddc31f167ee39816701a2d54c7ca5ec9d0fd162f4',
-    master_sites={'http://llvm.org/pre-releases/3.9.0/rc1/'},
+    name='compiler-rt-3.9.0rc2.src.tar.xz',
+    checksum='6ff0db5660508c84d7107d5f34419ce83b885f5f34bc2f3b66f713694c3de723',
+    master_sites={'http://llvm.org/pre-releases/3.9.0/rc2/'},
 )
