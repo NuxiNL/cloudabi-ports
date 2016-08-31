@@ -10,7 +10,7 @@ def build(ctx):
     ctx.extract('lld-3.9.0rc3.src').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
-    build = root.cmake(['-DLLVM_TARGETS_TO_BUILD=AArch64;X86'])
+    build = root.cmake(['-DLLVM_TARGETS_TO_BUILD=AArch64;ARM;X86'])
     build.ninja()
     stage = build.ninja_install()
 
@@ -43,14 +43,20 @@ distfile(
     name='cfe-3.9.0rc3.src.tar.xz',
     checksum='cb06bb2403cc13bd2bc561222a9854d1aa52d96cf48b4a24d9e4b0b6832c96ec',
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc3/'},
+    patches={'arm'},
 )
 distfile(
     name='lld-3.9.0rc3.src.tar.xz',
     checksum='9532dc6940516785a3186571378dc0d94484722cfc17396583dfbe16246c2494',
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc3/'},
+    patches={
+        'bug-30218',
+        'r276095',
+    },
 )
 distfile(
     name='llvm-3.9.0rc3.src.tar.xz',
     checksum='b52ed8390a9b7c30ab88cd679f890b5cac17ec52f7fe10bfc305b4d7254e3f82',
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc3/'},
+    patches=set(),
 )

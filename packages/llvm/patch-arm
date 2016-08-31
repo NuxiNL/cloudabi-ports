@@ -1,0 +1,11 @@
+--- lib/Basic/Targets.cpp
++++ lib/Basic/Targets.cpp
+@@ -8170,6 +8170,8 @@
+       return new DarwinARMTargetInfo(Triple, Opts);
+ 
+     switch (os) {
++    case llvm::Triple::CloudABI:
++      return new CloudABITargetInfo<ARMleTargetInfo>(Triple, Opts);
+     case llvm::Triple::Linux:
+       return new LinuxTargetInfo<ARMleTargetInfo>(Triple, Opts);
+     case llvm::Triple::FreeBSD:

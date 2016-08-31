@@ -1,0 +1,21 @@
+--- ELF/Target.cpp
++++ ELF/Target.cpp
+@@ -186,6 +186,7 @@
+                        const InputFile &File,
+                        const SymbolBody &S) const override;
+   void relocateOne(uint8_t *Loc, uint32_t Type, uint64_t Val) const override;
++  void relaxTlsIeToLe(uint8_t *Loc, uint32_t Type, uint64_t Val) const override;
+ };
+ 
+ template <class ELFT> class MipsTargetInfo final : public TargetInfo {
+@@ -1794,6 +1795,10 @@
+   }
+ }
+ 
++void ARMTargetInfo::relaxTlsIeToLe(uint8_t *Loc, uint32_t Type,
++                                   uint64_t Val) const {
++}
++
+ template <class ELFT> MipsTargetInfo<ELFT>::MipsTargetInfo() {
+   GotPltHeaderEntriesNum = 2;
+   PageSize = 65536;
