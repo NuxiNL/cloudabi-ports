@@ -1,3 +1,36 @@
+--- ELF/Config.h
++++ ELF/Config.h
+@@ -103,6 +103,7 @@
+   bool StripAll;
+   bool StripDebug;
+   bool SysvHash = true;
++  bool Target1Rel;
+   bool Threads;
+   bool Trace;
+   bool Verbose;
+--- ELF/Driver.cpp
++++ ELF/Driver.cpp
+@@ -361,6 +361,7 @@
+   Config->Shared = Args.hasArg(OPT_shared);
+   Config->StripAll = Args.hasArg(OPT_strip_all);
+   Config->StripDebug = Args.hasArg(OPT_strip_debug);
++  Config->Target1Rel = Args.hasArg(OPT_target1_rel);
+   Config->Threads = Args.hasArg(OPT_threads);
+   Config->Trace = Args.hasArg(OPT_trace);
+   Config->Verbose = Args.hasArg(OPT_verbose);
+--- ELF/Options.td
++++ ELF/Options.td
+@@ -146,6 +146,10 @@
+ 
+ def sysroot: J<"sysroot=">, HelpText<"Set the system root">;
+ 
++def target1_rel: F<"target1-rel">, HelpText<"Interpret R_ARM_TARGET1 as R_ARM_REL32">;
++
++def target1_abs: F<"target1-abs">, HelpText<"Interpret R_ARM_TARGET1 as R_ARM_ABS32">;
++
+ def threads: F<"threads">, HelpText<"Enable use of threads">;
+ 
+ def trace: F<"trace">, HelpText<"Print the names of the input files">;
 --- ELF/Target.cpp
 +++ ELF/Target.cpp
 @@ -178,6 +178,8 @@
@@ -18,7 +51,7 @@
  }
  
  RelExpr ARMTargetInfo::getRelExpr(uint32_t Type, const SymbolBody &S) const {
-@@ -1515,8 +1519,11 @@
+@@ -1515,8 +1519,13 @@
      // GOT(S) + A - GOT_ORG
      return R_GOT_OFF;
    case R_ARM_GOT_PREL:
@@ -26,12 +59,14 @@
 +  case R_ARM_TLS_IE32:
 +    // GOT(S) + A - P
      return R_GOT_PC;
++  case R_ARM_TARGET1:
++    return Config->Target1Rel ? R_PC : R_ABS;
 +  case R_ARM_TLS_GD32:
 +    return R_TLSGD_PC;
    case R_ARM_BASE_PREL:
      // B(S) + A - P
      // FIXME: currently B(S) assumed to be .got, this may not hold for all
-@@ -1529,6 +1536,8 @@
+@@ -1529,10 +1538,14 @@
    case R_ARM_THM_MOVW_PREL_NC:
    case R_ARM_THM_MOVT_PREL:
      return R_PC;
@@ -40,27 +75,35 @@
    }
  }
  
-@@ -1614,6 +1623,9 @@
+ uint32_t ARMTargetInfo::getDynRel(uint32_t Type) const {
++  if (Type == R_ARM_TARGET1 && !Config->Target1Rel)
++    return R_ARM_ABS32;
+   if (Type == R_ARM_ABS32)
+     return Type;
+   // Keep it going with a dummy value so that we can find more reloc errors.
+@@ -1614,6 +1627,10 @@
    case R_ARM_GOT_BREL:
    case R_ARM_GOT_PREL:
    case R_ARM_REL32:
++  case R_ARM_TARGET1:
 +  case R_ARM_TLS_GD32:
 +  case R_ARM_TLS_IE32:
 +  case R_ARM_TLS_LE32:
      write32le(Loc, Val);
      break;
    case R_ARM_PREL31:
-@@ -1737,6 +1749,9 @@
+@@ -1737,6 +1754,10 @@
    case R_ARM_GOT_BREL:
    case R_ARM_GOT_PREL:
    case R_ARM_REL32:
++  case R_ARM_TARGET1:
 +  case R_ARM_TLS_GD32:
 +  case R_ARM_TLS_IE32:
 +  case R_ARM_TLS_LE32:
      return SignExtend64<32>(read32le(Buf));
    case R_ARM_PREL31:
      return SignExtend64<31>(read32le(Buf));
-@@ -1794,6 +1809,14 @@
+@@ -1794,6 +1815,14 @@
    }
  }
  

@@ -51,7 +51,7 @@ distfile(
     master_sites={'http://llvm.org/pre-releases/3.9.0/rc3/'},
     patches={
         'bug-30218',
-        'r276095',
+        'r276095-r277369',
     },
 )
 distfile(
