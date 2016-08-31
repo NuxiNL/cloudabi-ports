@@ -7,6 +7,7 @@
 def build(ctx):
     root = ctx.extract('%(name)s-3.9.0rc3.src')
     headers = ctx.extract('cloudlibc/v0.53').path('src/include')
+
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
         'addtf3.c', 'addvdi3.c', 'addvsi3.c', 'addvti3.c', 'ashldi3.c',
@@ -48,6 +49,14 @@ def build(ctx):
         'x86_64/floatundidf.S', 'x86_64/floatundisf.S',
         'x86_64/floatundixf.S',
     }
+    if ctx.cpu() == 'armv6':
+        sources |= {
+            'arm/aeabi_idivmod.S', 'arm/aeabi_ldivmod.S',
+            'arm/aeabi_memcpy.S', 'arm/aeabi_memmove.S',
+            'arm/aeabi_memset.S', 'arm/aeabi_uidivmod.S',
+            'arm/aeabi_uldivmod.S',
+        }
+
     srcdir = root.path('lib/builtins')
     library = ctx.archive(srcdir.path(f).compile([
         '-I%s' % headers, '-DCRT_HAS_128BIT',
