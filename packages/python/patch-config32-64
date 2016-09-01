@@ -4,9 +4,9 @@
  /*                              Configuration                                 */
  /******************************************************************************/
  
-+#if defined(__i386__)
++#if __POINTER_WIDTH__ == 32
 +#define CONFIG_32
-+#elif defined(__aarch64__) || defined(__x86_64__)
++#elif __POINTER_WIDTH__ == 64
 +#define CONFIG_64
 +#endif
 +
