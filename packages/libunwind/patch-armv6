@@ -1,0 +1,13 @@
+--- src/AddressSpace.hpp
++++ src/AddressSpace.hpp
+@@ -35,8 +35,9 @@
+ #include "Registers.hpp"
+ 
+ #if _LIBUNWIND_ARM_EHABI
+-#if defined(__FreeBSD__) || defined(__NetBSD__)
++#if defined(__CloudABI__) || defined(__FreeBSD__) || defined(__NetBSD__)
+ 
++#include <link.h>
+ typedef void *_Unwind_Ptr;
+ 
+ #elif defined(__linux__)
