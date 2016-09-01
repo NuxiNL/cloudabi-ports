@@ -253,6 +253,11 @@ class BuildHandle:
         util.copy_file(source, target, False)
         return FileHandle(self._builder, target)
 
+    @staticmethod
+    def stack_direction():
+        # TODO(ed): Don't hardcode this.
+        return 'down'
+
 
 class BuildDirectory:
 
