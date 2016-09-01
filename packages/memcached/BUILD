@@ -5,13 +5,7 @@
 
 
 def build(ctx):
-    build = ctx.extract().gnu_configure([
-        'ac_cv_c_endian=' + {
-            'aarch64': 'little',
-            'i686': 'little',
-            'x86_64': 'little',
-        }[ctx.cpu()],
-    ])
+    build = ctx.extract().gnu_configure(['ac_cv_c_endian=' + ctx.endian()])
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 

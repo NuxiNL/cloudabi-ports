@@ -212,6 +212,11 @@ class BuildHandle:
     def cxxflags(self):
         return ' '.join(self._builder.get_cxxflags())
 
+    @staticmethod
+    def endian():
+        # TODO(ed): Extend this once we support big endian CPUs as well.
+        return 'little'
+
     def executable(self, objects):
         objs = sorted(obj._path for obj in objects)
         output = self._builder._build_directory.get_new_executable()

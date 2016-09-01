@@ -7,10 +7,9 @@
 def build(ctx):
     build = ctx.extract().gnu_configure([
         'ax_cv_c_float_words_bigendian=' + {
-            'aarch64': 'no',
-            'i686': 'no',
-            'x86_64': 'no',
-        }[ctx.cpu()],
+            'little': 'no',
+            'big': 'yes',
+        }[ctx.endian()],
         'ac_cv_func_mmap=no',
         '--enable-xlib=no',
     ])
