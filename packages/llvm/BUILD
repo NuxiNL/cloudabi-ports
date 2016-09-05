@@ -43,7 +43,7 @@ distfile(
     name='cfe-3.9.0.src.tar.xz',
     checksum='7596a7c7d9376d0c89e60028fe1ceb4d3e535e8ea8b89e0eb094e0dcb3183d28',
     master_sites={'http://llvm.org/releases/3.9.0/'},
-    patches={'arm'},
+    patches={'r280672'},
 )
 distfile(
     name='lld-3.9.0.src.tar.xz',
