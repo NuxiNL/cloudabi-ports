@@ -1,6 +1,6 @@
 --- include/lcms2.h
 +++ include/lcms2.h
-@@ -1508,7 +1508,6 @@
+@@ -1510,7 +1510,6 @@
  
  typedef struct _cms_io_handler cmsIOHANDLER;
  
@@ -8,7 +8,7 @@
  CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream);
  CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromMem(cmsContext ContextID, void *Buffer, cmsUInt32Number size, const char* AccessMode);
  CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromNULL(cmsContext ContextID);
-@@ -1521,8 +1520,6 @@
+@@ -1523,8 +1522,6 @@
  
  // Profile high level funtions ------------------------------------------------------------------------------------------
  
@@ -17,7 +17,7 @@
  CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromStream(FILE* ICCProfile, const char* sAccess);
  CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromStreamTHR(cmsContext ContextID, FILE* ICCProfile, const char* sAccess);
  CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromMem(const void * MemPtr, cmsUInt32Number dwSize);
-@@ -1531,7 +1528,6 @@
+@@ -1533,7 +1530,6 @@
  CMSAPI cmsHPROFILE      CMSEXPORT cmsOpenProfileFromIOhandler2THR(cmsContext ContextID, cmsIOHANDLER* io, cmsBool write);
  CMSAPI cmsBool          CMSEXPORT cmsCloseProfile(cmsHPROFILE hProfile);
  
@@ -25,7 +25,7 @@
  CMSAPI cmsBool          CMSEXPORT cmsSaveProfileToStream(cmsHPROFILE hProfile, FILE* Stream);
  CMSAPI cmsBool          CMSEXPORT cmsSaveProfileToMem(cmsHPROFILE hProfile, void *MemPtr, cmsUInt32Number* BytesNeeded);
  CMSAPI cmsUInt32Number  CMSEXPORT cmsSaveProfileToIOhandler(cmsHPROFILE hProfile, cmsIOHANDLER* io);
-@@ -1792,11 +1788,9 @@
+@@ -1806,11 +1802,9 @@
  CMSAPI cmsInt32Number   CMSEXPORT cmsIT8SetTable(cmsHANDLE hIT8, cmsUInt32Number nTable);
  
  // Persistence
@@ -157,7 +157,7 @@
  cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID, const char* FileName, const char* AccessMode)
  {
      cmsIOHANDLER* iohandler = NULL;
-@@ -419,6 +418,7 @@
+@@ -429,6 +428,7 @@
  
      return iohandler;
  }
@@ -165,15 +165,15 @@
  
  // Create a iohandler for stream based files
  cmsIOHANDLER* CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream)
-@@ -432,7 +432,6 @@
+@@ -450,7 +450,6 @@
      iohandler -> stream = (void*) Stream;
      iohandler -> UsedSpace = 0;
-     iohandler -> ReportedSize = (cmsUInt32Number) cmsfilelength(Stream);
+     iohandler -> ReportedSize = (cmsUInt32Number) fileSize;
 -    iohandler -> PhysicalFile[0] = 0;
  
      iohandler ->Read    = FileRead;
      iohandler ->Seek    = FileSeek;
-@@ -1036,7 +1035,6 @@
+@@ -1054,7 +1053,6 @@
      NewIcc ->IOhandler = io;
      if (write) {
  
@@ -181,7 +181,7 @@
          return hEmpty;
      }
  
-@@ -1050,6 +1048,7 @@
+@@ -1068,6 +1066,7 @@
  
  
  // Create profile from disk file
@@ -189,7 +189,7 @@
  cmsHPROFILE CMSEXPORT cmsOpenProfileFromFileTHR(cmsContext ContextID, const char *lpFileName, const char *sAccess)
  {
      _cmsICCPROFILE* NewIcc;
-@@ -1082,6 +1081,7 @@
+@@ -1100,6 +1099,7 @@
  {
      return cmsOpenProfileFromFileTHR(NULL, ICCProfile, sAccess);
  }
@@ -197,7 +197,7 @@
  
  
  cmsHPROFILE  CMSEXPORT cmsOpenProfileFromStreamTHR(cmsContext ContextID, FILE* ICCProfile, const char *sAccess)
-@@ -1098,7 +1098,6 @@
+@@ -1116,7 +1116,6 @@
  
      if (*sAccess == 'w') {
  
@@ -205,7 +205,7 @@
          return hEmpty;
      }
  
-@@ -1337,6 +1336,7 @@
+@@ -1364,6 +1363,7 @@
  
  
  // Low-level save to disk.
@@ -213,7 +213,7 @@
  cmsBool  CMSEXPORT cmsSaveProfileToFile(cmsHPROFILE hProfile, const char* FileName)
  {
      cmsContext ContextID = cmsGetProfileContextID(hProfile);
-@@ -1353,6 +1353,7 @@
+@@ -1380,6 +1380,7 @@
      }
      return rc;
  }
@@ -221,7 +221,7 @@
  
  // Same as anterior, but for streams
  cmsBool CMSEXPORT cmsSaveProfileToStream(cmsHPROFILE hProfile, FILE* Stream)
-@@ -1407,12 +1408,6 @@
+@@ -1434,12 +1435,6 @@
  
      if (!Icc) return FALSE;
  
@@ -236,7 +236,7 @@
  
 --- src/lcms2_internal.h
 +++ src/lcms2_internal.h
-@@ -740,7 +740,6 @@
+@@ -748,7 +748,6 @@
                                                                   // depending on profile version, so we keep track of the
                                                                   // type handler for each tag in the list.
      // Special

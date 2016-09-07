@@ -1,6 +1,6 @@
 --- src/cmsio0.c
 +++ src/cmsio0.c
-@@ -477,7 +477,7 @@
+@@ -495,7 +495,7 @@
      Icc ->Version =  0x02100000;
  
      // Set creation date/time
