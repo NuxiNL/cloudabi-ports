@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2869,7 +2869,11 @@
+@@ -2896,7 +2896,11 @@
      }
      else
  #endif

@@ -1,6 +1,6 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -811,7 +811,7 @@
+@@ -827,7 +827,7 @@
      return os_getcwdb_impl(module);
  }
  
@@ -9,7 +9,7 @@
  
  PyDoc_STRVAR(os_link__doc__,
  "link($module, /, src, dst, *, src_dir_fd=None, dst_dir_fd=None,\n"
-@@ -863,7 +863,7 @@
+@@ -880,7 +880,7 @@
      return return_value;
  }
  
@@ -20,7 +20,7 @@
  "listdir($module, /, path=None)\n"
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3387,7 +3387,7 @@
+@@ -3414,7 +3414,7 @@
  #define HAVE_LINK 1
  #endif
  
@@ -29,7 +29,7 @@
  /*[clinic input]
  
  os.link
-@@ -3457,7 +3457,11 @@
+@@ -3484,7 +3484,11 @@
              follow_symlinks ? AT_SYMLINK_FOLLOW : 0);
      else
  #endif

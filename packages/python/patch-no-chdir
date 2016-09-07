@@ -1,6 +1,6 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -219,6 +219,7 @@
+@@ -222,6 +222,7 @@
  
  #endif /* defined(HAVE_CTERMID) */
  
@@ -8,7 +8,7 @@
  PyDoc_STRVAR(os_chdir__doc__,
  "chdir($module, /, path)\n"
  "--\n"
-@@ -254,6 +255,7 @@
+@@ -258,6 +259,7 @@
  
      return return_value;
  }
@@ -18,7 +18,7 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2723,7 +2723,11 @@
+@@ -2750,7 +2750,11 @@
          result = fchdir(path->fd);
      else
  #endif

@@ -89,7 +89,7 @@
                       !(async_err = PyErr_CheckSignals()));
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -7742,7 +7742,11 @@
+@@ -7771,7 +7771,11 @@
              fd = openat(dir_fd, path->narrow, flags, mode);
          else
  #endif

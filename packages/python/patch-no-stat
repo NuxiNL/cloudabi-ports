@@ -29,7 +29,7 @@
  #       define FSTAT fstat
  #       define STRUCT_STAT struct stat
  #endif
-@@ -2149,7 +2153,11 @@
+@@ -2176,7 +2180,11 @@
                           follow_symlinks ? 0 : AT_SYMLINK_NOFOLLOW);
      else
  #endif
@@ -41,7 +41,7 @@
      Py_END_ALLOW_THREADS
  
      if (result != 0) {
-@@ -11506,9 +11514,17 @@
+@@ -11535,9 +11543,17 @@
      path = PyBytes_AS_STRING(bytes);
  
      if (follow_symlinks)

@@ -1,6 +1,6 @@
 --- Modules/selectmodule.c
 +++ Modules/selectmodule.c
-@@ -400,7 +400,11 @@
+@@ -404,7 +404,11 @@
  {
      PyObject *o, *key, *value;
      int fd;
@@ -12,7 +12,7 @@
      int err;
  
      if (!PyArg_ParseTuple(args, "O|O&:register", &o, ushort_converter, &events))
-@@ -2431,7 +2435,9 @@
+@@ -2435,7 +2439,9 @@
          if (PyType_Ready(&poll_Type) < 0)
              return NULL;
          PyModule_AddIntMacro(m, POLLIN);

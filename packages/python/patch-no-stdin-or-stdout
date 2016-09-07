@@ -380,7 +380,7 @@
  _Py_IDENTIFIER(stderr);
  
  #ifdef __cplusplus
-@@ -482,11 +486,14 @@
+@@ -487,11 +491,14 @@
  static int
  flush_std_files(void)
  {
@@ -395,7 +395,7 @@
      if (fout != NULL && fout != Py_None && !file_is_closed(fout)) {
          tmp = _PyObject_CallMethodId(fout, &PyId_flush, "");
          if (tmp == NULL) {
-@@ -496,6 +503,7 @@
+@@ -501,6 +508,7 @@
          else
              Py_DECREF(tmp);
      }
@@ -403,7 +403,7 @@
  
      if (ferr != NULL && ferr != Py_None && !file_is_closed(ferr)) {
          tmp = _PyObject_CallMethodId(ferr, &PyId_flush, "");
-@@ -1200,6 +1208,7 @@
+@@ -1206,6 +1214,7 @@
          }
      }
  
@@ -411,7 +411,7 @@
      /* Set sys.stdin */
      fd = fileno(stdin);
      /* Under some conditions stdin, stdout and stderr may not be connected
-@@ -1212,7 +1221,9 @@
+@@ -1218,7 +1227,9 @@
      PySys_SetObject("__stdin__", std);
      _PySys_SetObjectId(&PyId_stdin, std);
      Py_DECREF(std);
@@ -421,7 +421,7 @@
      /* Set sys.stdout */
      fd = fileno(stdout);
      std = create_stdio(iomod, fd, 1, "<stdout>", encoding, errors);
-@@ -1221,6 +1232,7 @@
+@@ -1227,6 +1238,7 @@
      PySys_SetObject("__stdout__", std);
      _PySys_SetObjectId(&PyId_stdout, std);
      Py_DECREF(std);
@@ -429,7 +429,7 @@
  
  #if 1 /* Disable this if you have trouble debugging bootstrap stuff */
      /* Set sys.stderr, replaces the preliminary stderr */
-@@ -1476,7 +1488,9 @@
+@@ -1482,7 +1494,9 @@
      while (nexitfuncs > 0)
          (*exitfuncs[--nexitfuncs])();
  

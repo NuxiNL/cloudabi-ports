@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -4011,7 +4011,11 @@
+@@ -4040,7 +4040,11 @@
  #if ( defined(__WATCOMC__) || defined(PYCC_VACPP) ) && !defined(__QNX__)
          result = mkdir(path->narrow);
  #else

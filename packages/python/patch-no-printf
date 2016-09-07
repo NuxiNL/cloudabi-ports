@@ -23,7 +23,7 @@
  /* some functions handy for testing */
  
  EXPORT(int)
-@@ -63,14 +67,26 @@
+@@ -81,14 +85,26 @@
      int result;
      va_list argptr;
      va_start(argptr, fmt);
@@ -50,7 +50,7 @@
  }
  
  EXPORT(char *)my_strchr(const char *s, int c)
-@@ -657,3 +673,7 @@
+@@ -675,3 +691,7 @@
  {
      return PyModule_Create(&_ctypes_testmodule);
  }
@@ -673,7 +673,7 @@
  #endif
 --- Python/ceval.c
 +++ Python/ceval.c
-@@ -1342,11 +1342,11 @@
+@@ -1343,11 +1343,11 @@
  
          if (lltrace) {
              if (HAS_ARG(opcode)) {
@@ -687,7 +687,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4317,10 +4317,10 @@
+@@ -4296,10 +4296,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

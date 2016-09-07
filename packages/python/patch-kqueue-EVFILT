@@ -1,6 +1,6 @@
 --- Modules/selectmodule.c
 +++ Modules/selectmodule.c
-@@ -2519,14 +2519,24 @@
+@@ -2533,14 +2533,24 @@
      /* event filters */
      PyModule_AddIntConstant(m, "KQ_FILTER_READ", EVFILT_READ);
      PyModule_AddIntConstant(m, "KQ_FILTER_WRITE", EVFILT_WRITE);
@@ -25,7 +25,7 @@
  
      /* event flags */
      PyModule_AddIntConstant(m, "KQ_EV_ADD", EV_ADD);
-@@ -2536,16 +2546,23 @@
+@@ -2550,16 +2560,23 @@
      PyModule_AddIntConstant(m, "KQ_EV_ONESHOT", EV_ONESHOT);
      PyModule_AddIntConstant(m, "KQ_EV_CLEAR", EV_CLEAR);
  
@@ -49,7 +49,7 @@
      PyModule_AddIntConstant(m, "KQ_NOTE_DELETE", NOTE_DELETE);
      PyModule_AddIntConstant(m, "KQ_NOTE_WRITE", NOTE_WRITE);
      PyModule_AddIntConstant(m, "KQ_NOTE_EXTEND", NOTE_EXTEND);
-@@ -2553,8 +2570,10 @@
+@@ -2567,8 +2584,10 @@
      PyModule_AddIntConstant(m, "KQ_NOTE_LINK", NOTE_LINK);
      PyModule_AddIntConstant(m, "KQ_NOTE_RENAME", NOTE_RENAME);
      PyModule_AddIntConstant(m, "KQ_NOTE_REVOKE", NOTE_REVOKE);
@@ -60,7 +60,7 @@
      PyModule_AddIntConstant(m, "KQ_NOTE_EXIT", NOTE_EXIT);
      PyModule_AddIntConstant(m, "KQ_NOTE_FORK", NOTE_FORK);
      PyModule_AddIntConstant(m, "KQ_NOTE_EXEC", NOTE_EXEC);
-@@ -2564,13 +2583,14 @@
+@@ -2578,13 +2597,14 @@
      PyModule_AddIntConstant(m, "KQ_NOTE_TRACK", NOTE_TRACK);
      PyModule_AddIntConstant(m, "KQ_NOTE_CHILD", NOTE_CHILD);
      PyModule_AddIntConstant(m, "KQ_NOTE_TRACKERR", NOTE_TRACKERR);

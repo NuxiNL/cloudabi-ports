@@ -1,11 +1,6 @@
 --- Modules/_datetimemodule.c
 +++ Modules/_datetimemodule.c
-@@ -2456,17 +2456,17 @@
-     return self;
- }
- 
--/* Return new date from localtime(t). */
-+/* Return new date from localtime_r(t). */
+@@ -2517,13 +2517,13 @@
  static PyObject *
  date_local_from_object(PyObject *cls, PyObject *obj)
  {
@@ -21,62 +16,38 @@
      if (tm == NULL) {
          /* unconvertible time */
  #ifdef EINVAL
-@@ -4077,20 +4077,20 @@
-     return self;
+@@ -4198,7 +4198,7 @@
  }
  
--/* TM_FUNC is the shared type of localtime() and gmtime(). */
+ /* TM_FUNC is the shared type of localtime() and gmtime(). */
 -typedef struct tm *(*TM_FUNC)(const time_t *timer);
-+/* TM_FUNC is the shared type of localtime_r() and gmtime_r(). */
 +typedef struct tm *(*TM_FUNC)(const time_t *timer, struct tm *result);
  
- /* Internal helper.
-  * Build datetime from a time_t and a distinct count of microseconds.
-- * Pass localtime or gmtime for f, to control the interpretation of timet.
-+ * Pass localtime_r or gmtime_r for f, to control the interpretation of timet.
-  */
- static PyObject *
+ /* As of version 2015f max fold in IANA database is
+  * 23 hours at 1969-09-30 13:00:00 in Kwajalein. */
+@@ -4247,10 +4247,10 @@
  datetime_from_timet_and_us(PyObject *cls, TM_FUNC f, time_t timet, int us,
                             PyObject *tzinfo)
  {
 -    struct tm *tm;
 +    struct tm *tm, tmbuf;
+     int year, month, day, hour, minute, second, fold = 0;
  
 -    tm = f(&timet);
 +    tm = f(&timet, &tmbuf);
      if (tm == NULL) {
  #ifdef EINVAL
          if (errno == 0)
-@@ -4099,7 +4099,7 @@
-         return PyErr_SetFromErrno(PyExc_OSError);
-     }
+@@ -4272,7 +4272,7 @@
+      */
+     second = Py_MIN(59, tm->tm_sec);
  
--    /* The platform localtime/gmtime may insert leap seconds,
-+    /* The platform localtime_r/gmtime_r may insert leap seconds,
-      * indicated by tm->tm_sec > 59.  We don't care about them,
-      * except to the extent that passing them on to the datetime
-      * constructor would raise ValueError for a reason that
-@@ -4119,7 +4119,7 @@
- }
+-    if (tzinfo == Py_None && f == localtime) {
++    if (tzinfo == Py_None && f == localtime_r) {
+         PY_LONG_LONG probe_seconds, result_seconds, transition;
  
- /* Internal helper.
-- * Build datetime from a Python timestamp.  Pass localtime or gmtime for f,
-+ * Build datetime from a Python timestamp.  Pass localtime_r or gmtime_r for f,
-  * to control the interpretation of the timestamp.  Since a double doesn't
-  * have enough bits to cover a datetime's full range of precision, it's
-  * better to call datetime_from_timet_and_us provided you have a way
-@@ -4140,8 +4140,8 @@
- }
- 
- /* Internal helper.
-- * Build most accurate possible datetime for current time.  Pass localtime or
-- * gmtime for f as appropriate.
-+ * Build most accurate possible datetime for current time.  Pass localtime_r or
-+ * gmtime_r for f as appropriate.
-  */
- static PyObject *
- datetime_best_possible(PyObject *cls, TM_FUNC f, PyObject *tzinfo)
-@@ -4183,7 +4183,7 @@
+         result_seconds = utc_to_seconds(year, month, day,
+@@ -4360,7 +4360,7 @@
          return NULL;
  
      self = datetime_best_possible((PyObject *)type,
@@ -85,7 +56,7 @@
                                    tz);
      if (self != NULL && tz != Py_None) {
          /* Convert UTC to tzinfo's zone. */
-@@ -4198,7 +4198,7 @@
+@@ -4375,7 +4375,7 @@
  static PyObject *
  datetime_utcnow(PyObject *cls, PyObject *dummy)
  {
@@ -94,7 +65,7 @@
  }
  
  /* Return new local datetime from timestamp (Python timestamp -- a double). */
-@@ -4217,7 +4217,7 @@
+@@ -4394,7 +4394,7 @@
          return NULL;
  
      self = datetime_from_timestamp(cls,
@@ -103,7 +74,7 @@
                                     timestamp,
                                     tzinfo);
      if (self != NULL && tzinfo != Py_None) {
-@@ -4235,7 +4235,7 @@
+@@ -4412,7 +4412,7 @@
      PyObject *result = NULL;
  
      if (PyArg_ParseTuple(args, "O:utcfromtimestamp", &timestamp))
@@ -112,36 +83,42 @@
                                           Py_None);
      return result;
  }
-@@ -4745,7 +4745,7 @@
- local_timezone(PyDateTime_DateTime *utc_time)
+@@ -5035,11 +5035,11 @@
  {
      PyObject *result = NULL;
--    struct tm *timep;
-+    struct tm *timep, timebuf;
-     time_t timestamp;
      PyObject *delta;
-     PyObject *one_second;
-@@ -4774,7 +4774,7 @@
-     Py_DECREF(seconds);
-     if (timestamp == -1 && PyErr_Occurred())
-         return NULL;
--    timep = localtime(&timestamp);
-+    timep = localtime_r(&timestamp, &timebuf);
+-    struct tm *local_time_tm;
++    struct tm *local_time_tm, tmbuf;
+     PyObject *nameo = NULL;
+     const char *zone = NULL;
+ 
+-    local_time_tm = localtime(&timestamp);
++    local_time_tm = localtime_r(&timestamp, &tmbuf);
  #ifdef HAVE_STRUCT_TM_TM_ZONE
-     zone = timep->tm_zone;
-     delta = new_delta(0, timep->tm_gmtoff, 0, 1);
+     zone = local_time_tm->tm_zone;
+     delta = new_delta(0, local_time_tm->tm_gmtoff, 0, 1);
+@@ -5059,7 +5059,7 @@
+         if (local_time == NULL) {
+             return NULL;
+         }
+-        utc_time_tm = gmtime(&timestamp);
++        utc_time_tm = gmtime_r(&timestamp, &tmbuf);
+         utc_time = new_datetime(utc_time_tm->tm_year + 1900,
+                                 utc_time_tm->tm_mon + 1,
+                                 utc_time_tm->tm_mday,
 --- Modules/timemodule.c
 +++ Modules/timemodule.c
-@@ -339,7 +339,7 @@
+@@ -339,15 +339,14 @@
          return NULL;
  
      errno = 0;
 -    local = gmtime(&when);
+-    if (local == NULL) {
 +    local = gmtime_r(&when, &buf);
-     if (local == NULL) {
++    if (local != &buf) {
  #ifdef EINVAL
          if (errno == 0)
-@@ -347,7 +347,6 @@
+             errno = EINVAL;
  #endif
          return PyErr_SetFromErrno(PyExc_OSError);
      }
@@ -149,15 +126,17 @@
      return tmtotuple(&buf);
  }
  
-@@ -367,7 +366,7 @@
+@@ -367,8 +366,8 @@
      struct tm *local;
  
      assert (timep != NULL);
 -    local = localtime(timep);
+-    if (local == NULL) {
 +    local = localtime_r(timep, result);
-     if (local == NULL) {
++    if (local != result) {
          /* unconvertible time */
  #ifdef EINVAL
+         if (errno == 0)
 @@ -377,7 +376,6 @@
          PyErr_SetFromErrno(PyExc_OSError);
          return -1;

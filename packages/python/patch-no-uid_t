@@ -16,7 +16,7 @@
  #endif /* MS_WINDOWS */
  
  
-@@ -2023,6 +2025,11 @@
+@@ -2050,6 +2052,11 @@
  #if defined(MS_WINDOWS)
      PyStructSequence_SET_ITEM(v, 4, PyLong_FromLong(0));
      PyStructSequence_SET_ITEM(v, 5, PyLong_FromLong(0));
@@ -28,7 +28,7 @@
  #else
      PyStructSequence_SET_ITEM(v, 4, _PyLong_FromUid(st->st_uid));
      PyStructSequence_SET_ITEM(v, 5, _PyLong_FromGid(st->st_gid));
-@@ -12361,14 +12368,22 @@
+@@ -12394,14 +12401,22 @@
  static PyMethodDef posix_methods[] = {
  
      OS_STAT_METHODDEF

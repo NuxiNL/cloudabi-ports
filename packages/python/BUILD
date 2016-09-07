@@ -6,7 +6,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract('Python-3.6.0a3')
+    srcdir = ctx.extract('Python-3.6.0a4')
 
     # Delete the in-tree copy of these, to make certain the out-of-tree
     # versions are used, i.e. those generated from our patched importlib
@@ -78,8 +78,8 @@ package(
 )
 
 distfile(
-    name='Python-3.6.0a3.tar.xz',
-    checksum='2cd0611c3456a83737d99d8ffd36d4094b3d44c29dd3a4185f1146be502a8321',
+    name='Python-3.6.0a4.tar.xz',
+    checksum='63acec349d20de412682f64c013f7c3374c695430b44e1c0ef12076da1d7fd2c',
     master_sites={'https://www.python.org/ftp/python/3.6.0/'},
     unsafe_string_sources={
         'Modules/_ctypes/_ctypes.c',

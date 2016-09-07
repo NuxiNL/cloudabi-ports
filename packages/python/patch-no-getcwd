@@ -1,6 +1,6 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -775,6 +775,7 @@
+@@ -791,6 +791,7 @@
  
  #endif /* defined(HAVE_LCHOWN) */
  
@@ -8,7 +8,7 @@
  PyDoc_STRVAR(os_getcwd__doc__,
  "getcwd($module, /)\n"
  "--\n"
-@@ -810,6 +811,7 @@
+@@ -826,6 +827,7 @@
  {
      return os_getcwdb_impl(module);
  }
@@ -34,7 +34,7 @@
          joinpath(path, p);
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3272,6 +3272,7 @@
+@@ -3299,6 +3299,7 @@
  #endif /* HAVE_LCHOWN */
  
  
@@ -42,7 +42,7 @@
  static PyObject *
  posix_getcwd(int use_bytes)
  {
-@@ -3381,6 +3382,7 @@
+@@ -3408,6 +3409,7 @@
  {
      return posix_getcwd(1);
  }
@@ -50,7 +50,7 @@
  
  
  #if ((!defined(HAVE_LINK)) && defined(MS_WINDOWS))
-@@ -12374,8 +12376,10 @@
+@@ -12407,8 +12409,10 @@
      OS_LCHFLAGS_METHODDEF
      OS_CHROOT_METHODDEF
      OS_CTERMID_METHODDEF

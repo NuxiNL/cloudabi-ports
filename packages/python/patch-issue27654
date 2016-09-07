@@ -1,6 +1,6 @@
 --- Python/random.c
 +++ Python/random.c
-@@ -226,6 +226,9 @@
+@@ -229,6 +229,9 @@
  static void
  dev_urandom_noraise(unsigned char *buffer, Py_ssize_t size)
  {
@@ -10,7 +10,7 @@
      int fd;
      Py_ssize_t n;
  
-@@ -257,6 +260,7 @@
+@@ -260,6 +263,7 @@
          size -= n;
      }
      close(fd);
@@ -18,7 +18,7 @@
  }
  
  /* Read size bytes from /dev/urandom into buffer.
-@@ -264,6 +268,9 @@
+@@ -267,6 +271,9 @@
  static int
  dev_urandom_python(char *buffer, Py_ssize_t size)
  {
@@ -28,7 +28,7 @@
      int fd;
      Py_ssize_t n;
      struct _Py_stat_struct st;
-@@ -340,6 +347,7 @@
+@@ -343,6 +350,7 @@
          buffer += n;
          size -= n;
      } while (0 < size);

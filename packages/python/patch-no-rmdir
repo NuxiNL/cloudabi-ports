@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -4255,7 +4255,11 @@
+@@ -4284,7 +4284,11 @@
          result = unlinkat(dir_fd, path->narrow, AT_REMOVEDIR);
      else
  #endif
