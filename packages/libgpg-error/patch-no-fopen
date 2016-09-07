@@ -1,6 +1,6 @@
 --- src/estream.c
 +++ src/estream.c
-@@ -1602,6 +1602,7 @@
+@@ -1620,6 +1620,7 @@
   */
  
  /* Create function for objects identified by a file name.  */
@@ -8,7 +8,7 @@
  static int
  func_file_create (void **cookie, int *filedes,
                    const char *path, unsigned int modeflags, unsigned int cmode)
-@@ -1644,6 +1645,7 @@
+@@ -1661,6 +1662,7 @@
  
    return err;
  }
@@ -16,7 +16,7 @@
  
  
  
-@@ -3014,6 +3016,7 @@
+@@ -3033,6 +3035,7 @@
  
  /* API.  */
  
@@ -24,7 +24,7 @@
  estream_t
  _gpgrt_fopen (const char *_GPGRT__RESTRICT path,
                const char *_GPGRT__RESTRICT mode)
-@@ -3056,6 +3059,7 @@
+@@ -3075,6 +3078,7 @@
  
    return stream;
  }
@@ -32,7 +32,7 @@
  
  
  
-@@ -3477,11 +3481,13 @@
+@@ -3496,11 +3500,13 @@
        if (!stream)
          {
            /* Second try is to use the standard C streams.  */
@@ -46,7 +46,7 @@
              stream = do_fpopen (stderr, "a", 1, 1);
          }
  
-@@ -3512,6 +3518,7 @@
+@@ -3531,6 +3537,7 @@
  
  /* Note: A "samethread" keyword given in "mode" is ignored and the
     value used by STREAM is used instead. */
@@ -54,7 +54,7 @@
  estream_t
  _gpgrt_freopen (const char *_GPGRT__RESTRICT path,
                  const char *_GPGRT__RESTRICT mode,
-@@ -3579,6 +3586,7 @@
+@@ -3598,6 +3605,7 @@
  
    return stream;
  }

@@ -8,16 +8,16 @@
  static void md_stop_debug ( gcry_md_hd_t a );
  
  
-@@ -510,8 +509,6 @@
-         }
+@@ -509,8 +508,6 @@
+       b->list = br;
      }
  
--  if (a->debug && !err)
+-  if (a->debug)
 -    md_start_debug (bhd, "unknown");
  
-   if (!err)
-     *b_hd = bhd;
-@@ -777,9 +774,6 @@
+   *b_hd = bhd;
+ 
+@@ -776,9 +773,6 @@
      case GCRYCTL_FINALIZE:
        md_final (hd);
        break;
@@ -27,7 +27,7 @@
      case GCRYCTL_STOP_DUMP:
        md_stop_debug ( hd );
        break;
-@@ -806,6 +800,7 @@
+@@ -805,6 +799,7 @@
  /* The new debug interface.  If SUFFIX is a string it creates an debug
     file for the context HD.  IF suffix is NULL, the file is closed and
     debugging is stopped.  */
@@ -35,7 +35,7 @@
  void
  _gcry_md_debug (gcry_md_hd_t hd, const char *suffix)
  {
-@@ -814,6 +809,7 @@
+@@ -813,6 +808,7 @@
    else
      md_stop_debug (hd);
  }
@@ -43,7 +43,7 @@
  
  
  /****************
-@@ -1193,6 +1189,7 @@
+@@ -1203,6 +1199,7 @@
  }
  
  
@@ -51,7 +51,7 @@
  static void
  md_start_debug ( gcry_md_hd_t md, const char *suffix )
  {
-@@ -1213,6 +1210,7 @@
+@@ -1223,6 +1220,7 @@
    if ( !md->ctx->debug )
      log_debug("md debug: can't open %s\n", buf );
  }
@@ -71,7 +71,7 @@
  /*-- random-drbg.c --*/
 --- random/random-csprng.c
 +++ random/random-csprng.c
-@@ -667,6 +667,7 @@
+@@ -671,6 +671,7 @@
     reasonable time to succeed.  With FOR_WRITE set to true a write
     lock will be taken.  FNAME is used only for diagnostics. Returns 0
     on success or -1 on error. */
@@ -79,7 +79,7 @@
  static int
  lock_seed_file (int fd, const char *fname, int for_write)
  {
-@@ -703,6 +704,7 @@
+@@ -707,6 +708,7 @@
  #endif /*!LOCK_SEED_FILE*/
    return 0;
  }
@@ -87,7 +87,7 @@
  
  
  /* Read in a seed from the random_seed file and return true if this
-@@ -733,6 +735,7 @@
+@@ -737,6 +739,7 @@
    if (!seed_file_name)
      return 0;
  
@@ -95,7 +95,7 @@
  #ifdef HAVE_DOSISH_SYSTEM
    fd = open( seed_file_name, O_RDONLY | O_BINARY );
  #else
-@@ -819,9 +822,11 @@
+@@ -823,9 +826,11 @@
  
    allow_seed_file_update = 1;
    return 1;
@@ -107,7 +107,7 @@
  void
  _gcry_rngcsprng_update_seed_file (void)
  {
-@@ -899,6 +904,7 @@
+@@ -903,6 +908,7 @@
  
    unlock_pool ();
  }
@@ -115,7 +115,7 @@
  
  
  /* Read random out of the pool.  This function is the core of the
-@@ -1108,8 +1114,6 @@
+@@ -1112,8 +1118,6 @@
               enum random_origins, size_t, int);
  
  #if USE_RNDLINUX
@@ -229,7 +229,7 @@
        fd_set rfds;
        struct timeval tv;
        int rc;
-@@ -294,6 +296,9 @@
+@@ -293,6 +295,9 @@
        while (n == -1 && errno == EINTR);
        if  (n == -1)
          log_fatal("read error on random device: %s\n", strerror(errno));
@@ -348,7 +348,7 @@
  #endif /*HMAC256_H*/
 --- src/hwfeatures.c
 +++ src/hwfeatures.c
-@@ -117,6 +117,7 @@
+@@ -121,6 +121,7 @@
  static void
  parse_hwf_deny_file (void)
  {
@@ -356,7 +356,7 @@
    const char *fname = HWF_DENY_FILE;
    FILE *fp;
    char buffer[256];
-@@ -172,6 +173,7 @@
+@@ -176,6 +177,7 @@
  #endif /*HAVE_SYSLOG*/
          }
      }
