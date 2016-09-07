@@ -55,8 +55,8 @@ def build(ctx):
         stage.path(f).unhardcode_paths()
 
     # Remove Pickle files, as they don't seem to be stable.
-    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.alpha.3.pickle',
-              'lib/python3.6/lib2to3/PatternGrammar3.6.0.alpha.3.pickle'}:
+    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.alpha.4.pickle',
+              'lib/python3.6/lib2to3/PatternGrammar3.6.0.alpha.4.pickle'}:
         stage.path(f).remove()
     stage.install()
 
