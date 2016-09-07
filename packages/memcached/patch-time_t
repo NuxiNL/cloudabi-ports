@@ -1,3 +1,17 @@
+--- crawler.c
++++ crawler.c
+@@ -226,9 +226,9 @@
+     // TODO: uriencode directly into the buffer.
+     uriencode(ITEM_key(it), keybuf, it->nkey, KEY_MAX_LENGTH * 3 + 1);
+     int total = snprintf(cm->c.cbuf, 4096,
+-            "key=%s exp=%ld la=%llu cas=%llu fetch=%s\n",
++            "key=%s exp=%jd la=%llu cas=%llu fetch=%s\n",
+             keybuf,
+-            (it->exptime == 0) ? -1 : (long)it->exptime + process_started,
++            (it->exptime == 0) ? -1 : (intmax_t)(it->exptime + process_started),
+             (unsigned long long)it->time + process_started,
+             (unsigned long long)ITEM_get_cas(it),
+             (it->it_flags & ITEM_FETCHED) ? "yes" : "no");
 --- items.c
 +++ items.c
 @@ -484,10 +484,10 @@
