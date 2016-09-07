@@ -1,6 +1,6 @@
 --- lib/connect.c
 +++ lib/connect.c
-@@ -429,7 +429,8 @@
+@@ -433,7 +433,8 @@
    }
  
    for(;;) {
@@ -10,7 +10,7 @@
        /* we succeeded to bind */
        struct Curl_sockaddr_storage add;
        curl_socklen_t size = sizeof(add);
-@@ -1115,7 +1116,8 @@
+@@ -1094,7 +1095,8 @@
  #endif
      }
      else {

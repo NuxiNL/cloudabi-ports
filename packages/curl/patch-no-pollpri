@@ -1,6 +1,6 @@
 --- include/curl/multi.h
 +++ include/curl/multi.h
-@@ -100,7 +100,6 @@
+@@ -104,7 +104,6 @@
   * We don't use pollfd and POLL* constants explicitly
   * to cover platforms without poll(). */
  #define CURL_WAIT_POLLIN    0x0001
@@ -10,7 +10,7 @@
  struct curl_waitfd {
 --- lib/multi.c
 +++ lib/multi.c
-@@ -1060,8 +1060,6 @@
+@@ -1053,8 +1053,6 @@
      ufds[nfds].events = 0;
      if(extra_fds[i].events & CURL_WAIT_POLLIN)
        ufds[nfds].events |= POLLIN;
@@ -19,7 +19,7 @@
      if(extra_fds[i].events & CURL_WAIT_POLLOUT)
        ufds[nfds].events |= POLLOUT;
      ++nfds;
-@@ -1087,8 +1085,6 @@
+@@ -1080,8 +1078,6 @@
            mask |= CURL_WAIT_POLLIN;
          if(r & POLLOUT)
            mask |= CURL_WAIT_POLLOUT;

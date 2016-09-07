@@ -1,6 +1,6 @@
 --- configure
 +++ configure
-@@ -20129,9 +20129,6 @@
+@@ -20132,9 +20132,6 @@
  fi
  
  
@@ -10,7 +10,7 @@
  
  
  curl_includes_winsock2="\
-@@ -20366,7 +20363,6 @@
+@@ -20369,7 +20366,6 @@
      X-unknown)
        { $as_echo "$as_me:${as_lineno-$LINENO}: result: cannot find connect" >&5
  $as_echo "cannot find connect" >&6; }

@@ -1,6 +1,6 @@
 --- lib/connect.c
 +++ lib/connect.c
-@@ -638,7 +638,7 @@
+@@ -642,7 +642,7 @@
        }
        break;
  #endif
