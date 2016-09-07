@@ -5,14 +5,14 @@
 
 host_package(
     name='cmake',
-    version='3.5.2',
+    version='3.6.1',
     homepage='http://www.cmake.org/',
     maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 
 distfile(
-    name='cmake-3.5.2.tar.gz',
-    checksum='92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a',
-    master_sites={'http://www.cmake.org/files/v3.5/'},
+    name='cmake-3.6.1.tar.gz',
+    checksum='28ee98ec40427d41a45673847db7a905b59ce9243bb866eaf59dce0f58aaef11',
+    master_sites={'http://www.cmake.org/files/v3.6/'},
 )

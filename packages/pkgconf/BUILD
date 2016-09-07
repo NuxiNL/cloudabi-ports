@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -24,14 +24,14 @@ def build(ctx):
 
 host_package(
     name='pkgconf',
-    version='0.9.12',
+    version='1.0.1',
     homepage='https://github.com/pkgconf/pkgconf',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='pkgconf-0.9.12.tar.bz2',
-    checksum='7ec8b516e655e247f4ba976837cee808134785819ab8f538f652fe919cc6c09f',
-    master_sites={'http://rabbit.dereferenced.org/~nenolod/distfiles/'},
+    name='pkgconf-1.0.1.tar.xz',
+    checksum='37db912cf060ed0a3113114515597f3c566d3ab796973c5c408691e20ec1fe20',
+    master_sites={'https://github.com/pkgconf/pkgconf/releases/download/pkgconf-1.0.1/'},
 )
