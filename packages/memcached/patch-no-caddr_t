@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -4231,7 +4231,7 @@
+@@ -4420,7 +4420,7 @@
              /* Might have written just part of the last iovec entry;
                 adjust it so the next write will do the rest. */
              if (res > 0) {

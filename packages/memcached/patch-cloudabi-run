@@ -34,7 +34,7 @@
  static int try_read_command(conn *c);
  
  enum try_read_result {
-@@ -230,6 +233,7 @@
+@@ -215,6 +218,7 @@
      settings.oldest_cas = 0;          /* supplements accuracy of oldest_live */
      settings.evict_to_free = 1;       /* push old items out of cache when memory runs out */
      settings.socketpath = NULL;       /* by default, not using a unix socket */
@@ -42,7 +42,7 @@
      settings.factor = 1.25;
      settings.chunk_size = 48;         /* space for a modest key and value */
      settings.num_threads = 4;         /* N workers */
-@@ -4621,6 +4625,7 @@
+@@ -4878,6 +4882,7 @@
      return;
  }
  
@@ -50,7 +50,7 @@
  static int new_socket(struct addrinfo *ai) {
      int sfd;
      int flags;
-@@ -4967,6 +4972,7 @@
+@@ -5224,6 +5229,7 @@
  
      return 0;
  }
@@ -58,7 +58,7 @@
  
  /*
   * We keep the current time of day in a global variable that's updated by a
-@@ -5027,6 +5033,7 @@
+@@ -5284,6 +5290,7 @@
      }
  }
  
@@ -66,7 +66,7 @@
  static void usage(void) {
      printf(PACKAGE " " VERSION "\n");
      printf("-p <num>      TCP port number to listen on (default: 11211)\n"
-@@ -5297,6 +5304,7 @@
+@@ -5555,6 +5562,7 @@
      return -1;
  #endif
  }
@@ -74,7 +74,7 @@
  
  /**
   * Do basic sanity check of the runtime environment
-@@ -5320,6 +5328,7 @@
+@@ -5578,6 +5586,7 @@
      return true;
  }
  
@@ -82,7 +82,7 @@
  static bool _parse_slab_sizes(char *s, uint32_t *slab_sizes) {
      char *b = NULL;
      uint32_t size = 0;
-@@ -5357,6 +5366,148 @@
+@@ -5615,6 +5624,148 @@
      slab_sizes[i] = 0;
      return true;
  }
@@ -171,7 +171,7 @@
 +    slabs_init(settings.maxbytes, settings.factor, preallocate, NULL);
 +
 +    /* start up worker threads if MT mode */
-+    memcached_thread_init(settings.num_threads, main_base);
++    memcached_thread_init(settings.num_threads);
 +
 +    if (start_assoc_maintenance_thread() == -1) {
 +        exit(EXIT_FAILURE);
@@ -231,7 +231,7 @@
  
  int main (int argc, char **argv) {
      int c;
-@@ -6125,3 +6276,5 @@
+@@ -6439,3 +6590,5 @@
  
      return retval;
  }
@@ -239,7 +239,7 @@
 +#endif
 --- memcached.h
 +++ memcached.h
-@@ -326,6 +326,7 @@
+@@ -335,6 +335,7 @@
      int evict_to_free;
      char *socketpath;   /* path to unix socket if using local socket */
      int access;  /* access mask (a la chmod) for unix domain socket */
@@ -247,10 +247,10 @@
      double factor;          /* chunk size growth factor */
      int chunk_size;
      int num_threads;        /* number of worker (without dispatcher) libevent threads to run */
-@@ -564,7 +565,9 @@
-                                     uint64_t *cas, const uint32_t hv);
+@@ -599,7 +600,9 @@
  enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
  conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);
+ void conn_worker_readd(conn *c);
 +#ifndef __CloudABI__
  extern int daemonize(int nochdir, int noclose);
 +#endif

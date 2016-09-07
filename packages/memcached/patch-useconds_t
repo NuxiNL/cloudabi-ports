@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -333,7 +333,7 @@
+@@ -320,7 +320,7 @@
              if ((i % CONNS_PER_SLICE) == 0) {
                  if (settings.verbose > 2)
                      fprintf(stderr, "idle timeout thread sleeping for %dus\n",

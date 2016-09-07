@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -405,10 +405,13 @@
+@@ -392,10 +392,13 @@
      /* We're unlikely to see an FD much higher than maxconns. */
      int next_fd = dup(1);
      int headroom = 10;      /* account for extra unexpected open FDs */
@@ -14,7 +14,7 @@
      /* But if possible, get the actual highest FD we can possibly ever see. */
      if (getrlimit(RLIMIT_NOFILE, &rl) == 0) {
          max_fds = rl.rlim_max;
-@@ -416,6 +419,7 @@
+@@ -403,6 +406,7 @@
          fprintf(stderr, "Failed to query maximum file descriptor; "
                          "falling back to maxconns\n");
      }

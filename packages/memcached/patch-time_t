@@ -1,6 +1,6 @@
 --- items.c
 +++ items.c
-@@ -467,10 +467,10 @@
+@@ -484,10 +484,10 @@
          /* Copy the key since it may not be null-terminated in the struct */
          strncpy(key_temp, ITEM_key(it), it->nkey);
          key_temp[it->nkey] = 0x00; /* terminate */
