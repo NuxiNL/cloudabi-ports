@@ -1,6 +1,6 @@
 --- src/lib/openjp2/openjpeg.c
 +++ src/lib/openjp2/openjpeg.c
-@@ -921,6 +921,7 @@
+@@ -917,6 +917,7 @@
  	}
  }
  
@@ -8,14 +8,14 @@
  opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream)
  {
      return opj_stream_create_file_stream(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
-@@ -962,3 +963,4 @@
+@@ -958,3 +959,4 @@
  
      return l_stream;
  }
 +#endif
 --- src/lib/openjp2/openjpeg.h
 +++ src/lib/openjp2/openjpeg.h
-@@ -1166,16 +1166,12 @@
+@@ -1170,16 +1170,12 @@
   * @param fname             the filename of the file to stream
   * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
  */

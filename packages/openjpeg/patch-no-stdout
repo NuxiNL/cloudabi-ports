@@ -1,6 +1,6 @@
 --- src/lib/openjp2/j2k.c
 +++ src/lib/openjp2/j2k.c
-@@ -8940,7 +8940,6 @@
+@@ -9466,7 +9466,6 @@
          char tab[2];
  
          if (dev_dump_flag){
@@ -8,7 +8,7 @@
                  tab[0] = '\0';
          }
          else {
-@@ -8969,7 +8968,6 @@
+@@ -9495,7 +9494,6 @@
          char tab[3];
  
          if (dev_dump_flag){
@@ -16,16 +16,3 @@
                  tab[0] = '\0';
          }       else {
                  tab[0] = '\t';tab[1] = '\t';tab[2] = '\0';
---- src/lib/openjp2/t2.c
-+++ src/lib/openjp2/t2.c
-@@ -863,10 +863,8 @@
-         if (p_tcp->csty & J2K_CP_CSTY_SOP) {
-                 if (p_max_length < 6) {
-                         /* TODO opj_event_msg(p_t2->cinfo->event_mgr, EVT_WARNING, "Not enough space for expected SOP marker\n"); */
--                        printf("Not enough space for expected SOP marker\n");
-                 } else if ((*l_current_data) != 0xff || (*(l_current_data + 1) != 0x91)) {
-                         /* TODO opj_event_msg(p_t2->cinfo->event_mgr, EVT_WARNING, "Expected SOP marker\n"); */
--                        printf("Expected SOP marker\n");
-                         fprintf(stderr, "Error : expected SOP marker\n");
-                 } else {
-                         l_current_data += 6;

@@ -1,6 +1,6 @@
 --- src/lib/openjp2/CMakeLists.txt
 +++ src/lib/openjp2/CMakeLists.txt
-@@ -77,10 +77,6 @@
+@@ -112,10 +112,6 @@
  
  # internal utilities to generate t1_luts.h (part of the jp2 lib)
  # no need to install:
