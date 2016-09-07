@@ -22,7 +22,7 @@ package(
     version='2.9.4',
     homepage='http://www.xmlsoft.org/',
     maintainer='info@nuxi.nl',
-    lib_depends={'c-runtime'},
+    lib_depends={'c-runtime', 'xz', 'zlib'},
     build_cmd=build,
 )
 
