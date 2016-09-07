@@ -322,7 +322,7 @@
  
  /**
   * g_key_file_ref: (skip)
-@@ -4425,6 +4433,7 @@
+@@ -4427,6 +4435,7 @@
   *
   * Since: 2.40
   */
@@ -330,7 +330,7 @@
  gboolean
  g_key_file_save_to_file (GKeyFile     *key_file,
                           const gchar  *filename,
-@@ -4446,3 +4455,4 @@
+@@ -4448,3 +4457,4 @@
  
    return success;
  }

@@ -26,7 +26,7 @@ def build(ctx):
 
 package(
     name='glib',
-    version='2.48.1',
+    version='2.48.2',
     homepage='https://developer.gnome.org/glib/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libffi', 'pcre', 'zlib'},
@@ -41,7 +41,7 @@ def host_build(ctx):
 
 host_package(
     name='glib',
-    version='2.48.1',
+    version='2.48.2',
     homepage='https://developer.gnome.org/glib/',
     maintainer='info@nuxi.nl',
     lib_depends={'gettext'},
@@ -49,8 +49,8 @@ host_package(
 )
 
 distfile(
-    name='glib-2.48.1.tar.xz',
-    checksum='74411bff489cb2a3527bac743a51018841a56a4d896cc1e0d0d54f8166a14612',
+    name='glib-2.48.2.tar.xz',
+    checksum='f25e751589cb1a58826eac24fbd4186cda4518af772806b666a3f91f66e6d3f4',
     master_sites={'http://ftp.gnome.org/pub/gnome/sources/glib/2.48/'},
     unsafe_string_sources={
         'glib/gbacktrace.c',

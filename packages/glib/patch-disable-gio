@@ -1,6 +1,6 @@
 --- Makefile.in
 +++ Makefile.in
-@@ -833,7 +833,7 @@
+@@ -832,7 +832,7 @@
  
  @ENABLE_INSTALLED_TESTS_TRUE@installed_test_meta_DATA = $(installed_testcases:=.test)
  ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
@@ -9,7 +9,7 @@
  DIST_SUBDIRS = $(SUBDIRS) build
  bin_SCRIPTS = glib-gettextize
  AM_CPPFLAGS = \
-@@ -845,8 +845,7 @@
+@@ -844,8 +844,7 @@
  CONFIGURE_DEPENDENCIES = acglib.m4
  pkgconfigdir = $(libdir)/pkgconfig
  pkgconfig_DATA = glib-2.0.pc gobject-2.0.pc gmodule-2.0.pc \

@@ -9,7 +9,7 @@
  
  INSTALL_HFILES=\
  	re2/filtered_re2.h\
-@@ -282,13 +282,10 @@
+@@ -277,13 +277,10 @@
  
  fuzz: obj/test/re2_fuzzer
  

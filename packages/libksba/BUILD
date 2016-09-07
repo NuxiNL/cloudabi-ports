@@ -15,7 +15,7 @@ def build(ctx):
 
 package(
     name='libksba',
-    version='1.3.4',
+    version='1.3.5',
     homepage='https://www.gnupg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libgpg-error'},
@@ -23,8 +23,8 @@ package(
 )
 
 distfile(
-    name='libksba-1.3.4.tar.bz2',
-    checksum='f6c2883cebec5608692d8730843d87f237c0964d923bbe7aa89c05f20558ad4f',
+    name='libksba-1.3.5.tar.bz2',
+    checksum='41444fd7a6ff73a79ad9728f985e71c9ba8cd3e5e53358e70d5f066d35c1a340',
     master_sites={'https://gnupg.org/ftp/gcrypt/libksba/'},
     unsafe_string_sources={
         'src/asn1-func.c',

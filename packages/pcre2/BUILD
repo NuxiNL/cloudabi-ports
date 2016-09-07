@@ -7,7 +7,8 @@
 def build(ctx):
     srcdir = ctx.extract()
     build = srcdir.gnu_configure([
-        '--enable-jit', '--enable-pcre2-16', '--enable-pcre2-32',
+        '--disable-pcre2grep-callout', '--enable-jit',
+        '--enable-pcre2-16', '--enable-pcre2-32',
     ])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
     stage = build.make_install([
@@ -18,7 +19,7 @@ def build(ctx):
 
 package(
     name='pcre2',
-    version='10.21',
+    version='10.22',
     homepage='http://www.pcre.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -26,8 +27,8 @@ package(
 )
 
 distfile(
-    name='pcre2-10.21.tar.bz2',
-    checksum='c66a17509328a7251782691093e75ede7484a203ebc6bed3c08122b092ccd4e0',
+    name='pcre2-10.22.tar.bz2',
+    checksum='b2b44619f4ac6c50ad74c2865fd56807571392496fae1c9ad7a70993d018f416',
     master_sites={'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/'},
     unsafe_string_sources={
         'src/pcre2_error.c',

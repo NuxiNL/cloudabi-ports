@@ -865,7 +865,7 @@
  
  int
  tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
-@@ -334,11 +336,13 @@
+@@ -354,11 +356,13 @@
  	return (0);
  }
  
@@ -879,7 +879,7 @@
  
  int
  tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
-@@ -347,6 +351,7 @@
+@@ -367,6 +371,7 @@
  	return tls_keypair_set_key_mem(config->keypair, key, len);
  }
  
@@ -887,7 +887,7 @@
  int
  tls_config_set_keypair_file(struct tls_config *config,
      const char *cert_file, const char *key_file)
-@@ -358,6 +363,7 @@
+@@ -378,6 +383,7 @@
  
  	return (0);
  }
@@ -897,7 +897,7 @@
  tls_config_set_keypair_mem(struct tls_config *config, const uint8_t *cert,
 --- tls/tls_internal.h
 +++ tls/tls_internal.h
-@@ -44,10 +44,8 @@
+@@ -46,10 +46,8 @@
  struct tls_keypair {
  	struct tls_keypair *next;
  
@@ -908,7 +908,7 @@
  	char *key_mem;
  	size_t key_len;
  };
-@@ -55,8 +53,6 @@
+@@ -57,8 +55,6 @@
  struct tls_config {
  	struct tls_error error;
  

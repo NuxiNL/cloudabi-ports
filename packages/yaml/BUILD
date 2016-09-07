@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='yaml',
-    version='0.1.6',
+    version='0.1.7',
     homepage='http://pyyaml.org/wiki/LibYAML',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,8 +19,8 @@ package(
 )
 
 distfile(
-    name='yaml-0.1.6.tar.gz',
-    checksum='7da6971b4bd08a986dd2a61353bc422362bd0edcc67d7ebaac68c95f74182749',
+    name='yaml-0.1.7.tar.gz',
+    checksum='8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729',
     master_sites={'http://pyyaml.org/download/libyaml/'},
     unsafe_string_sources={'src/dumper.c'},
 )

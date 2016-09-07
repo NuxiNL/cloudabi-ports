@@ -5,13 +5,13 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s/2016-06-01')
+    root = ctx.extract('%(name)s/2016-09-01')
     root.make(['CXXFLAGS=-std=c++11 ' + ctx.cxxflags()])
     root.make_install(['prefix=' + ctx.prefix(), 'install']).install()
 
 package(
     name='re2',
-    version='0.20160601',
+    version='0.20160901',
     homepage='https://github.com/google/re2',
     maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
@@ -19,8 +19,8 @@ package(
 )
 
 distfile(
-    name='re2/2016-06-01.tar.gz',
-    checksum='a781763b22b1051f6d6adb74b671caddb7b1707e275be311a6c50e4d8b25f5eb',
+    name='re2/2016-09-01.tar.gz',
+    checksum='4f5833331c5d6e3bc0465984cff6f75ed9360e1ea1db670716161b98564cda2a',
     master_sites={'https://github.com/google/re2/archive/'},
     unsafe_string_sources={'util/strutil.cc'},
 )
