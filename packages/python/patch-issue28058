@@ -1,0 +1,11 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -2047,7 +2047,7 @@
+     PyStructSequence_SET_ITEM(v, 2, _PyLong_FromDev(st->st_dev));
+ #endif
+     PyStructSequence_SET_ITEM(v, 3, PyLong_FromLong((long)st->st_nlink));
+-#if defined(MS_WINDOWS)
++#if defined(MS_WINDOWS) || defined(__CloudABI__)
+     PyStructSequence_SET_ITEM(v, 4, PyLong_FromLong(0));
+     PyStructSequence_SET_ITEM(v, 5, PyLong_FromLong(0));
+ #else
