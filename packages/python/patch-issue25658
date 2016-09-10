@@ -1,0 +1,133 @@
+--- Python/thread_pthread.h
++++ Python/thread_pthread.h
+@@ -1,6 +1,7 @@
+ 
+ /* Posix threads interface */
+ 
++#include <stdbool.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #if defined(__APPLE__) || defined(HAVE_PTHREAD_DESTRUCTOR)
+@@ -603,46 +604,107 @@
+ 
+ #define Py_HAVE_NATIVE_TLS
+ 
++struct key_entry {
++  pthread_key_t key;
++  bool used;
++};
++
++
++struct key_entry *key_list = NULL;
++int key_list_used = 0;
++int key_list_size = 0;
++
++
++static struct key_entry *
++key_entry_get(int key)
++{
++    if (key >= 0 && key < key_list_size && key_list[key].used)
++        return &key_list[key];
++    return NULL;
++}
++
+ int
+ PyThread_create_key(void)
+ {
+-    pthread_key_t key;
+-    int fail = pthread_key_create(&key, NULL);
+-    if (fail)
+-        return -1;
+-    if (key > INT_MAX) {
+-        /* Issue #22206: handle integer overflow */
+-        pthread_key_delete(key);
+-        errno = ENOMEM;
++    struct key_entry *entry, *new_list;
++    int error, i, new_list_size;
++
++    if (key_list_used >= key_list_size / 2) {
++        /* Key list is getting too full. Grow. */
++        new_list_size = 4;
++        while (new_list_size <= key_list_size)
++            new_list_size *= 2;
++        new_list = PyMem_RawRealloc(key_list,
++                                    sizeof(struct key_entry) * new_list_size);
++        if (new_list == NULL)
++            return -1;
++
++        /* Mark new trailing elements as unused. */
++        for (i = key_list_size; i < new_list_size; ++i)
++             new_list[i].used = false;
++        key_list = new_list;
++        key_list_size = new_list_size;
++    }
++
++    /*
++     * Pick a random key that is unused. This loop is guaranteed to
++     * terminate in two iterations on average, due to its use being less
++     * than 50%.
++     */
++    do {
++        i = rand() % key_list_size;
++        entry = &key_list[i];
++    } while (entry->used);
++
++    error = pthread_key_create(&entry->key, NULL);
++    if (error != 0) {
++        errno = error;
+         return -1;
+     }
+-    return (int)key;
++    entry->used = true;
++    ++key_list_used;
++    return i;
+ }
+ 
+ void
+ PyThread_delete_key(int key)
+ {
+-    pthread_key_delete(key);
++    struct key_entry *entry;
++    entry = key_entry_get(key);
++    if (entry != NULL) {
++        pthread_key_delete(entry->key);
++        entry->used = false;
++        --key_list_used;
++    }
+ }
+ 
+ void
+ PyThread_delete_key_value(int key)
+ {
+-    pthread_setspecific(key, NULL);
++    struct key_entry *entry;
++    entry = key_entry_get(key);
++    if (entry != NULL)
++        pthread_setspecific(entry->key, NULL);
+ }
+ 
+ int
+ PyThread_set_key_value(int key, void *value)
+ {
+-    int fail;
+-    fail = pthread_setspecific(key, value);
+-    return fail ? -1 : 0;
++    struct key_entry *entry;
++    entry = key_entry_get(key);
++    if (entry == NULL)
++        return -1;
++    return pthread_setspecific(entry->key, value) == 0 ? 0 : -1;
+ }
+ 
+ void *
+ PyThread_get_key_value(int key)
+ {
+-    return pthread_getspecific(key);
++    struct key_entry *entry;
++    entry = key_entry_get(key);
++    if (entry == NULL)
++        return NULL;
++    return pthread_getspecific(entry->key);
+ }
+ 
+ void

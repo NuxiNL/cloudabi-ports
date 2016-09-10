@@ -24,7 +24,6 @@ def build(ctx):
         '--disable-shared',
         '--without-ensurepip',
         '--with-pydebug',
-        '--without-threads',
         '--with-system-expat',
         '--with-system-ffi',
         'ac_cv_buggy_getaddrinfo=no',
