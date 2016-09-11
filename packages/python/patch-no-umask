@@ -1,47 +1,49 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -1411,6 +1411,7 @@
+@@ -1411,6 +1411,8 @@
  
  #endif /* defined(HAVE_SYSTEM) && !defined(MS_WINDOWS) */
  
-+#ifdef HAVE_UMASK
++#if (defined(MS_WINDOWS) || defined(HAVE_UMASK))
++
  PyDoc_STRVAR(os_umask__doc__,
  "umask($module, mask, /)\n"
  "--\n"
-@@ -1437,6 +1438,7 @@
- exit:
+@@ -1438,6 +1440,8 @@
      return return_value;
  }
-+#endif /* HAVE_UMASK */
  
++#endif /* (defined(MS_WINDOWS) || defined(HAVE_UMASK)) */
++
  PyDoc_STRVAR(os_unlink__doc__,
  "unlink($module, /, path, *, dir_fd=None)\n"
+ "--\n"
+@@ -5663,6 +5667,10 @@
+     #define OS_SYSTEM_METHODDEF
+ #endif /* !defined(OS_SYSTEM_METHODDEF) */
+ 
++#ifndef OS_UMASK_METHODDEF
++    #define OS_UMASK_METHODDEF
++#endif /* !defined(OS_UMASK_METHODDEF) */
++
+ #ifndef OS_UNAME_METHODDEF
+     #define OS_UNAME_METHODDEF
+ #endif /* !defined(OS_UNAME_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -4338,7 +4338,7 @@
- #endif
+@@ -4339,6 +4339,7 @@
  #endif /* HAVE_SYSTEM */
  
--
-+#ifdef HAVE_UMASK
+ 
++#if defined(MS_WINDOWS) || defined(HAVE_UMASK)
  /*[clinic input]
  os.umask
  
-@@ -4357,6 +4357,7 @@
+@@ -4357,6 +4358,7 @@
          return posix_error();
      return PyLong_FromLong((long)i);
  }
-+#endif /* HAVE_UMASK */
++#endif /* MS_WINDOWS || HAVE_UMASK */
  
  #ifdef MS_WINDOWS
  
-@@ -12432,7 +12433,9 @@
-     {"stat_float_times", stat_float_times, METH_VARARGS, stat_float_times__doc__},
-     OS_SYMLINK_METHODDEF
-     OS_SYSTEM_METHODDEF
-+#ifdef HAVE_UMASK
-     OS_UMASK_METHODDEF
-+#endif
-     OS_UNAME_METHODDEF
-     OS_UNLINK_METHODDEF
-     OS_REMOVE_METHODDEF
