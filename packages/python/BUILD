@@ -8,11 +8,19 @@
 def build(ctx):
     srcdir = ctx.extract('Python-3.6.0a4')
 
+    # Delete the in-tree copy of these, to make certain the out-of-tree
+    # versions are used, i.e. those generated from our patched importlib.
+    generated_files = {'Python/importlib.h', 'Python/importlib_external.h'}
+    for i in generated_files:
+        srcdir.path(i).remove()
+
     # First build a native binary, this will be used by the cross-build
     # to generate some files.
     hostbuild = srcdir.host().gnu_configure()
     hostbuild.make()
 
+    # For the target build, copy over the generated files into the build
+    # directory, as generating them depends on tools built for the host.
     ctx.resource('Setup.dist').rename(srcdir.path('Modules/Setup.dist'))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
@@ -36,6 +44,8 @@ def build(ctx):
         '$(srcdir)/Lib/$(PLATDIR) '
         '%s' % hostbuild.path('python'),
     ])
+    for i in generated_files:
+        hostbuild.path(i).rename(build.path(i))
     build.make()
     stage = build.make_install()
 

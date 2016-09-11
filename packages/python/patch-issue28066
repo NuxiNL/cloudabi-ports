@@ -1,29 +1,22 @@
---- Makefile.pre.in
-+++ Makefile.pre.in
-@@ -719,13 +719,13 @@
- Programs/_freeze_importlib: Programs/_freeze_importlib.o $(LIBRARY_OBJS_OMIT_FROZEN)
- 	$(LINKCC) $(PY_LDFLAGS) -o $@ Programs/_freeze_importlib.o $(LIBRARY_OBJS_OMIT_FROZEN) $(LIBS) $(MODLIBS) $(SYSLIBS) $(LDLAST)
- 
--Python/importlib_external.h: @GENERATED_COMMENT@ $(srcdir)/Lib/importlib/_bootstrap_external.py Programs/_freeze_importlib
-+$(srcdir)/Python/importlib_external.h: @GENERATED_COMMENT@ $(srcdir)/Lib/importlib/_bootstrap_external.py Programs/_freeze_importlib
- 	./Programs/_freeze_importlib \
--	    $(srcdir)/Lib/importlib/_bootstrap_external.py Python/importlib_external.h
-+	    $(srcdir)/Lib/importlib/_bootstrap_external.py $(srcdir)/Python/importlib_external.h
- 
--Python/importlib.h: @GENERATED_COMMENT@ $(srcdir)/Lib/importlib/_bootstrap.py Programs/_freeze_importlib
-+$(srcdir)/Python/importlib.h: @GENERATED_COMMENT@ $(srcdir)/Lib/importlib/_bootstrap.py Programs/_freeze_importlib
- 	./Programs/_freeze_importlib \
--	    $(srcdir)/Lib/importlib/_bootstrap.py Python/importlib.h
-+	    $(srcdir)/Lib/importlib/_bootstrap.py $(srcdir)/Python/importlib.h
+--- configure
++++ configure
+@@ -2810,7 +2810,7 @@
  
  
- ############################################################################
-@@ -871,7 +871,7 @@
  
- Python/ceval.o: $(OPCODETARGETS_H) $(srcdir)/Python/ceval_gil.h
+-if test "$abs_srcdir" != "$abs_builddir"; then
++if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
+     # If we're building out-of-tree, we need to make sure the following
+     # resources get picked up before their $srcdir counterparts.
+     #   Objects/ -> typeslots.inc
+--- configure.ac
++++ configure.ac
+@@ -10,7 +10,7 @@
+ AC_INIT(python, PYTHON_VERSION, https://bugs.python.org/)
  
--Python/frozen.o: Python/importlib.h Python/importlib_external.h
-+Python/frozen.o: $(srcdir)/Python/importlib.h $(srcdir)/Python/importlib_external.h
- 
- Objects/typeobject.o: Objects/typeslots.inc
- Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
+ AC_SUBST(BASECPPFLAGS)
+-if test "$abs_srcdir" != "$abs_builddir"; then
++if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
+     # If we're building out-of-tree, we need to make sure the following
+     # resources get picked up before their $srcdir counterparts.
+     #   Objects/ -> typeslots.inc
