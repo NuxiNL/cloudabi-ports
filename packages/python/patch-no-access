@@ -12,3 +12,13 @@
      Py_END_ALLOW_THREADS
      return_value = !result;
  #endif
+@@ -12394,7 +12398,9 @@
+ static PyMethodDef posix_methods[] = {
+ 
+     OS_STAT_METHODDEF
++#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
+     OS_ACCESS_METHODDEF
++#endif
+     OS_TTYNAME_METHODDEF
+     OS_CHDIR_METHODDEF
+     OS_CHFLAGS_METHODDEF
