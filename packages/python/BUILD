@@ -8,11 +8,6 @@
 def build(ctx):
     srcdir = ctx.extract('Python-3.6.0a4')
 
-    # Delete the in-tree copy of these, to make certain the out-of-tree
-    # versions are used, i.e. those generated from our patched importlib
-    srcdir.path('Python/importlib.h').remove()
-    srcdir.path('Python/importlib_external.h').remove()
-
     # First build a native binary, this will be used by the cross-build
     # to generate some files.
     hostbuild = srcdir.host().gnu_configure()
@@ -41,9 +36,8 @@ def build(ctx):
         '$(srcdir)/Lib/$(PLATDIR) '
         '%s' % hostbuild.path('python'),
     ])
-    make_env = ['FREEZE_IMPORTLIB=%s/Programs/_freeze_importlib' % hostbuild]
-    build.make(make_env)
-    stage = build.make_install(make_env + ['install'])
+    build.make()
+    stage = build.make_install()
 
     # Fix up pathnames in shebangs and build configurations.
     for f in {'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
