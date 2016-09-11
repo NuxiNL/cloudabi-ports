@@ -1,21 +1,34 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -2349,6 +2349,7 @@
+@@ -2349,6 +2349,8 @@
  
  #endif /* defined(HAVE_GETGID) */
  
-+#ifdef HAVE_GETPID
++#if defined(HAVE_GETPID)
++
  PyDoc_STRVAR(os_getpid__doc__,
  "getpid($module, /)\n"
  "--\n"
-@@ -2366,6 +2367,7 @@
- {
+@@ -2367,6 +2369,8 @@
      return os_getpid_impl(module);
  }
-+#endif /* HAVE_GETPID */
  
++#endif /* defined(HAVE_GETPID) */
++
  #if defined(HAVE_GETGROUPS)
  
+ PyDoc_STRVAR(os_getgroups__doc__,
+@@ -5751,6 +5755,10 @@
+     #define OS_GETGID_METHODDEF
+ #endif /* !defined(OS_GETGID_METHODDEF) */
+ 
++#ifndef OS_GETPID_METHODDEF
++    #define OS_GETPID_METHODDEF
++#endif /* !defined(OS_GETPID_METHODDEF) */
++
+ #ifndef OS_GETGROUPS_METHODDEF
+     #define OS_GETGROUPS_METHODDEF
+ #endif /* !defined(OS_GETGROUPS_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
 @@ -6082,6 +6082,7 @@
@@ -34,16 +47,6 @@
  
  #ifdef HAVE_GETGROUPLIST
  
-@@ -12464,7 +12466,9 @@
-     {"getgrouplist",    posix_getgrouplist, METH_VARARGS, posix_getgrouplist__doc__},
- #endif
-     OS_GETGROUPS_METHODDEF
-+#ifdef HAVE_GETPID
-     OS_GETPID_METHODDEF
-+#endif
-     OS_GETPGRP_METHODDEF
-     OS_GETPPID_METHODDEF
-     OS_GETUID_METHODDEF
 --- Modules/signalmodule.c
 +++ Modules/signalmodule.c
 @@ -89,7 +89,9 @@

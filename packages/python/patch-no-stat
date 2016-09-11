@@ -1,3 +1,17 @@
+--- Include/fileutils.h
++++ Include/fileutils.h
+@@ -48,9 +48,11 @@
+     struct _Py_stat_struct *status);
+ #endif   /* Py_LIMITED_API */
+ 
++#ifdef HAVE_STAT
+ PyAPI_FUNC(int) _Py_stat(
+     PyObject *path,
+     struct stat *status);
++#endif /* HAVE_STAT */
+ 
+ #ifndef Py_LIMITED_API
+ PyAPI_FUNC(int) _Py_open(
 --- Modules/getpath.c
 +++ Modules/getpath.c
 @@ -126,8 +126,13 @@
@@ -16,49 +30,24 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -362,8 +362,12 @@
- #       define FSTAT _Py_fstat_noraise
- #       define STRUCT_STAT struct _Py_stat_struct
- #else
-+#   ifdef HAVE_STAT
- #       define STAT stat
-+#   endif
-+#   ifdef HAVE_LSTAT
- #       define LSTAT lstat
-+#   endif
- #       define FSTAT fstat
- #       define STRUCT_STAT struct stat
+@@ -11507,6 +11507,7 @@
+ static PyObject *
+ DirEntry_fetch_stat(DirEntry *self, int follow_symlinks)
+ {
++#if defined(HAVE_STAT)
+     int result;
+     struct _Py_stat_struct st;
+ 
+@@ -11545,6 +11546,9 @@
  #endif
-@@ -2176,7 +2180,11 @@
-                          follow_symlinks ? 0 : AT_SYMLINK_NOFOLLOW);
-     else
- #endif
-+#ifdef HAVE_STAT
-         result = STAT(path->narrow, &st);
+ 
+     return _pystat_fromstructstat(&st);
 +#else
-+        {result = -1; errno = ENAMETOOLONG;}
++    return NULL;
 +#endif
-     Py_END_ALLOW_THREADS
+ }
  
-     if (result != 0) {
-@@ -11535,9 +11543,17 @@
-     path = PyBytes_AS_STRING(bytes);
- 
-     if (follow_symlinks)
-+#ifdef HAVE_STAT
-         result = STAT(path, &st);
-+#else
-+        {result = -1; errno = ENOSYS;}
-+#endif /* HAVE_STAT */
-     else
-+#ifdef HAVE_LSTAT
-         result = LSTAT(path, &st);
-+#else
-+        {result = -1; errno = ENOSYS;}
-+#endif /* HAVE_LSTAT */
-     Py_DECREF(bytes);
- 
-     if (result != 0)
+ static PyObject *
 --- Modules/zipimport.c
 +++ Modules/zipimport.c
 @@ -100,7 +100,12 @@
@@ -74,3 +63,21 @@
          if (rv == -2)
              goto error;
          if (rv == 0) {
+--- Python/fileutils.c
++++ Python/fileutils.c
+@@ -708,6 +708,7 @@
+    Return 0 on success, -1 on _wstat() / stat() error, -2 if an exception was
+    raised. */
+ 
++#ifdef HAVE_STAT
+ int
+ _Py_stat(PyObject *path, struct stat *statbuf)
+ {
+@@ -733,6 +734,7 @@
+     return ret;
+ #endif
+ }
++#endif /* HAVE_STAT */
+ 
+ 
+ static int

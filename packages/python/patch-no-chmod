@@ -1,24 +1,49 @@
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -296,6 +296,8 @@
+ 
+ #endif /* defined(HAVE_FCHDIR) */
+ 
++#if (defined(HAVE_CHMOD) || defined(HAVE_FCHMODAT))
++
+ PyDoc_STRVAR(os_chmod__doc__,
+ "chmod($module, /, path, mode, *, dir_fd=None, follow_symlinks=True)\n"
+ "--\n"
+@@ -353,6 +355,8 @@
+     return return_value;
+ }
+ 
++#endif /* (defined(HAVE_CHMOD) || defined(HAVE_FCHMODAT)) */
++
+ #if defined(HAVE_FCHMOD)
+ 
+ PyDoc_STRVAR(os_fchmod__doc__,
+@@ -5583,6 +5587,10 @@
+     #define OS_FCHDIR_METHODDEF
+ #endif /* !defined(OS_FCHDIR_METHODDEF) */
+ 
++#ifndef OS_CHMOD_METHODDEF
++    #define OS_CHMOD_METHODDEF
++#endif /* !defined(OS_CHMOD_METHODDEF) */
++
+ #ifndef OS_FCHMOD_METHODDEF
+     #define OS_FCHMOD_METHODDEF
+ #endif /* !defined(OS_FCHMOD_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2896,7 +2896,11 @@
-     }
-     else
- #endif
-+#ifdef HAVE_CHMOD
-         result = chmod(path->narrow, mode);
-+#else
-+        {result= -1; errno = ENOSYS;}
-+#endif /* HAVE_CHMOD */
-     Py_END_ALLOW_THREADS
+@@ -2784,6 +2784,7 @@
+ #endif /* HAVE_FCHDIR */
  
-     if (result) {
-@@ -12398,7 +12402,9 @@
-     OS_TTYNAME_METHODDEF
-     OS_CHDIR_METHODDEF
-     OS_CHFLAGS_METHODDEF
-+#if defined(MS_WINDOWS) || defined(HAVE_CHMOD)
-     OS_CHMOD_METHODDEF
-+#endif
-     OS_FCHMOD_METHODDEF
-     OS_LCHMOD_METHODDEF
-     OS_CHOWN_METHODDEF
+ 
++#if defined(HAVE_CHMOD) || defined(HAVE_FCHMODAT)
+ /*[clinic input]
+ os.chmod
+ 
+@@ -2916,6 +2917,7 @@
+ 
+     Py_RETURN_NONE;
+ }
++#endif /* HAVE_CHMOD || HAVE_FCHMODAT */
+ 
+ 
+ #ifdef HAVE_FCHMOD

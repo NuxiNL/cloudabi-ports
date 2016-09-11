@@ -9,52 +9,22 @@
  PyAPI_FUNC(PyObject *) _Py_device_encoding(int);
  
  PyAPI_FUNC(wchar_t *) Py_DecodeLocale(
-@@ -48,11 +50,14 @@
-     struct _Py_stat_struct *status);
- #endif   /* Py_LIMITED_API */
- 
-+#ifdef HAVE_STAT
- PyAPI_FUNC(int) _Py_stat(
-     PyObject *path,
+@@ -53,6 +55,7 @@
      struct stat *status);
-+#endif /* HAVE_STAT */
  
  #ifndef Py_LIMITED_API
 +#ifdef HAVE_OPEN
  PyAPI_FUNC(int) _Py_open(
      const char *pathname,
      int flags);
-@@ -60,8 +65,10 @@
+@@ -60,6 +63,7 @@
  PyAPI_FUNC(int) _Py_open_noraise(
      const char *pathname,
      int flags);
 +#endif /* HAVE_OPEN */
  #endif
  
-+#ifdef HAVE_FOPEN
  PyAPI_FUNC(FILE *) _Py_wfopen(
-     const wchar_t *path,
-     const wchar_t *mode);
-@@ -73,6 +80,7 @@
- PyAPI_FUNC(FILE*) _Py_fopen_obj(
-     PyObject *path,
-     const char *mode);
-+#endif /* HAVE_FOPEN */
- 
- PyAPI_FUNC(Py_ssize_t) _Py_read(
-     int fd,
-@@ -103,9 +111,11 @@
-     size_t resolved_path_size);
- #endif
- 
-+#ifdef HAVE_GETCWD
- PyAPI_FUNC(wchar_t*) _Py_wgetcwd(
-     wchar_t *buf,
-     size_t size);
-+#endif /* HAVE_GETCWD */
- 
- #ifndef Py_LIMITED_API
- PyAPI_FUNC(int) _Py_get_inheritable(int fd);
 --- Include/pyerrors.h
 +++ Include/pyerrors.h
 @@ -345,6 +345,7 @@
@@ -87,20 +57,6 @@
                  Py_END_ALLOW_THREADS
              } while (self->fd < 0 && errno == EINTR &&
                       !(async_err = PyErr_CheckSignals()));
---- Modules/posixmodule.c
-+++ Modules/posixmodule.c
-@@ -7771,7 +7771,11 @@
-             fd = openat(dir_fd, path->narrow, flags, mode);
-         else
- #endif
-+#ifdef HAVE_OPEN
-             fd = open(path->narrow, flags, mode);
-+#else
-+            {fd = -1; errno = ENOSYS;}
-+#endif /* HAVE_OPEN */
-         Py_END_ALLOW_THREADS
-     } while (fd < 0 && errno == EINTR && !(async_err = PyErr_CheckSignals()));
-     _Py_END_SUPPRESS_IPH
 --- Python/ast.c
 +++ Python/ast.c
 @@ -659,7 +659,11 @@
@@ -164,23 +120,7 @@
  }
 --- Python/fileutils.c
 +++ Python/fileutils.c
-@@ -708,6 +708,7 @@
-    Return 0 on success, -1 on _wstat() / stat() error, -2 if an exception was
-    raised. */
- 
-+#ifdef HAVE_STAT
- int
- _Py_stat(PyObject *path, struct stat *statbuf)
- {
-@@ -733,6 +734,7 @@
-     return ret;
- #endif
- }
-+#endif /* HAVE_STAT */
- 
- 
- static int
-@@ -942,6 +944,7 @@
+@@ -942,6 +942,7 @@
      return set_inheritable(fd, inheritable, 1, atomic_flag_works);
  }
  
@@ -188,7 +128,7 @@
  static int
  _Py_open_impl(const char *pathname, int flags, int gil_held)
  {
-@@ -1160,6 +1163,7 @@
+@@ -1160,6 +1161,7 @@
      }
      return f;
  }
@@ -196,30 +136,3 @@
  
  /* Read count bytes from fd into buf.
  
-@@ -1454,6 +1458,7 @@
-    including the null character. Decode the path from the locale encoding.
-    Return NULL on error. */
- 
-+#ifdef HAVE_GETCWD
- wchar_t*
- _Py_wgetcwd(wchar_t *buf, size_t size)
- {
-@@ -1479,6 +1484,7 @@
-     return buf;
- #endif
- }
-+#endif /* HAVE_GETCWD */
- 
- /* Duplicate a file descriptor. The new file descriptor is created as
-    non-inheritable. Return a new file descriptor on success, raise an OSError
---- Python/sysmodule.c
-+++ Python/sysmodule.c
-@@ -1763,7 +1763,7 @@
-     crashing the Python interpreter. Catch this common mistake here
-     and output a useful error message. Note that under MS Windows,
-     the shell already prevents that. */
--#if !defined(MS_WINDOWS)
-+#if !defined(MS_WINDOWS) && !defined(__CloudABI__)
-     {
-         struct _Py_stat_struct sb;
-         if (_Py_fstat_noraise(fileno(stdin), &sb) == 0 &&

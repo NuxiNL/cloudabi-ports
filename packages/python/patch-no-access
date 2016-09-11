@@ -1,24 +1,49 @@
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -92,6 +92,8 @@
+     return return_value;
+ }
+ 
++#if (defined(HAVE_ACCESS) || defined(HAVE_FACCESSAT))
++
+ PyDoc_STRVAR(os_access__doc__,
+ "access($module, /, path, mode, *, dir_fd=None, effective_ids=False,\n"
+ "       follow_symlinks=True)\n"
+@@ -161,6 +163,8 @@
+     return return_value;
+ }
+ 
++#endif /* (defined(HAVE_ACCESS) || defined(HAVE_FACCESSAT)) */
++
+ #if defined(HAVE_TTYNAME)
+ 
+ PyDoc_STRVAR(os_ttyname__doc__,
+@@ -5571,6 +5575,10 @@
+     return return_value;
+ }
+ 
++#ifndef OS_ACCESS_METHODDEF
++    #define OS_ACCESS_METHODDEF
++#endif /* !defined(OS_ACCESS_METHODDEF) */
++
+ #ifndef OS_TTYNAME_METHODDEF
+     #define OS_TTYNAME_METHODDEF
+ #endif /* !defined(OS_TTYNAME_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2646,7 +2646,11 @@
-     }
-     else
- #endif
-+#ifdef HAVE_ACCESS
-         result = access(path->narrow, mode);
-+#else
-+        {result = -1; errno = ENOSYS;}
-+#endif /* HAVE_ACCESS */
-     Py_END_ALLOW_THREADS
-     return_value = !result;
- #endif
-@@ -12394,7 +12398,9 @@
- static PyMethodDef posix_methods[] = {
+@@ -2548,6 +2548,7 @@
+ }
  
-     OS_STAT_METHODDEF
-+#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
-     OS_ACCESS_METHODDEF
-+#endif
-     OS_TTYNAME_METHODDEF
-     OS_CHDIR_METHODDEF
-     OS_CHFLAGS_METHODDEF
+ 
++#if defined(HAVE_ACCESS) || defined(HAVE_FACCESSAT)
+ /*[clinic input]
+ os.access -> bool
+ 
+@@ -2666,6 +2667,7 @@
+ #ifndef X_OK
+ #define X_OK 1
+ #endif
++#endif /* HAVE_ACCESS || HAVE_FACCESSAT */
+ 
+ 
+ #ifdef HAVE_TTYNAME

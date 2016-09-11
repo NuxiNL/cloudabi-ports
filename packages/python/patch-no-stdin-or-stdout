@@ -540,6 +540,15 @@
      if (outf == NULL || outf == Py_None) {
          PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
          return NULL;
+@@ -1763,7 +1769,7 @@
+     crashing the Python interpreter. Catch this common mistake here
+     and output a useful error message. Note that under MS Windows,
+     the shell already prevents that. */
+-#if !defined(MS_WINDOWS)
++#if !defined(MS_WINDOWS) && !defined(__CloudABI__)
+     {
+         struct _Py_stat_struct sb;
+         if (_Py_fstat_noraise(fileno(stdin), &sb) == 0 &&
 @@ -2221,6 +2227,7 @@
      PyErr_Restore(error_type, error_value, error_traceback);
  }

@@ -1,0 +1,131 @@
+--- Include/fileutils.h
++++ Include/fileutils.h
+@@ -103,9 +103,11 @@
+     size_t resolved_path_size);
+ #endif
+ 
++#ifdef HAVE_GETCWD
+ PyAPI_FUNC(wchar_t*) _Py_wgetcwd(
+     wchar_t *buf,
+     size_t size);
++#endif /* HAVE_GETCWD */
+ 
+ #ifndef Py_LIMITED_API
+ PyAPI_FUNC(int) _Py_get_inheritable(int fd);
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -791,6 +791,8 @@
+ 
+ #endif /* defined(HAVE_LCHOWN) */
+ 
++#if (defined(MS_WINDOWS) || defined(HAVE_GETCWD))
++
+ PyDoc_STRVAR(os_getcwd__doc__,
+ "getcwd($module, /)\n"
+ "--\n"
+@@ -809,6 +811,10 @@
+     return os_getcwd_impl(module);
+ }
+ 
++#endif /* (defined(MS_WINDOWS) || defined(HAVE_GETCWD)) */
++
++#if (defined(MS_WINDOWS) || defined(HAVE_GETCWD))
++
+ PyDoc_STRVAR(os_getcwdb__doc__,
+ "getcwdb($module, /)\n"
+ "--\n"
+@@ -827,7 +833,9 @@
+     return os_getcwdb_impl(module);
+ }
+ 
+-#if defined(HAVE_LINK)
++#endif /* (defined(MS_WINDOWS) || defined(HAVE_GETCWD)) */
++
++#if defined(HAVE_LINK) || defined(HAVE_LINKAT)
+ 
+ PyDoc_STRVAR(os_link__doc__,
+ "link($module, /, src, dst, *, src_dir_fd=None, dst_dir_fd=None,\n"
+@@ -880,7 +888,7 @@
+     return return_value;
+ }
+ 
+-#endif /* defined(HAVE_LINK) */
++#endif /* defined(HAVE_LINK) || defined(HAVE_LINKAT) */
+ 
+ PyDoc_STRVAR(os_listdir__doc__,
+ "listdir($module, /, path=None)\n"
+@@ -5627,6 +5635,14 @@
+     #define OS_LCHOWN_METHODDEF
+ #endif /* !defined(OS_LCHOWN_METHODDEF) */
+ 
++#ifndef OS_GETCWD_METHODDEF
++    #define OS_GETCWD_METHODDEF
++#endif /* !defined(OS_GETCWD_METHODDEF) */
++
++#ifndef OS_GETCWDB_METHODDEF
++    #define OS_GETCWDB_METHODDEF
++#endif /* !defined(OS_GETCWDB_METHODDEF) */
++
+ #ifndef OS_LINK_METHODDEF
+     #define OS_LINK_METHODDEF
+ #endif /* !defined(OS_LINK_METHODDEF) */
+--- Modules/getpath.c
++++ Modules/getpath.c
+@@ -231,11 +231,13 @@
+     if (p[0] == SEP)
+         wcscpy(path, p);
+     else {
++#ifdef HAVE_GETCWD
+         if (!_Py_wgetcwd(path, pathlen)) {
+             /* unable to get the current directory */
+             wcscpy(path, p);
+             return;
+         }
++#endif
+         if (p[0] == '.' && p[1] == SEP)
+             p += 2;
+         joinpath(path, p);
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -3299,6 +3299,7 @@
+ #endif /* HAVE_LCHOWN */
+ 
+ 
++#if defined(MS_WINDOWS) || defined(HAVE_GETCWD)
+ static PyObject *
+ posix_getcwd(int use_bytes)
+ {
+@@ -3408,13 +3409,14 @@
+ {
+     return posix_getcwd(1);
+ }
++#endif /* MS_WINDOWS || HAVE_GETCWD */
+ 
+ 
+ #if ((!defined(HAVE_LINK)) && defined(MS_WINDOWS))
+ #define HAVE_LINK 1
+ #endif
+ 
+-#ifdef HAVE_LINK
++#if defined(HAVE_LINK) || defined(HAVE_LINKAT)
+ /*[clinic input]
+ 
+ os.link
+--- Python/fileutils.c
++++ Python/fileutils.c
+@@ -1454,6 +1454,7 @@
+    including the null character. Decode the path from the locale encoding.
+    Return NULL on error. */
+ 
++#ifdef HAVE_GETCWD
+ wchar_t*
+ _Py_wgetcwd(wchar_t *buf, size_t size)
+ {
+@@ -1479,6 +1480,7 @@
+     return buf;
+ #endif
+ }
++#endif /* HAVE_GETCWD */
+ 
+ /* Duplicate a file descriptor. The new file descriptor is created as
+    non-inheritable. Return a new file descriptor on success, raise an OSError
