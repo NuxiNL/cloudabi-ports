@@ -138,7 +138,7 @@ class Distfile:
             if path.endswith('.orig'):
                 os.unlink(path)
 
-        for patch in self._patches:
+        for patch in sorted(self._patches):
             log.info('FIXUP %s', patch)
             # Apply individual patches to the code.
             patched_dir = os.path.join(tmpdir, 'patched')
