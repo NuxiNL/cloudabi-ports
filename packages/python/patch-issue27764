@@ -24,7 +24,6 @@
  exit:
      return return_value;
  }
--/*[clinic end generated code: output=36cff76a8fb2c9a6 input=a9049054013a1b77]*/
 +
 +#endif /* defined(F_SETLK) */
 +
@@ -35,7 +34,7 @@
 +#ifndef FCNTL_LOCKF_METHODDEF
 +    #define FCNTL_LOCKF_METHODDEF
 +#endif /* !defined(FCNTL_LOCKF_METHODDEF) */
-+/*[clinic end generated code: output=e0e74fdd07a73222 input=a9049054013a1b77]*/
+ /*[clinic end generated code: output=36cff76a8fb2c9a6 input=a9049054013a1b77]*/
 --- Modules/fcntlmodule.c
 +++ Modules/fcntlmodule.c
 @@ -265,6 +265,7 @@
