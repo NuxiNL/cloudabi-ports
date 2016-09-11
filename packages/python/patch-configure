@@ -112,7 +112,7 @@
 - clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
 - fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
 +for ac_func in alarm accept4 access setitimer getitimer bind bindtextdomain bind_textdomain_codeset chdir chmod chown \
-+ clock clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
++ clock clock_getres clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
 + fexecve fdopendir fopen fork fpathconf freehostent fstatat ftime ftruncate futimesat \
   futimens futimes gai_strerror getentropy \
 - getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
@@ -201,7 +201,7 @@
 - clock confstr ctermid dup3 execv faccessat fchmod fchmodat fchown fchownat \
 - fexecve fdopendir fork fpathconf fstatat ftime ftruncate futimesat \
 +AC_CHECK_FUNCS(alarm accept4 access setitimer getitimer bind bindtextdomain bind_textdomain_codeset chdir chmod chown \
-+ clock clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
++ clock clock_getres clock_settime confstr connect ctermid dcgettext dup3 execv execve faccessat fchmod fchmodat fchown fchownat \
 + fexecve fdopendir fopen fork fpathconf freehostent fstatat ftime ftruncate futimesat \
   futimens futimes gai_strerror getentropy \
 - getgrouplist getgroups getlogin getloadavg getpeername getpgid getpid \
@@ -284,7 +284,13 @@
  /* Define to 1 if you have the `chown' function. */
  #undef HAVE_CHOWN
  
-@@ -128,6 +143,9 @@
+@@ -125,9 +140,15 @@
+ /* Define to 1 if you have the `clock_getres' function. */
+ #undef HAVE_CLOCK_GETRES
+ 
++/* Define to 1 if you have the `clock_getres' function. */
++#undef HAVE_CLOCK_GETRES
++
  /* Define to 1 if you have the `clock_gettime' function. */
  #undef HAVE_CLOCK_GETTIME
  
@@ -294,7 +300,7 @@
  /* Define if the C compiler supports computed gotos. */
  #undef HAVE_COMPUTED_GOTOS
  
-@@ -137,6 +155,9 @@
+@@ -137,6 +158,9 @@
  /* Define to 1 if you have the <conio.h> header file. */
  #undef HAVE_CONIO_H
  
@@ -304,7 +310,7 @@
  /* Define to 1 if you have the `copysign' function. */
  #undef HAVE_COPYSIGN
  
-@@ -158,6 +179,9 @@
+@@ -158,6 +182,9 @@
  /* Define if you have the 'resize_term' function. */
  #undef HAVE_CURSES_RESIZE_TERM
  
@@ -314,7 +320,7 @@
  /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
     don't. */
  #undef HAVE_DECL_ISFINITE
-@@ -260,6 +284,9 @@
+@@ -260,6 +287,9 @@
  /* Define to 1 if you have the `execv' function. */
  #undef HAVE_EXECV
  
@@ -324,7 +330,7 @@
  /* Define to 1 if you have the `expm1' function. */
  #undef HAVE_EXPM1
  
-@@ -299,6 +326,9 @@
+@@ -299,6 +329,9 @@
  /* Define to 1 if you have the `flock' function. */
  #undef HAVE_FLOCK
  
@@ -334,7 +340,7 @@
  /* Define to 1 if you have the `fork' function. */
  #undef HAVE_FORK
  
-@@ -308,6 +338,9 @@
+@@ -308,6 +341,9 @@
  /* Define to 1 if you have the `fpathconf' function. */
  #undef HAVE_FPATHCONF
  
@@ -344,7 +350,7 @@
  /* Define to 1 if you have the `fseek64' function. */
  #undef HAVE_FSEEK64
  
-@@ -366,18 +399,27 @@
+@@ -366,18 +402,27 @@
  /* Define if you have the getaddrinfo function. */
  #undef HAVE_GETADDRINFO
  
@@ -372,7 +378,7 @@
  /* Define to 1 if you have the `gethostbyname' function. */
  #undef HAVE_GETHOSTBYNAME
  
-@@ -420,6 +462,9 @@
+@@ -420,6 +465,9 @@
  /* Define to 1 if you have the `getpid' function. */
  #undef HAVE_GETPID
  
@@ -382,7 +388,7 @@
  /* Define to 1 if you have the `getpriority' function. */
  #undef HAVE_GETPRIORITY
  
-@@ -450,6 +495,9 @@
+@@ -450,6 +498,9 @@
  /* Define to 1 if you have the `gettimeofday' function. */
  #undef HAVE_GETTIMEOFDAY
  
@@ -392,7 +398,7 @@
  /* Define to 1 if you have the `getwd' function. */
  #undef HAVE_GETWD
  
-@@ -457,6 +505,9 @@
+@@ -457,6 +508,9 @@
     bcopy. */
  #undef HAVE_GLIBC_MEMMOVE_BUG
  
@@ -402,7 +408,7 @@
  /* Define to 1 if you have the <grp.h> header file. */
  #undef HAVE_GRP_H
  
-@@ -475,6 +526,9 @@
+@@ -475,6 +529,9 @@
  /* Define to 1 if you have the `if_nameindex' function. */
  #undef HAVE_IF_NAMEINDEX
  
@@ -412,7 +418,7 @@
  /* Define if you have the 'inet_aton' function. */
  #undef HAVE_INET_ATON
  
-@@ -580,6 +634,9 @@
+@@ -580,6 +637,9 @@
  /* Define to 1 if you have the <linux/tipc.h> header file. */
  #undef HAVE_LINUX_TIPC_H
  
@@ -422,7 +428,7 @@
  /* Define to 1 if you have the `lockf' function. */
  #undef HAVE_LOCKF
  
-@@ -616,6 +673,9 @@
+@@ -616,6 +676,9 @@
  /* Define to 1 if you have the `memrchr' function. */
  #undef HAVE_MEMRCHR
  
@@ -432,7 +438,7 @@
  /* Define to 1 if you have the `mkdirat' function. */
  #undef HAVE_MKDIRAT
  
-@@ -655,9 +715,15 @@
+@@ -655,9 +718,15 @@
  /* Define to 1 if you have the `nice' function. */
  #undef HAVE_NICE
  
@@ -448,7 +454,7 @@
  /* Define to 1 if you have the `openpty' function. */
  #undef HAVE_OPENPTY
  
-@@ -691,6 +757,9 @@
+@@ -691,6 +760,9 @@
  /* Define to 1 if you have the `pread' function. */
  #undef HAVE_PREAD
  
@@ -458,7 +464,7 @@
  /* Define if you have the 'prlimit' functions. */
  #undef HAVE_PRLIMIT
  
-@@ -724,6 +793,9 @@
+@@ -724,6 +796,9 @@
  /* Define to 1 if you have the `putenv' function. */
  #undef HAVE_PUTENV
  
@@ -468,7 +474,7 @@
  /* Define to 1 if you have the `pwrite' function. */
  #undef HAVE_PWRITE
  
-@@ -739,6 +811,9 @@
+@@ -739,6 +814,9 @@
  /* Define to 1 if you have the `realpath' function. */
  #undef HAVE_REALPATH
  
@@ -478,7 +484,7 @@
  /* Define to 1 if you have the `renameat' function. */
  #undef HAVE_RENAMEAT
  
-@@ -769,9 +844,15 @@
+@@ -769,9 +847,15 @@
  /* Define if you have readline 4.0 */
  #undef HAVE_RL_RESIZE_TERMINAL
  
@@ -494,7 +500,7 @@
  /* Define to 1 if you have the `sched_get_priority_max' function. */
  #undef HAVE_SCHED_GET_PRIORITY_MAX
  
-@@ -793,6 +874,9 @@
+@@ -793,6 +877,9 @@
  /* Define to 1 if you have the `select' function. */
  #undef HAVE_SELECT
  
@@ -504,7 +510,7 @@
  /* Define to 1 if you have the `sem_getvalue' function. */
  #undef HAVE_SEM_GETVALUE
  
-@@ -808,6 +892,9 @@
+@@ -808,6 +895,9 @@
  /* Define to 1 if you have the `sendfile' function. */
  #undef HAVE_SENDFILE
  
@@ -514,7 +520,7 @@
  /* Define to 1 if you have the `setegid' function. */
  #undef HAVE_SETEGID
  
-@@ -853,6 +940,9 @@
+@@ -853,6 +943,9 @@
  /* Define to 1 if you have the `setsid' function. */
  #undef HAVE_SETSID
  
@@ -524,7 +530,7 @@
  /* Define to 1 if you have the `setuid' function. */
  #undef HAVE_SETUID
  
-@@ -871,6 +961,9 @@
+@@ -871,6 +964,9 @@
  /* Define to 1 if you have the `siginterrupt' function. */
  #undef HAVE_SIGINTERRUPT
  
@@ -534,7 +540,7 @@
  /* Define to 1 if you have the <signal.h> header file. */
  #undef HAVE_SIGNAL_H
  
-@@ -907,6 +1000,9 @@
+@@ -907,6 +1003,9 @@
  /* Define if your compiler provides ssize_t */
  #undef HAVE_SSIZE_T
  
@@ -544,7 +550,7 @@
  /* Define to 1 if you have the `statvfs' function. */
  #undef HAVE_STATVFS
  
-@@ -989,6 +1085,9 @@
+@@ -989,6 +1088,9 @@
  /* Define to 1 if you have the <sysexits.h> header file. */
  #undef HAVE_SYSEXITS_H
  
@@ -554,7 +560,7 @@
  /* Define to 1 if you have the <sys/audioio.h> header file. */
  #undef HAVE_SYS_AUDIOIO_H
  
-@@ -1054,6 +1153,9 @@
+@@ -1054,6 +1156,9 @@
  /* Define to 1 if you have the <sys/socket.h> header file. */
  #undef HAVE_SYS_SOCKET_H
  
@@ -564,7 +570,7 @@
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H
  
-@@ -1108,6 +1210,9 @@
+@@ -1108,6 +1213,9 @@
  /* Define to 1 if you have the <term.h> header file. */
  #undef HAVE_TERM_H
  
@@ -574,7 +580,7 @@
  /* Define to 1 if you have the `tgamma' function. */
  #undef HAVE_TGAMMA
  
-@@ -1133,6 +1238,9 @@
+@@ -1133,6 +1241,9 @@
  /* Define to 1 if you have the `truncate' function. */
  #undef HAVE_TRUNCATE
  
@@ -584,7 +590,7 @@
  /* Define to 1 if you don't have `tm_zone' but do have the external array
     `tzname'. */
  #undef HAVE_TZNAME
-@@ -1149,12 +1257,18 @@
+@@ -1149,12 +1260,18 @@
  /* Define to 1 if the system has the type `uintptr_t'. */
  #undef HAVE_UINTPTR_T
  
@@ -603,7 +609,7 @@
  /* Define to 1 if you have the `unlinkat' function. */
  #undef HAVE_UNLINKAT
  
-@@ -1178,6 +1292,9 @@
+@@ -1178,6 +1295,9 @@
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
  
