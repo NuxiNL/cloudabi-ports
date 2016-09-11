@@ -4,7 +4,7 @@
  "clock_gettime(clk_id) -> floating point number\n\
  \n\
  Return the time of the specified clock clk_id.");
-+#endif /* HAVE_CLOCK_GETTIME */
++#endif   /* HAVE_CLOCK_GETTIME */
  
 +#ifdef HAVE_CLOCK_SETTIME
  static PyObject *
@@ -14,7 +14,7 @@
  "clock_settime(clk_id, time)\n\
  \n\
  Set the time of the specified clock clk_id.");
-+#endif /* HAVE_CLOCK_SETTIME */
++#endif   /* HAVE_CLOCK_SETTIME */
  
 +#ifdef HAVE_CLOCK_GETRES
  static PyObject *
@@ -25,7 +25,7 @@
  \n\
  Return the resolution (precision) of the specified clock clk_id.");
 -#endif   /* HAVE_CLOCK_GETTIME */
-+#endif /* HAVE_CLOCK_GETRES */
++#endif   /* HAVE_CLOCK_GETRES */
  
  static PyObject *
  time_sleep(PyObject *self, PyObject *obj)
