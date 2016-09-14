@@ -6,7 +6,22 @@
  * signal handlers, so just provide some stubs for these functions.
  */
 
+PyDoc_STRVAR(module_doc, "_signal module.");
+
+static struct PyModuleDef module_def = {
+    PyModuleDef_HEAD_INIT,
+    "_signal",
+    module_doc,
+    0,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
+
 PyMODINIT_FUNC PyInit__signal(void) {
+  return PyModule_Create(&module_def);
 }
 
 int PyErr_CheckSignals(void) {
