@@ -20,8 +20,8 @@
 +#ifdef HAVE_OPENDIR
      iterator->dirp = opendir(path);
 +#else
-+        dirp = NULL;
-+        errno = ENOSYS;
++    iterator->dirp = NULL;
++    errno = ENOSYS;
 +#endif
      Py_END_ALLOW_THREADS
  
