@@ -21,7 +21,8 @@ def build(ctx):
 
     # For the target build, copy over the generated files into the build
     # directory, as generating them depends on tools built for the host.
-    ctx.resource('Setup.dist').rename(srcdir.path('Modules/Setup.dist'))
+    for f in {'Setup.dist', 'signalmodule.c'}:
+        ctx.resource(f).rename(srcdir.path('Modules').path(f))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
         '--disable-shared',

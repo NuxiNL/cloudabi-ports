@@ -47,35 +47,3 @@
  
  #ifdef HAVE_GETGROUPLIST
  
---- Modules/signalmodule.c
-+++ Modules/signalmodule.c
-@@ -89,7 +89,9 @@
- #include <sys/types.h> /* For pid_t */
- #include "pythread.h"
- static long main_thread;
-+# ifdef HAVE_GETPID
- static pid_t main_pid;
-+# endif
- #endif
- 
- static volatile struct {
-@@ -1193,7 +1195,9 @@
- 
- #ifdef WITH_THREAD
-     main_thread = PyThread_get_thread_ident();
-+# ifdef HAVE_GETPID
-     main_pid = getpid();
-+# endif
- #endif
- 
-     /* Create the module and add the functions */
-@@ -1607,7 +1611,9 @@
-     _PyGILState_Reinit();
-     PyEval_ReInitThreads();
-     main_thread = PyThread_get_thread_ident();
-+# ifdef HAVE_GETPID
-     main_pid = getpid();
-+# endif
-     _PyImport_ReInitLock();
- #endif
- }
