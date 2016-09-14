@@ -1,21 +1,27 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3503,7 +3503,9 @@
+@@ -3503,7 +3503,12 @@
          }
  
          Py_BEGIN_ALLOW_THREADS
 +#ifdef HAVE_OPENDIR
          dirp = opendir(name);
++#else
++        dirp = NULL;
++        errno = ENOSYS;
 +#endif
          Py_END_ALLOW_THREADS
      }
  
-@@ -11925,7 +11927,9 @@
+@@ -11925,7 +11930,12 @@
  
      errno = 0;
      Py_BEGIN_ALLOW_THREADS
 +#ifdef HAVE_OPENDIR
      iterator->dirp = opendir(path);
++#else
++        dirp = NULL;
++        errno = ENOSYS;
 +#endif
      Py_END_ALLOW_THREADS
  
