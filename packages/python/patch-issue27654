@@ -1,38 +1,40 @@
+--- Modules/_randommodule.c
++++ Modules/_randommodule.c
+@@ -218,6 +218,9 @@
+     _PyTime_t now;
+     uint32_t key[5];
+ 
++#ifdef __CloudABI__
++    arc4random_buf(key, sizeof(key));
++#else
+     now = _PyTime_GetSystemClock();
+     key[0] = (PY_UINT32_T)(now & 0xffffffffU);
+     key[1] = (PY_UINT32_T)(now >> 32);
+@@ -227,6 +230,7 @@
+     now = _PyTime_GetMonotonicClock();
+     key[3] = (PY_UINT32_T)(now & 0xffffffffU);
+     key[4] = (PY_UINT32_T)(now >> 32);
++#endif
+ 
+     init_by_array(self, key, Py_ARRAY_LENGTH(key));
+ }
 --- Python/random.c
 +++ Python/random.c
-@@ -229,6 +229,9 @@
- static void
- dev_urandom_noraise(unsigned char *buffer, Py_ssize_t size)
- {
-+#ifdef __CloudABI__
-+    arc4random_buf(buffer, size);
-+#else
-     int fd;
-     Py_ssize_t n;
- 
-@@ -260,6 +263,7 @@
-         size -= n;
-     }
-     close(fd);
-+#endif
- }
- 
- /* Read size bytes from /dev/urandom into buffer.
-@@ -267,6 +271,9 @@
+@@ -230,6 +230,9 @@
  static int
- dev_urandom_python(char *buffer, Py_ssize_t size)
+ dev_urandom(char *buffer, Py_ssize_t size, int blocking, int raise)
  {
 +#ifdef __CloudABI__
 +    arc4random_buf(buffer, size);
 +#else
      int fd;
      Py_ssize_t n;
-     struct _Py_stat_struct st;
-@@ -343,6 +350,7 @@
-         buffer += n;
-         size -= n;
-     } while (0 < size);
+ #ifdef PY_GETRANDOM
+@@ -334,6 +337,7 @@
+         }
+         close(fd);
+     }
 +#endif
- 
      return 0;
  }
+ 

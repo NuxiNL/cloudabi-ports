@@ -1,6 +1,6 @@
 --- Include/fileutils.h
 +++ Include/fileutils.h
-@@ -103,9 +103,11 @@
+@@ -100,9 +100,11 @@
      size_t resolved_path_size);
  #endif
  
@@ -10,8 +10,8 @@
      size_t size);
 +#endif /* HAVE_GETCWD */
  
- #ifndef Py_LIMITED_API
  PyAPI_FUNC(int) _Py_get_inheritable(int fd);
+ 
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
 @@ -791,6 +791,8 @@
@@ -54,7 +54,7 @@
  
  PyDoc_STRVAR(os_listdir__doc__,
  "listdir($module, /, path=None)\n"
-@@ -5627,6 +5635,14 @@
+@@ -5717,6 +5725,14 @@
      #define OS_LCHOWN_METHODDEF
  #endif /* !defined(OS_LCHOWN_METHODDEF) */
  
@@ -87,7 +87,7 @@
          joinpath(path, p);
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3299,6 +3299,7 @@
+@@ -3167,6 +3167,7 @@
  #endif /* HAVE_LCHOWN */
  
  
@@ -95,7 +95,7 @@
  static PyObject *
  posix_getcwd(int use_bytes)
  {
-@@ -3408,13 +3409,14 @@
+@@ -3276,13 +3277,14 @@
  {
      return posix_getcwd(1);
  }
@@ -113,7 +113,7 @@
  os.link
 --- Python/fileutils.c
 +++ Python/fileutils.c
-@@ -1454,6 +1454,7 @@
+@@ -1421,6 +1421,7 @@
     including the null character. Decode the path from the locale encoding.
     Return NULL on error. */
  
@@ -121,7 +121,7 @@
  wchar_t*
  _Py_wgetcwd(wchar_t *buf, size_t size)
  {
-@@ -1479,6 +1480,7 @@
+@@ -1446,6 +1447,7 @@
      return buf;
  #endif
  }

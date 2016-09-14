@@ -1,8 +1,8 @@
 --- Include/fileutils.h
 +++ Include/fileutils.h
-@@ -48,9 +48,11 @@
+@@ -47,9 +47,11 @@
+     int fd,
      struct _Py_stat_struct *status);
- #endif   /* Py_LIMITED_API */
  
 +#ifdef HAVE_STAT
  PyAPI_FUNC(int) _Py_stat(
@@ -10,8 +10,8 @@
      struct stat *status);
 +#endif /* HAVE_STAT */
  
- #ifndef Py_LIMITED_API
  PyAPI_FUNC(int) _Py_open(
+     const char *pathname,
 --- Modules/getpath.c
 +++ Modules/getpath.c
 @@ -126,8 +126,13 @@
@@ -30,7 +30,7 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -11507,6 +11507,7 @@
+@@ -11124,6 +11124,7 @@
  static PyObject *
  DirEntry_fetch_stat(DirEntry *self, int follow_symlinks)
  {
@@ -38,7 +38,7 @@
      int result;
      struct _Py_stat_struct st;
  
-@@ -11545,6 +11546,9 @@
+@@ -11162,6 +11163,9 @@
  #endif
  
      return _pystat_fromstructstat(&st);
@@ -50,7 +50,7 @@
  static PyObject *
 --- Python/fileutils.c
 +++ Python/fileutils.c
-@@ -708,6 +708,7 @@
+@@ -705,6 +705,7 @@
     Return 0 on success, -1 on _wstat() / stat() error, -2 if an exception was
     raised. */
  
@@ -58,7 +58,7 @@
  int
  _Py_stat(PyObject *path, struct stat *statbuf)
  {
-@@ -733,6 +734,7 @@
+@@ -730,6 +731,7 @@
      return ret;
  #endif
  }

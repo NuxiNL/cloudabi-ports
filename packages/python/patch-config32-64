@@ -1,6 +1,6 @@
 --- Modules/_decimal/libmpdec/mpdecimal.h
 +++ Modules/_decimal/libmpdec/mpdecimal.h
-@@ -123,6 +123,12 @@
+@@ -119,6 +119,12 @@
  /*                              Configuration                                 */
  /******************************************************************************/
  

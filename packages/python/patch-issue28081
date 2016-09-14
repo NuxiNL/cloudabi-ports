@@ -29,26 +29,7 @@
  
  static PyObject *
  time_sleep(PyObject *self, PyObject *obj)
-@@ -1226,8 +1230,9 @@
- #endif /* __CYGWIN__ */
- #endif /* !HAVE_TZNAME || __GLIBC__ || __CYGWIN__*/
- 
--#if defined(HAVE_CLOCK_GETTIME)
-+#ifdef CLOCK_REALTIME
-     PyModule_AddIntMacro(m, CLOCK_REALTIME);
-+#endif
- #ifdef CLOCK_MONOTONIC
-     PyModule_AddIntMacro(m, CLOCK_MONOTONIC);
- #endif
-@@ -1243,7 +1248,6 @@
- #ifdef CLOCK_THREAD_CPUTIME_ID
-     PyModule_AddIntMacro(m, CLOCK_THREAD_CPUTIME_ID);
- #endif
--#endif /* HAVE_CLOCK_GETTIME */
- }
- 
- 
-@@ -1254,7 +1258,11 @@
+@@ -1287,7 +1291,11 @@
  #endif
  #ifdef HAVE_CLOCK_GETTIME
      {"clock_gettime",   time_clock_gettime, METH_VARARGS, clock_gettime_doc},
@@ -60,9 +41,28 @@
      {"clock_getres",    time_clock_getres, METH_VARARGS, clock_getres_doc},
  #endif
      {"sleep",           time_sleep, METH_O, sleep_doc},
+@@ -1383,8 +1391,9 @@
+     /* Set, or reset, module variables like time.timezone */
+     PyInit_timezone(m);
+ 
+-#if defined(HAVE_CLOCK_GETTIME)
++#ifdef CLOCK_REALTIME
+     PyModule_AddIntMacro(m, CLOCK_REALTIME);
++#endif
+ #ifdef CLOCK_MONOTONIC
+     PyModule_AddIntMacro(m, CLOCK_MONOTONIC);
+ #endif
+@@ -1400,7 +1409,6 @@
+ #ifdef CLOCK_THREAD_CPUTIME_ID
+     PyModule_AddIntMacro(m, CLOCK_THREAD_CPUTIME_ID);
+ #endif
+-#endif /* HAVE_CLOCK_GETTIME */
+ 
+     if (!initialized) {
+         if (PyStructSequence_InitType2(&StructTimeType,
 --- configure
 +++ configure
-@@ -12463,6 +12463,64 @@
+@@ -12571,6 +12571,64 @@
  done
  
  
@@ -129,7 +129,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 --- configure.ac
 +++ configure.ac
-@@ -3625,6 +3625,12 @@
+@@ -3734,6 +3734,12 @@
      ])
  ])
  
@@ -144,7 +144,7 @@
  #if defined(MAJOR_IN_MKDEV)
 --- pyconfig.h.in
 +++ pyconfig.h.in
-@@ -128,6 +128,9 @@
+@@ -125,6 +125,9 @@
  /* Define to 1 if you have the `clock_gettime' function. */
  #undef HAVE_CLOCK_GETTIME
  

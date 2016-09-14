@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -164,22 +164,10 @@
+@@ -173,22 +173,10 @@
  #define fsync _commit
  #else
  /* Unix functions that the configure script doesn't check for */
@@ -23,7 +23,7 @@
  #endif  /* _MSC_VER */
  #endif  /* ! __WATCOMC__ || __QNX__ */
  
-@@ -212,23 +200,41 @@
+@@ -221,23 +209,41 @@
  extern int chdir(char *);
  extern int rmdir(char *);
  #else
@@ -67,7 +67,7 @@
  #endif /* HAVE_SYMLINK */
 --- configure
 +++ configure
-@@ -3378,6 +3378,9 @@
+@@ -3247,6 +3247,9 @@
         # a lot of different things including 'define_xopen_source'
         # in the case statement below.
  	case "$host" in
@@ -77,7 +77,7 @@
  	*-*-linux*)
  		ac_sys_system=Linux
  		;;
-@@ -3417,7 +3420,7 @@
+@@ -3286,7 +3289,7 @@
  
  if test "$cross_compiling" = yes; then
  	case "$host" in
@@ -86,14 +86,14 @@
  		case "$host_cpu" in
  		arm*)
  			_host_cpu=arm
-@@ -7555,13 +7558,13 @@
+@@ -7780,13 +7783,13 @@
  
  for ac_header in asm/types.h conio.h direct.h dlfcn.h errno.h \
  fcntl.h grp.h \
 -ieeefp.h io.h langinfo.h libintl.h process.h pthread.h \
--sched.h shadow.h signal.h stdint.h stropts.h termios.h \
+-sched.h shadow.h signal.h stropts.h termios.h \
 +ieeefp.h io.h langinfo.h libintl.h process.h pthread.h pwd.h \
-+sched.h semaphore.h shadow.h signal.h stdint.h stropts.h termios.h \
++sched.h semaphore.h shadow.h signal.h stropts.h termios.h \
  unistd.h utime.h \
 -poll.h sys/devpoll.h sys/epoll.h sys/poll.h \
 +poll.h rpc/rpc.h sys/devpoll.h sys/epoll.h sys/poll.h \
@@ -104,7 +104,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -11107,27 +11110,35 @@
+@@ -11215,27 +11218,35 @@
  fi
  
  # checks for library functions
@@ -175,14 +175,14 @@
  		case "$host_cpu" in
  		arm*)
  			_host_cpu=arm
-@@ -1891,13 +1894,13 @@
+@@ -2035,13 +2038,13 @@
  AC_HEADER_STDC
  AC_CHECK_HEADERS(asm/types.h conio.h direct.h dlfcn.h errno.h \
  fcntl.h grp.h \
 -ieeefp.h io.h langinfo.h libintl.h process.h pthread.h \
--sched.h shadow.h signal.h stdint.h stropts.h termios.h \
+-sched.h shadow.h signal.h stropts.h termios.h \
 +ieeefp.h io.h langinfo.h libintl.h process.h pthread.h pwd.h \
-+sched.h semaphore.h shadow.h signal.h stdint.h stropts.h termios.h \
++sched.h semaphore.h shadow.h signal.h stropts.h termios.h \
  unistd.h utime.h \
 -poll.h sys/devpoll.h sys/epoll.h sys/poll.h \
 +poll.h rpc/rpc.h sys/devpoll.h sys/epoll.h sys/poll.h \
@@ -193,7 +193,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -3291,27 +3294,35 @@
+@@ -3400,27 +3403,35 @@
  fi
  
  # checks for library functions
@@ -268,9 +268,9 @@
  /* Define to 1 if you have the `bind_textdomain_codeset' function. */
  #undef HAVE_BIND_TEXTDOMAIN_CODESET
  
-@@ -110,9 +119,15 @@
- /* Define this if you have the type _Bool. */
- #undef HAVE_C99_BOOL
+@@ -107,9 +116,15 @@
+ /* Has builtin atomics */
+ #undef HAVE_BUILTIN_ATOMIC
  
 +/* Define to 1 if you have the `chdir' function. */
 +#undef HAVE_CHDIR
@@ -284,7 +284,7 @@
  /* Define to 1 if you have the `chown' function. */
  #undef HAVE_CHOWN
  
-@@ -137,6 +152,9 @@
+@@ -134,6 +149,9 @@
  /* Define to 1 if you have the <conio.h> header file. */
  #undef HAVE_CONIO_H
  
@@ -294,7 +294,7 @@
  /* Define to 1 if you have the `copysign' function. */
  #undef HAVE_COPYSIGN
  
-@@ -158,6 +176,9 @@
+@@ -155,6 +173,9 @@
  /* Define if you have the 'resize_term' function. */
  #undef HAVE_CURSES_RESIZE_TERM
  
@@ -304,7 +304,7 @@
  /* Define to 1 if you have the declaration of `isfinite', and to 0 if you
     don't. */
  #undef HAVE_DECL_ISFINITE
-@@ -260,6 +281,9 @@
+@@ -257,6 +278,9 @@
  /* Define to 1 if you have the `execv' function. */
  #undef HAVE_EXECV
  
@@ -314,7 +314,7 @@
  /* Define to 1 if you have the `expm1' function. */
  #undef HAVE_EXPM1
  
-@@ -299,6 +323,9 @@
+@@ -296,6 +320,9 @@
  /* Define to 1 if you have the `flock' function. */
  #undef HAVE_FLOCK
  
@@ -324,7 +324,7 @@
  /* Define to 1 if you have the `fork' function. */
  #undef HAVE_FORK
  
-@@ -308,6 +335,9 @@
+@@ -305,6 +332,9 @@
  /* Define to 1 if you have the `fpathconf' function. */
  #undef HAVE_FPATHCONF
  
@@ -334,7 +334,7 @@
  /* Define to 1 if you have the `fseek64' function. */
  #undef HAVE_FSEEK64
  
-@@ -366,18 +396,27 @@
+@@ -363,18 +393,27 @@
  /* Define if you have the getaddrinfo function. */
  #undef HAVE_GETADDRINFO
  
@@ -362,7 +362,7 @@
  /* Define to 1 if you have the `gethostbyname' function. */
  #undef HAVE_GETHOSTBYNAME
  
-@@ -420,6 +459,9 @@
+@@ -417,6 +456,9 @@
  /* Define to 1 if you have the `getpid' function. */
  #undef HAVE_GETPID
  
@@ -372,7 +372,7 @@
  /* Define to 1 if you have the `getpriority' function. */
  #undef HAVE_GETPRIORITY
  
-@@ -450,6 +492,9 @@
+@@ -447,6 +489,9 @@
  /* Define to 1 if you have the `gettimeofday' function. */
  #undef HAVE_GETTIMEOFDAY
  
@@ -382,7 +382,7 @@
  /* Define to 1 if you have the `getwd' function. */
  #undef HAVE_GETWD
  
-@@ -457,6 +502,9 @@
+@@ -454,6 +499,9 @@
     bcopy. */
  #undef HAVE_GLIBC_MEMMOVE_BUG
  
@@ -392,7 +392,7 @@
  /* Define to 1 if you have the <grp.h> header file. */
  #undef HAVE_GRP_H
  
-@@ -475,6 +523,9 @@
+@@ -472,6 +520,9 @@
  /* Define to 1 if you have the `if_nameindex' function. */
  #undef HAVE_IF_NAMEINDEX
  
@@ -402,7 +402,7 @@
  /* Define if you have the 'inet_aton' function. */
  #undef HAVE_INET_ATON
  
-@@ -580,6 +631,9 @@
+@@ -571,6 +622,9 @@
  /* Define to 1 if you have the <linux/tipc.h> header file. */
  #undef HAVE_LINUX_TIPC_H
  
@@ -412,7 +412,7 @@
  /* Define to 1 if you have the `lockf' function. */
  #undef HAVE_LOCKF
  
-@@ -616,6 +670,9 @@
+@@ -604,6 +658,9 @@
  /* Define to 1 if you have the `memrchr' function. */
  #undef HAVE_MEMRCHR
  
@@ -422,7 +422,7 @@
  /* Define to 1 if you have the `mkdirat' function. */
  #undef HAVE_MKDIRAT
  
-@@ -655,9 +712,15 @@
+@@ -643,9 +700,15 @@
  /* Define to 1 if you have the `nice' function. */
  #undef HAVE_NICE
  
@@ -438,7 +438,7 @@
  /* Define to 1 if you have the `openpty' function. */
  #undef HAVE_OPENPTY
  
-@@ -691,6 +754,9 @@
+@@ -676,6 +739,9 @@
  /* Define to 1 if you have the `pread' function. */
  #undef HAVE_PREAD
  
@@ -448,7 +448,7 @@
  /* Define if you have the 'prlimit' functions. */
  #undef HAVE_PRLIMIT
  
-@@ -724,6 +790,9 @@
+@@ -709,6 +775,9 @@
  /* Define to 1 if you have the `putenv' function. */
  #undef HAVE_PUTENV
  
@@ -458,7 +458,7 @@
  /* Define to 1 if you have the `pwrite' function. */
  #undef HAVE_PWRITE
  
-@@ -739,6 +808,9 @@
+@@ -724,6 +793,9 @@
  /* Define to 1 if you have the `realpath' function. */
  #undef HAVE_REALPATH
  
@@ -468,7 +468,7 @@
  /* Define to 1 if you have the `renameat' function. */
  #undef HAVE_RENAMEAT
  
-@@ -769,9 +841,15 @@
+@@ -754,9 +826,15 @@
  /* Define if you have readline 4.0 */
  #undef HAVE_RL_RESIZE_TERMINAL
  
@@ -484,7 +484,7 @@
  /* Define to 1 if you have the `sched_get_priority_max' function. */
  #undef HAVE_SCHED_GET_PRIORITY_MAX
  
-@@ -793,6 +871,9 @@
+@@ -778,6 +856,9 @@
  /* Define to 1 if you have the `select' function. */
  #undef HAVE_SELECT
  
@@ -494,7 +494,7 @@
  /* Define to 1 if you have the `sem_getvalue' function. */
  #undef HAVE_SEM_GETVALUE
  
-@@ -808,6 +889,9 @@
+@@ -793,6 +874,9 @@
  /* Define to 1 if you have the `sendfile' function. */
  #undef HAVE_SENDFILE
  
@@ -504,7 +504,7 @@
  /* Define to 1 if you have the `setegid' function. */
  #undef HAVE_SETEGID
  
-@@ -853,6 +937,9 @@
+@@ -838,6 +922,9 @@
  /* Define to 1 if you have the `setsid' function. */
  #undef HAVE_SETSID
  
@@ -514,7 +514,7 @@
  /* Define to 1 if you have the `setuid' function. */
  #undef HAVE_SETUID
  
-@@ -871,6 +958,9 @@
+@@ -856,6 +943,9 @@
  /* Define to 1 if you have the `siginterrupt' function. */
  #undef HAVE_SIGINTERRUPT
  
@@ -524,7 +524,7 @@
  /* Define to 1 if you have the <signal.h> header file. */
  #undef HAVE_SIGNAL_H
  
-@@ -907,6 +997,9 @@
+@@ -895,6 +985,9 @@
  /* Define if your compiler provides ssize_t */
  #undef HAVE_SSIZE_T
  
@@ -534,7 +534,7 @@
  /* Define to 1 if you have the `statvfs' function. */
  #undef HAVE_STATVFS
  
-@@ -989,6 +1082,9 @@
+@@ -977,6 +1070,9 @@
  /* Define to 1 if you have the <sysexits.h> header file. */
  #undef HAVE_SYSEXITS_H
  
@@ -544,7 +544,7 @@
  /* Define to 1 if you have the <sys/audioio.h> header file. */
  #undef HAVE_SYS_AUDIOIO_H
  
-@@ -1054,6 +1150,9 @@
+@@ -1042,6 +1138,9 @@
  /* Define to 1 if you have the <sys/socket.h> header file. */
  #undef HAVE_SYS_SOCKET_H
  
@@ -554,7 +554,7 @@
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H
  
-@@ -1108,6 +1207,9 @@
+@@ -1096,6 +1195,9 @@
  /* Define to 1 if you have the <term.h> header file. */
  #undef HAVE_TERM_H
  
@@ -564,7 +564,7 @@
  /* Define to 1 if you have the `tgamma' function. */
  #undef HAVE_TGAMMA
  
-@@ -1133,6 +1235,9 @@
+@@ -1121,6 +1223,9 @@
  /* Define to 1 if you have the `truncate' function. */
  #undef HAVE_TRUNCATE
  
@@ -574,9 +574,9 @@
  /* Define to 1 if you don't have `tm_zone' but do have the external array
     `tzname'. */
  #undef HAVE_TZNAME
-@@ -1149,12 +1254,18 @@
- /* Define to 1 if the system has the type `uintptr_t'. */
- #undef HAVE_UINTPTR_T
+@@ -1128,12 +1233,18 @@
+ /* Define this if you have tcl and TCL_UTF_MAX==6 */
+ #undef HAVE_UCS4_TCL
  
 +/* Define to 1 if you have the `umask' function. */
 +#undef HAVE_UMASK
@@ -593,7 +593,7 @@
  /* Define to 1 if you have the `unlinkat' function. */
  #undef HAVE_UNLINKAT
  
-@@ -1178,6 +1289,9 @@
+@@ -1157,6 +1268,9 @@
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
  

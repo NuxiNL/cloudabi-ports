@@ -18,7 +18,7 @@
  #if defined(HAVE_GETGROUPS)
  
  PyDoc_STRVAR(os_getgroups__doc__,
-@@ -5751,6 +5755,10 @@
+@@ -5841,6 +5845,10 @@
      #define OS_GETGID_METHODDEF
  #endif /* !defined(OS_GETGID_METHODDEF) */
  
@@ -31,7 +31,7 @@
  #endif /* !defined(OS_GETGROUPS_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -6082,6 +6082,7 @@
+@@ -5873,6 +5873,7 @@
  #endif /* HAVE_GETGID */
  
  
@@ -39,7 +39,7 @@
  /*[clinic input]
  os.getpid
  
-@@ -6094,6 +6095,7 @@
+@@ -5885,6 +5886,7 @@
  {
      return PyLong_FromPid(getpid());
  }
@@ -59,7 +59,7 @@
  #endif
  
  static volatile struct {
-@@ -1198,7 +1200,9 @@
+@@ -1193,7 +1195,9 @@
  
  #ifdef WITH_THREAD
      main_thread = PyThread_get_thread_ident();
@@ -69,7 +69,7 @@
  #endif
  
      /* Create the module and add the functions */
-@@ -1655,7 +1659,9 @@
+@@ -1607,7 +1611,9 @@
      _PyGILState_Reinit();
      PyEval_ReInitThreads();
      main_thread = PyThread_get_thread_ident();

@@ -41,6 +41,7 @@ _random _randommodule.c
 _sha1 sha1module.c
 _sha256 sha256module.c
 _sha512 sha512module.c
+_signal signalmodule.c
 _socket socketmodule.c
 _sre _sre.c
 _stat _stat.c

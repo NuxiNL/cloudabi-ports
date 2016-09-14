@@ -50,7 +50,7 @@
  }
  
  EXPORT(char *)my_strchr(const char *s, int c)
-@@ -675,3 +691,7 @@
+@@ -672,3 +688,7 @@
  {
      return PyModule_Create(&_ctypes_testmodule);
  }
@@ -72,7 +72,7 @@
      else {
 --- Modules/_testcapimodule.c
 +++ Modules/_testcapimodule.c
-@@ -2526,7 +2526,11 @@
+@@ -2508,7 +2508,11 @@
          e->tv_sec -=1;
          e->tv_usec += 1000000;
      }
@@ -104,7 +104,7 @@
  #endif
 --- Modules/main.c
 +++ Modules/main.c
-@@ -511,7 +511,11 @@
+@@ -512,7 +512,11 @@
          return usage(0, argv[0]);
  
      if (version) {
@@ -118,7 +118,7 @@
  
 --- Objects/unicodeobject.c
 +++ Objects/unicodeobject.c
-@@ -1165,12 +1165,12 @@
+@@ -1173,12 +1173,12 @@
      return _PyUnicode_COMPACT_DATA(unicode);
  }
  void *_PyUnicode_data(void *unicode){
@@ -137,7 +137,7 @@
      return PyUnicode_DATA(unicode);
  }
  
-@@ -1191,21 +1191,21 @@
+@@ -1199,21 +1199,21 @@
      }
      else
          data = unicode->data.any;
@@ -248,9 +248,9 @@
 -        printf("Label @ %8p, %d: %s\n", ll, ll->ll_nlabels,
 +        fprintf(stderr, "Label @ %8p, %d: %s\n", ll, ll->ll_nlabels,
                 PyGrammar_LabelRepr(lb));
-     return Py_SAFE_DOWNCAST(lb - ll->ll_label, Py_intptr_t, int);
+     return Py_SAFE_DOWNCAST(lb - ll->ll_label, intptr_t, int);
  }
-@@ -134,7 +134,7 @@
+@@ -140,7 +140,7 @@
      int i;
  
  #ifdef Py_DEBUG
@@ -259,7 +259,7 @@
  #endif
      /* Don't translate EMPTY */
      for (i = EMPTY+1; i < g->g_ll.ll_nlabels; i++)
-@@ -147,13 +147,13 @@
+@@ -153,13 +153,13 @@
      int i;
  
      if (Py_DebugFlag)
@@ -275,7 +275,7 @@
                          "Label %s is non-terminal %d.\n",
                          lb->lb_str,
                          g->g_dfa[i].d_type);
-@@ -166,7 +166,7 @@
+@@ -172,7 +172,7 @@
          for (i = 0; i < (int)N_TOKENS; i++) {
              if (strcmp(lb->lb_str, _PyParser_TokenNames[i]) == 0) {
                  if (Py_DebugFlag)
@@ -284,7 +284,7 @@
                          lb->lb_str, i);
                  lb->lb_type = i;
                  free(lb->lb_str);
-@@ -174,7 +174,7 @@
+@@ -180,7 +180,7 @@
                  return;
              }
          }
@@ -293,7 +293,7 @@
          return;
      }
  
-@@ -186,7 +186,7 @@
+@@ -192,7 +192,7 @@
              char *dest;
              size_t name_len;
              if (Py_DebugFlag)
@@ -302,7 +302,7 @@
              lb->lb_type = NAME;
              src = lb->lb_str + 1;
              p = strchr(src, '\'');
-@@ -196,7 +196,11 @@
+@@ -202,7 +202,11 @@
                  name_len = strlen(src);
              dest = (char *)malloc(name_len + 1);
              if (!dest) {
@@ -314,7 +314,7 @@
                  return;
              }
              strncpy(dest, src, name_len);
-@@ -212,8 +216,12 @@
+@@ -218,8 +222,12 @@
                  lb->lb_str = NULL;
              }
              else
@@ -327,7 +327,7 @@
          }
          else if (lb->lb_str[2] && lb->lb_str[3] == lb->lb_str[0]) {
              int type = (int) PyToken_TwoChars(lb->lb_str[1],
-@@ -224,8 +232,12 @@
+@@ -230,8 +238,12 @@
                  lb->lb_str = NULL;
              }
              else
@@ -340,7 +340,7 @@
          }
          else if (lb->lb_str[2] && lb->lb_str[3] && lb->lb_str[4] == lb->lb_str[0]) {
              int type = (int) PyToken_ThreeChars(lb->lb_str[1],
-@@ -237,14 +249,27 @@
+@@ -243,14 +255,27 @@
                  lb->lb_str = NULL;
              }
              else
@@ -659,7 +659,7 @@
      return g;
 --- Parser/tokenizer.c
 +++ Parser/tokenizer.c
-@@ -1881,9 +1881,9 @@
+@@ -1975,9 +1975,9 @@
  void
  tok_dump(int type, char *start, char *end)
  {
@@ -673,7 +673,7 @@
  #endif
 --- Python/ceval.c
 +++ Python/ceval.c
-@@ -1343,11 +1343,11 @@
+@@ -1207,11 +1207,11 @@
  
          if (lltrace) {
              if (HAS_ARG(opcode)) {
@@ -687,7 +687,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4296,10 +4296,10 @@
+@@ -4377,10 +4377,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

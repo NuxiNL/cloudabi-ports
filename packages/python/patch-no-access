@@ -18,9 +18,9 @@
  #if defined(HAVE_TTYNAME)
  
  PyDoc_STRVAR(os_ttyname__doc__,
-@@ -5571,6 +5575,10 @@
-     return return_value;
- }
+@@ -5661,6 +5665,10 @@
+ 
+ #endif /* defined(HAVE_GETRANDOM_SYSCALL) */
  
 +#ifndef OS_ACCESS_METHODDEF
 +    #define OS_ACCESS_METHODDEF
@@ -31,7 +31,7 @@
  #endif /* !defined(OS_TTYNAME_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2548,6 +2548,7 @@
+@@ -2428,6 +2428,7 @@
  }
  
  
@@ -39,7 +39,7 @@
  /*[clinic input]
  os.access -> bool
  
-@@ -2666,6 +2667,7 @@
+@@ -2543,6 +2544,7 @@
  #ifndef X_OK
  #define X_OK 1
  #endif

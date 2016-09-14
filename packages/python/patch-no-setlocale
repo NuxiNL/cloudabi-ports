@@ -125,54 +125,36 @@
  #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
    {"bind_textdomain_codeset",(PyCFunction)PyIntl_bind_textdomain_codeset,
     METH_VARARGS, bind_textdomain_codeset__doc__},
-@@ -632,21 +650,29 @@
- 
-     d = PyModule_GetDict(m);
+@@ -630,17 +648,29 @@
+     if (m == NULL)
+         return NULL;
  
 +#ifdef LC_CTYPE
-     x = PyLong_FromLong(LC_CTYPE);
-     PyDict_SetItemString(d, "LC_CTYPE", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_CTYPE);
 +#endif
- 
 +#ifdef LC_TIME
-     x = PyLong_FromLong(LC_TIME);
-     PyDict_SetItemString(d, "LC_TIME", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_TIME);
 +#endif
- 
 +#ifdef LC_COLLATE
-     x = PyLong_FromLong(LC_COLLATE);
-     PyDict_SetItemString(d, "LC_COLLATE", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_COLLATE);
 +#endif
- 
 +#ifdef LC_MONETARY
-     x = PyLong_FromLong(LC_MONETARY);
-     PyDict_SetItemString(d, "LC_MONETARY", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_MONETARY);
 +#endif
  
  #ifdef LC_MESSAGES
-     x = PyLong_FromLong(LC_MESSAGES);
-@@ -654,13 +680,17 @@
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_MESSAGES);
  #endif /* LC_MESSAGES */
  
 +#ifdef LC_NUMERIC
-     x = PyLong_FromLong(LC_NUMERIC);
-     PyDict_SetItemString(d, "LC_NUMERIC", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_NUMERIC);
 +#endif
- 
 +#ifdef LC_ALL
-     x = PyLong_FromLong(LC_ALL);
-     PyDict_SetItemString(d, "LC_ALL", x);
-     Py_XDECREF(x);
+     PyModule_AddIntMacro(m, LC_ALL);
 +#endif
+     PyModule_AddIntMacro(m, CHAR_MAX);
  
-     x = PyLong_FromLong(CHAR_MAX);
-     PyDict_SetItemString(d, "CHAR_MAX", x);
+     Error = PyErr_NewException("locale.Error", NULL, NULL);
 --- Programs/python.c
 +++ Programs/python.c
 @@ -22,7 +22,9 @@
@@ -229,8 +211,8 @@
 +#endif /* HAVE_SETLOCALE */
  #if defined(HAVE_LANGINFO_H) && defined(CODESET)
      char *codeset, **alias;
-     char encoding[100];
-@@ -125,6 +127,7 @@
+     char encoding[20];   /* longest name: "iso_646.irv_1991\0" */
+@@ -126,6 +128,7 @@
      };
  #endif
  
@@ -238,7 +220,7 @@
      loc = setlocale(LC_CTYPE, NULL);
      if (loc == NULL)
          goto error;
-@@ -132,6 +135,7 @@
+@@ -133,6 +136,7 @@
          /* the LC_CTYPE locale is different than C */
          return 0;
      }
@@ -278,7 +260,7 @@
      PyInitFrozenExtensions();
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
-@@ -1200,8 +1200,10 @@
+@@ -1245,8 +1245,10 @@
              /* When the LC_CTYPE locale is the POSIX locale ("C locale"),
                 stdin and stdout use the surrogateescape error handler by
                 default, instead of the strict error handler. */

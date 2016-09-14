@@ -121,10 +121,10 @@
          except OSError:
              pass
          raise
-@@ -278,7 +288,12 @@
-             message = 'debug_override or optimization must be set to None'
+@@ -284,7 +294,12 @@
              raise TypeError(message)
          optimization = '' if debug_override else 1
+     path = _os.fspath(path)
 -    head, tail = _path_split(path)
 +    if isinstance(path, (str, bytes)):
 +        dir_fd = None
@@ -135,7 +135,7 @@
      base, sep, rest = tail.rpartition('.')
      tag = sys.implementation.cache_tag
      if tag is None:
-@@ -294,7 +309,11 @@
+@@ -300,7 +315,11 @@
          if not optimization.isalnum():
              raise ValueError('{!r} is not alphanumeric'.format(optimization))
          almost_filename = '{}.{}{}'.format(almost_filename, _OPT, optimization)
@@ -148,10 +148,10 @@
  
  
  def source_from_cache(path):
-@@ -308,7 +327,12 @@
-     """
+@@ -315,7 +334,12 @@
      if sys.implementation.cache_tag is None:
          raise NotImplementedError('sys.implementation.cache_tag is None')
+     path = _os.fspath(path)
 -    head, pycache_filename = _path_split(path)
 +    if isinstance(path, (str, bytes)):
 +        dir_fd = None
@@ -162,7 +162,7 @@
      head, pycache = _path_split(head)
      if pycache != _PYCACHE:
          raise ValueError('{} not bottom-level directory in '
-@@ -327,7 +351,11 @@
+@@ -334,7 +358,11 @@
              raise ValueError("optimization level {!r} is not an alphanumeric "
                               "value".format(optimization))
      base_filename = pycache_filename.partition('.')[0]
@@ -175,7 +175,7 @@
  
  
  def _get_sourcefile(bytecode_path):
-@@ -350,12 +378,13 @@
+@@ -357,12 +385,13 @@
  
  
  def _get_cached(filename):
@@ -191,7 +191,7 @@
          return filename
      else:
          return None
-@@ -363,8 +392,12 @@
+@@ -370,8 +399,12 @@
  
  def _calc_mode(path):
      """Calculate the mode permissions for a bytecode file."""
@@ -205,7 +205,7 @@
      except OSError:
          mode = 0o666
      # We always ensure write access so we can update cached files
-@@ -478,8 +511,10 @@
+@@ -485,8 +518,10 @@
      code = marshal.loads(data)
      if isinstance(code, _code_type):
          _bootstrap._verbose_message('code object from {!r}', bytecode_path)
@@ -217,7 +217,7 @@
          return code
      else:
          raise ImportError('Non-code object in {!r}'.format(bytecode_path),
-@@ -650,7 +685,12 @@
+@@ -659,7 +694,12 @@
      def is_package(self, fullname):
          """Concrete implementation of InspectLoader.is_package by checking if
          the path returned by get_filename has a filename of '__init__.py'."""
@@ -231,7 +231,7 @@
          filename_base = filename.rsplit('.', 1)[0]
          tail_name = fullname.rpartition('.')[2]
          return filename_base == '__init__' and tail_name != '__init__'
-@@ -726,6 +766,8 @@
+@@ -735,6 +775,8 @@
  
          The 'data' argument can be any object type that compile() supports.
          """
@@ -240,7 +240,7 @@
          return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
                                          dont_inherit=True, optimize=_optimize)
  
-@@ -818,8 +860,19 @@
+@@ -827,8 +869,19 @@
  
      def get_data(self, path):
          """Return the data from path as raw bytes."""
@@ -262,7 +262,7 @@
  
  
  class SourceFileLoader(FileLoader, SourceLoader):
-@@ -828,7 +881,11 @@
+@@ -837,7 +890,11 @@
  
      def path_stats(self, path):
          """Return the metadata for the path."""
@@ -275,7 +275,7 @@
          return {'mtime': st.st_mtime, 'size': st.st_size}
  
      def _cache_bytecode(self, source_path, bytecode_path, data):
-@@ -838,7 +895,12 @@
+@@ -847,7 +904,12 @@
  
      def set_data(self, path, data, *, _mode=0o666):
          """Write bytes data to a file."""
@@ -289,7 +289,7 @@
          path_parts = []
          # Figure out what directories are missing.
          while parent and not _path_isdir(parent):
-@@ -848,7 +910,7 @@
+@@ -857,7 +919,7 @@
          for part in reversed(path_parts):
              parent = _path_join(parent, part)
              try:
@@ -298,7 +298,7 @@
              except FileExistsError:
                  # Probably another Python process already created the dir.
                  continue
-@@ -859,7 +921,7 @@
+@@ -868,7 +930,7 @@
                                              parent, exc)
                  return
          try:
@@ -307,7 +307,7 @@
              _bootstrap._verbose_message('created {!r}', path)
          except OSError as exc:
              # Same as above: just don't write the bytecode.
-@@ -1061,8 +1123,17 @@
+@@ -1070,8 +1132,17 @@
          for hook in sys.path_hooks:
              try:
                  return hook(path)
@@ -326,7 +326,7 @@
          else:
              return None
  
-@@ -1086,6 +1157,9 @@
+@@ -1095,6 +1166,9 @@
          except KeyError:
              finder = cls._path_hooks(path)
              sys.path_importer_cache[path] = finder
@@ -336,7 +336,7 @@
          return finder
  
      @classmethod
-@@ -1110,7 +1184,9 @@
+@@ -1119,7 +1193,9 @@
          #  the list of paths that will become its __path__
          namespace_path = []
          for entry in path:
@@ -347,7 +347,7 @@
                  continue
              finder = cls._path_importer_cache(entry)
              if finder is not None:
-@@ -1191,7 +1267,7 @@
+@@ -1200,7 +1276,7 @@
              loaders.extend((suffix, loader) for suffix in suffixes)
          self._loaders = loaders
          # Base (directory) path
@@ -356,7 +356,7 @@
          self._path_mtime = -1
          self._path_cache = set()
          self._relaxed_path_cache = set()
-@@ -1226,8 +1302,18 @@
+@@ -1235,8 +1311,18 @@
          """
          is_namespace = False
          tail_module = fullname.rpartition('.')[2]
@@ -376,7 +376,7 @@
          except OSError:
              mtime = -1
          if mtime != self._path_mtime:
-@@ -1242,24 +1328,67 @@
+@@ -1251,24 +1337,67 @@
              cache_module = tail_module
          # Check if the module is the name of a directory (and thus a package).
          if cache_module in cache:
@@ -459,7 +459,7 @@
          if is_namespace:
              _bootstrap._verbose_message('possible namespace for {}', base_path)
              spec = _bootstrap.ModuleSpec(fullname, None)
-@@ -1269,13 +1398,33 @@
+@@ -1278,13 +1407,33 @@
  
      def _fill_cache(self):
          """Fill the cache of potential modules and packages for this directory."""
@@ -495,7 +495,7 @@
          # We store two cached versions, to handle runtime changes of the
          # PYTHONCASEOK environment variable.
          if not sys.platform.startswith('win'):
-@@ -1310,7 +1459,14 @@
+@@ -1319,7 +1468,14 @@
          """
          def path_hook_for_FileFinder(path):
              """Path hook for importlib.machinery.FileFinder."""
@@ -695,7 +695,7 @@
  /* For Py_GetArgcArgv(); set by main() */
  static wchar_t **orig_argv;
  static int  orig_argc;
-@@ -546,6 +714,7 @@
+@@ -547,6 +715,7 @@
  #else
      if ((p = Py_GETENV("PYTHONWARNINGS")) && *p != '\0') {
          char *buf, *oldloc;
@@ -703,7 +703,7 @@
          PyObject *unicode;
  
          /* settle for strtok here as there's no one standard
-@@ -555,9 +724,13 @@
+@@ -556,9 +725,13 @@
              Py_FatalError(
                 "not enough memory to copy PYTHONWARNINGS");
          strcpy(buf, p);
@@ -718,7 +718,7 @@
  #ifdef __APPLE__
              /* Use utf-8 on Mac OS X */
              unicode = PyUnicode_FromString(p);
-@@ -572,8 +745,10 @@
+@@ -573,8 +746,10 @@
              PySys_AddWarnOptionUnicode(unicode);
              Py_DECREF(unicode);
          }
@@ -747,7 +747,7 @@
  wmain(int argc, wchar_t **argv)
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
-@@ -45,6 +45,11 @@
+@@ -48,6 +48,11 @@
  
  extern wchar_t *Py_GetPath(void);
  
@@ -759,7 +759,7 @@
  extern grammar _PyParser_Grammar; /* From graminit.c */
  
  /* Forward */
-@@ -389,7 +394,11 @@
+@@ -408,7 +413,11 @@
          Py_FatalError("Py_Initialize: can't initialize sys dict");
      Py_INCREF(interp->sysdict);
      _PyImport_FixupBuiltin(sysmod, "sys");
@@ -781,7 +781,7 @@
  #include <locale.h>
  
  #ifdef MS_WINDOWS
-@@ -1920,6 +1921,8 @@
+@@ -2046,6 +2047,8 @@
      return m;
  }
  
@@ -790,7 +790,7 @@
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -1964,6 +1967,240 @@
+@@ -2090,6 +2093,240 @@
      Py_DECREF(v);
  }
  
