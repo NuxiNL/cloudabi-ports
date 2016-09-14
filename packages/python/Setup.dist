@@ -72,5 +72,4 @@ syslog syslogmodule.c
 time timemodule.c
 unicodedata unicodedata.c
 xxsubtype xxsubtype.c
-zipimport zipimport.c
 zlib zlibmodule.c -lz

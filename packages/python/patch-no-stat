@@ -48,21 +48,6 @@
  }
  
  static PyObject *
---- Modules/zipimport.c
-+++ Modules/zipimport.c
-@@ -100,7 +100,12 @@
-         struct stat statbuf;
-         int rv;
- 
-+#ifdef HAVE_STAT
-         rv = _Py_stat(filename, &statbuf);
-+#else
-+        rv = -1;
-+        errno = ENOSYS;
-+#endif /* HAVE_STAT */
-         if (rv == -2)
-             goto error;
-         if (rv == 0) {
 --- Python/fileutils.c
 +++ Python/fileutils.c
 @@ -708,6 +708,7 @@
