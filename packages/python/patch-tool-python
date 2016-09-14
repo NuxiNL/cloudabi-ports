@@ -121,11 +121,27 @@
          except OSError:
              pass
          raise
-@@ -284,7 +294,12 @@
+@@ -258,6 +268,13 @@
+ # Deprecated.
+ DEBUG_BYTECODE_SUFFIXES = OPTIMIZED_BYTECODE_SUFFIXES = BYTECODE_SUFFIXES
+ 
++def _do_fspath(path):
++    try:
++        return _os.fspath(path)
++    except TypeError:
++        return path
++
++
+ def cache_from_source(path, debug_override=None, *, optimization=None):
+     """Given the path to a .py file, return the path to its .pyc file.
+ 
+@@ -283,8 +300,13 @@
+             message = 'debug_override or optimization must be set to None'
              raise TypeError(message)
          optimization = '' if debug_override else 1
-     path = _os.fspath(path)
+-    path = _os.fspath(path)
 -    head, tail = _path_split(path)
++    path = _do_fspath(path)
 +    if isinstance(path, (str, bytes)):
 +        dir_fd = None
 +        head, tail = _path_split(path)
@@ -135,7 +151,7 @@
      base, sep, rest = tail.rpartition('.')
      tag = sys.implementation.cache_tag
      if tag is None:
-@@ -300,7 +315,11 @@
+@@ -300,7 +322,11 @@
          if not optimization.isalnum():
              raise ValueError('{!r} is not alphanumeric'.format(optimization))
          almost_filename = '{}.{}{}'.format(almost_filename, _OPT, optimization)
@@ -148,11 +164,13 @@
  
  
  def source_from_cache(path):
-@@ -315,7 +334,12 @@
+@@ -314,8 +340,13 @@
+     """
      if sys.implementation.cache_tag is None:
          raise NotImplementedError('sys.implementation.cache_tag is None')
-     path = _os.fspath(path)
+-    path = _os.fspath(path)
 -    head, pycache_filename = _path_split(path)
++    path = _do_fspath(path)
 +    if isinstance(path, (str, bytes)):
 +        dir_fd = None
 +        head, pycache_filename = _path_split(path)
@@ -162,7 +180,7 @@
      head, pycache = _path_split(head)
      if pycache != _PYCACHE:
          raise ValueError('{} not bottom-level directory in '
-@@ -334,7 +358,11 @@
+@@ -334,7 +365,11 @@
              raise ValueError("optimization level {!r} is not an alphanumeric "
                               "value".format(optimization))
      base_filename = pycache_filename.partition('.')[0]
@@ -175,7 +193,7 @@
  
  
  def _get_sourcefile(bytecode_path):
-@@ -357,12 +385,13 @@
+@@ -357,12 +392,13 @@
  
  
  def _get_cached(filename):
@@ -191,7 +209,7 @@
          return filename
      else:
          return None
-@@ -370,8 +399,12 @@
+@@ -370,8 +406,12 @@
  
  def _calc_mode(path):
      """Calculate the mode permissions for a bytecode file."""
@@ -205,7 +223,7 @@
      except OSError:
          mode = 0o666
      # We always ensure write access so we can update cached files
-@@ -485,8 +518,10 @@
+@@ -485,8 +525,10 @@
      code = marshal.loads(data)
      if isinstance(code, _code_type):
          _bootstrap._verbose_message('code object from {!r}', bytecode_path)
@@ -217,7 +235,16 @@
          return code
      else:
          raise ImportError('Non-code object in {!r}'.format(bytecode_path),
-@@ -659,7 +694,12 @@
+@@ -543,7 +585,7 @@
+             except ImportError:
+                 pass
+     else:
+-        location = _os.fspath(location)
++        location = _do_fspath(location)
+ 
+     # If the location is on the filesystem, but doesn't actually exist,
+     # we could return None here, indicating that the location is not
+@@ -659,7 +701,12 @@
      def is_package(self, fullname):
          """Concrete implementation of InspectLoader.is_package by checking if
          the path returned by get_filename has a filename of '__init__.py'."""
@@ -231,7 +258,7 @@
          filename_base = filename.rsplit('.', 1)[0]
          tail_name = fullname.rpartition('.')[2]
          return filename_base == '__init__' and tail_name != '__init__'
-@@ -735,6 +775,8 @@
+@@ -735,6 +782,8 @@
  
          The 'data' argument can be any object type that compile() supports.
          """
@@ -240,7 +267,7 @@
          return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
                                          dont_inherit=True, optimize=_optimize)
  
-@@ -827,8 +869,19 @@
+@@ -827,8 +876,19 @@
  
      def get_data(self, path):
          """Return the data from path as raw bytes."""
@@ -262,7 +289,7 @@
  
  
  class SourceFileLoader(FileLoader, SourceLoader):
-@@ -837,7 +890,11 @@
+@@ -837,7 +897,11 @@
  
      def path_stats(self, path):
          """Return the metadata for the path."""
@@ -275,7 +302,7 @@
          return {'mtime': st.st_mtime, 'size': st.st_size}
  
      def _cache_bytecode(self, source_path, bytecode_path, data):
-@@ -847,7 +904,12 @@
+@@ -847,7 +911,12 @@
  
      def set_data(self, path, data, *, _mode=0o666):
          """Write bytes data to a file."""
@@ -289,7 +316,7 @@
          path_parts = []
          # Figure out what directories are missing.
          while parent and not _path_isdir(parent):
-@@ -857,7 +919,7 @@
+@@ -857,7 +926,7 @@
          for part in reversed(path_parts):
              parent = _path_join(parent, part)
              try:
@@ -298,7 +325,7 @@
              except FileExistsError:
                  # Probably another Python process already created the dir.
                  continue
-@@ -868,7 +930,7 @@
+@@ -868,7 +937,7 @@
                                              parent, exc)
                  return
          try:
@@ -307,7 +334,7 @@
              _bootstrap._verbose_message('created {!r}', path)
          except OSError as exc:
              # Same as above: just don't write the bytecode.
-@@ -1070,8 +1132,17 @@
+@@ -1070,8 +1139,17 @@
          for hook in sys.path_hooks:
              try:
                  return hook(path)
@@ -326,7 +353,7 @@
          else:
              return None
  
-@@ -1095,6 +1166,9 @@
+@@ -1095,6 +1173,9 @@
          except KeyError:
              finder = cls._path_hooks(path)
              sys.path_importer_cache[path] = finder
@@ -336,7 +363,7 @@
          return finder
  
      @classmethod
-@@ -1119,7 +1193,9 @@
+@@ -1119,7 +1200,9 @@
          #  the list of paths that will become its __path__
          namespace_path = []
          for entry in path:
@@ -347,7 +374,7 @@
                  continue
              finder = cls._path_importer_cache(entry)
              if finder is not None:
-@@ -1200,7 +1276,7 @@
+@@ -1200,7 +1283,7 @@
              loaders.extend((suffix, loader) for suffix in suffixes)
          self._loaders = loaders
          # Base (directory) path
@@ -356,7 +383,7 @@
          self._path_mtime = -1
          self._path_cache = set()
          self._relaxed_path_cache = set()
-@@ -1235,8 +1311,18 @@
+@@ -1235,8 +1318,18 @@
          """
          is_namespace = False
          tail_module = fullname.rpartition('.')[2]
@@ -376,7 +403,7 @@
          except OSError:
              mtime = -1
          if mtime != self._path_mtime:
-@@ -1251,24 +1337,67 @@
+@@ -1251,24 +1344,67 @@
              cache_module = tail_module
          # Check if the module is the name of a directory (and thus a package).
          if cache_module in cache:
@@ -459,7 +486,7 @@
          if is_namespace:
              _bootstrap._verbose_message('possible namespace for {}', base_path)
              spec = _bootstrap.ModuleSpec(fullname, None)
-@@ -1278,13 +1407,33 @@
+@@ -1278,13 +1414,33 @@
  
      def _fill_cache(self):
          """Fill the cache of potential modules and packages for this directory."""
@@ -495,7 +522,7 @@
          # We store two cached versions, to handle runtime changes of the
          # PYTHONCASEOK environment variable.
          if not sys.platform.startswith('win'):
-@@ -1319,7 +1468,14 @@
+@@ -1319,7 +1475,14 @@
          """
          def path_hook_for_FileFinder(path):
              """Path hook for importlib.machinery.FileFinder."""
