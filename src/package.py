@@ -111,7 +111,7 @@ class TargetPackage:
             'gettext', 'grep', 'help2man', 'libarchive', 'libtool',
             'llvm', 'm4', 'make', 'ninja', 'pkgconf', 'sed', 'texinfo',
         }, self._lib_depends)
-        log.info('BUILD %s', self._name)
+        log.info('BUILD %s %s', self._name, self._arch)
         self._build_cmd(
             BuildHandle(
                 TargetBuilder(BuildDirectory(),
