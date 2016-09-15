@@ -61,6 +61,11 @@ def build(ctx):
     for f in {'lib/python3.6/lib2to3/Grammar3.6.0.beta.1.pickle',
               'lib/python3.6/lib2to3/PatternGrammar3.6.0.beta.1.pickle'}:
         stage.path(f).remove()
+
+    # TODO(ed): Figure out what to do with this!
+    stage.path(
+        'lib/python3.6/lib-dynload/_sysconfigdata_m_freebsd10_.py'
+    ).remove()
     stage.install()
 
 package(
