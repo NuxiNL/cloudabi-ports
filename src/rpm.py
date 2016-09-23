@@ -5,6 +5,7 @@
 
 import struct
 
+
 class Header:
     """Class for generating binary RPM headers."""
 
@@ -22,7 +23,8 @@ class Header:
             align = value.alignment()
             values += b'\0' * (((align - len(values)) % align) % align)
             # Create index entry.
-            indices += struct.pack('>iiii', tag, value.type(), len(values), value.count())
+            indices += struct.pack('>iiii', tag, value.type(),
+                                   len(values), value.count())
             # Append the entry's value.
             values += value.encode()
 
@@ -30,6 +32,7 @@ class Header:
         return (b'\x8e\xad\xe8\x01\x00\x00\x00\x00' +
                 struct.pack('>ii', len(indices) // 16, len(values)) +
                 indices + values)
+
 
 class Int16:
     """List of 16 bit signed integers."""
@@ -39,7 +42,7 @@ class Int16:
 
     @staticmethod
     def alignment():
-      return 2
+        return 2
 
     def count(self):
         return len(self._values)
@@ -49,7 +52,8 @@ class Int16:
 
     @staticmethod
     def type():
-      return 3
+        return 3
+
 
 class Int32:
     """List of 32 bit signed integers."""
@@ -59,7 +63,7 @@ class Int32:
 
     @staticmethod
     def alignment():
-      return 4
+        return 4
 
     def count(self):
         return len(self._values)
@@ -69,7 +73,8 @@ class Int32:
 
     @staticmethod
     def type():
-      return 4
+        return 4
+
 
 class String:
     """Single C string."""
@@ -79,7 +84,7 @@ class String:
 
     @staticmethod
     def alignment():
-      return 1
+        return 1
 
     @staticmethod
     def count():
@@ -90,7 +95,8 @@ class String:
 
     @staticmethod
     def type():
-      return 6
+        return 6
+
 
 class Bin:
     """Binary blob."""
@@ -100,7 +106,7 @@ class Bin:
 
     @staticmethod
     def alignment():
-      return 1
+        return 1
 
     def count(self):
         return len(self._value)
@@ -110,7 +116,8 @@ class Bin:
 
     @staticmethod
     def type():
-      return 7
+        return 7
+
 
 class StringArray:
     """Sequence of C strings."""
@@ -120,7 +127,7 @@ class StringArray:
 
     @staticmethod
     def alignment():
-      return 1
+        return 1
 
     def count(self):
         return len(self._values)
@@ -131,7 +138,8 @@ class StringArray:
 
     @staticmethod
     def type():
-      return 8
+        return 8
+
 
 class I18NString:
     """Sequence of strings stored in a native character set.
@@ -143,7 +151,7 @@ class I18NString:
 
     @staticmethod
     def alignment():
-      return 1
+        return 1
 
     @staticmethod
     def count():
@@ -154,4 +162,4 @@ class I18NString:
 
     @staticmethod
     def type():
-      return 9
+        return 9
