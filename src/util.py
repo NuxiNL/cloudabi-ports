@@ -56,6 +56,7 @@ def diff(orig_dir, patched_dir, patch):
             else:
                 f.write(l)
 
+
 def file_contents_equal(path1, path2):
     # Compare file contents.
     with open(path1, 'rb') as f1, open(path2, 'rb') as f2:
