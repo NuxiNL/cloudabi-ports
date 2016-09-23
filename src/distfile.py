@@ -15,6 +15,7 @@ from . import util
 
 log = logging.getLogger(__name__)
 
+
 class Distfile:
 
     def __init__(self, distdir, name, checksum, master_sites, patches,
@@ -46,7 +47,8 @@ class Distfile:
         with open(patch, 'rb') as f:
             for l in f.readlines():
                 if l.startswith(b'--- '):
-                    filename = str(l[4:-1].split(b'\t', 1)[0], encoding='ASCII')
+                    filename = str(l[4:-1].split(b'\t', 1)[0],
+                                   encoding='ASCII')
                     while True:
                         if os.path.exists(os.path.join(target, filename)):
                             # Correct patchlevel determined.
@@ -120,12 +122,13 @@ class Distfile:
             self._apply_patch(patch, target)
         # Add markers to sources that depend on unsafe string sources.
         for filename in self._unsafe_string_sources:
-          path = os.path.join(target, filename)
-          with open(path, 'rb') as fin, open(path + '.new', 'wb') as fout:
-            fout.write(bytes('#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS\n',
-                             encoding='ASCII'))
-            fout.write(fin.read())
-            os.rename(path + '.new', path)
+            path = os.path.join(target, filename)
+            with open(path, 'rb') as fin, open(path + '.new', 'wb') as fout:
+                fout.write(
+                    bytes('#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS\n',
+                          encoding='ASCII'))
+                fout.write(fin.read())
+                os.rename(path + '.new', path)
         return target
 
     def fixup_patches(self, tmpdir):

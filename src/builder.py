@@ -15,6 +15,7 @@ from . import util
 
 log = logging.getLogger(__name__)
 
+
 def _chdir(path):
     util.make_dir(path)
     os.chdir(path)
@@ -31,7 +32,7 @@ class DiffCreator:
         # Create a backup of the source directory.
         self._backup_directory = self._build_directory.get_new_directory()
         for source_file, backup_file in util.walk_files_concurrently(
-            self._source_directory, self._backup_directory):
+                self._source_directory, self._backup_directory):
             util.make_parent_dir(backup_file)
             util.copy_file(source_file, backup_file, False)
 
@@ -118,7 +119,8 @@ class FileHandle:
         ])
 
     def diff(self, filename):
-        return DiffCreator(self._path, self._builder._build_directory, filename)
+        return DiffCreator(self._path, self._builder._build_directory,
+                           filename)
 
     def host(self):
         return FileHandle(self._builder._host_builder, self._path)
@@ -324,10 +326,10 @@ class HostBuilder:
             # preserve any documentation and locales.
             path = os.path.relpath(target_file, target)
             if (path != 'lib/charset.alias' and
-                not path.startswith('share/doc/') and
-                not path.startswith('share/info/') and
-                not path.startswith('share/locale/') and
-                not path.startswith('share/man/')):
+                    not path.startswith('share/doc/') and
+                    not path.startswith('share/info/') and
+                    not path.startswith('share/locale/') and
+                    not path.startswith('share/man/')):
                 util.make_parent_dir(target_file)
                 util.copy_file(source_file, target_file, False)
 
@@ -361,7 +363,9 @@ class TargetBuilder:
         self._bindir = os.path.join(config.DIR_BUILDROOT, 'bin')
         self._localbase = os.path.join(config.DIR_BUILDROOT, self._arch)
         self._cflags = [
-            '-O2', '-Werror=implicit-function-declaration', '-Werror=date-time',
+            '-O2',
+            '-Werror=implicit-function-declaration',
+            '-Werror=date-time',
         ]
 
         # In case we need to build software for the host system.
@@ -477,8 +481,8 @@ class TargetBuilder:
             'CXX_FOR_BUILD=' + self._host_builder.get_cxx(),
             'NM=' + self._tool('nm'),
             'OBJDUMP=' + self._tool('objdump'),
-             # List tools directory twice, as certain tools and scripts
-             # get confused if PATH contains no colon.
+            # List tools directory twice, as certain tools and scripts
+            # get confused if PATH contains no colon.
             'PATH=%s:%s' % (self._bindir, self._bindir),
             'PERL=' + config.PERL,
             'PKG_CONFIG=' + self._tool('pkg-config'),

@@ -23,6 +23,7 @@ from .version import FullVersion, SimpleVersion
 
 log = logging.getLogger(__name__)
 
+
 class Catalog:
 
     def __init__(self, old_path, new_path):
@@ -132,7 +133,8 @@ class DebianCatalog(Catalog):
 
         # Optional, estimate in kB of disk space needed to install the package
         if installed_size is not None:
-            snippet += 'Installed-Size: %d\n' % math.ceil(installed_size/1024)
+            snippet += 'Installed-Size: %d\n' % math.ceil(
+                installed_size / 1024)
 
         lib_depends = package.get_lib_depends()
         if lib_depends:
@@ -192,8 +194,8 @@ class DebianCatalog(Catalog):
                 'Architectures: %s\n'
                 'Date: %s\n'
                 'SHA256:\n' % (
-                ' '.join(sorted(self._architectures)),
-                time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime())))
+                    ' '.join(sorted(self._architectures)),
+                    time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime())))
             for arch in sorted(self._architectures):
                 append(' %s %d cloudabi/binary-%s/Packages\n' %
                        (checksum, size, arch))
@@ -360,7 +362,8 @@ class FreeBSDCatalog(Catalog):
                 '+MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n' %
                 manifest)
             for path in files:
-                fullpath = os.path.join(prefix, os.path.relpath(path, installdir))
+                fullpath = os.path.join(prefix,
+                                        os.path.relpath(path, installdir))
                 if os.path.islink(path):
                     # Symbolic links.
                     f.write(
@@ -416,10 +419,12 @@ class HomebrewCatalog(Catalog):
         linksdir = os.path.join(self._new_path, 'links')
         util.make_dir(linksdir)
         for osx_version in self._OSX_VERSIONS:
-            link = os.path.join(linksdir,
-                '%s-%s.%s.bottle.tar.gz' % (
-                    package.get_homebrew_name(), version.get_homebrew_version(),
-                    osx_version))
+            link = os.path.join(
+                linksdir,
+                '%s-%s.%s.bottle.tar.gz' %
+                (package.get_homebrew_name(),
+                 version.get_homebrew_version(),
+                 osx_version))
             util.remove(link)
             os.symlink(os.path.join('..', filename), link)
 
@@ -429,21 +434,23 @@ class HomebrewCatalog(Catalog):
         with open(os.path.join(formulaedir,
                                package.get_homebrew_name() + '.rb'), 'w') as f:
             # Header.
-            f.write("""class %(homebrew_class)s < Formula
+            f.write(
+                """class %(homebrew_class)s < Formula
   desc "%(name)s for %(arch)s"
   homepage "%(homepage)s"
   url "http://this.package.cannot.be.built.from.source/"
   version "%(version)s"
   revision %(revision)d
 """ % {
-                'arch': package.get_arch(),
-                'homebrew_class': self._get_classname(package.get_homebrew_name()),
-                'homepage': package.get_homepage(),
-                'name': package.get_name(),
-                'revision': version.get_revision(),
-                'url': self._url,
-                'version': version.get_version(),
-            })
+                    'arch': package.get_arch(),
+                    'homebrew_class': self._get_classname(
+                        package.get_homebrew_name()),
+                    'homepage': package.get_homepage(),
+                    'name': package.get_name(),
+                    'revision': version.get_revision(),
+                    'url': self._url,
+                    'version': version.get_version(),
+                })
 
             # Dependencies.
             for dep in sorted(pkg.get_homebrew_name()
@@ -684,6 +691,7 @@ class OpenBSDCatalog(Catalog):
         ])
         return output
 
+
 class ArchLinuxCatalog(Catalog):
 
     def __init__(self, old_path, new_path):
@@ -696,7 +704,8 @@ class ArchLinuxCatalog(Catalog):
                     parts = filename.rsplit('-', 3)
                     if len(parts) == 4 and parts[3] == 'any.pkg.tar.xz':
                         name = parts[0]
-                        version = FullVersion.parse_archlinux(parts[1] + '-' + parts[2])
+                        version = FullVersion.parse_archlinux(
+                            '%s-%s' % (parts[1], parts[2]))
                         if self._existing[name] < version:
                             self._existing[name] = version
 
@@ -740,7 +749,8 @@ class ArchLinuxCatalog(Catalog):
                 }
             )
             lib_depends = package.get_lib_depends()
-            for dep in sorted(pkg.get_archlinux_name() for pkg in package.get_lib_depends()):
+            for dep in sorted(pkg.get_archlinux_name()
+                              for pkg in package.get_lib_depends()):
                 f.write('depend = %s\n' % dep)
 
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
@@ -755,9 +765,11 @@ class ArchLinuxCatalog(Catalog):
         with open(listing, 'w') as f:
             f.write('#mtree\n')
             f.write(
-                '.PKGINFO type=file mode=0644 uname=root gname=root time=0 contents=%s\n' % pkginfo)
+                '.PKGINFO type=file mode=0644 uname=root gname=root time=0 contents=%s\n' %
+                pkginfo)
             f.write(
-                '.MTREE type=file mode=0644 uname=root gname=root time=0 contents=%s\n' % mtree)
+                '.MTREE type=file mode=0644 uname=root gname=root time=0 contents=%s\n' %
+                mtree)
             for path in files:
                 relpath = os.path.relpath(path, installdir)
                 if os.path.islink(path):
@@ -789,10 +801,12 @@ class ArchLinuxCatalog(Catalog):
                 '--no-armor', '--digest-algo', 'SHA256',
                 os.path.join(self._new_path, package_file)])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
-        packages = [os.path.join(self._new_path, self._get_filename(*p)) for p in self._packages]
+        packages = [os.path.join(self._new_path, self._get_filename(*p))
+                    for p in self._packages]
         # Ensure that repo-add as a valid working directory.
         os.chdir('/')
-        subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] + packages)
+        subprocess.check_call(
+            ['repo-add', '-s', '-k', private_key, db_file] + packages)
 
 
 class CygwinCatalog(Catalog):
@@ -808,7 +822,8 @@ class CygwinCatalog(Catalog):
                         parts = filename[:-7].rsplit('-', 2)
                         if len(parts) == 3:
                             name = parts[0]
-                            version = FullVersion.parse_cygwin(parts[1] + '-' + parts[2])
+                            version = FullVersion.parse_cygwin(
+                                '%s-%s' % (parts[1], parts[2]))
                             if self._existing[name] < version:
                                 self._existing[name] = version
 
@@ -832,11 +847,8 @@ class CygwinCatalog(Catalog):
         files = sorted(util.walk_files(installdir))
 
         util.make_dir(installdir)
-
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
-
         self._run_tar(['-cJf', output, '-C', installdir, '.'])
-
         return output
 
     def finish(self, private_key):
@@ -848,10 +860,11 @@ class CygwinCatalog(Catalog):
                 f.write('release: cygwin\n')
                 f.write('arch: %s\n' % cygwin_arch)
                 f.write('setup-timestamp: %d\n' % int(time.time()))
-                for package, version in sorted(self._packages,
-                    key=lambda p:p[0].get_cygwin_name()):
+                for package, version in sorted(
+                        self._packages, key=lambda p: p[0].get_cygwin_name()):
                     package_file_name = self._get_filename(package, version)
-                    package_file = os.path.join(self._new_path, package_file_name)
+                    package_file = os.path.join(
+                        self._new_path, package_file_name)
                     f.write(
                         '\n'
                         '@ %(cygwinname)s\n'
@@ -865,11 +878,11 @@ class CygwinCatalog(Catalog):
                         }
                     )
                     if len(package.get_lib_depends()) > 0:
-                        f.write('requires: %(deps)s\n' % {
-                            'deps': ' '.join(sorted(pkg.get_cygwin_name() for pkg in
-                                package.get_lib_depends()))
-                            }
-                        );
+                        f.write(
+                            'requires: %s\n' %
+                            ' '.join(
+                                sorted(pkg.get_cygwin_name()
+                                       for pkg in package.get_lib_depends())))
                     f.write(
                         'install: %(filename)s %(size)s %(sha512)s\n' % {
                             'size': os.lstat(package_file).st_size,
@@ -949,7 +962,8 @@ class RedHatCatalog(Catalog):
         with open(listing, 'w') as f:
             f.write('#mtree\n')
             for path in files:
-                relpath = os.path.join(prefix, os.path.relpath(path, installdir))
+                relpath = os.path.join(prefix,
+                                       os.path.relpath(path, installdir))
                 if os.path.islink(path):
                     f.write(
                         '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n' %
