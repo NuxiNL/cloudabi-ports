@@ -131,16 +131,6 @@ class FileHandle:
         self._builder.cmake(builddir, self._path, args)
         return FileHandle(self._builder, builddir)
 
-        # Skip directory names.
-        while True:
-            entries = os.listdir(source_directory)
-            if len(entries) != 1:
-                break
-            new_directory = os.path.join(source_directory, entries[0])
-            if not os.path.isdir(new_directory):
-                break
-            source_directory = new_directory
-
     def install(self, path='.'):
         self._builder.install(self._path, path)
 

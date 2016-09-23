@@ -10,7 +10,9 @@ import sys
 
 from src import config
 from src import util
-from src.catalog import ArchLinuxCatalog, CygwinCatalog, DebianCatalog, FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog, OpenBSDCatalog, RedHatCatalog
+from src.catalog import (ArchLinuxCatalog, CygwinCatalog, DebianCatalog,
+                         FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog,
+                         OpenBSDCatalog, RedHatCatalog)
 from src.repository import Repository
 from src.version import FullVersion
 
