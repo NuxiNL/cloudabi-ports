@@ -13,7 +13,7 @@ def build(ctx):
     cxx_sources = {'Unwind-EHABI.cpp', 'libunwind.cpp'}
     srcdir = root.path('src')
     libunwind = ctx.archive(
-        {srcdir.path(f).compile(['-I../include'])
+        {srcdir.path(f).compile(['-I../include', '-fexceptions'])
          for f in c_sources} |
         {srcdir.path(f).compile(['-I../include', '-std=c++11'])
          for f in cxx_sources})
