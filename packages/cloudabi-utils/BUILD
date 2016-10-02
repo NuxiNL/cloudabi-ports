@@ -20,6 +20,11 @@ def build(ctx):
             'libemulator/tls.c',
         }).install('bin/cloudabi-emulate')
 
+    # TODO(ed): Integrate source file into cloudabi-utils.
+    ctx.executable({
+        ctx.resource('cloudabi-reexec.c').compile(),
+    }).install('libexec/cloudabi-reexec')
+
 package(
     name='cloudabi-utils',
     version='0.18',
