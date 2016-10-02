@@ -6,11 +6,9 @@
 
 def build(ctx):
     srcdir = ctx.extract('%(name)s/v%(version)s').path('src')
+    cflags = ['-I%s' % srcdir.path('libemulator')]
     ctx.executable(
-        srcdir.path(f).compile(
-            [
-                '-I%s' %
-                srcdir.path('libemulator')]) for f in {
+        srcdir.path(f).compile(cflags) for f in {
             'cloudabi-emulate/cloudabi-emulate.c',
             'libemulator/emulate.c',
             'libemulator/futex.c',
