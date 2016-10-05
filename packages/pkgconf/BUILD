@@ -22,6 +22,10 @@ def build(ctx):
         stage = build.make_install()
         stage.path('bin/pkgconf').install('bin/%s-pkg-config' % arch)
 
+    # Install the shipped copy of pkg.m4, so that autoreconf for
+    # packages using PKG_CHECK_MODULES() works.
+    ctx.extract().path('pkg.m4').install('share/aclocal/pkg.m4')
+
 host_package(
     name='pkgconf',
     version='0.9.12',
