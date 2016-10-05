@@ -1,0 +1,194 @@
+--- include/ucl.h
++++ include/ucl.h
+@@ -1019,6 +1019,7 @@
+  * @param err if *err is NULL it is set to parser error
+  * @return true if chunk has been added and false in case of error
+  */
++#ifndef __CloudABI__
+ UCL_EXTERN bool ucl_parser_add_file (struct ucl_parser *parser,
+ 		const char *filename);
+ 
+@@ -1033,6 +1034,7 @@
+  */
+ UCL_EXTERN bool ucl_parser_add_file_priority (struct ucl_parser *parser,
+ 		const char *filename, unsigned priority);
++#endif
+ 
+ /**
+  * Load and add data from a file descriptor
+@@ -1168,8 +1170,10 @@
+  * @param need_expand perform realpath() if this variable is true and filename is not NULL
+  * @return true if variables has been set
+  */
++#ifndef __CloudABI__
+ UCL_EXTERN bool ucl_parser_set_filevars (struct ucl_parser *parser, const char *filename,
+ 		bool need_expand);
++#endif
+ 
+ /** @} */
+ 
+--- src/ucl_internal.h
++++ src/ucl_internal.h
+@@ -236,6 +236,7 @@
+  * @param ud user data
+  * @return
+  */
++#ifndef __CloudABI__
+ bool ucl_include_handler (const unsigned char *data, size_t len,
+ 		const ucl_object_t *args, void* ud);
+ 
+@@ -260,6 +261,7 @@
+  */
+ bool ucl_includes_handler (const unsigned char *data, size_t len,
+ 		const ucl_object_t *args, void* ud);
++#endif
+ 
+ /**
+  * Handle priority macro
+@@ -280,8 +282,10 @@
+  * @param ud user data
+  * @return
+  */
++#ifndef __CloudABI__
+ bool ucl_load_handler (const unsigned char *data, size_t len,
+ 		const ucl_object_t *args, void* ud);
++#endif
+ /**
+  * Handle inherit macro
+  * @param data include data
+@@ -547,11 +551,13 @@
+  * @param buflen target length
+  * @return
+  */
++#ifndef __CloudABI__
+ bool ucl_fetch_file (const unsigned char *filename,
+ 		unsigned char **buf,
+ 		size_t *buflen,
+ 		UT_string **err,
+ 		bool must_exist);
++#endif
+ 
+ /**
+  * Add new element to an object using the current merge strategy and priority
+--- src/ucl_parser.c
++++ src/ucl_parser.c
+@@ -2447,11 +2447,15 @@
+ 
+ 	memset (parser, 0, sizeof (struct ucl_parser));
+ 
++#ifndef __CloudABI__
+ 	ucl_parser_register_macro (parser, "include", ucl_include_handler, parser);
+ 	ucl_parser_register_macro (parser, "try_include", ucl_try_include_handler, parser);
+ 	ucl_parser_register_macro (parser, "includes", ucl_includes_handler, parser);
++#endif
+ 	ucl_parser_register_macro (parser, "priority", ucl_priority_handler, parser);
++#ifndef __CloudABI__
+ 	ucl_parser_register_macro (parser, "load", ucl_load_handler, parser);
++#endif
+ 	ucl_parser_register_context_macro (parser, "inherit", ucl_inherit_handler, parser);
+ 
+ 	parser->flags = flags;
+@@ -2462,7 +2466,9 @@
+ 	}
+ 
+ 	/* Initial assumption about filevars */
++#ifndef __CloudABI__
+ 	ucl_parser_set_filevars (parser, NULL, false);
++#endif
+ 
+ 	return parser;
+ }
+--- src/ucl_schema.c
++++ src/ucl_schema.c
+@@ -751,6 +751,9 @@
+ 		ext_obj = ucl_object_lookup (ext_ref, p);
+ 
+ 		if (ext_obj == NULL) {
++#ifdef __CloudABI__
++			return NULL;
++#else
+ 			if (ucl_strnstr (p, "://", strlen (p)) != NULL) {
+ 				if (!ucl_fetch_url (p, &url_buf, &url_buflen, &url_err, true)) {
+ 
+@@ -798,6 +801,7 @@
+ 			ext_obj = url_obj;
+ 			ucl_object_insert_key (ext_ref, url_obj, p, 0, true);
+ 			free (url_buf);
++#endif
+ 		}
+ 
+ 		free (url_copy);
+--- src/ucl_util.c
++++ src/ucl_util.c
+@@ -744,6 +744,7 @@
+  * @param buflen target length
+  * @return
+  */
++#ifndef __CloudABI__
+ bool
+ ucl_fetch_file (const unsigned char *filename, unsigned char **buf, size_t *buflen,
+ 		UT_string **err, bool must_exist)
+@@ -783,6 +784,7 @@
+ 
+ 	return true;
+ }
++#endif
+ 
+ 
+ #if (defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x10000000L)
+@@ -865,6 +867,7 @@
+ 	unsigned char *buf = NULL;
+ 	size_t buflen = 0;
+ 	struct ucl_chunk *chunk;
++#define PATH_MAX 1025
+ 	char urlbuf[PATH_MAX];
+ 	int prev_state;
+ 
+@@ -929,6 +932,7 @@
+  * @param priority
+  * @return
+  */
++#ifndef __CloudABI__
+ static bool
+ ucl_include_file_single (const unsigned char *data, size_t len,
+ 		struct ucl_parser *parser, struct ucl_include_params *params)
+@@ -1486,6 +1490,7 @@
+ 
+ 	return ucl_include_common (data, len, args, parser, true, false);
+ }
++#endif
+ 
+ /**
+  * Handle priority macro
+@@ -1553,6 +1558,7 @@
+  * @param ud user data
+  * @return
+  */
++#ifndef __CloudABI__
+ bool
+ ucl_load_handler (const unsigned char *data, size_t len,
+ 		const ucl_object_t *args, void* ud)
+@@ -1709,6 +1715,7 @@
+ 	ucl_create_err (&parser->err, "Unable to parse load macro");
+ 	return false;
+ }
++#endif
+ 
+ bool
+ ucl_inherit_handler (const unsigned char *data, size_t len,
+@@ -1760,6 +1767,7 @@
+ 	return true;
+ }
+ 
++#ifndef __CloudABI__
+ bool
+ ucl_parser_set_filevars (struct ucl_parser *parser, const char *filename, bool need_expand)
+ {
+@@ -1834,6 +1842,7 @@
+ 	return ucl_parser_add_file_priority(parser, filename,
+ 			parser->default_priority);
+ }
++#endif
+ 
+ bool
+ ucl_parser_add_fd_priority (struct ucl_parser *parser, int fd,

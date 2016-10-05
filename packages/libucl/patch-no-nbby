@@ -1,0 +1,26 @@
+--- src/ucl_util.c
++++ src/ucl_util.c
+@@ -59,6 +59,11 @@
+ #include <fetch.h>
+ #endif
+ 
++#if defined(_WIN32) || defined(__CloudABI__)
++#include <limits.h>
++#define NBBY CHAR_BIT
++#endif
++
+ #ifdef _WIN32
+ #include <windows.h>
+ 
+@@ -81,11 +86,6 @@
+ #define MAP_FAILED      ((void *) -1)
+ #endif
+ 
+-#ifdef _WIN32
+-#include <limits.h>
+-#define NBBY CHAR_BIT
+-#endif
+-
+ static void *ucl_mmap(char *addr, size_t length, int prot, int access, int fd, off_t offset)
+ {
+ 	void *map = NULL;
