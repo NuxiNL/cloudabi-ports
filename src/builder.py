@@ -51,6 +51,9 @@ class FileHandle:
     def __str__(self):
         return self._path
 
+    def autoreconf(self):
+        self.run(['autoreconf', '-i'])
+
     def gnu_configure(self, args=[], inplace=False):
         for path in util.walk_files(self._path):
             filename = os.path.basename(path)
