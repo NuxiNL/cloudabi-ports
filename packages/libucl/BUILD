@@ -7,7 +7,7 @@
 def build(ctx):
     srcdir = ctx.extract('%(name)s/%(version)s')
     srcdir.autoreconf()
-    build = srcdir.gnu_configure()
+    build = srcdir.gnu_configure(['--enable-signatures'])
     build.make()
     build.make_install().install()
 
@@ -16,7 +16,7 @@ package(
     version='0.8.0',
     homepage='https://github.com/vstakhov/libucl',
     maintainer='info@nuxi.nl',
-    lib_depends={'c-runtime'},
+    lib_depends={'c-runtime', 'libressl'},
     build_cmd=build,
 )
 
