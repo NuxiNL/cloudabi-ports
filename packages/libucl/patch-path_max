@@ -1,0 +1,10 @@
+--- src/ucl_util.c
++++ src/ucl_util.c
+@@ -865,6 +865,7 @@
+ 	unsigned char *buf = NULL;
+ 	size_t buflen = 0;
+ 	struct ucl_chunk *chunk;
++#define PATH_MAX 1025
+ 	char urlbuf[PATH_MAX];
+ 	int prev_state;
+ 

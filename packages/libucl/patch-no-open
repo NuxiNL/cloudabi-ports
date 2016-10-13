@@ -136,15 +136,7 @@
  
  
  #if (defined(HAVE_OPENSSL) && OPENSSL_VERSION_NUMBER >= 0x10000000L)
-@@ -865,6 +867,7 @@
- 	unsigned char *buf = NULL;
- 	size_t buflen = 0;
- 	struct ucl_chunk *chunk;
-+#define PATH_MAX 1025
- 	char urlbuf[PATH_MAX];
- 	int prev_state;
- 
-@@ -929,6 +932,7 @@
+@@ -929,6 +931,7 @@
   * @param priority
   * @return
   */
@@ -152,7 +144,7 @@
  static bool
  ucl_include_file_single (const unsigned char *data, size_t len,
  		struct ucl_parser *parser, struct ucl_include_params *params)
-@@ -1486,6 +1490,7 @@
+@@ -1486,6 +1489,7 @@
  
  	return ucl_include_common (data, len, args, parser, true, false);
  }
@@ -160,7 +152,7 @@
  
  /**
   * Handle priority macro
-@@ -1553,6 +1558,7 @@
+@@ -1553,6 +1557,7 @@
   * @param ud user data
   * @return
   */
@@ -168,7 +160,7 @@
  bool
  ucl_load_handler (const unsigned char *data, size_t len,
  		const ucl_object_t *args, void* ud)
-@@ -1709,6 +1715,7 @@
+@@ -1709,6 +1714,7 @@
  	ucl_create_err (&parser->err, "Unable to parse load macro");
  	return false;
  }
@@ -176,7 +168,7 @@
  
  bool
  ucl_inherit_handler (const unsigned char *data, size_t len,
-@@ -1760,6 +1767,7 @@
+@@ -1760,6 +1766,7 @@
  	return true;
  }
  
@@ -184,7 +176,7 @@
  bool
  ucl_parser_set_filevars (struct ucl_parser *parser, const char *filename, bool need_expand)
  {
-@@ -1834,6 +1842,7 @@
+@@ -1834,6 +1841,7 @@
  	return ucl_parser_add_file_priority(parser, filename,
  			parser->default_priority);
  }
