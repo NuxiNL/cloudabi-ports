@@ -113,9 +113,9 @@
  
 +#ifndef __CloudABI__
      if ((Py_InspectFlag || (command == NULL && filename == NULL && module == NULL)) &&
-         isatty(fileno(stdin))) {
-         PyObject *v;
-@@ -711,6 +730,7 @@
+         isatty(fileno(stdin)) &&
+         !Py_IsolatedFlag) {
+@@ -712,6 +731,7 @@
          else
              Py_DECREF(v);
      }
@@ -123,7 +123,7 @@
  
      if (command) {
          sts = run_command(command, &cf);
-@@ -792,7 +812,9 @@
+@@ -793,7 +813,9 @@
          Py_InspectFlag = 0;
          RunInteractiveHook();
          /* XXX */
@@ -163,7 +163,7 @@
  static int level, atbol;
 --- Parser/tokenizer.c
 +++ Parser/tokenizer.c
-@@ -932,7 +932,11 @@
+@@ -934,7 +934,11 @@
              return Py_CHARMASK(*tok->cur++);
          }
          if (tok->prompt != NULL) {
@@ -540,7 +540,7 @@
      if (outf == NULL || outf == Py_None) {
          PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
          return NULL;
-@@ -1881,7 +1887,7 @@
+@@ -1919,7 +1925,7 @@
      crashing the Python interpreter. Catch this common mistake here
      and output a useful error message. Note that under MS Windows,
      the shell already prevents that. */
@@ -549,7 +549,7 @@
      {
          struct _Py_stat_struct sb;
          if (_Py_fstat_noraise(fileno(stdin), &sb) == 0 &&
-@@ -2340,6 +2346,7 @@
+@@ -2378,6 +2384,7 @@
      PyErr_Restore(error_type, error_value, error_traceback);
  }
  
@@ -557,7 +557,7 @@
  void
  PySys_WriteStdout(const char *format, ...)
  {
-@@ -2349,6 +2356,7 @@
+@@ -2387,6 +2394,7 @@
      sys_write(&PyId_stdout, stdout, format, va);
      va_end(va);
  }
@@ -565,7 +565,7 @@
  
  void
  PySys_WriteStderr(const char *format, ...)
-@@ -2382,6 +2390,7 @@
+@@ -2420,6 +2428,7 @@
      PyErr_Restore(error_type, error_value, error_traceback);
  }
  
@@ -573,7 +573,7 @@
  void
  PySys_FormatStdout(const char *format, ...)
  {
-@@ -2391,6 +2400,7 @@
+@@ -2429,6 +2438,7 @@
      sys_format(&PyId_stdout, stdout, format, va);
      va_end(va);
  }

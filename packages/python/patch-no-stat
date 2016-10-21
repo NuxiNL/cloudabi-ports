@@ -30,16 +30,16 @@
  
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -11124,6 +11124,7 @@
+@@ -11161,6 +11161,7 @@
  static PyObject *
  DirEntry_fetch_stat(DirEntry *self, int follow_symlinks)
  {
 +#if defined(HAVE_STAT)
      int result;
-     struct _Py_stat_struct st;
- 
-@@ -11162,6 +11163,9 @@
- #endif
+     STRUCT_STAT st;
+     PyObject *ub;
+@@ -11184,6 +11185,9 @@
+         return path_object_error(self->path);
  
      return _pystat_fromstructstat(&st);
 +#else

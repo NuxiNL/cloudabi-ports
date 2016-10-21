@@ -72,7 +72,7 @@
      else {
 --- Modules/_testcapimodule.c
 +++ Modules/_testcapimodule.c
-@@ -2508,7 +2508,11 @@
+@@ -2571,7 +2571,11 @@
          e->tv_sec -=1;
          e->tv_usec += 1000000;
      }
@@ -241,7 +241,7 @@
      PyObject_FREE(sym);
 --- Parser/grammar.c
 +++ Parser/grammar.c
-@@ -103,7 +103,7 @@
+@@ -120,7 +120,7 @@
      lb->lb_type = type;
      lb->lb_str = strdup(str);
      if (Py_DebugFlag)
@@ -250,7 +250,7 @@
                 PyGrammar_LabelRepr(lb));
      return Py_SAFE_DOWNCAST(lb - ll->ll_label, intptr_t, int);
  }
-@@ -140,7 +140,7 @@
+@@ -157,7 +157,7 @@
      int i;
  
  #ifdef Py_DEBUG
@@ -259,7 +259,7 @@
  #endif
      /* Don't translate EMPTY */
      for (i = EMPTY+1; i < g->g_ll.ll_nlabels; i++)
-@@ -153,13 +153,13 @@
+@@ -170,13 +170,13 @@
      int i;
  
      if (Py_DebugFlag)
@@ -275,7 +275,7 @@
                          "Label %s is non-terminal %d.\n",
                          lb->lb_str,
                          g->g_dfa[i].d_type);
-@@ -172,7 +172,7 @@
+@@ -189,7 +189,7 @@
          for (i = 0; i < (int)N_TOKENS; i++) {
              if (strcmp(lb->lb_str, _PyParser_TokenNames[i]) == 0) {
                  if (Py_DebugFlag)
@@ -284,7 +284,7 @@
                          lb->lb_str, i);
                  lb->lb_type = i;
                  free(lb->lb_str);
-@@ -180,7 +180,7 @@
+@@ -197,7 +197,7 @@
                  return;
              }
          }
@@ -293,7 +293,7 @@
          return;
      }
  
-@@ -192,7 +192,7 @@
+@@ -209,7 +209,7 @@
              char *dest;
              size_t name_len;
              if (Py_DebugFlag)
@@ -302,7 +302,7 @@
              lb->lb_type = NAME;
              src = lb->lb_str + 1;
              p = strchr(src, '\'');
-@@ -202,7 +202,11 @@
+@@ -219,7 +219,11 @@
                  name_len = strlen(src);
              dest = (char *)malloc(name_len + 1);
              if (!dest) {
@@ -314,7 +314,7 @@
                  return;
              }
              strncpy(dest, src, name_len);
-@@ -218,8 +222,12 @@
+@@ -235,8 +239,12 @@
                  lb->lb_str = NULL;
              }
              else
@@ -327,7 +327,7 @@
          }
          else if (lb->lb_str[2] && lb->lb_str[3] == lb->lb_str[0]) {
              int type = (int) PyToken_TwoChars(lb->lb_str[1],
-@@ -230,8 +238,12 @@
+@@ -247,8 +255,12 @@
                  lb->lb_str = NULL;
              }
              else
@@ -340,7 +340,7 @@
          }
          else if (lb->lb_str[2] && lb->lb_str[3] && lb->lb_str[4] == lb->lb_str[0]) {
              int type = (int) PyToken_ThreeChars(lb->lb_str[1],
-@@ -243,14 +255,27 @@
+@@ -260,14 +272,27 @@
                  lb->lb_str = NULL;
              }
              else
@@ -541,7 +541,7 @@
  #endif /* Py_DEBUG */
 --- Parser/pgen.c
 +++ Parser/pgen.c
-@@ -154,7 +154,7 @@
+@@ -164,7 +164,7 @@
      int i;
  
      if (Py_DebugFlag)
@@ -550,7 +550,7 @@
      gr = newnfagrammar();
      REQ(n, MSTART);
      i = n->n_nchildren - 1; /* Last child is ENDMARKER */
-@@ -311,6 +311,7 @@
+@@ -321,6 +321,7 @@
      int i;
      nfaarc *ar;
  
@@ -558,7 +558,7 @@
      printf("%c%2d%c",
          istate == nf->nf_start ? '*' : ' ',
          istate,
-@@ -325,6 +326,7 @@
+@@ -335,6 +336,7 @@
          ar++;
      }
      printf("\n");
@@ -566,7 +566,7 @@
  }
  
  static void
-@@ -332,8 +334,10 @@
+@@ -342,8 +344,10 @@
  {
      int i;
  
@@ -577,7 +577,7 @@
      for (i = 0; i < nf->nf_nstates; i++)
          dumpstate(ll, nf, i);
  }
-@@ -408,8 +412,13 @@
+@@ -418,8 +422,13 @@
      yy->ss_deleted = 0;
      yy->ss_finish = testbit(ss, nf->nf_finish);
      if (yy->ss_finish)
@@ -591,7 +591,7 @@
  
      /* This algorithm is from a book written before
         the invention of structured programming... */
-@@ -500,6 +509,7 @@
+@@ -514,6 +523,7 @@
      ss_state *yy;
      ss_arc *zz;
  
@@ -599,7 +599,7 @@
      printf("Subset DFA %s\n", msg);
      for (i = 0; i < xx_nstates; i++) {
          yy = &xx_state[i];
-@@ -522,6 +532,7 @@
+@@ -536,6 +546,7 @@
                      &ll->ll_label[zz->sa_label]));
          }
      }
@@ -607,7 +607,7 @@
  }
  
  
-@@ -555,7 +566,7 @@
+@@ -569,7 +580,7 @@
      int i, j;
  
      if (Py_DebugFlag)
@@ -616,7 +616,7 @@
      for (i = 0; i < xx_nstates; i++) {
          if (xx_state[i].ss_deleted)
              continue;
-@@ -648,9 +659,9 @@
+@@ -662,9 +673,9 @@
      for (i = 0; i < gr->gr_nnfas; i++) {
          nf = gr->gr_nfa[i];
          if (Py_DebugFlag) {
@@ -647,8 +647,8 @@
 +        fprintf(stderr, "Writing %s ...\n", graminit_h);
      printnonterminals(g, fp);
      fclose(fp);
-     Py_Exit(0);
-@@ -125,7 +125,7 @@
+     freegrammar(g);
+@@ -126,7 +126,7 @@
      g = pgen(n);
      PyNode_Free(n);
      if (g == NULL) {
@@ -659,7 +659,7 @@
      return g;
 --- Parser/tokenizer.c
 +++ Parser/tokenizer.c
-@@ -1975,9 +1975,9 @@
+@@ -1977,9 +1977,9 @@
  void
  tok_dump(int type, char *start, char *end)
  {
@@ -687,7 +687,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4377,10 +4377,10 @@
+@@ -4398,10 +4398,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

@@ -54,7 +54,7 @@
  
  PyDoc_STRVAR(os_listdir__doc__,
  "listdir($module, /, path=None)\n"
-@@ -5717,6 +5725,14 @@
+@@ -5721,6 +5729,14 @@
      #define OS_LCHOWN_METHODDEF
  #endif /* !defined(OS_LCHOWN_METHODDEF) */
  
@@ -87,7 +87,7 @@
          joinpath(path, p);
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3167,6 +3167,7 @@
+@@ -3179,6 +3179,7 @@
  #endif /* HAVE_LCHOWN */
  
  
@@ -95,7 +95,7 @@
  static PyObject *
  posix_getcwd(int use_bytes)
  {
-@@ -3276,13 +3277,14 @@
+@@ -3288,13 +3289,14 @@
  {
      return posix_getcwd(1);
  }

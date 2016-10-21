@@ -18,7 +18,7 @@
  PyDoc_STRVAR(os_unlink__doc__,
  "unlink($module, /, path, *, dir_fd=None)\n"
  "--\n"
-@@ -5753,6 +5757,10 @@
+@@ -5757,6 +5761,10 @@
      #define OS_SYSTEM_METHODDEF
  #endif /* !defined(OS_SYSTEM_METHODDEF) */
  
@@ -31,7 +31,7 @@
  #endif /* !defined(OS_UNAME_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -4129,6 +4129,7 @@
+@@ -4141,6 +4141,7 @@
  #endif /* HAVE_SYSTEM */
  
  
@@ -39,7 +39,7 @@
  /*[clinic input]
  os.umask
  
-@@ -4147,6 +4148,7 @@
+@@ -4159,6 +4160,7 @@
          return posix_error();
      return PyLong_FromLong((long)i);
  }

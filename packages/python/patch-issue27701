@@ -18,7 +18,7 @@
  #       define FSTAT fstat
  #       define STRUCT_STAT struct stat
  #endif
-@@ -2044,18 +2039,17 @@
+@@ -2056,18 +2051,17 @@
          result = win32_lstat(path->wide, &st);
  #else
      else
@@ -44,7 +44,7 @@
  #endif /* MS_WINDOWS */
      Py_END_ALLOW_THREADS
  
-@@ -2511,19 +2505,15 @@
+@@ -2523,19 +2517,15 @@
  
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_FACCESSAT
@@ -72,7 +72,7 @@
      Py_END_ALLOW_THREADS
      return_value = !result;
  #endif
-@@ -2734,13 +2724,8 @@
+@@ -2746,13 +2736,8 @@
          result = fchmod(path->fd, mode);
      else
  #endif
@@ -87,7 +87,7 @@
          /*
           * fchmodat() doesn't currently support AT_SYMLINK_NOFOLLOW!
           * The documentation specifically shows how to use it,
-@@ -2761,10 +2746,15 @@
+@@ -2773,10 +2758,15 @@
                           result &&
                           ((errno == ENOTSUP) || (errno == EOPNOTSUPP)) &&
                           !follow_symlinks;
@@ -106,7 +106,7 @@
      Py_END_ALLOW_THREADS
  
      if (result) {
-@@ -3081,18 +3071,19 @@
+@@ -3093,18 +3083,19 @@
          result = fchown(path->fd, uid, gid);
      else
  #endif
@@ -134,7 +134,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -3344,15 +3335,12 @@
+@@ -3356,15 +3347,12 @@
  #else
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_LINKAT
@@ -156,7 +156,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -3829,14 +3817,11 @@
+@@ -3841,14 +3829,11 @@
  #else
      Py_BEGIN_ALLOW_THREADS
  #if HAVE_MKDIRAT
@@ -175,7 +175,7 @@
  #endif
      Py_END_ALLOW_THREADS
      if (result < 0)
-@@ -3981,11 +3966,10 @@
+@@ -3993,11 +3978,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_RENAMEAT
@@ -190,7 +190,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -4068,13 +4052,10 @@
+@@ -4080,13 +4064,10 @@
  #ifdef MS_WINDOWS
      /* Windows, success=1, UNIX, success=0 */
      result = !RemoveDirectoryW(path->wide);
@@ -207,7 +207,7 @@
  #endif
      Py_END_ALLOW_THREADS
  
-@@ -4215,13 +4196,10 @@
+@@ -4227,13 +4208,10 @@
  #ifdef MS_WINDOWS
      /* Windows, success=1, UNIX, success=0 */
      result = !Py_DeleteFileW(path->wide);
@@ -224,7 +224,7 @@
  #endif
      _Py_END_SUPPRESS_IPH
      Py_END_ALLOW_THREADS
-@@ -4438,35 +4416,26 @@
+@@ -4450,35 +4428,26 @@
      #define PATH_UTIME_HAVE_FD 0
  #endif
  
@@ -266,7 +266,7 @@
      UTIME_TO_TIMEVAL;
      return utimes(path, time);
  #elif defined(HAVE_UTIME_H)
-@@ -4478,6 +4447,8 @@
+@@ -4490,6 +4459,8 @@
  #endif
  }
  
@@ -275,7 +275,7 @@
  #endif
  
  static int
-@@ -4653,25 +4624,23 @@
+@@ -4665,25 +4636,23 @@
  #else /* MS_WINDOWS */
      Py_BEGIN_ALLOW_THREADS
  
@@ -312,22 +312,22 @@
  
      Py_END_ALLOW_THREADS
  
-@@ -6932,11 +6901,10 @@
+@@ -6968,11 +6937,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_READLINKAT
 -    if (dir_fd != DEFAULT_DIR_FD)
--        length = readlinkat(dir_fd, path.narrow, buffer, sizeof(buffer));
+-        length = readlinkat(dir_fd, path.narrow, buffer, MAXPATHLEN);
 -    else
-+    length = readlinkat(dir_fd, path.narrow, buffer, sizeof(buffer));
++    length = readlinkat(dir_fd, path.narrow, buffer, MAXPATHLEN);
 +#else
-+    length = readlink(path.narrow, buffer, sizeof(buffer));
++    length = readlink(path.narrow, buffer, MAXPATHLEN);
  #endif
--        length = readlink(path.narrow, buffer, sizeof(buffer));
+-        length = readlink(path.narrow, buffer, MAXPATHLEN);
      Py_END_ALLOW_THREADS
  
      if (length < 0) {
-@@ -7185,11 +7153,10 @@
+@@ -7222,11 +7190,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #if HAVE_SYMLINKAT
@@ -342,7 +342,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -7483,11 +7450,10 @@
+@@ -7520,11 +7487,10 @@
          fd = _wopen(path->wide, flags, mode);
  #else
  #ifdef HAVE_OPENAT
@@ -358,7 +358,7 @@
  #endif /* !MS_WINDOWS */
          Py_END_ALLOW_THREADS
      } while (fd < 0 && errno == EINTR && !(async_err = PyErr_CheckSignals()));
-@@ -8418,11 +8384,10 @@
+@@ -8455,11 +8421,10 @@
      do {
          Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_MKFIFOAT
@@ -373,7 +373,7 @@
          Py_END_ALLOW_THREADS
      } while (result != 0 && errno == EINTR &&
               !(async_err = PyErr_CheckSignals()));
-@@ -8470,11 +8435,10 @@
+@@ -8507,11 +8472,10 @@
      do {
          Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_MKNODAT
@@ -388,15 +388,15 @@
          Py_END_ALLOW_THREADS
      } while (result != 0 && errno == EINTR &&
               !(async_err = PyErr_CheckSignals()));
-@@ -11152,9 +11116,9 @@
-     path = PyBytes_AS_STRING(bytes);
- 
-     if (follow_symlinks)
--        result = STAT(path, &st);
-+        result = stat(path, &st);
-     else
--        result = LSTAT(path, &st);
-+        result = lstat(path, &st);
-     Py_DECREF(bytes);
- 
-     if (result != 0)
+@@ -11173,9 +11137,9 @@
+         const char *path = PyBytes_AS_STRING(ub);
+ #endif
+         if (follow_symlinks)
+-            result = STAT(path, &st);
++            result = stat(path, &st);
+         else
+-            result = LSTAT(path, &st);
++            result = lstat(path, &st);
+         Py_DECREF(ub);
+     } else
+         return NULL;

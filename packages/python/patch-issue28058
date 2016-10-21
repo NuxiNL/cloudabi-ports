@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -1929,7 +1929,7 @@
+@@ -1941,7 +1941,7 @@
      PyStructSequence_SET_ITEM(v, 2, _PyLong_FromDev(st->st_dev));
  #endif
      PyStructSequence_SET_ITEM(v, 3, PyLong_FromLong((long)st->st_nlink));

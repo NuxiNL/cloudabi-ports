@@ -18,7 +18,7 @@
  #if defined(HAVE_FCHMOD)
  
  PyDoc_STRVAR(os_fchmod__doc__,
-@@ -5673,6 +5677,10 @@
+@@ -5677,6 +5681,10 @@
      #define OS_FCHDIR_METHODDEF
  #endif /* !defined(OS_FCHDIR_METHODDEF) */
  
@@ -31,7 +31,7 @@
  #endif /* !defined(OS_FCHMOD_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2658,6 +2658,7 @@
+@@ -2670,6 +2670,7 @@
  #endif /* HAVE_FCHDIR */
  
  
@@ -39,7 +39,7 @@
  /*[clinic input]
  os.chmod
  
-@@ -2784,6 +2785,7 @@
+@@ -2796,6 +2797,7 @@
  
      Py_RETURN_NONE;
  }

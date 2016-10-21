@@ -66,7 +66,7 @@
          if (fp != NULL) {
              (void) PyRun_SimpleFileExFlags(fp, startup, 0, cf);
              PyErr_Clear();
-@@ -734,7 +738,11 @@
+@@ -735,7 +739,11 @@
          }
  
          if (sts==-1 && filename!=NULL) {
@@ -104,7 +104,7 @@
      if (fp == NULL) {
          perror(graminit_h);
          Py_Exit(1);
-@@ -92,7 +100,11 @@
+@@ -93,7 +101,11 @@
      grammar *g0, *g;
      perrdetail err;
  

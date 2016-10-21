@@ -14,7 +14,7 @@
  def c2py(plural):
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
-@@ -1915,6 +1915,7 @@
+@@ -1953,6 +1953,7 @@
                          PyUnicode_FromString(Py_GetCopyright()));
      SET_SYS_FROM_STRING("platform",
                          PyUnicode_FromString(Py_GetPlatform()));
@@ -22,7 +22,7 @@
      SET_SYS_FROM_STRING("executable",
                          PyUnicode_FromWideChar(
                                 Py_GetProgramFullPath(), -1));
-@@ -1926,6 +1927,18 @@
+@@ -1964,6 +1965,18 @@
                          PyUnicode_FromWideChar(Py_GetPrefix(), -1));
      SET_SYS_FROM_STRING("base_exec_prefix",
                          PyUnicode_FromWideChar(Py_GetExecPrefix(), -1));

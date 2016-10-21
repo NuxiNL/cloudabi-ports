@@ -43,7 +43,7 @@
  
  /* the grouping is terminated by either 0 or CHAR_MAX */
  static PyObject*
-@@ -86,6 +88,7 @@
+@@ -87,6 +89,7 @@
      return result;
  }
  
@@ -51,7 +51,7 @@
  static PyObject*
  PyLocale_setlocale(PyObject* self, PyObject* args)
  {
-@@ -126,6 +129,7 @@
+@@ -127,6 +130,7 @@
      }
      return result_object;
  }
@@ -59,7 +59,7 @@
  
  PyDoc_STRVAR(localeconv__doc__,
  "() -> dict. Returns numeric and monetary locale-specific parameters.");
-@@ -480,6 +484,7 @@
+@@ -481,6 +485,7 @@
      return PyUnicode_DecodeLocale(dgettext(domain, in), NULL);
  }
  
@@ -67,7 +67,7 @@
  PyDoc_STRVAR(dcgettext__doc__,
  "dcgettext(domain, msg, category) -> string\n"
  "Return translation of msg in domain and category.");
-@@ -493,7 +498,9 @@
+@@ -494,7 +499,9 @@
          return 0;
      return PyUnicode_DecodeLocale(dcgettext(domain,msgid,category), NULL);
  }
@@ -77,7 +77,7 @@
  PyDoc_STRVAR(textdomain__doc__,
  "textdomain(domain) -> string\n"
  "Set the C library's textdmain to domain, returning the new domain.");
-@@ -511,7 +518,9 @@
+@@ -512,7 +519,9 @@
      }
      return PyUnicode_DecodeLocale(domain, NULL);
  }
@@ -87,7 +87,7 @@
  PyDoc_STRVAR(bindtextdomain__doc__,
  "bindtextdomain(domain, dir) -> string\n"
  "Bind the C library's domain to dir.");
-@@ -545,6 +554,7 @@
+@@ -546,6 +555,7 @@
      Py_XDECREF(dirname_bytes);
      return result;
  }
@@ -95,7 +95,7 @@
  
  #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
  PyDoc_STRVAR(bind_textdomain_codeset__doc__,
-@@ -567,8 +577,10 @@
+@@ -568,8 +578,10 @@
  #endif
  
  static struct PyMethodDef PyLocale_Methods[] = {
@@ -106,7 +106,7 @@
    {"localeconv", (PyCFunction) PyLocale_localeconv,
     METH_NOARGS, localeconv__doc__},
  #ifdef HAVE_WCSCOLL
-@@ -591,12 +603,18 @@
+@@ -592,12 +604,18 @@
      gettext__doc__},
    {"dgettext",(PyCFunction)PyIntl_dgettext,METH_VARARGS,
     dgettext__doc__},
@@ -125,7 +125,7 @@
  #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
    {"bind_textdomain_codeset",(PyCFunction)PyIntl_bind_textdomain_codeset,
     METH_VARARGS, bind_textdomain_codeset__doc__},
-@@ -630,17 +648,29 @@
+@@ -631,17 +649,29 @@
      if (m == NULL)
          return NULL;
  

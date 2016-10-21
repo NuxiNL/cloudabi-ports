@@ -20,7 +20,7 @@
  }
 --- Python/random.c
 +++ Python/random.c
-@@ -230,6 +230,9 @@
+@@ -233,6 +233,9 @@
  static int
  dev_urandom(char *buffer, Py_ssize_t size, int blocking, int raise)
  {
@@ -30,7 +30,7 @@
      int fd;
      Py_ssize_t n;
  #ifdef PY_GETRANDOM
-@@ -334,6 +337,7 @@
+@@ -337,6 +340,7 @@
          }
          close(fd);
      }

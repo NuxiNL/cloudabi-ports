@@ -18,7 +18,7 @@
  #if defined(HAVE_FCHDIR)
  
  PyDoc_STRVAR(os_fchdir__doc__,
-@@ -5669,6 +5673,10 @@
+@@ -5673,6 +5677,10 @@
      #define OS_CTERMID_METHODDEF
  #endif /* !defined(OS_CTERMID_METHODDEF) */
  
@@ -31,7 +31,7 @@
  #endif /* !defined(OS_FCHDIR_METHODDEF) */
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -2596,6 +2596,7 @@
+@@ -2608,6 +2608,7 @@
  #endif /* HAVE_CTERMID */
  
  
@@ -39,7 +39,7 @@
  /*[clinic input]
  os.chdir
  
-@@ -2634,6 +2635,7 @@
+@@ -2646,6 +2647,7 @@
  
      Py_RETURN_NONE;
  }
