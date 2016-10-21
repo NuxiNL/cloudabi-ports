@@ -21,16 +21,3 @@
  
  /* XXX Only unix build process has been tested */
  #ifndef HGVERSION
---- Modules/getpath.c
-+++ Modules/getpath.c
-@@ -492,8 +492,8 @@
-     wchar_t *lib_python;
- 
-     _pythonpath = Py_DecodeLocale(PYTHONPATH, NULL);
--    _prefix = Py_DecodeLocale(PREFIX, NULL);
--    _exec_prefix = Py_DecodeLocale(EXEC_PREFIX, NULL);
-+    _prefix = Py_DecodeLocale("/nonexistent", NULL);
-+    _exec_prefix = Py_DecodeLocale("/nonexistent", NULL);
-     lib_python = Py_DecodeLocale("lib/python" VERSION, NULL);
- 
-     if (!_pythonpath || !_prefix || !_exec_prefix || !lib_python) {

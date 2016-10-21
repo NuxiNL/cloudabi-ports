@@ -16,42 +16,6 @@
  
  PyAPI_FUNC(Py_ssize_t) _Py_read(
      int fd,
---- Modules/getpath.c
-+++ Modules/getpath.c
-@@ -404,7 +404,11 @@
-     exec_prefix[MAXPATHLEN] = L'\0';
-     joinpath(exec_prefix, L"pybuilddir.txt");
-     if (isfile(exec_prefix)) {
-+#ifdef HAVE_FOPEN
-         FILE *f = _Py_wfopen(exec_prefix, L"rb");
-+#else
-+        FILE *f = NULL;
-+#endif
-         if (f == NULL)
-             errno = 0;
-         else {
-@@ -643,13 +647,21 @@
-         wcscpy(tmpbuffer, argv0_path);
- 
-         joinpath(tmpbuffer, env_cfg);
-+#ifdef HAVE_FOPEN
-         env_file = _Py_wfopen(tmpbuffer, L"r");
-+#else
-+        env_file = NULL;
-+#endif
-         if (env_file == NULL) {
-             errno = 0;
-             reduce(tmpbuffer);
-             reduce(tmpbuffer);
-             joinpath(tmpbuffer, env_cfg);
-+#ifdef HAVE_FOPEN
-             env_file = _Py_wfopen(tmpbuffer, L"r");
-+#else
-+            env_file = NULL;
-+#endif
-             if (env_file == NULL) {
-                 errno = 0;
-             }
 --- Modules/main.c
 +++ Modules/main.c
 @@ -126,7 +126,11 @@

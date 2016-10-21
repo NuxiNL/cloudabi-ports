@@ -12,22 +12,6 @@
  
  PyAPI_FUNC(int) _Py_open(
      const char *pathname,
---- Modules/getpath.c
-+++ Modules/getpath.c
-@@ -126,8 +126,13 @@
-         errno = EINVAL;
-         return -1;
-     }
-+#ifdef HAVE_STAT
-     err = stat(fname, buf);
-+#else
-+    {err = -1; errno = ENOSYS;}
-+#endif
-     PyMem_Free(fname);
-+    
-     return err;
- }
- 
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
 @@ -11161,6 +11161,7 @@

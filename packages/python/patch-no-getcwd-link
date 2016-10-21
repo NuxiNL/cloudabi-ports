@@ -69,22 +69,6 @@
  #ifndef OS_LINK_METHODDEF
      #define OS_LINK_METHODDEF
  #endif /* !defined(OS_LINK_METHODDEF) */
---- Modules/getpath.c
-+++ Modules/getpath.c
-@@ -231,11 +231,13 @@
-     if (p[0] == SEP)
-         wcscpy(path, p);
-     else {
-+#ifdef HAVE_GETCWD
-         if (!_Py_wgetcwd(path, pathlen)) {
-             /* unable to get the current directory */
-             wcscpy(path, p);
-             return;
-         }
-+#endif
-         if (p[0] == '.' && p[1] == SEP)
-             p += 2;
-         joinpath(path, p);
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
 @@ -3179,6 +3179,7 @@

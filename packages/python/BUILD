@@ -21,7 +21,7 @@ def build(ctx):
 
     # For the target build, copy over the generated files into the build
     # directory, as generating them depends on tools built for the host.
-    for f in {'Setup.dist', 'faulthandler.c', 'signalmodule.c'}:
+    for f in {'Setup.dist', 'faulthandler.c', 'getpath.c', 'signalmodule.c'}:
         ctx.resource(f).rename(srcdir.path('Modules').path(f))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
@@ -100,7 +100,6 @@ distfile(
         'Modules/_testbuffer.c',
         'Modules/_testcapimodule.c',
         'Modules/cjkcodecs/cjkcodecs.h',
-        'Modules/getpath.c',
         'Modules/main.c',
         'Modules/posixmodule.c',
         'Modules/pyexpat.c',
