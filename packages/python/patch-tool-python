@@ -798,6 +798,18 @@
      PyDict_SetItemString(interp->sysdict, "modules",
                           interp->modules);
  
+@@ -813,7 +822,11 @@
+         if (interp->sysdict == NULL)
+             goto handle_error;
+         Py_INCREF(interp->sysdict);
++#ifndef __CloudABI__
+         PySys_SetPath(Py_GetPath());
++#else
++        PySys_SetPath(stdlibfd);
++#endif
+         PyDict_SetItemString(interp->sysdict, "modules",
+                              interp->modules);
+         /* Set up a preliminary stderr printer until we have enough
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
 @@ -20,6 +20,7 @@
