@@ -5,7 +5,7 @@
 
 package(
     name='mpfr',
-    version='3.1.4',
+    version='3.1.5',
     homepage='http://www.mpfr.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
@@ -13,8 +13,8 @@ package(
 )
 
 distfile(
-    name='mpfr-3.1.4.tar.xz',
-    checksum='761413b16d749c53e2bfd2b1dfaa3b027b0e793e404b90b5fbaeef60af6517f5',
+    name='mpfr-3.1.5.tar.xz',
+    checksum='015fde82b3979fbe5f83501986d328331ba8ddf008c1ff3da3c238f49ca062bc',
     master_sites={'http://www.mpfr.org/mpfr-current/'},
     unsafe_string_sources={
         'src/get_str.c',
