@@ -19,7 +19,7 @@
  
 --- source/common/param.cpp
 +++ source/common/param.cpp
-@@ -1489,6 +1489,7 @@
+@@ -1532,6 +1532,7 @@
  
  bool parseLambdaFile(x265_param* param)
  {
@@ -27,7 +27,7 @@
      if (!param->rc.lambdaFileName)
          return false;
  
-@@ -1555,6 +1556,9 @@
+@@ -1598,6 +1599,9 @@
  
      fclose(lfn);
      return false;
@@ -59,7 +59,7 @@
  /** set quantized matrix coefficient for encode */
 --- source/encoder/encoder.cpp
 +++ source/encoder/encoder.cpp
-@@ -318,6 +318,7 @@
+@@ -320,6 +320,7 @@
  
      if (m_param->analysisMode)
      {
@@ -67,7 +67,7 @@
          const char* name = m_param->analysisFileName;
          if (!name)
              name = defaultAnalysisFileName;
-@@ -328,6 +329,9 @@
+@@ -330,6 +331,9 @@
              x265_log(NULL, X265_LOG_ERROR, "Analysis load/save: failed to open file %s\n", name);
              m_aborted = true;
          }
@@ -79,7 +79,7 @@
      m_bZeroLatency = !m_param->bframes && !m_param->lookaheadDepth && m_param->frameNumThreads == 1;
 --- source/encoder/ratecontrol.cpp
 +++ source/encoder/ratecontrol.cpp
-@@ -396,6 +396,7 @@
+@@ -400,6 +400,7 @@
                  return false;
              if (m_param->rc.cuTree)
              {
@@ -87,7 +87,7 @@
                  char *tmpFile = strcatFilename(fileName, ".cutree");
                  if (!tmpFile)
                      return false;
-@@ -406,6 +407,9 @@
+@@ -410,6 +411,9 @@
                      x265_log_file(m_param, X265_LOG_ERROR, "can't open stats file %s.cutree\n", fileName);
                      return false;
                  }
@@ -97,7 +97,7 @@
              }
  
              /* check whether 1st pass options were compatible with current options */
-@@ -580,6 +584,7 @@
+@@ -587,6 +591,7 @@
           * and move it to the real name only when it's complete */
          if (m_param->rc.bStatWrite)
          {
@@ -105,7 +105,7 @@
              char *p, *statFileTmpname;
              statFileTmpname = strcatFilename(fileName, ".temp");
              if (!statFileTmpname)
-@@ -608,6 +613,9 @@
+@@ -615,6 +620,9 @@
                      return false;
                  }
              }
@@ -115,7 +115,7 @@
          }
          if (m_param->rc.cuTree)
          {
-@@ -2632,6 +2640,7 @@
+@@ -2683,6 +2691,7 @@
      if (!fileName)
          fileName = s_defaultStatFileName;
  
@@ -123,7 +123,7 @@
      if (m_statFileOut)
      {
          fclose(m_statFileOut);
-@@ -2667,6 +2676,7 @@
+@@ -2718,6 +2727,7 @@
          X265_FREE(tmpFileName);
          X265_FREE(newFileName);
      }
