@@ -1,6 +1,6 @@
 --- source/common/unicode/uconfig.h
 +++ source/common/unicode/uconfig.h
-@@ -250,6 +250,9 @@
+@@ -252,6 +252,9 @@
   *
   * @stable ICU 3.6
   */
@@ -12,7 +12,7 @@
  #endif
 --- source/io/ufile.c
 +++ source/io/ufile.c
-@@ -140,6 +140,7 @@
+@@ -142,6 +142,7 @@
      return finit_owner(f, locale, codepage, TRUE);
  }
  
@@ -20,7 +20,7 @@
  U_CAPI UFILE* U_EXPORT2 /* U_CAPI ... U_EXPORT2 added by Peter Kirk 17 Nov 2001 */
  u_fopen(const char    *filename,
          const char    *perm,
-@@ -191,6 +192,7 @@
+@@ -193,6 +194,7 @@
  #endif
      return result; /* not a file leak */
  }
@@ -30,7 +30,7 @@
  u_fstropen(UChar *stringBuf,
 --- source/io/unicode/ustdio.h
 +++ source/io/unicode/ustdio.h
-@@ -237,6 +237,7 @@
+@@ -239,6 +239,7 @@
   * @return A new UFILE, or NULL if an error occurred.
   * @stable ICU 3.0
   */
@@ -38,7 +38,7 @@
  U_STABLE UFILE* U_EXPORT2
  u_fopen(const char    *filename,
      const char    *perm,
-@@ -265,6 +266,7 @@
+@@ -267,6 +268,7 @@
      const char    *perm,
      const char    *locale,
      const char    *codepage);

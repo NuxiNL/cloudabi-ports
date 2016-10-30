@@ -1,6 +1,6 @@
 --- source/config/Makefile.inc.in
 +++ source/config/Makefile.inc.in
-@@ -208,7 +208,7 @@
+@@ -207,7 +207,7 @@
  MKINSTALLDIRS = $(SHELL) $(pkgdatadir)/mkinstalldirs
  RANLIB = @RANLIB@
  RMV = rm -rf
@@ -11,7 +11,7 @@
  U_IS_BIG_ENDIAN = @U_IS_BIG_ENDIAN@
 --- source/configure
 +++ source/configure
-@@ -2613,15 +2613,6 @@
+@@ -2611,15 +2611,6 @@
  # for icu-config
  # This may be removed later - mow (June 17, 2010)
  ICU_ECHO_C= ICU_ECHO_N= ICU_ECHO_T=
