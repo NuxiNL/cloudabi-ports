@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='nettle',
-    version='3.2',
+    version='3.3',
     homepage='http://www.lysator.liu.se/~nisse/nettle/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
@@ -19,7 +19,7 @@ package(
 )
 
 distfile(
-    name='nettle-3.2.tar.gz',
-    checksum='ea4283def236413edab5a4cf9cf32adf540c8df1b9b67641cfc2302fca849d97',
+    name='nettle-3.3.tar.gz',
+    checksum='46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e',
     master_sites=sites_gnu('nettle'),
 )
