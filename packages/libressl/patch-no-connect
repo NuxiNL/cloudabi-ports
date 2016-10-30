@@ -20,18 +20,18 @@
  			i = BIO_sock_error(b->num);
 --- include/tls.h
 +++ include/tls.h
-@@ -96,11 +96,8 @@
- int tls_accept_fds(struct tls *_ctx, struct tls **_cctx, int _fd_read,
-     int _fd_write);
+@@ -109,11 +109,8 @@
  int tls_accept_socket(struct tls *_ctx, struct tls **_cctx, int _socket);
+ int tls_accept_cbs(struct tls *_ctx, struct tls **_cctx,
+     tls_read_cb _read_cb, tls_write_cb _write_cb, void *_cb_arg);
 -int tls_connect(struct tls *_ctx, const char *_host, const char *_port);
  int tls_connect_fds(struct tls *_ctx, int _fd_read, int _fd_write,
      const char *_servername);
 -int tls_connect_servername(struct tls *_ctx, const char *_host,
 -    const char *_port, const char *_servername);
  int tls_connect_socket(struct tls *_ctx, int _s, const char *_servername);
- int tls_handshake(struct tls *_ctx);
- ssize_t tls_read(struct tls *_ctx, void *_buf, size_t _buflen);
+ int tls_connect_cbs(struct tls *_ctx, tls_read_cb _read_cb,
+     tls_write_cb _write_cb, void *_cb_arg, const char *_servername);
 --- tls/tls_client.c
 +++ tls/tls_client.c
 @@ -44,6 +44,7 @@
@@ -48,5 +48,5 @@
  }
 +#endif
  
- int
- tls_connect_socket(struct tls *ctx, int s, const char *servername)
+ static int
+ tls_connect_common(struct tls *ctx, const char *servername)
