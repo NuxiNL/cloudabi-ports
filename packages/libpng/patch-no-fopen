@@ -22,7 +22,7 @@
     int convert_to_8_bit, const void *buffer, png_int_32 row_stride,
 --- pngread.c
 +++ pngread.c
-@@ -1479,6 +1479,7 @@
+@@ -1481,6 +1481,7 @@
     return 0;
  }
  
@@ -30,7 +30,7 @@
  int PNGAPI
  png_image_begin_read_from_file(png_imagep image, const char *file_name)
  {
-@@ -1516,6 +1517,7 @@
+@@ -1518,6 +1519,7 @@
  
     return 0;
  }
@@ -40,7 +40,7 @@
  static void PNGCBAPI
 --- pngwrite.c
 +++ pngwrite.c
-@@ -2312,6 +2312,7 @@
+@@ -2314,6 +2314,7 @@
        return 0;
  }
  
@@ -48,7 +48,7 @@
  int PNGAPI
  png_image_write_to_file(png_imagep image, const char *file_name,
      int convert_to_8bit, const void *buffer, png_int_32 row_stride,
-@@ -2378,6 +2379,7 @@
+@@ -2380,6 +2381,7 @@
     else
        return 0;
  }
