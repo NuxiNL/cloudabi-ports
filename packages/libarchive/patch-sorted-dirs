@@ -10,9 +10,9 @@
 +	int 			 namelist_len;
 +	int			 namelist_pos;
  	struct dirent		*de;
- #if defined(HAVE_READDIR_R)
+ #if defined(USE_READDIR_R)
  	struct dirent		*dirent;
-@@ -2129,7 +2130,7 @@
+@@ -2142,7 +2143,7 @@
  	t->depth = 0;
  	t->descend = 0;
  	t->current = NULL;
@@ -21,7 +21,7 @@
  	t->symlink_mode = t->initial_symlink_mode;
  	archive_string_empty(&t->path);
  	t->entry_fd = -1;
-@@ -2294,7 +2295,7 @@
+@@ -2307,7 +2308,7 @@
  
  	while (t->stack != NULL) {
  		/* If there's an open dir, get the next entry from there. */
@@ -30,7 +30,7 @@
  			r = tree_dir_next_posix(t);
  			if (r == 0)
  				continue;
-@@ -2346,82 +2347,41 @@
+@@ -2359,82 +2360,41 @@
  }
  
  static int
@@ -47,7 +47,7 @@
  	size_t namelen;
  
 -	if (t->d == NULL) {
--#if defined(HAVE_READDIR_R)
+-#if defined(USE_READDIR_R)
 -		size_t dirent_size;
 -#endif
 -
@@ -72,7 +72,7 @@
  			t->visit_type = r != 0 ? r : TREE_ERROR_DIR;
  			return (t->visit_type);
  		}
--#if defined(HAVE_READDIR_R)
+-#if defined(USE_READDIR_R)
 -		dirent_size = offsetof(struct dirent, d_name) +
 -		  t->filesystem_table[t->current->filesystem_id].name_max + 1;
 -		if (t->dirent == NULL || t->dirent_allocated < dirent_size) {
@@ -89,11 +89,11 @@
 -			}
 -			t->dirent_allocated = dirent_size;
 -		}
--#endif /* HAVE_READDIR_R */
+-#endif /* USE_READDIR_R */
  	}
  	for (;;) {
 -		errno = 0;
--#if defined(HAVE_READDIR_R)
+-#if defined(USE_READDIR_R)
 -		r = readdir_r(t->d, t->dirent, &t->de);
 -#ifdef _AIX
 -		/* Note: According to the man page, return value 9 indicates
@@ -131,7 +131,7 @@
  		name = t->de->d_name;
  		namelen = D_NAMELEN(t->de);
  		t->flags &= ~hasLstat;
-@@ -2608,6 +2568,7 @@
+@@ -2621,6 +2581,7 @@
  static void
  tree_close(struct tree *t)
  {
@@ -139,7 +139,7 @@
  
  	if (t == NULL)
  		return;
-@@ -2616,9 +2577,11 @@
+@@ -2629,9 +2590,11 @@
  		t->entry_fd = -1;
  	}
  	/* Close the handle of readdir(). */

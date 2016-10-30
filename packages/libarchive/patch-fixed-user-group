@@ -16,7 +16,7 @@
  static const char *
  lookup_uname_helper(struct name_cache *cache, id_t id)
  {
-@@ -250,7 +257,14 @@
+@@ -251,7 +258,14 @@
  		    &lookup_gname_helper, (id_t)gid));
  }
  

@@ -1,6 +1,6 @@
 --- libarchive/archive_read_support_format_mtree.c
 +++ libarchive/archive_read_support_format_mtree.c
-@@ -1287,8 +1287,6 @@
+@@ -1296,8 +1296,6 @@
  			if ((parsed_kws & MTREE_HAS_SIZE) == 0 ||
  			    (parsed_kws & MTREE_HAS_NOCHANGE) != 0)
  				archive_entry_set_size(entry, st->st_size);
