@@ -1,6 +1,35 @@
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1293,7 +1293,7 @@
+@@ -1970,12 +1970,19 @@
+       (log_level & G_LOG_LEVEL_MASK))
+     {
+       const gchar *prg_name = g_get_prgname ();
++#ifndef __CloudABI__
+       gulong pid = getpid ();
+ 
+       if (prg_name == NULL)
+         g_string_append_printf (gstring, "(process:%lu): ", pid);
+       else
+         g_string_append_printf (gstring, "(%s:%lu): ", prg_name, pid);
++#else
++      if (prg_name == NULL)
++        g_string_append_printf (gstring, "(process): ");
++      else
++        g_string_append_printf (gstring, "(%s): ", prg_name);
++#endif
+     }
+ 
+   if (log_domain != NULL)
+@@ -2429,7 +2436,7 @@
+       write_string_sized (stream, field->value, field->length);
+     }
+ 
+-#ifndef G_OS_WIN32
++#if !defined(G_OS_WIN32) && !defined(__CloudABI__)
+   {
+     gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
+ 
+@@ -2623,7 +2630,7 @@
  			 gpointer       unused_data)
  {
    gchar level_prefix[STRING_BUFFER_SIZE];
@@ -9,7 +38,7 @@
    gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
  #endif
    FILE *stream;
-@@ -1309,7 +1309,7 @@
+@@ -2639,7 +2646,7 @@
    if (!message)
      message = "(NULL) message";
  
@@ -18,7 +47,7 @@
    format_unsigned (pid_string, getpid (), 10);
  #endif
  
-@@ -1318,7 +1318,7 @@
+@@ -2648,7 +2655,7 @@
    else
      write_string (stream, "\n** ");
  
@@ -27,24 +56,6 @@
    write_string (stream, "(process:");
    write_string (stream, pid_string);
    write_string (stream, "): ");
-@@ -1465,10 +1465,17 @@
-     {
-       const gchar *prg_name = g_get_prgname ();
-       
-+#ifndef __CloudABI__
-       if (!prg_name)
- 	g_string_append_printf (gstring, "(process:%lu): ", (gulong)getpid ());
-       else
- 	g_string_append_printf (gstring, "(%s:%lu): ", prg_name, (gulong)getpid ());
-+#else
-+      if (!prg_name)
-+	g_string_append_printf (gstring, "(process): ");
-+      else
-+	g_string_append_printf (gstring, "(%s): ", prg_name);
-+#endif
-     }
- 
-   if (log_domain)
 --- glib/gslice.c
 +++ glib/gslice.c
 @@ -1457,7 +1457,11 @@

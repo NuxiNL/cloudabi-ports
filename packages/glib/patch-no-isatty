@@ -1,0 +1,20 @@
+--- glib/gmessages.c
++++ glib/gmessages.c
+@@ -1823,6 +1823,9 @@
+ gboolean
+ g_log_writer_supports_color (gint output_fd)
+ {
++#ifdef __CloudABI__
++  return FALSE;
++#else
+   g_return_val_if_fail (output_fd >= 0, FALSE);
+ 
+   /* FIXME: This check could easily be expanded in future to be more robust
+@@ -1840,6 +1843,7 @@
+    *  - http://unix.stackexchange.com/questions/198794/where-does-the-term-environment-variable-default-get-set
+    */
+   return isatty (output_fd);
++#endif
+ }
+ 
+ #ifdef __linux__

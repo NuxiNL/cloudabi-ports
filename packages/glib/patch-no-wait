@@ -47,7 +47,7 @@
    gchar buf[16];
 @@ -256,9 +263,12 @@
    else
-     abort ();
+     g_abort ();
  #endif
 +#else
 +  abort();

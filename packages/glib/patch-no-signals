@@ -48,7 +48,7 @@
  
 --- glib/gmain.c
 +++ glib/gmain.c
-@@ -448,7 +448,7 @@
+@@ -449,7 +449,7 @@
  G_LOCK_DEFINE_STATIC (main_loop);
  static GMainContext *default_main_context;
  
@@ -57,7 +57,7 @@
  
  
  /* UNIX signals work by marking one of these variables then waking the
-@@ -487,6 +487,7 @@
+@@ -488,6 +488,7 @@
    NULL
  };
  
@@ -65,7 +65,7 @@
  GSourceFuncs g_child_watch_funcs =
  {
    g_child_watch_prepare,
-@@ -494,6 +495,7 @@
+@@ -495,6 +496,7 @@
    g_child_watch_dispatch,
    g_child_watch_finalize
  };
@@ -73,7 +73,7 @@
  
  GSourceFuncs g_idle_funcs =
  {
-@@ -4957,6 +4959,7 @@
+@@ -5059,6 +5061,7 @@
    G_UNLOCK(main_context_list);
  }
  
@@ -81,7 +81,7 @@
  static void
  dispatch_unix_signals_unlocked (void)
  {
-@@ -5055,6 +5058,7 @@
+@@ -5157,6 +5160,7 @@
    dispatch_unix_signals_unlocked ();
    G_UNLOCK(unix_signal_lock);
  }
@@ -89,7 +89,7 @@
  
  static gboolean
  g_child_watch_prepare (GSource *source,
-@@ -5122,6 +5126,7 @@
+@@ -5224,6 +5228,7 @@
    return again;
  }
  
@@ -97,7 +97,7 @@
  static void
  ref_unix_signal_handler_unlocked (int signum)
  {
-@@ -5198,6 +5203,7 @@
+@@ -5300,6 +5305,7 @@
    unref_unix_signal_handler_unlocked (SIGCHLD);
    G_UNLOCK (unix_signal_lock);
  }
@@ -105,7 +105,7 @@
  
  #endif /* G_OS_WIN32 */
  
-@@ -5224,7 +5230,7 @@
+@@ -5326,7 +5332,7 @@
    return FALSE;
  }
  
@@ -114,7 +114,7 @@
  
  static void
  g_unix_signal_handler (int signum)
-@@ -5273,6 +5279,7 @@
+@@ -5375,6 +5381,7 @@
   *
   * Since: 2.4
   **/
@@ -122,7 +122,7 @@
  GSource *
  g_child_watch_source_new (GPid pid)
  {
-@@ -5407,6 +5414,7 @@
+@@ -5509,6 +5516,7 @@
  {
    return g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, function, data, NULL);
  }
@@ -130,7 +130,7 @@
  
  
  /* Idle functions */
-@@ -5671,7 +5679,7 @@
+@@ -5782,7 +5790,7 @@
      {
        g_main_context_iteration (glib_worker_context, TRUE);
  
@@ -139,7 +139,7 @@
        if (any_unix_signal_pending)
          dispatch_unix_signals ();
  #endif
-@@ -5688,7 +5696,7 @@
+@@ -5799,7 +5807,7 @@
    if (g_once_init_enter (&initialised))
      {
        /* mask all signals in the worker thread */
@@ -148,7 +148,7 @@
        sigset_t prev_mask;
        sigset_t all;
  
-@@ -5697,7 +5705,7 @@
+@@ -5808,7 +5816,7 @@
  #endif
        glib_worker_context = g_main_context_new ();
        g_thread_new ("gmain", glib_worker_main, NULL);
@@ -159,7 +159,7 @@
        g_once_init_leave (&initialised, TRUE);
 --- glib/gmain.h
 +++ glib/gmain.h
-@@ -523,8 +523,10 @@
+@@ -534,8 +534,10 @@
   */
  GLIB_AVAILABLE_IN_ALL
  GSource *g_idle_source_new        (void);
@@ -170,7 +170,7 @@
  GLIB_AVAILABLE_IN_ALL
  GSource *g_timeout_source_new     (guint interval);
  GLIB_AVAILABLE_IN_ALL
-@@ -570,6 +572,7 @@
+@@ -581,6 +583,7 @@
  guint    g_timeout_add_seconds      (guint           interval,
                                       GSourceFunc     function,
                                       gpointer        data);
@@ -178,7 +178,7 @@
  GLIB_AVAILABLE_IN_ALL
  guint    g_child_watch_add_full     (gint            priority,
                                       GPid            pid,
-@@ -580,6 +583,7 @@
+@@ -591,6 +594,7 @@
  guint    g_child_watch_add          (GPid            pid,
                                       GChildWatchFunc function,
                                       gpointer        data);
@@ -186,7 +186,7 @@
  GLIB_AVAILABLE_IN_ALL
  guint    g_idle_add                 (GSourceFunc     function,
                                       gpointer        data);
-@@ -604,10 +608,14 @@
+@@ -615,10 +619,14 @@
  
  /* Hook for GClosure / GSource integration. Don't touch */
  GLIB_VAR GSourceFuncs g_timeout_funcs;
