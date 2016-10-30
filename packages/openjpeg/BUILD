@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='openjpeg',
-    version='2.1.1',
+    version='2.1.2',
     homepage='http://www.openjpeg.org/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,8 +21,8 @@ package(
 )
 
 distfile(
-    name='openjpeg/v2.1.1.tar.gz',
-    checksum='82c27f47fc7219e2ed5537ac69545bf15ed8c6ba8e6e1e529f89f7356506dbaa',
+    name='openjpeg/v2.1.2.tar.gz',
+    checksum='4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7',
     master_sites={'https://github.com/uclouvain/openjpeg/archive/'},
     unsafe_string_sources={'src/lib/openjp2/j2k.c'},
 )
