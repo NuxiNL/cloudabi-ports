@@ -16,7 +16,7 @@ def build(ctx):
 
 package(
     name='curl',
-    version='7.50.2',
+    version='7.50.3',
     homepage='http://curl.haxx.se/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libressl', 'zlib'},
@@ -24,8 +24,8 @@ package(
 )
 
 distfile(
-    name='curl-7.50.2.tar.lzma',
-    checksum='7ebd149b05877a894aa821d6bd2af726a0c04069e754b0e72f10025d7bf0b434',
+    name='curl-7.50.3.tar.lzma',
+    checksum='8c5457e2ecfc38d7e1103bf5e0f87895222340200de9ceefd300c3420698f5ea',
     master_sites={'http://curl.haxx.se/download/'},
     unsafe_string_sources={
         'lib/curl_sasl.c',

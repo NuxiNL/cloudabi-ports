@@ -10,7 +10,7 @@
  /* name is only stored pointer do not free in formfree */
  #define CURL_HTTPPOST_PTRNAME (1<<2)
  /* contents is only stored pointer do not free in formfree */
-@@ -974,10 +972,8 @@
+@@ -975,10 +973,8 @@
    CINIT(HTTPPOST, OBJECTPOINT, 24),
  
    /* name of the file keeping your private SSL-certificate */
@@ -21,7 +21,7 @@
  
    /* send TYPE parameter? */
    CINIT(CRLF, LONG, 27),
-@@ -1081,7 +1077,6 @@
+@@ -1082,7 +1078,6 @@
  
    /* The CApath or CAfile used to validate the peer certificate
       this option is used only if SSL_VERIFYPEER is true */
@@ -29,7 +29,7 @@
  
    /* 66 = OBSOLETE */
    /* 67 = OBSOLETE */
-@@ -1140,7 +1135,6 @@
+@@ -1141,7 +1136,6 @@
  
    /* Specify which file name to write all known cookies in after completed
       operation. Set file name to "-" (dash) to make it go to stdout. */
@@ -37,7 +37,7 @@
  
    /* Specify which SSL ciphers to use */
    CINIT(SSL_CIPHER_LIST, STRINGPOINT, 83),
-@@ -1155,13 +1149,10 @@
+@@ -1156,13 +1150,10 @@
    CINIT(FTP_USE_EPSV, LONG, 85),
  
    /* type of the file keeping your SSL-certificate ("DER", "PEM", "ENG") */
@@ -51,7 +51,7 @@
  
    /* crypto engine for the SSL-sub system */
    CINIT(SSLENGINE, STRINGPOINT, 89),
-@@ -1191,7 +1182,6 @@
+@@ -1192,7 +1183,6 @@
  
    /* The CApath directory used to validate the peer certificate
       this option is used only if SSL_VERIFYPEER is true */
@@ -59,7 +59,7 @@
  
    /* Instruct libcurl to use a smaller receive buffer */
    CINIT(BUFFERSIZE, LONG, 98),
-@@ -1443,10 +1433,8 @@
+@@ -1444,10 +1434,8 @@
    CINIT(SEEKDATA, OBJECTPOINT, 168),
  
    /* CRL file */
@@ -70,7 +70,7 @@
  
    /* (IPv6) Address scope */
    CINIT(ADDRESS_SCOPE, LONG, 171),
-@@ -1654,7 +1642,6 @@
+@@ -1655,7 +1643,6 @@
  
    /* The public key in DER form used to validate the peer public key
       this option is used only if SSL_VERIFYPEER is true */
@@ -78,7 +78,7 @@
  
    /* Path to Unix domain socket */
    CINIT(UNIX_SOCKET_PATH, STRINGPOINT, 231),
-@@ -1860,16 +1847,13 @@
+@@ -1861,16 +1848,13 @@
    CFINIT(COPYCONTENTS),
    CFINIT(PTRCONTENTS),
    CFINIT(CONTENTSLENGTH),
