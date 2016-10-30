@@ -11,7 +11,7 @@ def build(ctx):
 
 package(
     name='jasper',
-    version='1.900.1',
+    version='1.900.16',
     homepage='http://www.ece.uvic.ca/~frodo/jasper/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -19,8 +19,8 @@ package(
 )
 
 distfile(
-    name='jasper-1.900.1.zip',
-    checksum='6b905a9c2aca2e275544212666eefc4eb44d95d0a57e4305457b407fe63f9494',
+    name='jasper-1.900.16.tar.gz',
+    checksum='349f2261767c51a9e59e37025a027686f45f55cfbb8c46fd55c8697092f9f971',
     master_sites={'http://www.ece.uvic.ca/~frodo/jasper/software/'},
     unsafe_string_sources={
         'src/libjasper/base/jas_seq.c',

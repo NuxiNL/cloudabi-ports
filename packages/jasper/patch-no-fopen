@@ -1,14 +1,84 @@
 --- src/libjasper/base/jas_image.c
 +++ src/libjasper/base/jas_image.c
-@@ -319,7 +319,7 @@
- 	cmpt->cps_ = (depth + 7) / 8;
+@@ -99,7 +99,7 @@
+ static void jas_image_cmpt_destroy(jas_image_cmpt_t *cmpt);
+ static jas_image_cmpt_t *jas_image_cmpt_create(uint_fast32_t tlx, uint_fast32_t tly,
+   uint_fast32_t hstep, uint_fast32_t vstep, uint_fast32_t width, uint_fast32_t
+-  height, uint_fast16_t depth, bool sgnd, uint_fast32_t inmem);
++  height, uint_fast16_t depth, bool sgnd);
+ static void jas_image_setbbox(jas_image_t *image);
+ static jas_image_cmpt_t *jas_image_cmpt_copy(jas_image_cmpt_t *cmpt);
+ static int jas_image_growcmpts(jas_image_t *image, int maxcmpts);
+@@ -132,7 +132,6 @@
+ {
+ 	jas_image_t *image;
+ 	uint_fast32_t rawsize;
+-	uint_fast32_t inmem;
+ 	int cmptno;
+ 	jas_image_cmptparm_t *cmptparm;
  
- 	size = cmpt->width_ * cmpt->height_ * cmpt->cps_;
--	cmpt->stream_ = (inmem) ? jas_stream_memopen(0, size) : jas_stream_tmpfile();
+@@ -142,7 +141,6 @@
+ 
+ 	image->clrspc_ = clrspc;
+ 	image->maxcmpts_ = numcmpts;
+-	image->inmem_ = true;
+ 
+ 	/* Allocate memory for the per-component information. */
+ 	if (!(image->cmpts_ = jas_alloc2(image->maxcmpts_,
+@@ -164,7 +162,6 @@
+ 	}
+ 	/* Decide whether to buffer the image data in memory, based on the
+ 	  raw size of the image. */
+-	inmem = (rawsize < JAS_IMAGE_INMEMTHRESH);
+ 
+ 	/* Create the individual image components. */
+ 	for (cmptno = 0, cmptparm = cmptparms; cmptno < numcmpts; ++cmptno,
+@@ -172,7 +169,7 @@
+ 		if (!(image->cmpts_[cmptno] = jas_image_cmpt_create(cmptparm->tlx,
+ 		  cmptparm->tly, cmptparm->hstep, cmptparm->vstep,
+ 		  cmptparm->width, cmptparm->height, cmptparm->prec,
+-		  cmptparm->sgnd, inmem))) {
++		  cmptparm->sgnd))) {
+ 			jas_image_destroy(image);
+ 			return 0;
+ 		}
+@@ -202,7 +199,6 @@
+ 	image->numcmpts_ = 0;
+ 	image->maxcmpts_ = 0;
+ 	image->cmpts_ = 0;
+-	image->inmem_ = true;
+ 	image->cmprof_ = 0;
+ 
+ 	return image;
+@@ -308,8 +304,7 @@
+ 
+ static jas_image_cmpt_t *jas_image_cmpt_create(uint_fast32_t tlx,
+   uint_fast32_t tly, uint_fast32_t hstep, uint_fast32_t vstep,
+-  uint_fast32_t width, uint_fast32_t height, uint_fast16_t depth, bool sgnd,
+-  uint_fast32_t inmem)
++  uint_fast32_t width, uint_fast32_t height, uint_fast16_t depth, bool sgnd)
+ {
+ 	jas_image_cmpt_t *cmpt;
+ 	size_t size;
+@@ -337,8 +332,7 @@
+ 	  !jas_safe_size_mul(size, cmpt->cps_, &size)) {
+ 		goto error;
+ 	}
+-	cmpt->stream_ = (inmem) ? jas_stream_memopen(0, size) :
+-	  jas_stream_tmpfile();
 +	cmpt->stream_ = jas_stream_memopen(0, size);
  	if (!cmpt->stream_) {
- 		jas_image_cmpt_destroy(cmpt);
- 		return 0;
+ 		goto error;
+ 	}
+@@ -720,7 +714,7 @@
+ 	if (!(newcmpt = jas_image_cmpt_create(cmptparm->tlx,
+ 	  cmptparm->tly, cmptparm->hstep, cmptparm->vstep,
+ 	  cmptparm->width, cmptparm->height, cmptparm->prec,
+-	  cmptparm->sgnd, 1))) {
++	  cmptparm->sgnd))) {
+ 		return -1;
+ 	}
+ 	if (cmptno < image->numcmpts_) {
 --- src/libjasper/base/jas_stream.c
 +++ src/libjasper/base/jas_stream.c
 @@ -233,6 +233,7 @@
@@ -19,7 +89,7 @@
  jas_stream_t *jas_stream_fopen(const char *filename, const char *mode)
  {
  	jas_stream_t *stream;
-@@ -292,6 +293,7 @@
+@@ -295,6 +296,7 @@
  
  	return stream;
  }
@@ -27,7 +97,7 @@
  
  jas_stream_t *jas_stream_freopen(const char *path, const char *mode, FILE *fp)
  {
-@@ -341,6 +343,7 @@
+@@ -344,6 +346,7 @@
  	return stream;
  }
  
@@ -35,7 +105,7 @@
  jas_stream_t *jas_stream_tmpfile()
  {
  	jas_stream_t *stream;
-@@ -392,6 +395,7 @@
+@@ -395,6 +398,7 @@
  
  	return stream;
  }
@@ -43,7 +113,7 @@
  
  jas_stream_t *jas_stream_fdopen(int fd, const char *mode)
  {
-@@ -430,7 +434,6 @@
+@@ -433,7 +437,6 @@
  	}
  	obj->fd = fd;
  	obj->flags = 0;
@@ -51,16 +121,7 @@
  	stream->obj_ = (void *) obj;
  
  	/* Do not close the underlying file descriptor when the stream is
-@@ -553,7 +556,7 @@
- 	int ret;
- 
- 	va_start(ap, fmt);
--	ret = vsprintf(buf, fmt, ap);
-+	ret = vsnprintf(buf, sizeof(buf), fmt, ap);
- 	jas_stream_puts(stream, buf);
- 	va_end(ap);
- 	return ret;
-@@ -1110,9 +1113,6 @@
+@@ -1119,9 +1122,6 @@
  	jas_stream_fileobj_t *fileobj = JAS_CAST(jas_stream_fileobj_t *, obj);
  	int ret;
  	ret = close(fileobj->fd);
@@ -70,6 +131,17 @@
  	jas_free(fileobj);
  	return ret;
  }
+--- src/libjasper/include/jasper/jas_image.h
++++ src/libjasper/include/jasper/jas_image.h
+@@ -211,8 +211,6 @@
+ 
+ 	jas_cmprof_t *cmprof_;
+ 
+-	bool inmem_;
+-
+ } jas_image_t;
+ 
+ /* Component parameters class. */
 --- src/libjasper/include/jasper/jas_stream.h
 +++ src/libjasper/include/jasper/jas_stream.h
 @@ -251,10 +251,8 @@
@@ -101,7 +173,7 @@
  int jas_stream_close(jas_stream_t *stream);
 --- src/libjasper/mif/mif_cod.c
 +++ src/libjasper/mif/mif_cod.c
-@@ -91,7 +91,6 @@
+@@ -92,7 +92,6 @@
  	MIF_VSAMP,
  	MIF_PREC,
  	MIF_SGND,
@@ -109,7 +181,7 @@
  } mif_tagid_t;
  
  /******************************************************************************\
-@@ -130,7 +129,6 @@
+@@ -131,7 +130,6 @@
  	{MIF_VSAMP, "samppery"},
  	{MIF_PREC, "prec"},
  	{MIF_SGND, "sgnd"},
@@ -117,16 +189,18 @@
  	{-1, 0}
  };
  
-@@ -173,7 +171,7 @@
+@@ -174,9 +172,8 @@
  
  	for (cmptno = 0; cmptno < hdr->numcmpts; ++cmptno) {
  		cmpt = hdr->cmpts[cmptno];
 -		tmpstream = cmpt->data ? jas_stream_fopen(cmpt->data, "rb") : in;
 +		tmpstream = in;
  		if (!tmpstream) {
+-			jas_eprintf("cannot open component file %s\n", cmpt->data);
  			goto error;
  		}
-@@ -297,7 +295,6 @@
+ 		if (!(tmpimage = jas_image_decode(tmpstream, -1, 0))) {
+@@ -299,7 +296,6 @@
  	/* Output component data. */
  	for (cmptno = 0; cmptno < hdr->numcmpts; ++cmptno) {
  		cmpt = hdr->cmpts[cmptno];
@@ -134,7 +208,7 @@
  			if (!(tmpimage = jas_image_create0())) {
  				goto error;
  			}	
-@@ -338,7 +335,6 @@
+@@ -340,7 +336,6 @@
  			}
  			jas_image_destroy(tmpimage);
  			tmpimage = 0;
@@ -142,27 +216,27 @@
  	}
  
  	mif_hdr_destroy(hdr);
-@@ -531,7 +527,6 @@
+@@ -554,7 +549,6 @@
  	cmpt->height = 0;
  	cmpt->prec = 0;
  	cmpt->sgnd = -1;
 -	cmpt->data = 0;
  
  	if (!(tvp = jas_tvparser_create(buf))) {
- 		goto error;
-@@ -563,11 +558,6 @@
+ 		jas_eprintf("cannot create parser\n");
+@@ -595,11 +589,6 @@
  		case MIF_SGND:
  			cmpt->sgnd = atoi(jas_tvparser_getval(tvp));
  			break;
 -		case MIF_DATA:
 -			if (!(cmpt->data = jas_strdup(jas_tvparser_getval(tvp)))) {
--				return -1;
+-				goto error;
 -			}
 -			break;
- 		}
- 	}
- 	jas_tvparser_destroy(tvp);
-@@ -607,9 +597,6 @@
+ 		default:
+ 			jas_eprintf("invalid component information: %s\n", buf);
+ 			goto error;
+@@ -647,9 +636,6 @@
  		  "sampperx=%ld samppery=%ld width=%ld height=%ld prec=%d sgnd=%d",
  		  cmpt->tlx, cmpt->tly, cmpt->sampperx, cmpt->samppery, cmpt->width,
  		  cmpt->height, cmpt->prec, cmpt->sgnd);
@@ -172,7 +246,7 @@
  		jas_stream_printf(out, "\n");
  	}
  
-@@ -648,9 +635,6 @@
+@@ -688,9 +674,6 @@
  
  static void mif_cmpt_destroy(mif_cmpt_t *cmpt)
  {
@@ -182,7 +256,7 @@
  	jas_free(cmpt);
  }
  
-@@ -745,7 +729,6 @@
+@@ -786,7 +769,6 @@
  		cmpt->samppery = jas_image_cmptvstep(image, cmptno);
  		cmpt->prec = jas_image_cmptprec(image, cmptno);
  		cmpt->sgnd = jas_image_cmptsgnd(image, cmptno);
