@@ -15,7 +15,7 @@ def build(ctx):
 package(
     name='lz4',
     version='131',
-    homepage='https://cyan4973.github.io/lz4/',
+    homepage='https://lz4.github.io/lz4/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
@@ -24,5 +24,5 @@ package(
 distfile(
     name='lz4/r131.tar.gz',
     checksum='9d4d00614d6b9dec3114b33d1224b6262b99ace24434c53487a0c8fd0b18cfed',
-    master_sites={'https://github.com/Cyan4973/lz4/archive/'},
+    master_sites={'https://github.com/lz4/lz4/archive/'},
 )
