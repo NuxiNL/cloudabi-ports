@@ -5,14 +5,14 @@
 
 host_package(
     name='texinfo',
-    version='6.1',
+    version='6.3',
     homepage='https://www.gnu.org/software/texinfo/',
     maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 
 distfile(
-    name='texinfo-6.1.tar.xz',
-    checksum='ac68394ce21b2420ba7ed7cec65d84aacf308cc88e9bf4716fcfff88286883d2',
+    name='texinfo-6.3.tar.xz',
+    checksum='246cf3ffa54985118ec2eea2b8d0c71b92114efe6282c2ae90d65029db4cf93a',
     master_sites=sites_gnu('texinfo'),
 )

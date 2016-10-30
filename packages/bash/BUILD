@@ -14,14 +14,14 @@ def build(ctx):
 
 host_package(
     name='bash',
-    version='4.3.30',
+    version='4.4',
     homepage='https://www.gnu.org/software/bash/',
     maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 
 distfile(
-    name='bash-4.3.30.tar.gz',
-    checksum='317881019bbf2262fb814b7dd8e40632d13c3608d2f237800a8828fbb8a640dd',
+    name='bash-4.4.tar.gz',
+    checksum='d86b3392c1202e8ff5a423b302e6284db7f8f435ea9f39b5b1b20fd3ac36dfcb',
     master_sites=sites_gnu('bash'),
 )
