@@ -1,6 +1,6 @@
 --- src/src_linear.c
 +++ src/src_linear.c
-@@ -109,11 +109,6 @@
+@@ -97,11 +97,6 @@
  		if (priv->out_count > 0 && fabs (psrc->last_ratio - data->src_ratio) > SRC_MIN_RATIO_DIFF)
  			src_ratio = psrc->last_ratio + priv->out_gen * (data->src_ratio - psrc->last_ratio) / priv->out_count ;
  

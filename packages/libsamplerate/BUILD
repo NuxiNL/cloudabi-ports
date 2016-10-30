@@ -13,7 +13,7 @@ def build(ctx):
 
 package(
     name='libsamplerate',
-    version='0.1.8',
+    version='0.1.9',
     homepage='http://www.mega-nerd.com/SRC/',
     maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
@@ -21,7 +21,7 @@ package(
 )
 
 distfile(
-    name='libsamplerate-0.1.8.tar.gz',
-    checksum='93b54bdf46d5e6d2354b7034395fe329c222a966790de34520702bb9642f1c06',
+    name='libsamplerate-0.1.9.tar.gz',
+    checksum='0a7eb168e2f21353fb6d84da152e4512126f7dc48ccb0be80578c565413444c1',
     master_sites={'http://www.mega-nerd.com/SRC/'},
 )
