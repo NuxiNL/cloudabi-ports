@@ -1,0 +1,29 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -2676,6 +2676,7 @@
+ string of that length; otherwise it is an integer.");
+ 
+ 
++#if defined(HAVE_BIND)
+ /* s.bind(sockaddr) method */
+ 
+ static PyObject *
+@@ -2702,6 +2703,7 @@
+ Bind the socket to a local address.  For IP sockets, the address is a\n\
+ pair (host, port); the host must refer to the local host. For raw packet\n\
+ sockets the address is a tuple (ifname, proto [,pkttype [,hatype]])");
++#endif /* defined(HAVE_BIND) */
+ 
+ 
+ /* s.close() method.
+@@ -4452,8 +4454,10 @@
+ static PyMethodDef sock_methods[] = {
+     {"_accept",           (PyCFunction)sock_accept, METH_NOARGS,
+                       accept_doc},
++#if defined(HAVE_BIND)
+     {"bind",              (PyCFunction)sock_bind, METH_O,
+                       bind_doc},
++#endif
+     {"close",             (PyCFunction)sock_close, METH_NOARGS,
+                       close_doc},
+     {"connect",           (PyCFunction)sock_connect, METH_O,

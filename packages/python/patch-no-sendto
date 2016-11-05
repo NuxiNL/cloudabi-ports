@@ -1,0 +1,29 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -3812,6 +3812,7 @@
+ to tell how much data has been sent.");
+ 
+ 
++#if defined(MS_WINDOWS) || defined(HAVE_SENDTO)
+ struct sock_sendto {
+     char *buf;
+     Py_ssize_t len;
+@@ -3898,6 +3899,7 @@
+ \n\
+ Like send(data, flags) but allows specifying the destination address.\n\
+ For IP sockets, the address is a pair (hostaddr, port).");
++#endif /* defined(MS_WINDOWS) || defined(HAVE_SENDTO) */
+ 
+ 
+ /* The sendmsg() and recvmsg[_into]() methods require a working
+@@ -4494,8 +4496,10 @@
+                       send_doc},
+     {"sendall",           (PyCFunction)sock_sendall, METH_VARARGS,
+                       sendall_doc},
++#if defined(MS_WINDOWS) || defined(HAVE_SENDTO)
+     {"sendto",            (PyCFunction)sock_sendto, METH_VARARGS,
+                       sendto_doc},
++#endif
+     {"setblocking",       (PyCFunction)sock_setblocking, METH_O,
+                       setblocking_doc},
+     {"settimeout",    (PyCFunction)sock_settimeout, METH_O,

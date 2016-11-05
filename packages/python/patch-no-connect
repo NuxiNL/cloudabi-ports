@@ -1,0 +1,31 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -2753,6 +2753,7 @@
+ The object cannot be used after this call, but the file descriptor\n\
+ can be reused for other purposes.  The file descriptor is returned.");
+ 
++#if defined(HAVE_CONNECT)
+ static int
+ sock_connect_impl(PySocketSockObject *s, void* Py_UNUSED(data))
+ {
+@@ -2890,6 +2891,7 @@
+ \n\
+ This is like connect(address), but returns an error code (the errno value)\n\
+ instead of raising an exception when an error occurs.");
++#endif /* defined(HAVE_CONNECT) */
+ 
+ 
+ /* s.fileno() method */
+@@ -4456,10 +4458,12 @@
+                       bind_doc},
+     {"close",             (PyCFunction)sock_close, METH_NOARGS,
+                       close_doc},
++#if defined(HAVE_CONNECT)
+     {"connect",           (PyCFunction)sock_connect, METH_O,
+                       connect_doc},
+     {"connect_ex",        (PyCFunction)sock_connect_ex, METH_O,
+                       connect_ex_doc},
++#endif
+     {"detach",            (PyCFunction)sock_detach, METH_NOARGS,
+                       detach_doc},
+     {"fileno",            (PyCFunction)sock_fileno, METH_NOARGS,

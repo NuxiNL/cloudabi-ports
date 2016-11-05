@@ -1,0 +1,29 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -2547,6 +2547,7 @@
+ operations. A timeout of None indicates that timeouts on socket \n\
+ operations are disabled.");
+ 
++#if defined(HAVE_SETSOCKOPT)
+ /* s.setsockopt() method.
+    With an integer third argument, sets an integer optval with optlen=4.
+    With None as third argument and an integer fourth argument, set
+@@ -2621,6 +2622,7 @@
+ Set a socket option.  See the Unix manual for level and option.\n\
+ The value argument can either be an integer, a string buffer, or \n\
+ None, optlen.");
++#endif /* defined(HAVE_SETSOCKOPT) */
+ 
+ 
+ /* s.getsockopt() method.
+@@ -4502,8 +4504,10 @@
+                       settimeout_doc},
+     {"gettimeout",    (PyCFunction)sock_gettimeout, METH_NOARGS,
+                       gettimeout_doc},
++#if defined(HAVE_SETSOCKOPT)
+     {"setsockopt",        (PyCFunction)sock_setsockopt, METH_VARARGS,
+                       setsockopt_doc},
++#endif
+     {"shutdown",          (PyCFunction)sock_shutdown, METH_O,
+                       shutdown_doc},
+ #ifdef CMSG_LEN
