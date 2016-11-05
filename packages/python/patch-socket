@@ -210,7 +210,7 @@
      {"gethostbyname_ex",        socket_gethostbyname_ex,
       METH_VARARGS, ghbn_ex_doc},
 +#endif
-+#ifdef GETHOSTBYADDR
++#ifdef HAVE_GETHOSTBYADDR
      {"gethostbyaddr",           socket_gethostbyaddr,
       METH_VARARGS, gethostbyaddr_doc},
 +#endif
