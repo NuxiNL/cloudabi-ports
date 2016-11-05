@@ -1,0 +1,25 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -5691,6 +5691,9 @@
+ {
+     Py_buffer packed_ip;
+     struct in_addr packed_addr;
++#ifdef HAVE_INET_PTON
++    char result[INET_ADDRSTRLEN];
++#endif
+ 
+     if (!PyArg_ParseTuple(args, "y*:inet_ntoa", &packed_ip)) {
+         return NULL;
+@@ -5706,7 +5709,12 @@
+     memcpy(&packed_addr, packed_ip.buf, packed_ip.len);
+     PyBuffer_Release(&packed_ip);
+ 
++#ifdef HAVE_INET_PTON
++    inet_ntop(AF_INET, &packed_addr, result, sizeof(result));
++    return PyUnicode_FromString(result);
++#else
+     return PyUnicode_FromString(inet_ntoa(packed_addr));
++#endif
+ }
+ 
+ #if defined(HAVE_INET_PTON) || defined(MS_WINDOWS)

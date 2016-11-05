@@ -104,7 +104,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -11215,27 +11218,35 @@
+@@ -11215,27 +11218,34 @@
  fi
  
  # checks for library functions
@@ -127,7 +127,6 @@
 - initgroups kill killpg lchmod lchown lockf linkat lstat lutimes mmap \
 - memrchr mbrtowc mkdirat mkfifo \
 - mkfifoat mknod mknodat mktime mremap nice openat pathconf pause pipe2 plock poll \
-+ inet_addr \
 + initgroups kill killpg lchmod lchown localtime lockf linkat lstat lutimes mmap \
 + memrchr mbrtowc mkdir mkdirat mkfifo \
 + mkfifoat mknod mknodat mktime mremap nice open openat opendir pathconf pause pipe2 plock poll \
@@ -193,7 +192,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -3400,27 +3403,35 @@
+@@ -3400,27 +3403,34 @@
  fi
  
  # checks for library functions
@@ -216,7 +215,6 @@
 - initgroups kill killpg lchmod lchown lockf linkat lstat lutimes mmap \
 - memrchr mbrtowc mkdirat mkfifo \
 - mkfifoat mknod mknodat mktime mremap nice openat pathconf pause pipe2 plock poll \
-+ inet_addr \
 + initgroups kill killpg lchmod lchown localtime lockf linkat lstat lutimes mmap \
 + memrchr mbrtowc mkdir mkdirat mkfifo \
 + mkfifoat mknod mknodat mktime mremap nice open openat opendir pathconf pause pipe2 plock poll \
@@ -392,17 +390,7 @@
  /* Define to 1 if you have the <grp.h> header file. */
  #undef HAVE_GRP_H
  
-@@ -475,6 +523,9 @@
- /* Define to 1 if you have the `if_nameindex' function. */
- #undef HAVE_IF_NAMEINDEX
- 
-+/* Define to 1 if you have the `inet_addr' function. */
-+#undef HAVE_INET_ADDR
-+
- /* Define if you have the 'inet_aton' function. */
- #undef HAVE_INET_ATON
- 
-@@ -574,6 +625,9 @@
+@@ -574,6 +622,9 @@
  /* Define to 1 if you have the <linux/tipc.h> header file. */
  #undef HAVE_LINUX_TIPC_H
  
@@ -412,7 +400,7 @@
  /* Define to 1 if you have the `lockf' function. */
  #undef HAVE_LOCKF
  
-@@ -607,6 +661,9 @@
+@@ -607,6 +658,9 @@
  /* Define to 1 if you have the `memrchr' function. */
  #undef HAVE_MEMRCHR
  
@@ -422,7 +410,7 @@
  /* Define to 1 if you have the `mkdirat' function. */
  #undef HAVE_MKDIRAT
  
-@@ -646,9 +703,15 @@
+@@ -646,9 +700,15 @@
  /* Define to 1 if you have the `nice' function. */
  #undef HAVE_NICE
  
@@ -438,7 +426,7 @@
  /* Define to 1 if you have the `openpty' function. */
  #undef HAVE_OPENPTY
  
-@@ -679,6 +742,9 @@
+@@ -679,6 +739,9 @@
  /* Define to 1 if you have the `pread' function. */
  #undef HAVE_PREAD
  
@@ -448,7 +436,7 @@
  /* Define if you have the 'prlimit' functions. */
  #undef HAVE_PRLIMIT
  
-@@ -712,6 +778,9 @@
+@@ -712,6 +775,9 @@
  /* Define to 1 if you have the `putenv' function. */
  #undef HAVE_PUTENV
  
@@ -458,7 +446,7 @@
  /* Define to 1 if you have the `pwrite' function. */
  #undef HAVE_PWRITE
  
-@@ -727,6 +796,9 @@
+@@ -727,6 +793,9 @@
  /* Define to 1 if you have the `realpath' function. */
  #undef HAVE_REALPATH
  
@@ -468,7 +456,7 @@
  /* Define to 1 if you have the `renameat' function. */
  #undef HAVE_RENAMEAT
  
-@@ -757,9 +829,15 @@
+@@ -757,9 +826,15 @@
  /* Define if you have readline 4.0 */
  #undef HAVE_RL_RESIZE_TERMINAL
  
@@ -484,7 +472,7 @@
  /* Define to 1 if you have the `sched_get_priority_max' function. */
  #undef HAVE_SCHED_GET_PRIORITY_MAX
  
-@@ -781,6 +859,9 @@
+@@ -781,6 +856,9 @@
  /* Define to 1 if you have the `select' function. */
  #undef HAVE_SELECT
  
@@ -494,7 +482,7 @@
  /* Define to 1 if you have the `sem_getvalue' function. */
  #undef HAVE_SEM_GETVALUE
  
-@@ -796,6 +877,9 @@
+@@ -796,6 +874,9 @@
  /* Define to 1 if you have the `sendfile' function. */
  #undef HAVE_SENDFILE
  
@@ -504,7 +492,7 @@
  /* Define to 1 if you have the `setegid' function. */
  #undef HAVE_SETEGID
  
-@@ -841,6 +925,9 @@
+@@ -841,6 +922,9 @@
  /* Define to 1 if you have the `setsid' function. */
  #undef HAVE_SETSID
  
@@ -514,7 +502,7 @@
  /* Define to 1 if you have the `setuid' function. */
  #undef HAVE_SETUID
  
-@@ -859,6 +946,9 @@
+@@ -859,6 +943,9 @@
  /* Define to 1 if you have the `siginterrupt' function. */
  #undef HAVE_SIGINTERRUPT
  
@@ -524,7 +512,7 @@
  /* Define to 1 if you have the <signal.h> header file. */
  #undef HAVE_SIGNAL_H
  
-@@ -898,6 +988,9 @@
+@@ -898,6 +985,9 @@
  /* Define if your compiler provides ssize_t */
  #undef HAVE_SSIZE_T
  
@@ -534,7 +522,7 @@
  /* Define to 1 if you have the `statvfs' function. */
  #undef HAVE_STATVFS
  
-@@ -980,6 +1073,9 @@
+@@ -980,6 +1070,9 @@
  /* Define to 1 if you have the <sysexits.h> header file. */
  #undef HAVE_SYSEXITS_H
  
@@ -544,7 +532,7 @@
  /* Define to 1 if you have the <sys/audioio.h> header file. */
  #undef HAVE_SYS_AUDIOIO_H
  
-@@ -1045,6 +1141,9 @@
+@@ -1045,6 +1138,9 @@
  /* Define to 1 if you have the <sys/socket.h> header file. */
  #undef HAVE_SYS_SOCKET_H
  
@@ -554,7 +542,7 @@
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H
  
-@@ -1099,6 +1198,9 @@
+@@ -1099,6 +1195,9 @@
  /* Define to 1 if you have the <term.h> header file. */
  #undef HAVE_TERM_H
  
@@ -564,7 +552,7 @@
  /* Define to 1 if you have the `tgamma' function. */
  #undef HAVE_TGAMMA
  
-@@ -1124,6 +1226,9 @@
+@@ -1124,6 +1223,9 @@
  /* Define to 1 if you have the `truncate' function. */
  #undef HAVE_TRUNCATE
  
@@ -574,7 +562,7 @@
  /* Define to 1 if you don't have `tm_zone' but do have the external array
     `tzname'. */
  #undef HAVE_TZNAME
-@@ -1131,12 +1236,18 @@
+@@ -1131,12 +1233,18 @@
  /* Define this if you have tcl and TCL_UTF_MAX==6 */
  #undef HAVE_UCS4_TCL
  
@@ -593,7 +581,7 @@
  /* Define to 1 if you have the `unlinkat' function. */
  #undef HAVE_UNLINKAT
  
-@@ -1160,6 +1271,9 @@
+@@ -1160,6 +1268,9 @@
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
  
