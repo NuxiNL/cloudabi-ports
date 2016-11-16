@@ -1,6 +1,6 @@
 --- Modules/socketmodule.c
 +++ Modules/socketmodule.c
-@@ -1240,8 +1240,12 @@
+@@ -1247,8 +1247,12 @@
          else
  #endif /* linux */
          {
@@ -13,7 +13,7 @@
          }
      }
  #endif /* AF_UNIX */
-@@ -1559,6 +1563,7 @@
+@@ -1566,6 +1570,7 @@
          else
  #endif /* linux */
          {
@@ -21,7 +21,7 @@
              /* regular NULL-terminated string */
              if ((size_t)path.len >= sizeof addr->sun_path) {
                  PyErr_SetString(PyExc_OSError,
-@@ -1566,10 +1571,13 @@
+@@ -1573,10 +1578,13 @@
                  goto unix_out;
              }
              addr->sun_path[path.len] = 0;

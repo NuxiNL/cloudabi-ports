@@ -1,6 +1,6 @@
 --- Modules/socketmodule.c
 +++ Modules/socketmodule.c
-@@ -4829,6 +4829,7 @@
+@@ -4836,6 +4836,7 @@
  };
  
  
@@ -8,7 +8,7 @@
  /* Python interface to gethostname(). */
  
  /*ARGSUSED*/
-@@ -4888,6 +4889,7 @@
+@@ -4895,6 +4896,7 @@
  "gethostname() -> string\n\
  \n\
  Return the current host name.");
@@ -16,7 +16,7 @@
  
  #ifdef HAVE_SETHOSTNAME
  PyDoc_STRVAR(sethostname_doc,
-@@ -4926,6 +4928,7 @@
+@@ -4933,6 +4935,7 @@
  }
  #endif
  
@@ -24,7 +24,7 @@
  /* Python interface to gethostbyname(name). */
  
  /*ARGSUSED*/
-@@ -4950,6 +4953,7 @@
+@@ -4957,6 +4960,7 @@
  "gethostbyname(host) -> address\n\
  \n\
  Return the IP address (a string of the form '255.255.255.255') for a host.");
@@ -32,7 +32,7 @@
  
  
  static PyObject*
-@@ -4965,6 +4969,7 @@
+@@ -4972,6 +4976,7 @@
  #endif
  }
  
@@ -40,7 +40,7 @@
  /* Convenience function common to gethostbyname_ex and gethostbyaddr */
  
  static PyObject *
-@@ -5094,8 +5099,10 @@
+@@ -5101,8 +5106,10 @@
      Py_XDECREF(addr_list);
      return rtn_tuple;
  }
@@ -51,7 +51,7 @@
  /* Python interface to gethostbyname_ex(name). */
  
  /*ARGSUSED*/
-@@ -5164,8 +5171,10 @@
+@@ -5171,8 +5178,10 @@
  \n\
  Return the true host name, a list of aliases, and a list of IP addresses,\n\
  for a host.  The host argument is a string giving a host name or IP number.");
@@ -62,7 +62,7 @@
  /* Python interface to gethostbyaddr(IP). */
  
  /*ARGSUSED*/
-@@ -5256,6 +5265,7 @@
+@@ -5263,6 +5272,7 @@
  \n\
  Return the true host name, a list of aliases, and a list of IP addresses,\n\
  for a host.  The host argument is a string giving a host name or IP number.");
@@ -70,7 +70,7 @@
  
  
  /* Python interface to getservbyname(name).
-@@ -6355,14 +6365,20 @@
+@@ -6362,14 +6372,20 @@
  /* List of functions exported by this module. */
  
  static PyMethodDef socket_methods[] = {
