@@ -134,7 +134,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -3356,15 +3347,12 @@
+@@ -3355,15 +3346,12 @@
  #else
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_LINKAT
@@ -156,7 +156,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -3841,14 +3829,11 @@
+@@ -3838,14 +3826,11 @@
  #else
      Py_BEGIN_ALLOW_THREADS
  #if HAVE_MKDIRAT
@@ -175,7 +175,7 @@
  #endif
      Py_END_ALLOW_THREADS
      if (result < 0)
-@@ -3993,11 +3978,10 @@
+@@ -3990,11 +3975,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_RENAMEAT
@@ -190,7 +190,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -4080,13 +4064,10 @@
+@@ -4077,13 +4061,10 @@
  #ifdef MS_WINDOWS
      /* Windows, success=1, UNIX, success=0 */
      result = !RemoveDirectoryW(path->wide);
@@ -207,7 +207,7 @@
  #endif
      Py_END_ALLOW_THREADS
  
-@@ -4227,13 +4208,10 @@
+@@ -4226,13 +4207,10 @@
  #ifdef MS_WINDOWS
      /* Windows, success=1, UNIX, success=0 */
      result = !Py_DeleteFileW(path->wide);
@@ -224,7 +224,7 @@
  #endif
      _Py_END_SUPPRESS_IPH
      Py_END_ALLOW_THREADS
-@@ -4450,35 +4428,26 @@
+@@ -4449,35 +4427,26 @@
      #define PATH_UTIME_HAVE_FD 0
  #endif
  
@@ -266,7 +266,7 @@
      UTIME_TO_TIMEVAL;
      return utimes(path, time);
  #elif defined(HAVE_UTIME_H)
-@@ -4490,6 +4459,8 @@
+@@ -4489,6 +4458,8 @@
  #endif
  }
  
@@ -275,7 +275,7 @@
  #endif
  
  static int
-@@ -4665,25 +4636,23 @@
+@@ -4664,25 +4635,23 @@
  #else /* MS_WINDOWS */
      Py_BEGIN_ALLOW_THREADS
  
@@ -312,7 +312,7 @@
  
      Py_END_ALLOW_THREADS
  
-@@ -6968,11 +6937,10 @@
+@@ -7013,11 +6982,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_READLINKAT
@@ -327,7 +327,7 @@
      Py_END_ALLOW_THREADS
  
      if (length < 0) {
-@@ -7222,11 +7190,10 @@
+@@ -7267,11 +7235,10 @@
  
      Py_BEGIN_ALLOW_THREADS
  #if HAVE_SYMLINKAT
@@ -342,7 +342,7 @@
      Py_END_ALLOW_THREADS
  
      if (result)
-@@ -7520,11 +7487,10 @@
+@@ -7565,11 +7532,10 @@
          fd = _wopen(path->wide, flags, mode);
  #else
  #ifdef HAVE_OPENAT
@@ -358,7 +358,7 @@
  #endif /* !MS_WINDOWS */
          Py_END_ALLOW_THREADS
      } while (fd < 0 && errno == EINTR && !(async_err = PyErr_CheckSignals()));
-@@ -8455,11 +8421,10 @@
+@@ -8502,11 +8468,10 @@
      do {
          Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_MKFIFOAT
@@ -373,7 +373,7 @@
          Py_END_ALLOW_THREADS
      } while (result != 0 && errno == EINTR &&
               !(async_err = PyErr_CheckSignals()));
-@@ -8507,11 +8472,10 @@
+@@ -8554,11 +8519,10 @@
      do {
          Py_BEGIN_ALLOW_THREADS
  #ifdef HAVE_MKNODAT
@@ -388,7 +388,7 @@
          Py_END_ALLOW_THREADS
      } while (result != 0 && errno == EINTR &&
               !(async_err = PyErr_CheckSignals()));
-@@ -11173,9 +11137,9 @@
+@@ -11220,9 +11184,9 @@
          const char *path = PyBytes_AS_STRING(ub);
  #endif
          if (follow_symlinks)

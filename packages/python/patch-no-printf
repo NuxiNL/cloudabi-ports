@@ -72,7 +72,7 @@
      else {
 --- Modules/_testcapimodule.c
 +++ Modules/_testcapimodule.c
-@@ -2571,7 +2571,11 @@
+@@ -2591,7 +2591,11 @@
          e->tv_sec -=1;
          e->tv_usec += 1000000;
      }
@@ -104,14 +104,14 @@
  #endif
 --- Modules/main.c
 +++ Modules/main.c
-@@ -512,7 +512,11 @@
+@@ -513,7 +513,11 @@
          return usage(0, argv[0]);
  
      if (version) {
 +#ifdef HAVE_PRINTF
-         printf("Python %s\n", PY_VERSION);
+         printf("Python %s\n", version >= 2 ? Py_GetVersion() : PY_VERSION);
 +#else
-+        fprintf(stderr, "Python %s\n", PY_VERSION);
++        fprintf(stderr, "Python %s\n", version >= 2 ? Py_GetVersion() : PY_VERSION);
 +#endif
          return 0;
      }
@@ -687,7 +687,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4398,10 +4398,10 @@
+@@ -4399,10 +4399,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

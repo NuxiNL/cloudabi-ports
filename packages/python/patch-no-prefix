@@ -10,8 +10,8 @@
 +except TypeError:
 +    pass
  
- 
- def c2py(plural):
+ # Expression parsing for plural form selection.
+ #
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
 @@ -1953,6 +1953,7 @@

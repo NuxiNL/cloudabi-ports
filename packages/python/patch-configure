@@ -67,7 +67,7 @@
  #endif /* HAVE_SYMLINK */
 --- configure
 +++ configure
-@@ -3247,6 +3247,9 @@
+@@ -3259,6 +3259,9 @@
         # a lot of different things including 'define_xopen_source'
         # in the case statement below.
  	case "$host" in
@@ -77,7 +77,7 @@
  	*-*-linux*)
  		ac_sys_system=Linux
  		;;
-@@ -3286,7 +3289,7 @@
+@@ -3298,7 +3301,7 @@
  
  if test "$cross_compiling" = yes; then
  	case "$host" in
@@ -86,7 +86,7 @@
  		case "$host_cpu" in
  		arm*)
  			_host_cpu=arm
-@@ -7780,13 +7783,13 @@
+@@ -7791,13 +7794,13 @@
  
  for ac_header in asm/types.h conio.h direct.h dlfcn.h errno.h \
  fcntl.h grp.h \
@@ -104,7 +104,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -11215,27 +11218,34 @@
+@@ -11226,27 +11229,34 @@
  fi
  
  # checks for library functions

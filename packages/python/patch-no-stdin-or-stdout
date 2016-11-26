@@ -43,7 +43,7 @@
          ptr = ptr->next;
 --- Modules/main.c
 +++ Modules/main.c
-@@ -106,7 +106,11 @@
+@@ -107,7 +107,11 @@
  static int
  usage(int exitcode, const wchar_t* program)
  {
@@ -55,7 +55,7 @@
  
      fprintf(f, usage_line, program);
      if (exitcode)
-@@ -332,7 +336,11 @@
+@@ -333,7 +337,11 @@
      wchar_t *command = NULL;
      wchar_t *filename = NULL;
      wchar_t *module = NULL;
@@ -67,7 +67,7 @@
      char *p;
  #ifdef MS_WINDOWS
      wchar_t *wp;
-@@ -591,7 +599,11 @@
+@@ -592,7 +600,11 @@
          filename = argv[_PyOS_optind];
      }
  
@@ -79,7 +79,7 @@
  
  #if defined(MS_WINDOWS) || defined(__CYGWIN__)
      /* don't translate newlines (\r\n <=> \n) */
-@@ -602,12 +614,16 @@
+@@ -603,12 +615,16 @@
  
      if (Py_UnbufferedStdioFlag) {
  #ifdef HAVE_SETVBUF
@@ -96,7 +96,7 @@
          setbuf(stderr, (char *)NULL);
  #endif /* !HAVE_SETVBUF */
      }
-@@ -618,8 +634,10 @@
+@@ -619,8 +635,10 @@
          setvbuf(stdout, (char *)NULL, _IONBF, BUFSIZ);
  #else /* !MS_WINDOWS */
  #ifdef HAVE_SETVBUF
@@ -107,7 +107,7 @@
  #endif /* HAVE_SETVBUF */
  #endif /* !MS_WINDOWS */
          /* Leave stderr alone - it should be unbuffered anyway. */
-@@ -702,6 +720,7 @@
+@@ -703,6 +721,7 @@
  
      PySys_SetArgv(argc-_PyOS_optind, argv+_PyOS_optind);
  
@@ -115,7 +115,7 @@
      if ((Py_InspectFlag || (command == NULL && filename == NULL && module == NULL)) &&
          isatty(fileno(stdin)) &&
          !Py_IsolatedFlag) {
-@@ -712,6 +731,7 @@
+@@ -713,6 +732,7 @@
          else
              Py_DECREF(v);
      }
@@ -123,7 +123,7 @@
  
      if (command) {
          sts = run_command(command, &cf);
-@@ -793,7 +813,9 @@
+@@ -794,7 +814,9 @@
          Py_InspectFlag = 0;
          RunInteractiveHook();
          /* XXX */

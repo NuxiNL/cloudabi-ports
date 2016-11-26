@@ -18,7 +18,7 @@
  #if defined(HAVE_FCHMOD)
  
  PyDoc_STRVAR(os_fchmod__doc__,
-@@ -5677,6 +5681,10 @@
+@@ -5678,6 +5682,10 @@
      #define OS_FCHDIR_METHODDEF
  #endif /* !defined(OS_FCHDIR_METHODDEF) */
  

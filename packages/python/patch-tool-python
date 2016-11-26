@@ -722,7 +722,7 @@
  /* For Py_GetArgcArgv(); set by main() */
  static wchar_t **orig_argv;
  static int  orig_argc;
-@@ -547,6 +715,7 @@
+@@ -548,6 +716,7 @@
  #else
      if ((p = Py_GETENV("PYTHONWARNINGS")) && *p != '\0') {
          char *buf, *oldloc;
@@ -730,7 +730,7 @@
          PyObject *unicode;
  
          /* settle for strtok here as there's no one standard
-@@ -556,9 +725,13 @@
+@@ -557,9 +726,13 @@
              Py_FatalError(
                 "not enough memory to copy PYTHONWARNINGS");
          strcpy(buf, p);
@@ -745,7 +745,7 @@
  #ifdef __APPLE__
              /* Use utf-8 on Mac OS X */
              unicode = PyUnicode_FromString(p);
-@@ -573,8 +746,10 @@
+@@ -574,8 +747,10 @@
              PySys_AddWarnOptionUnicode(unicode);
              Py_DECREF(unicode);
          }

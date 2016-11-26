@@ -1,6 +1,6 @@
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -3515,7 +3515,12 @@
+@@ -3514,7 +3514,12 @@
          }
  
          Py_BEGIN_ALLOW_THREADS
@@ -13,7 +13,7 @@
          Py_END_ALLOW_THREADS
      }
  
-@@ -11949,7 +11954,12 @@
+@@ -11996,7 +12001,12 @@
  
      errno = 0;
      Py_BEGIN_ALLOW_THREADS

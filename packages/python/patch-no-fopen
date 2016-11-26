@@ -18,7 +18,7 @@
      int fd,
 --- Modules/main.c
 +++ Modules/main.c
-@@ -126,7 +126,11 @@
+@@ -127,7 +127,11 @@
  {
      char *startup = Py_GETENV("PYTHONSTARTUP");
      if (startup != NULL && startup[0] != '\0') {
@@ -30,7 +30,7 @@
          if (fp != NULL) {
              (void) PyRun_SimpleFileExFlags(fp, startup, 0, cf);
              PyErr_Clear();
-@@ -735,7 +739,11 @@
+@@ -736,7 +740,11 @@
          }
  
          if (sts==-1 && filename!=NULL) {

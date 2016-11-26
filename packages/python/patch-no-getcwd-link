@@ -54,7 +54,7 @@
  
  PyDoc_STRVAR(os_listdir__doc__,
  "listdir($module, /, path=None)\n"
-@@ -5721,6 +5729,14 @@
+@@ -5722,6 +5730,14 @@
      #define OS_LCHOWN_METHODDEF
  #endif /* !defined(OS_LCHOWN_METHODDEF) */
  

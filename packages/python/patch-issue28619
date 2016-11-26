@@ -1,6 +1,6 @@
 --- Modules/socketmodule.c
 +++ Modules/socketmodule.c
-@@ -5698,6 +5698,9 @@
+@@ -5700,6 +5700,9 @@
  {
      Py_buffer packed_ip;
      struct in_addr packed_addr;
@@ -10,7 +10,7 @@
  
      if (!PyArg_ParseTuple(args, "y*:inet_ntoa", &packed_ip)) {
          return NULL;
-@@ -5713,7 +5716,12 @@
+@@ -5715,7 +5718,12 @@
      memcpy(&packed_addr, packed_ip.buf, packed_ip.len);
      PyBuffer_Release(&packed_ip);
  

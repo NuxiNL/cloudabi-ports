@@ -14,7 +14,7 @@
      const char *pathname,
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -11161,6 +11161,7 @@
+@@ -11208,6 +11208,7 @@
  static PyObject *
  DirEntry_fetch_stat(DirEntry *self, int follow_symlinks)
  {
@@ -22,7 +22,7 @@
      int result;
      STRUCT_STAT st;
      PyObject *ub;
-@@ -11184,6 +11185,9 @@
+@@ -11231,6 +11232,9 @@
          return path_object_error(self->path);
  
      return _pystat_fromstructstat(&st);
