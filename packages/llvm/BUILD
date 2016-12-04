@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
-    ctx.extract('lld-%(version)s.src').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-%(version)s')
+    ctx.extract('cfe-%(version)s').rename(root.path('tools/clang'))
+    ctx.extract('lld-%(version)s').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake(['-DLLVM_TARGETS_TO_BUILD=AArch64;ARM;X86'])
@@ -32,7 +32,7 @@ def build(ctx):
 
 host_package(
     name='llvm',
-    version='3.9.0',
+    version='0.288619',
     homepage='http://llvm.org/',
     maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
@@ -40,23 +40,17 @@ host_package(
 )
 
 distfile(
-    name='cfe-3.9.0.src.tar.xz',
-    checksum='7596a7c7d9376d0c89e60028fe1ceb4d3e535e8ea8b89e0eb094e0dcb3183d28',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
-    patches={'r280672'},
+    name='cfe-0.288619.tar.xz',
+    checksum='10f4f149f1e5c2a170b7a2e8e84bec29c154deebc6d411513c621be92f2d0977',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
 distfile(
-    name='lld-3.9.0.src.tar.xz',
-    checksum='986e8150ec5f457469a20666628bf634a5ca992a53e157f3b69dbc35056b32d9',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
-    patches={
-        'bug-30218',
-        'r276095-r277369',
-    },
+    name='lld-0.288619.tar.xz',
+    checksum='2681d75c62ce41313cd25bd8934637ca42e7b474bd0d4852ad8c957a7d4d3c70',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
 distfile(
-    name='llvm-3.9.0.src.tar.xz',
-    checksum='66c73179da42cee1386371641241f79ded250e117a79f571bbd69e56daa48948',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
-    patches=set(),
+    name='llvm-0.288619.tar.xz',
+    checksum='83a85fca8215973f6341f4c46aeb7736b2f604b57e292618d1fdf88dc7c0ae2e',
+    master_sites={'https://nuxi.nl/distfiles/third_party/'},
 )
