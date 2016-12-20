@@ -7,7 +7,6 @@ package(
     name='mpfr',
     version='3.1.5',
     homepage='http://www.mpfr.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
     build_cmd=build_autoconf_automake,
 )

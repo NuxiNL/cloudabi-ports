@@ -7,7 +7,6 @@ package(
     name='libebml',
     version='1.3.4',
     homepage='http://www.matroska.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build_autoconf_automake,
 )

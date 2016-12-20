@@ -14,7 +14,6 @@ package(
     name='tiff',
     version='4.0.6',
     homepage='http://www.remotesensing.org/libtiff/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

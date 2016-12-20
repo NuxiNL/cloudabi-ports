@@ -13,7 +13,6 @@ package(
     name='opus',
     version='1.1.3',
     homepage='http://www.opus-codec.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

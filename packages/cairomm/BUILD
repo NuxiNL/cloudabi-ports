@@ -17,7 +17,6 @@ package(
     name='cairomm',
     version='1.12.0',
     homepage='http://cairographics.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cairo', 'cxx-runtime', 'libsigcxx'},
     build_cmd=build,
 )

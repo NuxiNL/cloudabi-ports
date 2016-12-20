@@ -16,7 +16,6 @@ package(
     name='libpng',
     version='1.6.26',
     homepage='http://www.libpng.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'zlib'},
     build_cmd=build,
 )

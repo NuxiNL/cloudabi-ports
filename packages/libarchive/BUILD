@@ -13,7 +13,6 @@ host_package(
     name='libarchive',
     version='3.2.2',
     homepage='http://www.libarchive.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'xz'},
     build_cmd=build,
 )

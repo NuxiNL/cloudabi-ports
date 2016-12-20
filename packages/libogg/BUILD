@@ -7,7 +7,6 @@ package(
     name='libogg',
     version='1.3.2',
     homepage='https://xiph.org/ogg/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

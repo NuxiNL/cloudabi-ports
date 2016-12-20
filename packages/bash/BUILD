@@ -16,7 +16,6 @@ host_package(
     name='bash',
     version='4.4',
     homepage='https://www.gnu.org/software/bash/',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

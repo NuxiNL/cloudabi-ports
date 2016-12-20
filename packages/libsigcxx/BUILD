@@ -17,7 +17,6 @@ package(
     name='libsigcxx',
     version='2.10.0',
     homepage='http://libsigc.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

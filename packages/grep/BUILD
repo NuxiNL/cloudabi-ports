@@ -7,7 +7,6 @@ host_package(
     name='grep',
     version='2.26',
     homepage='https://www.gnu.org/software/grep/',
-    maintainer='info@nuxi.nl',
     build_depends={'texinfo'},
     build_cmd=build_autoconf_automake,
 )

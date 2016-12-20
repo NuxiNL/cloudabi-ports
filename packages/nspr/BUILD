@@ -20,7 +20,6 @@ package(
     name='nspr',
     version='4.13.1',
     homepage='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

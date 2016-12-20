@@ -34,7 +34,6 @@ host_package(
     name='llvm',
     version='0.288619',
     homepage='http://llvm.org/',
-    maintainer='info@nuxi.nl',
     build_depends={'cmake', 'ninja'},
     build_cmd=build,
 )

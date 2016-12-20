@@ -13,7 +13,6 @@ package(
     name='jpeg',
     version='9.2',
     homepage='http://www.ijg.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

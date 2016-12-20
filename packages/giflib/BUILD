@@ -15,7 +15,6 @@ package(
     name='giflib',
     version='5.1.4',
     homepage='http://giflib.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

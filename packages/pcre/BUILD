@@ -20,7 +20,6 @@ package(
     name='pcre',
     version='8.39',
     homepage='http://www.pcre.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

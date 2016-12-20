@@ -15,7 +15,6 @@ package(
     name='libucl',
     version='0.8.0',
     homepage='https://github.com/vstakhov/libucl',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libressl'},
     build_cmd=build,
 )

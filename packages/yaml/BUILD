@@ -13,7 +13,6 @@ package(
     name='yaml',
     version='0.1.7',
     homepage='http://pyyaml.org/wiki/LibYAML',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

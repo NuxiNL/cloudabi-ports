@@ -13,7 +13,6 @@ package(
     name='nettle',
     version='3.3',
     homepage='http://www.lysator.liu.se/~nisse/nettle/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'gmp'},
     build_cmd=build,
 )

@@ -13,7 +13,6 @@ package(
     name='gmp',
     version='6.1.1',
     homepage='https://gmplib.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

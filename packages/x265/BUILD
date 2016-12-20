@@ -16,7 +16,6 @@ package(
     name='x265',
     version='2.1',
     homepage='http://x265.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

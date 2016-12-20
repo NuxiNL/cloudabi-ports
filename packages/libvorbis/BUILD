@@ -7,7 +7,6 @@ package(
     name='libvorbis',
     version='1.3.5',
     homepage='https://xiph.org/vorbis/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libogg'},
     build_cmd=build_autoconf_automake,
 )

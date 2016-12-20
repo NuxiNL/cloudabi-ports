@@ -15,7 +15,6 @@ package(
     name='libxspf',
     version='1.2.0',
     homepage='http://libspiff.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime', 'expat', 'uriparser'},
     build_cmd=build,
 )

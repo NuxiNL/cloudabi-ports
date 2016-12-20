@@ -13,7 +13,6 @@ package(
     name='uriparser',
     version='0.8.4',
     homepage='http://uriparser.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

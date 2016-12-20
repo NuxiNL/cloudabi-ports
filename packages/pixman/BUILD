@@ -15,7 +15,6 @@ package(
     name='pixman',
     version='0.34.0',
     homepage='http://www.pixman.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

@@ -17,7 +17,6 @@ package(
     name='bzip2',
     version='1.0.6',
     homepage='http://www.bzip.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

@@ -18,7 +18,6 @@ package(
     name='libtomcrypt',
     version='1.17',
     homepage='http://www.libtom.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

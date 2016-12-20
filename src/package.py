@@ -17,8 +17,8 @@ log = logging.getLogger(__name__)
 class HostPackage:
 
     def __init__(self, install_directory, name, version, homepage,
-                 maintainer, build_depends, lib_depends, distfiles,
-                 build_cmd, resource_directory):
+                 build_depends, lib_depends, distfiles, build_cmd,
+                 resource_directory):
         self._install_directory = install_directory
         self._name = name
         self._version = version
@@ -74,14 +74,13 @@ class HostPackage:
 class TargetPackage:
 
     def __init__(self, install_directory, arch, name, version, homepage,
-                 maintainer, host_packages, lib_depends, build_cmd,
-                 distfiles, resource_directory):
+                 host_packages, lib_depends, build_cmd, distfiles,
+                 resource_directory):
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
         self._version = version
         self._homepage = homepage
-        self._maintainer = maintainer
         self._host_packages = host_packages
         self._build_cmd = build_cmd
         self._distfiles = distfiles
@@ -172,7 +171,7 @@ class TargetPackage:
         return self._lib_depends
 
     def get_maintainer(self):
-        return self._maintainer
+        return 'info@nuxi.nl'
 
     def get_name(self):
         return self._name

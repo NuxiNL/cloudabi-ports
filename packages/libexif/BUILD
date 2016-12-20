@@ -7,7 +7,6 @@ package(
     name='libexif',
     version='0.6.21',
     homepage='http://libexif.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

@@ -16,7 +16,6 @@ package(
     name='lz4',
     version='131',
     homepage='https://lz4.github.io/lz4/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

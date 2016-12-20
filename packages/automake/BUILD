@@ -7,7 +7,6 @@ host_package(
     name='automake',
     version='1.15',
     homepage='https://www.gnu.org/software/automake/',
-    maintainer='info@nuxi.nl',
     build_depends={'autoconf', 'm4', 'make'},
     build_cmd=build_autoconf_automake,
 )

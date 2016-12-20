@@ -16,7 +16,6 @@ package(
     name='freetype',
     version='2.7',
     homepage='http://www.freetype.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'bzip2', 'c-runtime', 'libpng', 'zlib'},
     build_cmd=build,
 )

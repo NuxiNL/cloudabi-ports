@@ -7,7 +7,6 @@ package(
     name='json-c',
     version='0.12.1',
     homepage='https://github.com/json-c/json-c',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

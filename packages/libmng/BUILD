@@ -13,7 +13,6 @@ package(
     name='libmng',
     version='2.0.3',
     homepage='http://libmng.com/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'jpeg', 'lcms2', 'zlib'},
     build_cmd=build,
 )

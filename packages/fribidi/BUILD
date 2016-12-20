@@ -7,7 +7,6 @@ package(
     name='fribidi',
     version='0.19.7',
     homepage='http://fribidi.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

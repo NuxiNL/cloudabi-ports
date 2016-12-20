@@ -198,7 +198,6 @@ class Repository:
                 name='everything',
                 version=SimpleVersion('1.0'),
                 homepage='https://nuxi.nl/',
-                maintainer='info@nuxi.nl',
                 host_packages=self._host_packages,
                 lib_depends={
                     value

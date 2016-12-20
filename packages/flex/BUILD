@@ -13,7 +13,6 @@ host_package(
     name='flex',
     version='2.6.0',
     homepage='http://flex.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     build_depends={'bison', 'm4', 'texinfo'},
     build_cmd=build,
 )

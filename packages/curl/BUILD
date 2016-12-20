@@ -18,7 +18,6 @@ package(
     name='curl',
     version='7.50.3',
     homepage='http://curl.haxx.se/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libressl', 'zlib'},
     build_cmd=build,
 )

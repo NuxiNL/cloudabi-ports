@@ -15,7 +15,6 @@ package(
     name='taglib',
     version='1.11.1',
     homepage='https://taglib.github.io/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime', 'zlib'},
     build_cmd=build,
 )

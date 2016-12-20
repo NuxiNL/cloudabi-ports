@@ -15,7 +15,6 @@ package(
     name='libressl',
     version='2.5.0',
     homepage='http://www.libressl.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

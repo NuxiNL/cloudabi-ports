@@ -65,7 +65,6 @@ package(
     name='compiler-rt',
     version='3.9.0',
     homepage='http://compiler-rt.llvm.org/',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

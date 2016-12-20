@@ -7,7 +7,6 @@ host_package(
     name='texinfo',
     version='6.3',
     homepage='https://www.gnu.org/software/texinfo/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

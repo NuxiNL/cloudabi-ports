@@ -13,7 +13,6 @@ package(
     name='libid3tag',
     version='0.15.1.2',
     homepage='http://www.underbit.com/products/mad/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'zlib'},
     build_cmd=build,
 )

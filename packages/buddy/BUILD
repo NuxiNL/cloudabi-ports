@@ -7,7 +7,6 @@ package(
     name='buddy',
     version='2.4',
     homepage='http://buddy.sourceforge.net/manual/main.html',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build_autoconf_automake,
 )

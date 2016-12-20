@@ -7,7 +7,6 @@ host_package(
     name='cmake',
     version='3.6.2',
     homepage='http://www.cmake.org/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

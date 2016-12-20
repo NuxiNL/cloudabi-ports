@@ -7,7 +7,6 @@ host_package(
     name='diffutils',
     version='3.5',
     homepage='https://www.gnu.org/software/diffutils/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

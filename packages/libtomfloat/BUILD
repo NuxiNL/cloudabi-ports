@@ -17,7 +17,6 @@ package(
     name='libtomfloat',
     version='0.2',
     homepage='http://www.libtom.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libtommath'},
     build_cmd=build,
 )

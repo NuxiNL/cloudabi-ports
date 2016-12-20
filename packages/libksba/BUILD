@@ -17,7 +17,6 @@ package(
     name='libksba',
     version='1.3.5',
     homepage='https://www.gnupg.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libgpg-error'},
     build_cmd=build,
 )

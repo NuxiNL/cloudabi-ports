@@ -13,7 +13,6 @@ package(
     name='lcms2',
     version='2.8',
     homepage='http://www.littlecms.com/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'jpeg', 'tiff', 'zlib'},
     build_cmd=build,
 )

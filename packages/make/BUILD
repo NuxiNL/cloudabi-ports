@@ -7,7 +7,6 @@ host_package(
     name='make',
     version='4.2.1',
     homepage='https://www.gnu.org/software/make/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

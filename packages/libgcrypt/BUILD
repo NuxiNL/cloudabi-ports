@@ -19,7 +19,6 @@ package(
     name='libgcrypt',
     version='1.7.3',
     homepage='https://www.gnupg.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libgpg-error'},
     build_cmd=build,
 )

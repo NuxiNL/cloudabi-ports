@@ -13,7 +13,6 @@ package(
     name='qpdf',
     version='6.0.0',
     homepage='http://qpdf.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'pcre', 'zlib'},
     build_cmd=build,
 )

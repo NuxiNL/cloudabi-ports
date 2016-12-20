@@ -30,7 +30,6 @@ host_package(
     name='pkgconf',
     version='0.9.12',
     homepage='https://github.com/pkgconf/pkgconf',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

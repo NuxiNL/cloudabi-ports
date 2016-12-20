@@ -7,7 +7,6 @@ host_package(
     name='gettext',
     version='0.19.8.1',
     homepage='https://www.gnu.org/software/gettext/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

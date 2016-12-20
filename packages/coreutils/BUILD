@@ -7,7 +7,6 @@ host_package(
     name='coreutils',
     version='8.25',
     homepage='https://www.gnu.org/software/coreutils/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

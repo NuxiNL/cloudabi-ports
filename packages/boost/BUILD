@@ -29,7 +29,6 @@ package(
     name='boost',
     version='1.61.0',
     homepage='http://www.boost.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'bzip2', 'cxx-runtime', 'icu4c', 'zlib'},
     build_cmd=build,
 )

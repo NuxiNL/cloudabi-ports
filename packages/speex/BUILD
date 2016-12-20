@@ -14,7 +14,6 @@ package(
     name='speex',
     version='1.1.92',
     homepage='http://www.speex.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

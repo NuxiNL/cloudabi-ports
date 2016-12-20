@@ -13,7 +13,6 @@ package(
     name='libevent',
     version='2.0.22',
     homepage='http://libevent.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

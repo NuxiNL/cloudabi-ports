@@ -13,7 +13,6 @@ host_package(
     name='ninja',
     version='1.7.1',
     homepage='https://ninja-build.org/',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

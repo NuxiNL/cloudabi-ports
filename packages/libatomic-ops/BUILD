@@ -13,7 +13,6 @@ package(
     name='libatomic-ops',
     version='7.4.0',
     homepage='http://www.hpl.hp.com/research/linux/atomic_ops/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

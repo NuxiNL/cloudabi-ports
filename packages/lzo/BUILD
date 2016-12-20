@@ -13,7 +13,6 @@ package(
     name='lzo',
     version='2.9',
     homepage='http://www.oberhumer.com/opensource/lzo/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

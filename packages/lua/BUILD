@@ -14,7 +14,6 @@ package(
     name='lua',
     version='5.3.3',
     homepage='http://www.lua.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

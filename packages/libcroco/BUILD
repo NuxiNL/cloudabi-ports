@@ -15,7 +15,6 @@ package(
     name='libcroco',
     version='0.6.11',
     homepage='https://github.com/GNOME/libcroco',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'glib', 'libxml2'},
     build_cmd=build,
 )

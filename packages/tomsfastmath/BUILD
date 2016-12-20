@@ -17,7 +17,6 @@ package(
     name='tomsfastmath',
     version='0.13',
     homepage='http://www.libtom.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

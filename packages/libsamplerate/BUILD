@@ -15,7 +15,6 @@ package(
     name='libsamplerate',
     version='0.1.9',
     homepage='http://www.mega-nerd.com/SRC/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

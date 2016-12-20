@@ -22,7 +22,6 @@ package(
     name='cairo',
     version='1.14.6',
     homepage='http://cairographics.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'freetype', 'libpng', 'pixman'},
     build_cmd=build,
 )

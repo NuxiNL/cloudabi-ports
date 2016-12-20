@@ -28,7 +28,6 @@ package(
     name='glib',
     version='2.50.1',
     homepage='https://developer.gnome.org/glib/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libffi', 'pcre', 'zlib'},
     build_cmd=build,
 )
@@ -43,7 +42,6 @@ host_package(
     name='glib',
     version='2.50.1',
     homepage='https://developer.gnome.org/glib/',
-    maintainer='info@nuxi.nl',
     lib_depends={'gettext'},
     build_cmd=host_build,
 )

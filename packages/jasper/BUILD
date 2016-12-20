@@ -13,7 +13,6 @@ package(
     name='jasper',
     version='1.900.16',
     homepage='http://www.ece.uvic.ca/~frodo/jasper/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

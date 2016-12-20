@@ -13,7 +13,6 @@ package(
     name='re2',
     version='0.20161001',
     homepage='https://github.com/google/re2',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

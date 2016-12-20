@@ -20,7 +20,6 @@ package(
     name='xz',
     version='5.2.2',
     homepage='http://tukaani.org/xz/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
@@ -29,7 +28,6 @@ host_package(
     name='xz',
     version='5.2.2',
     homepage='http://tukaani.org/xz/',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

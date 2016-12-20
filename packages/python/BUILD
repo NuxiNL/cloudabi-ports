@@ -72,7 +72,6 @@ package(
     name='python',
     version='3.6.0',
     homepage='https://www.python.org/',
-    maintainer='alex@moreati.org.uk',
     lib_depends={
         'bzip2',
         'c-runtime',

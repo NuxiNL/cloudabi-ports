@@ -21,7 +21,6 @@ package(
     name='pcre2',
     version='10.22',
     homepage='http://www.pcre.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

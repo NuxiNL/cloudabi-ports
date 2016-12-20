@@ -14,7 +14,6 @@ package(
     name='libtheora',
     version='1.1.1',
     homepage='http://www.theora.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libogg'},
     build_cmd=build,
 )

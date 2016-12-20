@@ -16,7 +16,6 @@ package(
     name='libtasn1',
     version='4.9',
     homepage='https://www.gnu.org/software/libtasn1/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

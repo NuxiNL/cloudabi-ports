@@ -13,7 +13,6 @@ package(
     name='expat',
     version='2.2.0',
     homepage='http://expat.sourceforge.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

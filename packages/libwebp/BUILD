@@ -7,7 +7,6 @@ package(
     name='libwebp',
     version='0.5.1',
     homepage='https://developers.google.com/speed/webp/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

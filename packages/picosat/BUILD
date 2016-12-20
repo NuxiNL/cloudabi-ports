@@ -15,7 +15,6 @@ package(
     name='picosat',
     version='965',
     homepage='http://fmv.jku.at/picosat/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

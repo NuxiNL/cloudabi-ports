@@ -19,7 +19,6 @@ package(
     name='flac',
     version='1.3.1',
     homepage='https://xiph.org/flac/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime', 'libogg'},
     build_cmd=build,
 )

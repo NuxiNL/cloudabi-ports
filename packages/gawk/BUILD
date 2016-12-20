@@ -7,7 +7,6 @@ host_package(
     name='gawk',
     version='4.1.4',
     homepage='https://www.gnu.org/software/gawk/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

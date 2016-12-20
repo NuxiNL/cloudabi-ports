@@ -13,7 +13,6 @@ package(
     name='snappy',
     version='1.1.3',
     homepage='https://google.github.io/snappy/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

@@ -15,7 +15,6 @@ package(
     name='jsoncpp',
     version='1.8.0',
     homepage='https://github.com/open-source-parsers/jsoncpp',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

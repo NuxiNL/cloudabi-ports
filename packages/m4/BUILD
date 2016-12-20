@@ -7,7 +7,6 @@ host_package(
     name='m4',
     version='1.4.17',
     homepage='https://www.gnu.org/software/m4/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

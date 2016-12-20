@@ -17,7 +17,6 @@ package(
     name='libgpg-error',
     version='1.24',
     homepage='https://www.gnupg.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

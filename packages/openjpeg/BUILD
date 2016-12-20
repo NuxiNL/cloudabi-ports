@@ -15,7 +15,6 @@ package(
     name='openjpeg',
     version='2.1.2',
     homepage='http://www.openjpeg.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )

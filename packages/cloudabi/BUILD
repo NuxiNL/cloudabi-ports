@@ -11,7 +11,6 @@ package(
     name='cloudabi',
     version='0.8',
     homepage='https://github.com/NuxiNL/cloudabi',
-    maintainer='info@nuxi.nl',
     build_cmd=build,
 )
 

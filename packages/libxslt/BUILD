@@ -20,7 +20,6 @@ package(
     name='libxslt',
     version='1.1.29',
     homepage='http://xmlsoft.org/libxslt/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libxml2'},
     build_cmd=build,
 )

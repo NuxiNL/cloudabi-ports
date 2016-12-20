@@ -7,7 +7,6 @@ package(
     name='libffi',
     version='3.2.1',
     homepage='https://sourceware.org/libffi/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

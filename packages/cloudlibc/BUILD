@@ -15,7 +15,6 @@ package(
     name='cloudlibc',
     version='0.64',
     homepage='https://github.com/NuxiNL/cloudlibc',
-    maintainer='info@nuxi.nl',
     lib_depends={'cloudabi', 'compiler-rt'},
     build_cmd=build,
 )

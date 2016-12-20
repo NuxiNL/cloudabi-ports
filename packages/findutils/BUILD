@@ -7,7 +7,6 @@ host_package(
     name='findutils',
     version='4.6.0',
     homepage='https://www.gnu.org/software/findutils/',
-    maintainer='info@nuxi.nl',
     build_depends={'make'},
     build_cmd=build_autoconf_automake,
 )

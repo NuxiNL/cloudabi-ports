@@ -7,7 +7,6 @@ host_package(
     name='libtool',
     version='2.4.6',
     homepage='https://www.gnu.org/software/libtool/',
-    maintainer='info@nuxi.nl',
     build_depends={'help2man', 'm4', 'make'},
     build_cmd=build_autoconf_automake,
 )

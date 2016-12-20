@@ -24,7 +24,6 @@ package(
     name='libunwind',
     version='3.9.0',
     homepage='http://libcxx.llvm.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libcxx'},
     build_cmd=build,
 )

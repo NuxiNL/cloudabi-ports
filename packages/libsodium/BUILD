@@ -7,7 +7,6 @@ package(
     name='libsodium',
     version='1.0.11',
     homepage='https://www.libsodium.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build_autoconf_automake,
 )

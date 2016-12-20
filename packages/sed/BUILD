@@ -7,7 +7,6 @@ host_package(
     name='sed',
     version='4.2.2',
     homepage='https://www.gnu.org/software/sed/',
-    maintainer='info@nuxi.nl',
     build_cmd=build_autoconf_automake,
 )
 

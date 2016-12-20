@@ -31,7 +31,6 @@ package(
     name='icu4c',
     version='58.1',
     homepage='http://site.icu-project.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )

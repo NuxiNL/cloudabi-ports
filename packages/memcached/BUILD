@@ -13,7 +13,6 @@ package(
     name='memcached',
     version='1.4.32',
     homepage='https://memcached.org/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime', 'libevent'},
     build_cmd=build,
 )

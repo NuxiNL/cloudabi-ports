@@ -14,7 +14,6 @@ package(
     name='zlib',
     version='1.2.8',
     homepage='http://www.zlib.net/',
-    maintainer='info@nuxi.nl',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
