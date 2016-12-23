@@ -22,14 +22,14 @@ def build(ctx):
 
 package(
     name='libunwind',
-    version='3.9.0',
+    version='3.9.1',
     homepage='http://libcxx.llvm.org/',
     lib_depends={'c-runtime', 'libcxx'},
     build_cmd=build,
 )
 
 distfile(
-    name='libunwind-3.9.0.src.tar.xz',
-    checksum='66675ddec5ba0d36689757da6008cb2596ee1a9067f4f598d89ce5a3b43f4c2b',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
+    name='libunwind-3.9.1.src.tar.xz',
+    checksum='0b0bc73264d7ab77d384f8a7498729e3c4da8ffee00e1c85ad02a2f85e91f0e6',
+    master_sites={'http://llvm.org/releases/3.9.1/'},
 )

@@ -29,14 +29,14 @@ def build(ctx):
 
 package(
     name='libcxxabi',
-    version='3.9.0',
+    version='3.9.1',
     homepage='http://libcxxabi.llvm.org/',
     lib_depends={'c-runtime', 'libcxx'},
     build_cmd=build,
 )
 
 distfile(
-    name='libcxxabi-3.9.0.src.tar.xz',
-    checksum='b037a92717856882e05df57221e087d7d595a2ae9f170f7bc1a23ec7a92c8019',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
+    name='libcxxabi-3.9.1.src.tar.xz',
+    checksum='920d8be32e6f5574a3fb293f93a31225eeba15086820fcb942155bf50dc029e2',
+    master_sites={'http://llvm.org/releases/3.9.1/'},
 )

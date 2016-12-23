@@ -63,13 +63,13 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='3.9.0',
+    version='3.9.1',
     homepage='http://compiler-rt.llvm.org/',
     build_cmd=build,
 )
 
 distfile(
-    name='compiler-rt-3.9.0.src.tar.xz',
-    checksum='e0e5224fcd5740b61e416c549dd3dcda92f10c524216c1edb5e979e42078a59a',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
+    name='compiler-rt-3.9.1.src.tar.xz',
+    checksum='d30967b1a5fa51a2503474aacc913e69fd05ae862d37bf310088955bdb13ec99',
+    master_sites={'http://llvm.org/releases/3.9.1/'},
 )

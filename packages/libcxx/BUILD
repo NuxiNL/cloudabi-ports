@@ -37,14 +37,14 @@ def build(ctx):
 
 package(
     name='libcxx',
-    version='3.9.0',
+    version='3.9.1',
     homepage='http://libcxx.llvm.org/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='libcxx-3.9.0.src.tar.xz',
-    checksum='d0b38d51365c6322f5666a2a8105785f2e114430858de4c25a86b49f227f5b06',
-    master_sites={'http://llvm.org/releases/3.9.0/'},
+    name='libcxx-3.9.1.src.tar.xz',
+    checksum='25e615e428f60e651ed09ffd79e563864e3f4bc69a9e93ee41505c419d1a7461',
+    master_sites={'http://llvm.org/releases/3.9.1/'},
 )
