@@ -42,7 +42,7 @@
  #if _LIBUNWIND_SUPPORT_DWARF_UNWIND && _LIBUNWIND_SUPPORT_DWARF_INDEX
  #include <link.h>
  // Macro for machine-independent access to the ELF program headers. This
-@@ -362,23 +356,15 @@
+@@ -362,23 +350,15 @@
      info.compact_unwind_section_length = dyldInfo.compact_unwind_section_length;
      return true;
    }
@@ -69,7 +69,7 @@
    struct dl_iterate_cb_data {
      LocalAddressSpace *addressSpace;
      UnwindInfoSections *sects;
-@@ -389,9 +375,6 @@
+@@ -389,9 +369,6 @@
    int found = dl_iterate_phdr(
        [](struct dl_phdr_info *pinfo, size_t, void *data) -> int {
          auto cbdata = static_cast<dl_iterate_cb_data *>(data);
@@ -79,7 +79,7 @@
  
          assert(cbdata);
          assert(cbdata->sects);
-@@ -407,6 +390,14 @@
+@@ -407,6 +384,14 @@
          typedef ElfW(Phdr) Elf_Phdr;
  #endif
  
@@ -94,7 +94,7 @@
          for (Elf_Half i = 0; i < pinfo->dlpi_phnum; i++) {
            const Elf_Phdr *phdr = &pinfo->dlpi_phdr[i];
            if (phdr->p_type == PT_LOAD) {
-@@ -436,12 +427,22 @@
+@@ -436,12 +421,22 @@
          } else {
            return false;
          }
