@@ -829,7 +829,7 @@
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -2128,6 +2131,240 @@
+@@ -2128,6 +2131,244 @@
      Py_DECREF(v);
  }
  
@@ -861,7 +861,8 @@
 +        int value;
 +        if (argdata_get_fd(ad, &value) == 0) {
 +            struct stat sb;
-+            if (fstat(value, &sb) == 0 && S_ISSOCK(sb.st_mode)) {
++            int stat_result = fstat(value, &sb);
++            if (stat_result == 0 && S_ISSOCK(sb.st_mode)) {
 +                /*
 +                 * File descriptor corresponds to a socket. Create a
 +                 * socket.socket object.
@@ -889,6 +890,9 @@
 +                Py_DECREF(args);
 +                Py_DECREF(function);
 +                return o;
++            } else if (stat_result == 0 && S_ISDIR(sb.st_mode)) {
++                /* Directories must be expressed as raw descriptor numbers. */
++                return PyLong_FromLong(value);
 +            } else {
 +                /* Create an object using io.open(). */
 +                int mode = fcntl(value, F_GETFL);
