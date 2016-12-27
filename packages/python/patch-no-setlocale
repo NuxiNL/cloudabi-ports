@@ -155,51 +155,6 @@
      PyModule_AddIntMacro(m, CHAR_MAX);
  
      Error = PyErr_NewException("locale.Error", NULL, NULL);
---- Programs/python.c
-+++ Programs/python.c
-@@ -22,7 +22,9 @@
-     /* We need a second copy, as Python might modify the first one. */
-     wchar_t **argv_copy2;
-     int i, res;
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-     char *oldloc;
-+#endif
- 
-     /* Force malloc() allocator to bootstrap Python */
-     (void)_PyMem_SetupAllocators("malloc");
-@@ -43,6 +45,7 @@
-     fedisableexcept(FE_OVERFLOW);
- #endif
- 
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
-     if (!oldloc) {
-         fprintf(stderr, "out of memory\n");
-@@ -50,10 +53,13 @@
-     }
- 
-     setlocale(LC_ALL, "");
-+#endif
-     for (i = 0; i < argc; i++) {
-         argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
-         if (!argv_copy[i]) {
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-             PyMem_RawFree(oldloc);
-+#endif
-             fprintf(stderr, "Fatal Python error: "
-                             "unable to decode the command line argument #%i\n",
-                             i + 1);
-@@ -63,8 +69,10 @@
-     }
-     argv_copy2[argc] = argv_copy[argc] = NULL;
- 
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-     setlocale(LC_ALL, oldloc);
-     PyMem_RawFree(oldloc);
-+#endif
- 
-     res = Py_Main(argc, argv_copy);
- 
 --- Python/fileutils.c
 +++ Python/fileutils.c
 @@ -101,7 +101,9 @@
@@ -228,36 +183,6 @@
  
  #if defined(HAVE_LANGINFO_H) && defined(CODESET)
      codeset = nl_langinfo(CODESET);
---- Python/frozenmain.c
-+++ Python/frozenmain.c
-@@ -46,6 +46,7 @@
-         setbuf(stderr, (char *)NULL);
-     }
- 
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
-     if (!oldloc) {
-         fprintf(stderr, "out of memory\n");
-@@ -53,6 +54,7 @@
-     }
- 
-     setlocale(LC_ALL, "");
-+#endif
-     for (i = 0; i < argc; i++) {
-         argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
-         argv_copy2[i] = argv_copy[i];
-@@ -63,9 +65,11 @@
-             goto error;
-         }
-     }
-+#if defined(HAVE_SETLOCALE) && defined(LC_ALL)
-     setlocale(LC_ALL, oldloc);
-     PyMem_RawFree(oldloc);
-     oldloc = NULL;
-+#endif
- 
- #ifdef MS_WINDOWS
-     PyInitFrozenExtensions();
 --- Python/pylifecycle.c
 +++ Python/pylifecycle.c
 @@ -1245,8 +1245,10 @@

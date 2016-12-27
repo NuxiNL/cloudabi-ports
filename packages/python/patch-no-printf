@@ -102,20 +102,6 @@
             max_chain_len, size / 1024);
  }
  #endif
---- Modules/main.c
-+++ Modules/main.c
-@@ -513,7 +513,11 @@
-         return usage(0, argv[0]);
- 
-     if (version) {
-+#ifdef HAVE_PRINTF
-         printf("Python %s\n", version >= 2 ? Py_GetVersion() : PY_VERSION);
-+#else
-+        fprintf(stderr, "Python %s\n", version >= 2 ? Py_GetVersion() : PY_VERSION);
-+#endif
-         return 0;
-     }
- 
 --- Objects/unicodeobject.c
 +++ Objects/unicodeobject.c
 @@ -1173,12 +1173,12 @@

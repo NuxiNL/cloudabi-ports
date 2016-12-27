@@ -19,10 +19,12 @@ def build(ctx):
     hostbuild = srcdir.host().gnu_configure()
     hostbuild.make()
 
-    # For the target build, copy over the generated files into the build
-    # directory, as generating them depends on tools built for the host.
-    for f in {'Setup.dist', 'faulthandler.c', 'getpath.c', 'signalmodule.c'}:
-        ctx.resource(f).rename(srcdir.path('Modules').path(f))
+    # Some source files that are part of the codebase simply don't apply
+    # to this environment. Replace them by customized versions.
+    for f in {'Modules/Setup.dist', 'Modules/faulthandler.c',
+              'Modules/getpath.c', 'Modules/main.c', 'Modules/signalmodule.c',
+              'Programs/python.c', 'Python/frozenmain.c'}:
+        ctx.resource(f).rename(srcdir.path(f))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
         '--disable-shared',
@@ -45,6 +47,9 @@ def build(ctx):
         '$(srcdir)/Lib/$(PLATDIR) '
         '%s' % hostbuild.path('python'),
     ])
+
+    # For the target build, copy over the generated files into the build
+    # directory, as generating them depends on tools built for the host.
     for i in generated_files:
         hostbuild.path(i).rename(build.path(i))
     build.make()
@@ -99,7 +104,6 @@ distfile(
         'Modules/_testbuffer.c',
         'Modules/_testcapimodule.c',
         'Modules/cjkcodecs/cjkcodecs.h',
-        'Modules/main.c',
         'Modules/posixmodule.c',
         'Modules/pyexpat.c',
         'Modules/unicodedata.c',

@@ -16,32 +16,6 @@
  
  PyAPI_FUNC(Py_ssize_t) _Py_read(
      int fd,
---- Modules/main.c
-+++ Modules/main.c
-@@ -127,7 +127,11 @@
- {
-     char *startup = Py_GETENV("PYTHONSTARTUP");
-     if (startup != NULL && startup[0] != '\0') {
-+#ifdef HAVE_FOPEN
-         FILE *fp = _Py_fopen(startup, "r");
-+#else
-+        FILE *fp = NULL;
-+#endif
-         if (fp != NULL) {
-             (void) PyRun_SimpleFileExFlags(fp, startup, 0, cf);
-             PyErr_Clear();
-@@ -736,7 +740,11 @@
-         }
- 
-         if (sts==-1 && filename!=NULL) {
-+#ifdef HAVE_FOPEN
-             fp = _Py_wfopen(filename, L"r");
-+#else
-+            fp = NULL;
-+#endif
-             if (fp == NULL) {
-                 char *cfilename_buffer;
-                 const char *cfilename;
 --- Parser/pgenmain.c
 +++ Parser/pgenmain.c
 @@ -62,7 +62,11 @@
