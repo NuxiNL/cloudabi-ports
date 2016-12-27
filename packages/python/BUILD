@@ -62,11 +62,6 @@ def build(ctx):
               'lib/python3.6/config-3.6dm/python-config.py'}:
         stage.path(f).unhardcode_paths()
 
-    # Remove Pickle files, as they don't seem to be stable.
-    for f in {'lib/python3.6/lib2to3/Grammar3.6.0.beta.1.pickle',
-              'lib/python3.6/lib2to3/PatternGrammar3.6.0.beta.1.pickle'}:
-        stage.path(f).remove()
-
     # TODO(ed): Figure out what to do with this!
     stage.path(
         'lib/python3.6/lib-dynload/_sysconfigdata_m_freebsd10_.py'
