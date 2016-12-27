@@ -10,12 +10,11 @@ const argdata_t *path_argdata = NULL;
 void
 Py_ProgramMain(const argdata_t *ad)
 {
-    int sts;
-    const char *command = "";
-    int saw_unbuffered_flag = 0;
     argdata_map_iterator_t it, itpath;
     const argdata_t *key, *val;
-    PyObject *warning_options = NULL;
+    const char *command = "";
+    FILE *script = NULL;
+    int sts;
 
     /* Force malloc() allocator to bootstrap Python */
     (void)_PyMem_SetupAllocators("malloc");
@@ -52,6 +51,14 @@ Py_ProgramMain(const argdata_t *ad)
             Py_InteractiveFlag++;
         } else if (strcmp(keystr, "optimize") == 0) {
             Py_OptimizeFlag++;
+        } else if (strcmp(keystr, "script") == 0) {
+            int fd;
+            if (argdata_get_fd(val, &fd) != 0 ||
+                (script = fdopen(fd, "r")) == NULL) {
+                fprintf(stderr, "Fatal Python error: "
+                                "unable to decode the 'script' argument\n");
+                exit(1);
+            }
         } else if (strcmp(keystr, "stderr") == 0) {
             int fd;
             if (argdata_get_fd(val, &fd) == 0) {
@@ -61,7 +68,6 @@ Py_ProgramMain(const argdata_t *ad)
             }
         } else if (strcmp(keystr, "unbufferedstdio") == 0) {
             Py_UnbufferedStdioFlag = 1;
-            saw_unbuffered_flag = 1;
         } else if (strcmp(keystr, "verbose") == 0) {
             Py_VerboseFlag++;
         }
@@ -86,7 +92,6 @@ Py_ProgramMain(const argdata_t *ad)
     Py_NoUserSiteDirectory = 1;
     Py_NoSiteFlag = 1;
     Py_Initialize();
-    Py_XDECREF(warning_options);
 
     /* Extract the "args" key and expose it as sys.argdata. */
     argdata_map_iterate(ad, &it);
@@ -105,7 +110,10 @@ Py_ProgramMain(const argdata_t *ad)
             Py_GetVersion(), Py_GetPlatform());
     }
 
-    sts = PyRun_SimpleString(command);
+    if (script == NULL)
+        sts = PyRun_SimpleString(command);
+    else
+        sts = PyRun_AnyFile(script, "<script>");
 
     if (Py_FinalizeEx() < 0) {
         /* Value unlikely to be confused with a non-error exit status or
