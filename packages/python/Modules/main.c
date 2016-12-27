@@ -50,9 +50,6 @@ Py_ProgramMain(const argdata_t *ad)
         } else if (strcmp(keystr, "inspect") == 0) {
             Py_InspectFlag++;
             Py_InteractiveFlag++;
-        } else if (strcmp(keystr, "isolate") == 0) {
-            Py_IsolatedFlag++;
-            Py_IgnoreEnvironmentFlag++;
         } else if (strcmp(keystr, "optimize") == 0) {
             Py_OptimizeFlag++;
         } else if (strcmp(keystr, "stderr") == 0) {
