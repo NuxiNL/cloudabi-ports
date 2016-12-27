@@ -85,8 +85,7 @@ Py_ProgramMain(const argdata_t *ad)
             len = wcslen(valwstr);
             command = (wchar_t *)PyMem_RawMalloc(sizeof(wchar_t) * (len + 2));
             if (command == NULL)
-                Py_FatalError(
-                   "not enough memory to copy  argument");
+                Py_FatalError("not enough memory to copy argument");
             wmemcpy(command, valwstr, len);
             command[len] = L'\n';
             command[len + 1] = L'\0';
