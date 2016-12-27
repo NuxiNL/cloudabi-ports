@@ -72,7 +72,7 @@
      else {
 --- Modules/_testcapimodule.c
 +++ Modules/_testcapimodule.c
-@@ -2591,7 +2591,11 @@
+@@ -2604,7 +2604,11 @@
          e->tv_sec -=1;
          e->tv_usec += 1000000;
      }
@@ -673,7 +673,7 @@
                         f->f_lasti, opcode);
              }
          }
-@@ -4399,10 +4399,10 @@
+@@ -4402,10 +4402,10 @@
  static int
  prtrace(PyObject *v, const char *str)
  {

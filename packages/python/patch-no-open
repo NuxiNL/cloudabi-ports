@@ -73,7 +73,7 @@
          loc = Py_None;
 --- Python/compile.c
 +++ Python/compile.c
-@@ -4656,7 +4656,11 @@
+@@ -4660,7 +4660,11 @@
      PyObject *loc;
      PyObject *u = NULL, *v = NULL;
  

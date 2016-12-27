@@ -182,7 +182,7 @@
  _Py_IDENTIFIER(stderr);
  
  #include "clinic/bltinmodule.c.h"
-@@ -1725,7 +1729,11 @@
+@@ -1755,7 +1759,11 @@
                                       kwlist, &sep, &end, &file, &flush))
          return NULL;
      if (file == NULL || file == Py_None) {
@@ -194,7 +194,7 @@
          if (file == NULL) {
              PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
              return NULL;
-@@ -1825,8 +1833,16 @@
+@@ -1855,8 +1863,16 @@
  builtin_input_impl(PyObject *module, PyObject *prompt)
  /*[clinic end generated code: output=83db5a191e7a0d60 input=5e8bb70c2908fe3c]*/
  {
@@ -211,7 +211,7 @@
      PyObject *ferr = _PySys_GetObjectId(&PyId_stderr);
      PyObject *tmp;
      long fd;
-@@ -1869,7 +1885,11 @@
+@@ -1899,7 +1915,11 @@
          Py_DECREF(tmp);
          if (fd < 0 && PyErr_Occurred())
              return NULL;
@@ -223,7 +223,7 @@
      }
      if (tty) {
          tmp = _PyObject_CallMethodId(fout, &PyId_fileno, NULL);
-@@ -1882,7 +1902,11 @@
+@@ -1912,7 +1932,11 @@
              Py_DECREF(tmp);
              if (fd < 0 && PyErr_Occurred())
                  return NULL;
@@ -235,7 +235,7 @@
          }
      }
  
-@@ -1941,7 +1965,11 @@
+@@ -1971,7 +1995,11 @@
              po = NULL;
              promptstr = "";
          }
