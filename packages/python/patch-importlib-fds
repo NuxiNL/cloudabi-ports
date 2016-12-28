@@ -1,3 +1,17 @@
+--- Lib/importlib/_bootstrap.py
++++ Lib/importlib/_bootstrap.py
+@@ -537,7 +537,10 @@
+     if spec.has_location:
+         if override or getattr(module, '__file__', None) is None:
+             try:
+-                module.__file__ = spec.origin
++                if isinstance(spec.origin, tuple):
++                    module.__file__ = spec.origin[1]
++                else:
++                    module.__file__ = spec.origin
+             except AttributeError:
+                 pass
+ 
 --- Lib/importlib/_bootstrap_external.py
 +++ Lib/importlib/_bootstrap_external.py
 @@ -72,54 +72,55 @@
