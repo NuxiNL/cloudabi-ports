@@ -30,18 +30,34 @@
  
      """ Sets the locale for category to the default setting.
  
-@@ -633,7 +636,10 @@
+@@ -632,15 +635,18 @@
+             """Return the charset that the user is likely using,
              according to the system configuration."""
              import _bootlocale
-             if do_setlocale:
+-            if do_setlocale:
 -                oldloc = setlocale(LC_CTYPE)
-+                try:
+-                try:
+-                    setlocale(LC_CTYPE, "")
+-                except Error:
+-                    pass
+-            result = _bootlocale.getpreferredencoding(False)
+-            if do_setlocale:
+-                setlocale(LC_CTYPE, oldloc)
++            try:
++                if do_setlocale:
 +                    oldloc = setlocale(LC_CTYPE)
-+                except NameError:
-+                    return 'US-ASCII'
-                 try:
-                     setlocale(LC_CTYPE, "")
-                 except Error:
++                    try:
++                        setlocale(LC_CTYPE, "")
++                    except Error:
++                        pass
++                result = _bootlocale.getpreferredencoding(False)
++                if do_setlocale:
++                    setlocale(LC_CTYPE, oldloc)
++            except NameError:
++                result = _bootlocale.getpreferredencoding(False)
+             return result
+ 
+ 
 --- Modules/_localemodule.c
 +++ Modules/_localemodule.c
 @@ -44,8 +44,10 @@
