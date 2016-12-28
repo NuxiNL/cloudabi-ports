@@ -7,7 +7,7 @@
 def build(ctx):
     # TODO(ed): Generalize the way we install Python code.
     srcdir = ctx.extract('Django-%(version)s')
-    srcdir.path('django').install('lib/python3.6/django')
+    srcdir.path('django').install('lib/python3.6/site-packages/django')
 
 package(
     name='django',
