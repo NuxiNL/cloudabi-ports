@@ -30,7 +30,8 @@
 -def _path_isfile(path):
 +def _path_isfile(path, dir_fd=None):
      """Replacement for os.path.isfile."""
-     return _path_is_mode_type(path, 0o100000)
+-    return _path_is_mode_type(path, 0o100000)
++    return _path_is_mode_type(path, 0o100000, dir_fd=dir_fd)
  
  
 -def _path_isdir(path):
@@ -39,7 +40,8 @@
 -    if not path:
 +    if not path and path not in {0}:
          path = _os.getcwd()
-     return _path_is_mode_type(path, 0o040000)
+-    return _path_is_mode_type(path, 0o040000)
++    return _path_is_mode_type(path, 0o040000, dir_fd=dir_fd)
  
  
 -def _write_atomic(path, data, mode=0o666):
