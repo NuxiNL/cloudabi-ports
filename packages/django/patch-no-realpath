@@ -1,0 +1,13 @@
+--- django/contrib/auth/password_validation.py
++++ django/contrib/auth/password_validation.py
+@@ -163,9 +163,7 @@
+     The list Django ships with contains 1000 common passwords, created by Mark Burnett:
+     https://xato.net/passwords/more-top-worst-passwords/
+     """
+-    DEFAULT_PASSWORD_LIST_PATH = os.path.join(
+-        os.path.dirname(os.path.realpath(upath(__file__))), 'common-passwords.txt.gz'
+-    )
++    DEFAULT_PASSWORD_LIST_PATH = '/nonexistent'
+ 
+     def __init__(self, password_list_path=DEFAULT_PASSWORD_LIST_PATH):
+         try:

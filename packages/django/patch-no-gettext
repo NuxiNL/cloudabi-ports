@@ -1,0 +1,21 @@
+--- django/utils/translation/trans_real.py
++++ django/utils/translation/trans_real.py
+@@ -129,9 +129,6 @@
+             self._add_installed_apps_translations()
+ 
+         self._add_local_translations()
+-        if self.__language == settings.LANGUAGE_CODE and self.domain == 'django' and self._catalog is None:
+-            # default lang should have at least one translation file available.
+-            raise IOError("No translation files found for default language %s." % settings.LANGUAGE_CODE)
+         self._add_fallback(localedirs)
+         if self._catalog is None:
+             # No catalogs found for this language, set an empty catalog.
+@@ -172,7 +169,7 @@
+                 "apps registry is ready. Check that you don't make non-lazy "
+                 "gettext calls at import time.")
+         for app_config in app_configs:
+-            localedir = os.path.join(app_config.path, 'locale')
++            localedir = '/nonexistent'
+             translation = self._new_gnu_trans(localedir)
+             self.merge(translation)
+ 
