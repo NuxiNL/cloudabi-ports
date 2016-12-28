@@ -21,8 +21,9 @@ def build(ctx):
 
     # Some source files that are part of the codebase simply don't apply
     # to this environment. Replace them by customized versions.
-    for f in {'Modules/Setup.dist', 'Modules/faulthandler.c',
-              'Modules/getpath.c', 'Modules/main.c', 'Modules/signalmodule.c',
+    for f in {'Lib/signal.py', 'Lib/subprocess.py', 'Modules/Setup.dist',
+              'Modules/faulthandler.c', 'Modules/getpath.c',
+              'Modules/main.c', 'Modules/signalmodule.c',
               'Programs/python.c', 'Python/frozenmain.c'}:
         ctx.resource(f).rename(srcdir.path(f))
     build = srcdir.gnu_configure([
