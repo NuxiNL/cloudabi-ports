@@ -1,23 +1,12 @@
 --- Modules/getbuildinfo.c
 +++ Modules/getbuildinfo.c
-@@ -5,20 +5,12 @@
+@@ -4,6 +4,9 @@
+ #include <stdio.h>
  #endif
  
++#define DATE "Jan  1 1970"
++#define TIME "00:00:00"
++
  #ifndef DATE
--#ifdef __DATE__
--#define DATE __DATE__
--#else
- #define DATE "xx/xx/xx"
- #endif
--#endif
- 
- #ifndef TIME
--#ifdef __TIME__
--#define TIME __TIME__
--#else
- #define TIME "xx:xx:xx"
- #endif
--#endif
- 
- /* XXX Only unix build process has been tested */
- #ifndef HGVERSION
+ #ifdef __DATE__
+ #define DATE __DATE__
