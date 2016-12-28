@@ -30,6 +30,18 @@
  
      """ Sets the locale for category to the default setting.
  
+@@ -633,7 +636,10 @@
+             according to the system configuration."""
+             import _bootlocale
+             if do_setlocale:
+-                oldloc = setlocale(LC_CTYPE)
++                try:
++                    oldloc = setlocale(LC_CTYPE)
++                except NameError:
++                    return 'US-ASCII'
+                 try:
+                     setlocale(LC_CTYPE, "")
+                 except Error:
 --- Modules/_localemodule.c
 +++ Modules/_localemodule.c
 @@ -44,8 +44,10 @@
