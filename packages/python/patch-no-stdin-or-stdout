@@ -29,6 +29,20 @@
  PyAPI_FUNC(void) PySys_FormatStderr(const char *format, ...);
  
  PyAPI_FUNC(void) PySys_ResetWarnOptions(void);
+--- Lib/pprint.py
++++ Lib/pprint.py
+@@ -129,10 +129,7 @@
+         self._depth = depth
+         self._indent_per_level = indent
+         self._width = width
+-        if stream is not None:
+-            self._stream = stream
+-        else:
+-            self._stream = _sys.stdout
++        self._stream = stream
+         self._compact = bool(compact)
+ 
+     def pprint(self, object):
 --- Objects/fileobject.c
 +++ Objects/fileobject.c
 @@ -349,7 +349,11 @@
