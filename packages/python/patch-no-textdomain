@@ -1,0 +1,43 @@
+--- Modules/_localemodule.c
++++ Modules/_localemodule.c
+@@ -495,6 +495,7 @@
+     return PyUnicode_DecodeLocale(dcgettext(domain,msgid,category), NULL);
+ }
+ 
++#ifdef HAVE_TEXTDOMAIN
+ PyDoc_STRVAR(textdomain__doc__,
+ "textdomain(domain) -> string\n"
+ "Set the C library's textdmain to domain, returning the new domain.");
+@@ -512,7 +513,9 @@
+     }
+     return PyUnicode_DecodeLocale(domain, NULL);
+ }
++#endif /* HAVE_TEXTDOMAIN */
+ 
++#ifdef HAVE_BINDTEXTDOMAIN
+ PyDoc_STRVAR(bindtextdomain__doc__,
+ "bindtextdomain(domain, dir) -> string\n"
+ "Bind the C library's domain to dir.");
+@@ -546,6 +549,7 @@
+     Py_XDECREF(dirname_bytes);
+     return result;
+ }
++#endif /* HAVE_BINDTEXTDOMAIN */
+ 
+ #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+ PyDoc_STRVAR(bind_textdomain_codeset__doc__,
+@@ -594,10 +598,14 @@
+    dgettext__doc__},
+   {"dcgettext",(PyCFunction)PyIntl_dcgettext,METH_VARARGS,
+     dcgettext__doc__},
++#ifdef HAVE_TEXTDOMAIN
+   {"textdomain",(PyCFunction)PyIntl_textdomain,METH_VARARGS,
+    textdomain__doc__},
++#endif
++#ifdef HAVE_BINDTEXTDOMAIN
+   {"bindtextdomain",(PyCFunction)PyIntl_bindtextdomain,METH_VARARGS,
+    bindtextdomain__doc__},
++#endif
+ #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+   {"bind_textdomain_codeset",(PyCFunction)PyIntl_bind_textdomain_codeset,
+    METH_VARARGS, bind_textdomain_codeset__doc__},

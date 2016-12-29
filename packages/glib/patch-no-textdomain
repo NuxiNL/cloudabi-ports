@@ -1,0 +1,30 @@
+--- glib/ggettext.c
++++ glib/ggettext.c
+@@ -95,6 +95,7 @@
+ static void
+ ensure_gettext_initialized (void)
+ {
++#ifndef __CloudABI__
+   static gsize initialised;
+ 
+   if (g_once_init_enter (&initialised))
+@@ -111,6 +112,7 @@
+ #    endif
+       g_once_init_leave (&initialised, TRUE);
+     }
++#endif
+ }
+ 
+ /**
+@@ -312,7 +314,11 @@
+     {
+       gboolean should_translate = TRUE;
+ 
++#ifndef __CloudABI__
+       const char *default_domain     = textdomain (NULL);
++#else
++      const char *default_domain     = NULL;
++#endif
+       const char *translator_comment = gettext ("");
+ #ifndef G_OS_WIN32
+       const char *translate_locale   = setlocale (LC_MESSAGES, NULL);

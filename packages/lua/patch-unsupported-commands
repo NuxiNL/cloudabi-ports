@@ -323,23 +323,7 @@
  
  
  static int os_getenv (lua_State *L) {
-@@ -352,6 +354,7 @@
- /* }====================================================== */
- 
- 
-+#if 0
- static int os_setlocale (lua_State *L) {
-   static const int cat[] = {LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY,
-                       LC_NUMERIC, LC_TIME};
-@@ -362,6 +365,7 @@
-   lua_pushstring(L, setlocale(cat[op], l));
-   return 1;
- }
-+#endif
- 
- 
- static int os_exit (lua_State *L) {
-@@ -381,14 +385,9 @@
+@@ -381,14 +383,10 @@
    {"clock",     os_clock},
    {"date",      os_date},
    {"difftime",  os_difftime},
@@ -348,7 +332,7 @@
    {"getenv",    os_getenv},
 -  {"remove",    os_remove},
 -  {"rename",    os_rename},
--  {"setlocale", os_setlocale},
+   {"setlocale", os_setlocale},
    {"time",      os_time},
 -  {"tmpname",   os_tmpname},
    {NULL, NULL}
