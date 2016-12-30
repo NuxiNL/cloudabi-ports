@@ -1,0 +1,25 @@
+--- build_detect_platform
++++ build_detect_platform
+@@ -72,6 +72,11 @@
+ fi
+ 
+ case "$TARGET_OS" in
++    CloudABI)
++        PLATFORM=OS_CLOUDABI
++        COMMON_FLAGS="$MEMCMP_FLAG -DOS_CLOUDABI"
++        PORT_FILE=port/port_posix.cc
++        ;;
+     CYGWIN_*)
+         PLATFORM=OS_LINUX
+         COMMON_FLAGS="$MEMCMP_FLAG -lpthread -DOS_LINUX -DCYGWIN"
+--- port/port_posix.h
++++ port/port_posix.h
+@@ -34,6 +34,8 @@
+   // See http://code.google.com/p/android/issues/detail?id=39824
+   #include <endian.h>
+   #define PLATFORM_IS_LITTLE_ENDIAN  (_BYTE_ORDER == _LITTLE_ENDIAN)
++#elif defined(OS_CLOUDABI)
++  #define PLATFORM_IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+ #else
+   #include <endian.h>
+ #endif

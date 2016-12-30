@@ -1,0 +1,16 @@
+--- Makefile
++++ Makefile
+@@ -284,11 +284,11 @@
+ else
+ $(STATIC_OUTDIR)/libleveldb.a:$(STATIC_LIBOBJECTS)
+ 	rm -f $@
+-	$(AR) -rs $@ $(STATIC_LIBOBJECTS)
++	$(AR) rs $@ $(STATIC_LIBOBJECTS)
+ 
+ $(STATIC_OUTDIR)/libmemenv.a:$(STATIC_MEMENVOBJECTS)
+ 	rm -f $@
+-	$(AR) -rs $@ $(STATIC_MEMENVOBJECTS)
++	$(AR) rs $@ $(STATIC_MEMENVOBJECTS)
+ endif
+ 
+ $(SHARED_MEMENVLIB):$(SHARED_MEMENVOBJECTS)
