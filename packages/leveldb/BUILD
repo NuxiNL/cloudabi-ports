@@ -19,7 +19,7 @@ package(
     name='leveldb',
     version='1.19',
     homepage='http://leveldb.org/',
-    lib_depends={'cxx-runtime'},
+    lib_depends={'cxx-runtime', 'snappy'},
     build_cmd=build,
 )
 
