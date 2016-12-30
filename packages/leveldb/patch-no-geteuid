@@ -1,11 +1,14 @@
 --- util/env_posix.cc
 +++ util/env_posix.cc
-@@ -470,7 +470,7 @@
+@@ -470,7 +470,11 @@
        *result = env;
      } else {
        char buf[100];
--      snprintf(buf, sizeof(buf), "/tmp/leveldbtest-%d", int(geteuid()));
++#if defined(OS_CLOUDABI)
 +      snprintf(buf, sizeof(buf), "/tmp/leveldbtest-%d", 0);
++#else
+       snprintf(buf, sizeof(buf), "/tmp/leveldbtest-%d", int(geteuid()));
++#endif
        *result = buf;
      }
      // Directory may already exist
