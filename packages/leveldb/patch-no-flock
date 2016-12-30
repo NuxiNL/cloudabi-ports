@@ -1,0 +1,20 @@
+--- util/env_posix.cc
++++ util/env_posix.cc
+@@ -254,6 +254,9 @@
+ };
+ 
+ static int LockOrUnlock(int fd, bool lock) {
++#if defined(OS_CLOUDABI)
++  return 0;
++#else
+   errno = 0;
+   struct flock f;
+   memset(&f, 0, sizeof(f));
+@@ -262,6 +265,7 @@
+   f.l_start = 0;
+   f.l_len = 0;        // Lock/unlock entire file
+   return fcntl(fd, F_SETLK, &f);
++#endif
+ }
+ 
+ class PosixFileLock : public FileLock {

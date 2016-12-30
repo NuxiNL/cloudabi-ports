@@ -1,0 +1,11 @@
+--- util/env_posix.cc
++++ util/env_posix.cc
+@@ -470,7 +470,7 @@
+       *result = env;
+     } else {
+       char buf[100];
+-      snprintf(buf, sizeof(buf), "/tmp/leveldbtest-%d", int(geteuid()));
++      snprintf(buf, sizeof(buf), "/tmp/leveldbtest-%d", 0);
+       *result = buf;
+     }
+     // Directory may already exist

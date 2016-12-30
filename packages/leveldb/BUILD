@@ -6,7 +6,6 @@
 
 def build(ctx):
     srcdir = ctx.extract('%(name)s/v%(version)s')
-    srcdir.path('util/env_posix.cc').remove()
     srcdir.make([
         'SHARED_LIBS=', 'SHARED_PROGRAMS=', 'STATIC_PROGRAMS=',
         'TARGET_OS=CloudABI',

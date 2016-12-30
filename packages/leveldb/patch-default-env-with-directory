@@ -1,0 +1,239 @@
+--- db/c.cc
++++ db/c.cc
+@@ -568,10 +568,10 @@
+   delete cache;
+ }
+ 
+-leveldb_env_t* leveldb_create_default_env() {
++leveldb_env_t* leveldb_create_default_env_with_directory(int dirfd) {
+   leveldb_env_t* result = new leveldb_env_t;
+-  result->rep = Env::Default();
+-  result->is_default = true;
++  result->rep = Env::DefaultWithDirectory(dirfd);
++  result->is_default = false;
+   return result;
+ }
+ 
+--- include/leveldb/c.h
++++ include/leveldb/c.h
+@@ -265,7 +265,7 @@
+ 
+ /* Env */
+ 
+-extern leveldb_env_t* leveldb_create_default_env();
++extern leveldb_env_t* leveldb_create_default_env_with_directory(int dirfd);
+ extern void leveldb_env_destroy(leveldb_env_t*);
+ 
+ /* Utility */
+--- include/leveldb/env.h
++++ include/leveldb/env.h
+@@ -37,8 +37,9 @@
+   // system.  Sophisticated users may wish to provide their own Env
+   // implementation instead of relying on this default environment.
+   //
+-  // The result of Default() belongs to leveldb and must never be deleted.
+-  static Env* Default();
++  // The dirfd argument should correspond to a file descriptor of a
++  // directory under which all filesystem operations take place.
++  static Env* DefaultWithDirectory(int dirfd);
+ 
+   // Create a brand new sequentially-readable file with the specified name.
+   // On success, stores a pointer to the new file in *result and returns OK.
+--- util/env_posix.cc
++++ util/env_posix.cc
+@@ -176,10 +176,11 @@
+  private:
+   std::string filename_;
+   FILE* file_;
++  int dirfd_;
+ 
+  public:
+-  PosixWritableFile(const std::string& fname, FILE* f)
+-      : filename_(fname), file_(f) { }
++  PosixWritableFile(int dirfd, const std::string& fname, FILE* f)
++      : dirfd_(dirfd), filename_(fname), file_(f) { }
+ 
+   ~PosixWritableFile() {
+     if (file_ != NULL) {
+@@ -226,7 +227,7 @@
+     }
+     Status s;
+     if (basename.starts_with("MANIFEST")) {
+-      int fd = open(dir.c_str(), O_RDONLY);
++      int fd = openat(dirfd_, dir.c_str(), O_RDONLY);
+       if (fd < 0) {
+         s = IOError(dir, errno);
+       } else {
+@@ -290,7 +291,7 @@
+ 
+ class PosixEnv : public Env {
+  public:
+-  PosixEnv();
++  PosixEnv(int dirfd);
+   virtual ~PosixEnv() {
+     char msg[] = "Destroying Env::Default()\n";
+     fwrite(msg, 1, sizeof(msg), stderr);
+@@ -299,7 +300,7 @@
+ 
+   virtual Status NewSequentialFile(const std::string& fname,
+                                    SequentialFile** result) {
+-    FILE* f = fopen(fname.c_str(), "r");
++    FILE* f = fopenat(dirfd_, fname.c_str(), "r");
+     if (f == NULL) {
+       *result = NULL;
+       return IOError(fname, errno);
+@@ -313,7 +314,7 @@
+                                      RandomAccessFile** result) {
+     *result = NULL;
+     Status s;
+-    int fd = open(fname.c_str(), O_RDONLY);
++    int fd = openat(dirfd_, fname.c_str(), O_RDONLY);
+     if (fd < 0) {
+       s = IOError(fname, errno);
+     } else if (mmap_limit_.Acquire()) {
+@@ -340,12 +341,12 @@
+   virtual Status NewWritableFile(const std::string& fname,
+                                  WritableFile** result) {
+     Status s;
+-    FILE* f = fopen(fname.c_str(), "w");
++    FILE* f = fopenat(dirfd_, fname.c_str(), "w");
+     if (f == NULL) {
+       *result = NULL;
+       s = IOError(fname, errno);
+     } else {
+-      *result = new PosixWritableFile(fname, f);
++      *result = new PosixWritableFile(dirfd_, fname, f);
+     }
+     return s;
+   }
+@@ -353,24 +354,24 @@
+   virtual Status NewAppendableFile(const std::string& fname,
+                                    WritableFile** result) {
+     Status s;
+-    FILE* f = fopen(fname.c_str(), "a");
++    FILE* f = fopenat(dirfd_, fname.c_str(), "a");
+     if (f == NULL) {
+       *result = NULL;
+       s = IOError(fname, errno);
+     } else {
+-      *result = new PosixWritableFile(fname, f);
++      *result = new PosixWritableFile(dirfd_, fname, f);
+     }
+     return s;
+   }
+ 
+   virtual bool FileExists(const std::string& fname) {
+-    return access(fname.c_str(), F_OK) == 0;
++    return faccessat(dirfd_, fname.c_str(), F_OK, 0) == 0;
+   }
+ 
+   virtual Status GetChildren(const std::string& dir,
+                              std::vector<std::string>* result) {
+     result->clear();
+-    DIR* d = opendir(dir.c_str());
++    DIR* d = opendirat(dirfd_, dir.c_str());
+     if (d == NULL) {
+       return IOError(dir, errno);
+     }
+@@ -384,7 +385,7 @@
+ 
+   virtual Status DeleteFile(const std::string& fname) {
+     Status result;
+-    if (unlink(fname.c_str()) != 0) {
++    if (unlinkat(dirfd_, fname.c_str(), 0) != 0) {
+       result = IOError(fname, errno);
+     }
+     return result;
+@@ -392,7 +393,7 @@
+ 
+   virtual Status CreateDir(const std::string& name) {
+     Status result;
+-    if (mkdir(name.c_str(), 0755) != 0) {
++    if (mkdirat(dirfd_, name.c_str(), 0755) != 0) {
+       result = IOError(name, errno);
+     }
+     return result;
+@@ -400,7 +401,7 @@
+ 
+   virtual Status DeleteDir(const std::string& name) {
+     Status result;
+-    if (rmdir(name.c_str()) != 0) {
++    if (unlinkat(dirfd_, name.c_str(), AT_REMOVEDIR) != 0) {
+       result = IOError(name, errno);
+     }
+     return result;
+@@ -409,7 +410,7 @@
+   virtual Status GetFileSize(const std::string& fname, uint64_t* size) {
+     Status s;
+     struct stat sbuf;
+-    if (stat(fname.c_str(), &sbuf) != 0) {
++    if (fstatat(dirfd_, fname.c_str(), &sbuf, 0) != 0) {
+       *size = 0;
+       s = IOError(fname, errno);
+     } else {
+@@ -420,7 +421,7 @@
+ 
+   virtual Status RenameFile(const std::string& src, const std::string& target) {
+     Status result;
+-    if (rename(src.c_str(), target.c_str()) != 0) {
++    if (renameat(dirfd_, src.c_str(), dirfd_, target.c_str()) != 0) {
+       result = IOError(src, errno);
+     }
+     return result;
+@@ -429,7 +430,7 @@
+   virtual Status LockFile(const std::string& fname, FileLock** lock) {
+     *lock = NULL;
+     Status result;
+-    int fd = open(fname.c_str(), O_RDWR | O_CREAT, 0644);
++    int fd = openat(dirfd_, fname.c_str(), O_RDWR | O_CREAT, 0644);
+     if (fd < 0) {
+       result = IOError(fname, errno);
+     } else if (!locks_.Insert(fname)) {
+@@ -486,7 +487,7 @@
+   }
+ 
+   virtual Status NewLogger(const std::string& fname, Logger** result) {
+-    FILE* f = fopen(fname.c_str(), "w");
++    FILE* f = fopenat(dirfd_, fname.c_str(), "w");
+     if (f == NULL) {
+       *result = NULL;
+       return IOError(fname, errno);
+@@ -533,9 +534,10 @@
+ 
+   PosixLockTable locks_;
+   MmapLimiter mmap_limit_;
++  int dirfd_;
+ };
+ 
+-PosixEnv::PosixEnv() : started_bgthread_(false) {
++PosixEnv::PosixEnv(int dirfd) : dirfd_(dirfd), started_bgthread_(false) {
+   PthreadCall("mutex_init", pthread_mutex_init(&mu_, NULL));
+   PthreadCall("cvar_init", pthread_cond_init(&bgsignal_, NULL));
+ }
+@@ -606,13 +608,8 @@
+ 
+ }  // namespace
+ 
+-static pthread_once_t once = PTHREAD_ONCE_INIT;
+-static Env* default_env;
+-static void InitDefaultEnv() { default_env = new PosixEnv; }
+-
+-Env* Env::Default() {
+-  pthread_once(&once, InitDefaultEnv);
+-  return default_env;
++Env* Env::DefaultWithDirectory(int dirfd) {
++  return new PosixEnv(dirfd);
+ }
+ 
+ }  // namespace leveldb
+--- util/options.cc
++++ util/options.cc
+@@ -14,7 +14,7 @@
+       create_if_missing(false),
+       error_if_exists(false),
+       paranoid_checks(false),
+-      env(Env::Default()),
++      env(NULL),
+       info_log(NULL),
+       write_buffer_size(4<<20),
+       max_open_files(1000),
