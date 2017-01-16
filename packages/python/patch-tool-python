@@ -83,15 +83,17 @@
          /* Set up a preliminary stderr printer until we have enough
 --- Python/sysmodule.c
 +++ Python/sysmodule.c
-@@ -20,6 +20,7 @@
+@@ -20,7 +20,9 @@
  #include "pythread.h"
  
  #include "osdefs.h"
 +#include <fcntl.h>
  #include <locale.h>
++#include <stdbool.h>
  
  #ifdef MS_WINDOWS
-@@ -2084,6 +2085,8 @@
+ #define WIN32_LEAN_AND_MEAN
+@@ -2084,6 +2086,8 @@
      return m;
  }
  
@@ -100,14 +102,14 @@
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -2277,6 +2280,213 @@
+@@ -2277,6 +2281,236 @@
      PySys_SetArgvEx(argc, argv, Py_IsolatedFlag == 0);
  }
  
 +#else /* defined(__CloudABI__) */
 +
 +static PyObject *
-+convertargdata(const argdata_t *ad)
++convertargdata(const argdata_t *ad, bool immutable)
 +{
 +    /* Byte strings. */
 +    {
@@ -243,12 +245,12 @@
 +                return NULL;
 +            const argdata_t *key, *value;
 +            while (argdata_map_next(&it, &key, &value)) {
-+                PyObject *keyv = convertargdata(key);
++                PyObject *keyv = convertargdata(key, true);
 +                if (keyv == NULL) {
 +                    Py_DECREF(v);
 +                    return NULL;
 +                }
-+                PyObject *valuev = convertargdata(value);
++                PyObject *valuev = convertargdata(value, false);
 +                if (valuev == NULL) {
 +                    Py_DECREF(keyv);
 +                    Py_DECREF(v);
@@ -269,23 +271,46 @@
 +    {
 +        argdata_seq_iterator_t it;
 +        if (argdata_seq_iterate(ad, &it) == 0) {
-+            PyObject *v = PyList_New(0);
-+            if (v == NULL)
-+                return NULL;
-+            const argdata_t *value;
-+            while (argdata_seq_next(&it, &value)) {
-+                PyObject *valuev = convertargdata(value);
-+                if (valuev == NULL) {
-+                    Py_DECREF(v);
++            if (immutable) {
++                PyObject *v = PyTuple_New(0);
++                if (v == NULL)
 +                    return NULL;
++                const argdata_t *value;
++                size_t i = 0;
++                while (argdata_seq_next(&it, &value)) {
++                    PyObject *valuev = convertargdata(value, true);
++                    if (valuev == NULL) {
++                        Py_DECREF(v);
++                        return NULL;
++                    }
++                    if (_PyTuple_Resize(&v, i + 1) != 0 ||
++                        PyTuple_SetItem(v, i, valuev) != 0) {
++                        Py_DECREF(valuev);
++                        Py_DECREF(v);
++                        return NULL;
++                    }
++                    ++i;
 +                }
-+                if (PyList_Append(v, valuev) != 0) {
-+                    Py_DECREF(valuev);
-+                    Py_DECREF(v);
++                return v;
++            } else {
++                PyObject *v = PyList_New(0);
++                if (v == NULL)
 +                    return NULL;
++                const argdata_t *value;
++                while (argdata_seq_next(&it, &value)) {
++                    PyObject *valuev = convertargdata(value, false);
++                    if (valuev == NULL) {
++                        Py_DECREF(v);
++                        return NULL;
++                    }
++                    if (PyList_Append(v, valuev) != 0) {
++                        Py_DECREF(valuev);
++                        Py_DECREF(v);
++                        return NULL;
++                    }
 +                }
++                return v;
 +            }
-+            return v;
 +        }
 +    }
 +
@@ -299,7 +324,7 @@
 +{
 +    PyObject *v;
 +
-+    v = convertargdata(ad);
++    v = convertargdata(ad, false);
 +    if (v == NULL) {
 +        Py_FatalError("can't create sys.argdata");
 +        return;
