@@ -267,7 +267,7 @@
 +        }
 +    }
 +
-+    /* Lists. */
++    /* Lists or tuples, depending on whether mutability is permitted. */
 +    {
 +        argdata_seq_iterator_t it;
 +        if (argdata_seq_iterate(ad, &it) == 0) {
