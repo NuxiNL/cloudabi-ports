@@ -19,22 +19,20 @@ def build(ctx):
             'libemulator/tidpool.c',
             'libemulator/tls.c',
         }).install('bin/cloudabi-emulate')
-
-    # TODO(ed): Integrate source file into cloudabi-utils.
     ctx.executable({
-        ctx.resource('cloudabi-reexec.c').compile(),
+        srcdir.path('cloudabi-reexec/cloudabi-reexec.c').compile(),
     }).install('libexec/cloudabi-reexec')
 
 package(
     name='cloudabi-utils',
-    version='0.18',
+    version='0.19',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='cloudabi-utils/v0.18.tar.gz',
-    checksum='2aaf229ee09ec6ec42102bc36a28a5f18af5a278156e4e4feea36369b1ae621d',
+    name='cloudabi-utils/v0.19.tar.gz',
+    checksum='dbbc7fd31dc7935aac94f4aa9fea0255fc232ec2a74afb7c37579efd837bdeba',
     master_sites={'https://github.com/NuxiNL/cloudabi-utils/archive/'},
 )
