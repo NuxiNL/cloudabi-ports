@@ -9,17 +9,16 @@
     /* The named file is opened for read and the image header is filled in
      * from the PNG header in the file.
      */
-@@ -3074,10 +3072,6 @@
+@@ -3074,9 +3072,6 @@
   * colormap_entries: set to the number of entries in the color-map (0 to 256)
   */
  #ifdef PNG_SIMPLIFIED_WRITE_STDIO_SUPPORTED
 -PNG_EXPORT(239, int, png_image_write_to_file, (png_imagep image,
 -   const char *file, int convert_to_8bit, const void *buffer,
 -   png_int_32 row_stride, const void *colormap));
--   /* Write the image to the named file. */
+    /* Write the image to the named file. */
  
  PNG_EXPORT(240, int, png_image_write_to_stdio, (png_imagep image, FILE *file,
-    int convert_to_8_bit, const void *buffer, png_int_32 row_stride,
 --- pngread.c
 +++ pngread.c
 @@ -1481,6 +1481,7 @@
