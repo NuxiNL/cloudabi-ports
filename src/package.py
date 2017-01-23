@@ -75,7 +75,7 @@ class TargetPackage:
 
     def __init__(self, install_directory, arch, name, version, homepage,
                  host_packages, lib_depends, build_cmd, distfiles,
-                 resource_directory):
+                 resource_directory, replaces=frozenset()):
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
@@ -85,6 +85,7 @@ class TargetPackage:
         self._build_cmd = build_cmd
         self._distfiles = distfiles
         self._resource_directory = resource_directory
+        self._replaces = replaces
 
         # Compute the set of transitive library dependencies.
         self._lib_depends = set()
@@ -169,6 +170,9 @@ class TargetPackage:
 
     def get_lib_depends(self):
         return self._lib_depends
+
+    def get_replaces(self):
+        return self._replaces
 
     def get_maintainer(self):
         return 'info@nuxi.nl'

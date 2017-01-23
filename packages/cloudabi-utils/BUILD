@@ -29,6 +29,7 @@ package(
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     lib_depends={'c-runtime'},
     build_cmd=build,
+    replaces={'cloudabi-reexec'},
 )
 
 distfile(

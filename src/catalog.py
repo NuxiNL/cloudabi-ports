@@ -752,6 +752,10 @@ class ArchLinuxCatalog(Catalog):
             for dep in sorted(pkg.get_archlinux_name()
                               for pkg in package.get_lib_depends()):
                 f.write('depend = %s\n' % dep)
+            for p in sorted(package.get_replaces()):
+                f.write('conflict = %s-%s\n' % (arch, p))
+            for p in sorted(package.get_replaces()):
+                f.write('replaces = %s-%s\n' % (arch, p))
 
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
