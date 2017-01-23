@@ -29,11 +29,17 @@ FALLBACK_MIRRORS = {'https://nuxi.nl/distfiles/third_party/'}
 # Host C and C++ compiler, used to compile the build tools. We'd better
 # use Clang if available. Compared to GCC, it has the advantage that it
 # does not depend on the 'as' and 'ld' utilities being part of $PATH.
-HOST_CC = ('/usr/bin/clang-3.7' if platform.system() == 'Linux' else
-           '/usr/bin/cc')
-HOST_CXX = ('/usr/bin/clang++-3.7' if platform.system() == 'Linux' else
-            '/usr/bin/c++')
+for i in ['/usr/bin/clang', '/usr/bin/clang-3.7']:
+    if os.path.exists(i):
+        HOST_CC = i
+        break
+for i in ['/usr/bin/clang++', '/usr/bin/clang++-3.7']:
+    if os.path.exists(i):
+        HOST_CXX = i
+        break
 
 # Name of the Perl executable.
-PERL = ('/usr/local/bin/perl' if platform.system() == 'FreeBSD' else
-        '/usr/bin/perl')
+for i in ['/usr/bin/perl', '/usr/local/bin/perl']:
+    if os.path.exists(i):
+        PERL = i
+        break
