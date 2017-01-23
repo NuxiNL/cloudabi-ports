@@ -10,7 +10,10 @@ def build(ctx):
     ctx.extract('lld-%(version)s').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
-    build = root.cmake(['-DLLVM_TARGETS_TO_BUILD=AArch64;ARM;X86'])
+    build = root.cmake([
+        '-DLLVM_ENABLE_OCAMLDOC=NO',
+        '-DLLVM_TARGETS_TO_BUILD=AArch64;ARM;X86',
+    ])
     build.ninja()
     stage = build.ninja_install()
 
