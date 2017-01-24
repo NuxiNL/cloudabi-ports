@@ -113,7 +113,7 @@ def _remove(path):
         shutil.rmtree(path)
     except FileNotFoundError:
         pass
-    except (NotADirectoryError, OSError):
+    except OSError:
         os.unlink(path)
 
 
@@ -121,7 +121,7 @@ def remove(path):
     try:
         # First try to remove the file or directory directly.
         _remove(path)
-    except PermissionError:
+    except OSError:
         # If that fails, add write permissions to the directories stored
         # inside and retry.
         for root, dirs, files in os.walk(path):
