@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -13,14 +13,14 @@ def build(ctx):
 
 package(
     name='cloudlibc',
-    version='0.67',
+    version='0.68',
     homepage='https://github.com/NuxiNL/cloudlibc',
     lib_depends={'cloudabi', 'compiler-rt'},
     build_cmd=build,
 )
 
 distfile(
-    name='cloudlibc/v0.67.tar.gz',
-    checksum='ac4ba3f76237ea6ec4bea4bf06a962cbe6991427f607578096493bfedfdeb002',
+    name='cloudlibc/v0.68.tar.gz',
+    checksum='472edbf7a9c7068fba9bd85374e7a98fa89825e6e1c1555116a1d12e161ab045',
     master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'},
 )

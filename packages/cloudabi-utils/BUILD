@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2016-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -25,7 +25,7 @@ def build(ctx):
 
 package(
     name='cloudabi-utils',
-    version='0.20',
+    version='0.21',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     lib_depends={'c-runtime'},
     build_cmd=build,
@@ -33,7 +33,7 @@ package(
 )
 
 distfile(
-    name='cloudabi-utils/v0.20.tar.gz',
-    checksum='51b5c25ca4a7beea89325443b8f253a77a6f4cf66f6a15ce87ac3fd7057f7b0e',
+    name='cloudabi-utils/v0.21.tar.gz',
+    checksum='f1d7c8e3ad697ff93bb02a74df8b61ebe17f47f3ac1a94c683a46a4f2c17d8e3',
     master_sites={'https://github.com/NuxiNL/cloudabi-utils/archive/'},
 )
