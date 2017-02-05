@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -6,7 +6,7 @@
 
 def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
-    headers = ctx.extract('cloudlibc/v0.67').path('src/include')
+    headers = ctx.extract('cloudlibc/v0.68').path('src/include')
 
     sources = {
         'absvdi2.c', 'absvsi2.c', 'absvti2.c', 'adddf3.c', 'addsf3.c',
