@@ -34,6 +34,6 @@ package(
 
 distfile(
     name='cloudabi-utils/v0.21.tar.gz',
-    checksum='f1d7c8e3ad697ff93bb02a74df8b61ebe17f47f3ac1a94c683a46a4f2c17d8e3',
+    checksum='e1a8f2b5d7677c1f39d96ee2b8f7750b950cd66e8e39cf18ef33a3d534df7265',
     master_sites={'https://github.com/NuxiNL/cloudabi-utils/archive/'},
 )
