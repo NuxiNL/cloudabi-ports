@@ -398,6 +398,7 @@ class TargetBuilder:
             '-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY',
             '-DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER',
             '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix(),
+            '-DCMAKE_NO_SYSTEM_FROM_IMPORTED=ON',
             '-DCMAKE_PREFIX_PATH=' + self._localbase,
             '-DCMAKE_RANLIB=' + self._tool('ranlib'),
             '-DCMAKE_SYSTEM_NAME=Generic',
