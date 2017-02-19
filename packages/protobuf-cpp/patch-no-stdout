@@ -1,0 +1,11 @@
+--- src/google/protobuf/text_format.cc
++++ src/google/protobuf/text_format.cc
+@@ -129,7 +129,7 @@
+ }
+ 
+ void Message::PrintDebugString() const {
+-  printf("%s", DebugString().c_str());
++  fprintf(stderr, "%s", DebugString().c_str());
+ }
+ 
+ 
