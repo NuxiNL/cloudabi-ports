@@ -11,7 +11,7 @@ package(
     name='mstd',
     version='1',
     homepage='https://github.com/m-ou-se/mstd',
-    lib_depends={'cxx-runtime'},
+    lib_depends={'libcxx'},
     build_cmd=build,
 )
 
