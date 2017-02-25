@@ -1,0 +1,50 @@
+--- src/cloudabi-emulate/cloudabi-emulate.c
++++ src/cloudabi-emulate/cloudabi-emulate.c
+@@ -28,12 +28,12 @@
+ 
+   // Serialize argument data that needs to be passed to the executable.
+   size_t buflen, fdslen;
+-  argdata_get_buffer_length(argv, &buflen, &fdslen);
++  argdata_serialized_length(argv, &buflen, &fdslen);
+   int *fds = malloc(fdslen * sizeof(fds[0]) + buflen);
+   if (fds == NULL)
+     _Exit(127);
+   void *buf = &fds[fdslen];
+-  fdslen = argdata_get_buffer(argv, buf, fds);
++  fdslen = argdata_serialize(argv, buf, fds);
+ 
+   // Register file descriptors.
+   struct fd_table ft;
+--- src/cloudabi-run/cloudabi-run.c
++++ src/cloudabi-run/cloudabi-run.c
+@@ -729,14 +729,14 @@
+   if (do_emulate) {
+     // Serialize argument data that needs to be passed to the executable.
+     size_t buflen, fdslen;
+-    argdata_get_buffer_length(ad, &buflen, &fdslen);
++    argdata_serialized_length(ad, &buflen, &fdslen);
+     int *fds = malloc(fdslen * sizeof(fds[0]) + buflen);
+     if (fds == NULL) {
+       perror("Cannot allocate argument data buffer");
+       exit(127);
+     }
+     void *buf = &fds[fdslen];
+-    fdslen = argdata_get_buffer(ad, buf, fds);
++    fdslen = argdata_serialize(ad, buf, fds);
+ 
+     // Register file descriptors.
+     struct fd_table ft;
+--- src/libcloudabi/program_exec.c
++++ src/libcloudabi/program_exec.c
+@@ -24,9 +24,9 @@
+   // Encode data. Add a trailing null byte, as execve() uses null
+   // terminated strings.
+   size_t datalen;
+-  argdata_get_buffer_length(adseq, &datalen, NULL);
++  argdata_serialized_length(adseq, &datalen, NULL);
+   char data[datalen + 1];
+-  argdata_get_buffer(adseq, data, NULL);
++  argdata_serialize(adseq, data, NULL);
+   data[datalen] = '\0';
+   argdata_free(adfd);
+   argdata_free(adseq);
