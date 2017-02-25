@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
+    root = ctx.extract('%(name)s-%(version)src2.src')
     headers = ctx.extract('cloudlibc/v0.71').path('src/include')
 
     sources = {
@@ -63,13 +63,13 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='3.9.1',
+    version='4.0.0',
     homepage='http://compiler-rt.llvm.org/',
     build_cmd=build,
 )
 
 distfile(
-    name='compiler-rt-3.9.1.src.tar.xz',
-    checksum='d30967b1a5fa51a2503474aacc913e69fd05ae862d37bf310088955bdb13ec99',
-    master_sites={'http://llvm.org/releases/3.9.1/'},
+    name='compiler-rt-4.0.0rc2.src.tar.xz',
+    checksum='5902f67a9feadc74b455b3f4979a2ff913918209a681e104d6010622334a201e',
+    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
 )

@@ -1,16 +1,14 @@
 --- include/cstdio
 +++ include/cstdio
-@@ -116,7 +116,6 @@
+@@ -119,13 +119,11 @@
  using ::fprintf;
  using ::fscanf;
  using ::snprintf;
 -using ::sprintf;
  using ::sscanf;
- #ifndef _LIBCPP_MSVCRT
  using ::vfprintf;
-@@ -124,7 +123,6 @@
+ using ::vfscanf;
  using ::vsscanf;
- #endif // _LIBCPP_MSVCRT
  using ::vsnprintf;
 -using ::vsprintf;
  using ::fgetc;
@@ -18,7 +16,7 @@
  using ::fputc;
 --- include/cstdlib
 +++ include/cstdlib
-@@ -115,7 +115,6 @@
+@@ -121,7 +121,6 @@
  using ::strtoull;
  #endif // _LIBCPP_HAS_NO_LONG_LONG
  using ::rand;
@@ -26,7 +24,7 @@
  using ::calloc;
  using ::free;
  using ::malloc;
-@@ -125,7 +124,6 @@
+@@ -131,7 +130,6 @@
  using ::exit;
  using ::_Exit;
  using ::getenv;
@@ -49,7 +47,7 @@
  using ::strncmp;
 --- include/cwchar
 +++ include/cwchar
-@@ -149,10 +149,7 @@
+@@ -145,10 +145,7 @@
  #ifndef _LIBCPP_HAS_NO_LONG_LONG
  using ::wcstoull;
  #endif // _LIBCPP_HAS_NO_LONG_LONG

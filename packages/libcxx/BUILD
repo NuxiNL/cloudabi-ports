@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    cxxabi = ctx.extract('libcxxabi-%(version)s.src')
+    root = ctx.extract('%(name)s-%(version)src2.src')
+    cxxabi = ctx.extract('libcxxabi-%(version)src2.src')
 
     # Install header files.
     headers = root.path('include')
@@ -24,27 +24,27 @@ def build(ctx):
         'mutex.cpp', 'new.cpp', 'optional.cpp', 'random.cpp',
         'regex.cpp', 'shared_mutex.cpp', 'stdexcept.cpp', 'string.cpp',
         'strstream.cpp', 'system_error.cpp', 'thread.cpp',
-        'typeinfo.cpp', 'utility.cpp', 'valarray.cpp',
+        'typeinfo.cpp', 'utility.cpp', 'valarray.cpp', 'variant.cpp',
     }
     srcdir = root.path('src')
     libcxx = ctx.archive(
         srcdir.path(f).compile([
             '-I%s/include' % root, '-I%s/include' % cxxabi,
             '-std=c++11', '-D_LIBCPP_BUILD_STATIC',
-            '-DLIBCXX_BUILDING_LIBCXXABI',
+            '-D_LIBCPP_BUILDING_LIBRARY', '-DLIBCXX_BUILDING_LIBCXXABI',
         ]) for f in sources)
     libcxx.install('lib/libc++.a')
 
 package(
     name='libcxx',
-    version='3.9.1',
+    version='4.0.0',
     homepage='http://libcxx.llvm.org/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='libcxx-3.9.1.src.tar.xz',
-    checksum='25e615e428f60e651ed09ffd79e563864e3f4bc69a9e93ee41505c419d1a7461',
-    master_sites={'http://llvm.org/releases/3.9.1/'},
+    name='libcxx-4.0.0rc2.src.tar.xz',
+    checksum='d631c653c2b05b63683f62a9eea2b1284ce9ac49256f6a1744b462e7dca60c8c',
+    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
 )

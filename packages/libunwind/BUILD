@@ -5,7 +5,7 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
+    root = ctx.extract('%(name)s-%(version)src2.src')
     c_sources = {
         'Unwind-sjlj.c', 'UnwindLevel1-gcc-ext.c', 'UnwindLevel1.c',
         'UnwindRegistersRestore.S', 'UnwindRegistersSave.S',
@@ -22,14 +22,14 @@ def build(ctx):
 
 package(
     name='libunwind',
-    version='3.9.1',
+    version='4.0.0',
     homepage='http://libcxx.llvm.org/',
     lib_depends={'c-runtime', 'libcxx'},
     build_cmd=build,
 )
 
 distfile(
-    name='libunwind-3.9.1.src.tar.xz',
-    checksum='0b0bc73264d7ab77d384f8a7498729e3c4da8ffee00e1c85ad02a2f85e91f0e6',
-    master_sites={'http://llvm.org/releases/3.9.1/'},
+    name='libunwind-4.0.0rc2.src.tar.xz',
+    checksum='bd9a545beec7d881e6aed5f2f57a32d7901d2b9ddfaacb2465f636ed2736ec70',
+    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
 )
