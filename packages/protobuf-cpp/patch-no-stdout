@@ -1,11 +1,24 @@
+--- src/google/protobuf/message.h
++++ src/google/protobuf/message.h
+@@ -256,8 +256,6 @@
+   string ShortDebugString() const;
+   // Like DebugString(), but do not escape UTF-8 byte sequences.
+   string Utf8DebugString() const;
+-  // Convenience function useful in GDB.  Prints DebugString() to stdout.
+-  void PrintDebugString() const;
+ 
+   // Heavy I/O -------------------------------------------------------
+   // Additional parsing and serialization methods not implemented by
 --- src/google/protobuf/text_format.cc
 +++ src/google/protobuf/text_format.cc
-@@ -129,7 +129,7 @@
+@@ -128,10 +128,6 @@
+   return debug_string;
  }
  
- void Message::PrintDebugString() const {
+-void Message::PrintDebugString() const {
 -  printf("%s", DebugString().c_str());
-+  fprintf(stderr, "%s", DebugString().c_str());
- }
+-}
+-
  
- 
+ // ===========================================================================
+ // Implementation of the parse information tree class.
