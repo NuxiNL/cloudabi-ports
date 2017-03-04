@@ -1,0 +1,11 @@
+--- src/thread.cpp
++++ src/thread.cpp
+@@ -86,7 +86,7 @@
+ {
+     static void *thread_routine (void *arg_)
+     {
+-#if !defined ZMQ_HAVE_OPENVMS && !defined ZMQ_HAVE_ANDROID
++#if !defined ZMQ_HAVE_OPENVMS && !defined ZMQ_HAVE_ANDROID && !defined __CloudABI__
+         //  Following code will guarantee more predictable latencies as it'll
+         //  disallow any signal handling in the I/O thread.
+         sigset_t signal_set;

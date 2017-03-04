@@ -1,0 +1,18 @@
+--- src/tcp.cpp
++++ src/tcp.cpp
+@@ -70,6 +70,7 @@
+ 
+ void zmq::set_tcp_send_buffer (fd_t sockfd_, int bufsize_)
+ {
++#ifdef SO_SNDBUF
+     const int rc = setsockopt (sockfd_, SOL_SOCKET, SO_SNDBUF,
+         (char*) &bufsize_, sizeof bufsize_);
+ #ifdef ZMQ_HAVE_WINDOWS
+@@ -77,6 +78,7 @@
+ #else
+     errno_assert (rc == 0);
+ #endif
++#endif
+ }
+ 
+ void zmq::set_tcp_receive_buffer (fd_t sockfd_, int bufsize_)

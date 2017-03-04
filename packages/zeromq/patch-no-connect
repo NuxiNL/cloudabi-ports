@@ -1,0 +1,237 @@
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -486,7 +486,6 @@
+         io_thread.cpp
+         ip.cpp
+         ipc_address.cpp
+-        ipc_connecter.cpp
+         ipc_listener.cpp
+         kqueue.cpp
+         lb.cpp
+@@ -528,13 +527,11 @@
+         signaler.cpp
+         socket_base.cpp
+         socks.cpp
+-        socks_connecter.cpp
+         stream.cpp
+         stream_engine.cpp
+         sub.cpp
+         tcp.cpp
+         tcp_address.cpp
+-        tcp_connecter.cpp
+         tcp_listener.cpp
+         thread.cpp
+         trie.cpp
+@@ -552,8 +549,6 @@
+         config.hpp
+         radio.cpp
+         dish.cpp
+-        udp_engine.cpp
+-        udp_address.cpp
+         scatter.cpp
+         gather.cpp)
+ 
+--- include/zmq.h
++++ include/zmq.h
+@@ -426,7 +426,9 @@
+ ZMQ_EXPORT int zmq_getsockopt (void *s, int option, void *optval,
+     size_t *optvallen);
+ ZMQ_EXPORT int zmq_bind (void *s, const char *addr);
++#ifndef __CloudABI__
+ ZMQ_EXPORT int zmq_connect (void *s, const char *addr);
++#endif
+ ZMQ_EXPORT int zmq_unbind (void *s, const char *addr);
+ ZMQ_EXPORT int zmq_disconnect (void *s, const char *addr);
+ ZMQ_EXPORT int zmq_send (void *s, const void *buf, size_t len, int flags);
+--- src/address.cpp
++++ src/address.cpp
+@@ -33,7 +33,6 @@
+ #include "ctx.hpp"
+ #include "err.hpp"
+ #include "tcp_address.hpp"
+-#include "udp_address.hpp"
+ #include "ipc_address.hpp"
+ #include "tipc_address.hpp"
+ 
+@@ -60,11 +59,14 @@
+             LIBZMQ_DELETE(resolved.tcp_addr);
+         }
+     }
++#ifndef __CloudABI__
++    else
+     if (protocol == "udp") {
+         if (resolved.udp_addr) {
+             LIBZMQ_DELETE(resolved.udp_addr);
+         }
+     }
++#endif
+ #if !defined ZMQ_HAVE_WINDOWS && !defined ZMQ_HAVE_OPENVMS
+     else
+     if (protocol == "ipc") {
+@@ -97,10 +99,13 @@
+         if (resolved.tcp_addr)
+             return resolved.tcp_addr->to_string (addr_);
+     }
++#ifndef __CloudABI__
++    else
+     if (protocol == "udp") {
+         if (resolved.udp_addr)
+             return resolved.udp_addr->to_string (addr_);
+     }
++#endif
+ #if !defined ZMQ_HAVE_WINDOWS && !defined ZMQ_HAVE_OPENVMS
+     else
+     if (protocol == "ipc") {
+--- src/session_base.cpp
++++ src/session_base.cpp
+@@ -34,16 +34,12 @@
+ #include "err.hpp"
+ #include "pipe.hpp"
+ #include "likely.hpp"
+-#include "tcp_connecter.hpp"
+-#include "ipc_connecter.hpp"
+ #include "tipc_connecter.hpp"
+-#include "socks_connecter.hpp"
+ #include "vmci_connecter.hpp"
+ #include "pgm_sender.hpp"
+ #include "pgm_receiver.hpp"
+ #include "address.hpp"
+ #include "norm_engine.hpp"
+-#include "udp_engine.hpp"
+ 
+ #include "ctx.hpp"
+ #include "req.hpp"
+@@ -314,8 +310,12 @@
+ 
+ void zmq::session_base_t::process_plug ()
+ {
++#ifdef __CloudABI__
++    zmq_assert (!active);
++#else
+     if (active)
+         start_connecting (false);
++#endif
+ }
+ 
+ int zmq::session_base_t::zap_connect ()
+@@ -429,9 +429,13 @@
+     switch (reason) {
+         case stream_engine_t::timeout_error:
+         case stream_engine_t::connection_error:
++#ifndef __CloudABI__
++            zmq_assert (!active);
++#else
+             if (active)
+                 reconnect ();
+             else
++#endif
+                 terminate ();
+             break;
+         case stream_engine_t::encryption_error:
+@@ -499,6 +503,7 @@
+     pipe->terminate (false);
+ }
+ 
++#ifndef __CloudABI__
+ void zmq::session_base_t::reconnect ()
+ {
+     //  For delayed connect situations, terminate the pipe
+@@ -690,3 +695,4 @@
+ 
+     zmq_assert (false);
+ }
++#endif
+--- src/session_base.hpp
++++ src/session_base.hpp
+@@ -107,9 +107,11 @@
+ 
+     private:
+ 
++#ifndef __CloudABI__
+         void start_connecting (bool wait_);
+ 
+         void reconnect ();
++#endif
+ 
+         //  Handlers for incoming commands.
+         void process_plug ();
+--- src/socket_base.cpp
++++ src/socket_base.cpp
+@@ -51,7 +51,6 @@
+ #include "tcp_listener.hpp"
+ #include "ipc_listener.hpp"
+ #include "tipc_listener.hpp"
+-#include "tcp_connecter.hpp"
+ #include "io_thread.hpp"
+ #include "session_base.hpp"
+ #include "config.hpp"
+@@ -63,7 +62,6 @@
+ #include "address.hpp"
+ #include "ipc_address.hpp"
+ #include "tcp_address.hpp"
+-#include "udp_address.hpp"
+ #include "tipc_address.hpp"
+ #include "mailbox.hpp"
+ #include "mailbox_safe.hpp"
+@@ -526,6 +524,7 @@
+         return rc;
+     }
+ 
++#ifndef __CloudABI__
+     if (protocol == "pgm" || protocol == "epgm" || protocol == "norm") {
+         //  For convenience's sake, bind can be used interchangeable with
+         //  connect for PGM, EPGM, NORM transports.
+@@ -588,6 +587,7 @@
+ 
+         return 0;
+     }
++#endif
+ 
+     //  Remaining transports require to be run in an I/O thread, so at this
+     //  point we'll choose one.
+@@ -680,6 +680,7 @@
+     return -1;
+ }
+ 
++#ifndef __CloudABI__
+ int zmq::socket_base_t::connect (const char *addr_)
+ {
+     scoped_optional_lock_t sync_lock(thread_safe ? &sync : NULL);
+@@ -982,6 +983,7 @@
+     add_endpoint (addr_, (own_t *) session, newpipe);
+     return 0;
+ }
++#endif
+ 
+ void zmq::socket_base_t::add_endpoint (const char *addr_, own_t *endpoint_, pipe_t *pipe)
+ {
+--- src/socket_base.hpp
++++ src/socket_base.hpp
+@@ -86,7 +86,9 @@
+         int setsockopt (int option_, const void *optval_, size_t optvallen_);
+         int getsockopt (int option_, void *optval_, size_t *optvallen_);
+         int bind (const char *addr_);
++#ifndef __CloudABI__
+         int connect (const char *addr_);
++#endif
+         int term_endpoint (const char *addr_);
+         int send (zmq::msg_t *msg_, int flags_);
+         int recv (zmq::msg_t *msg_, int flags_);
+--- src/zmq.cpp
++++ src/zmq.cpp
+@@ -335,6 +335,7 @@
+     return result;
+ }
+ 
++#ifndef __CloudABI__
+ int zmq_connect (void *s_, const char *addr_)
+ {
+     if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+@@ -345,6 +346,7 @@
+     int result = s->connect (addr_);
+     return result;
+ }
++#endif
+ 
+ int zmq_unbind (void *s_, const char *addr_)
+ {

@@ -1,0 +1,18 @@
+--- src/tcp.cpp
++++ src/tcp.cpp
+@@ -50,6 +50,7 @@
+     //  Disable Nagle's algorithm. We are doing data batching on 0MQ level,
+     //  so using Nagle wouldn't improve throughput in anyway, but it would
+     //  hurt latency.
++#ifdef TCP_NODELAY
+     int nodelay = 1;
+     int rc = setsockopt (s_, IPPROTO_TCP, TCP_NODELAY, (char*) &nodelay,
+         sizeof (int));
+@@ -58,6 +59,7 @@
+ #else
+     errno_assert (rc == 0);
+ #endif
++#endif
+ 
+ #ifdef ZMQ_HAVE_OPENVMS
+     //  Disable delayed acknowledgements as they hurt latency significantly.

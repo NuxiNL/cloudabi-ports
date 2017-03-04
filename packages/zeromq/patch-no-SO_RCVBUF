@@ -1,0 +1,18 @@
+--- src/tcp.cpp
++++ src/tcp.cpp
+@@ -81,6 +81,7 @@
+ 
+ void zmq::set_tcp_receive_buffer (fd_t sockfd_, int bufsize_)
+ {
++#ifdef SO_RCVBUF
+     const int rc = setsockopt (sockfd_, SOL_SOCKET, SO_RCVBUF,
+         (char *) &bufsize_, sizeof bufsize_);
+ #ifdef ZMQ_HAVE_WINDOWS
+@@ -88,6 +89,7 @@
+ #else
+     errno_assert (rc == 0);
+ #endif
++#endif
+ }
+ 
+ void zmq::tune_tcp_keepalives (fd_t s_, int keepalive_, int keepalive_cnt_,

@@ -1,0 +1,52 @@
+--- src/random.cpp
++++ src/random.cpp
+@@ -40,20 +40,26 @@
+ 
+ void zmq::seed_random ()
+ {
++#ifndef __CloudABI__
+ #if defined ZMQ_HAVE_WINDOWS
+     int pid = (int) GetCurrentProcessId ();
+ #else
+     int pid = (int) getpid ();
+ #endif
+     srand ((unsigned int) (clock_t::now_us () + pid));
++#endif
+ }
+ 
+ uint32_t zmq::generate_random ()
+ {
++#ifdef __CloudABI__
++    return arc4random();
++#else
+     //  Compensate for the fact that rand() returns signed integer.
+     uint32_t low = (uint32_t) rand ();
+     uint32_t high = (uint32_t) rand ();
+     high <<= (sizeof (int) * 8 - 1);
+     return high | low;
++#endif
+ }
+ 
+--- src/tweetnacl.c
++++ src/tweetnacl.c
+@@ -898,6 +898,20 @@
+     return rc;
+ }
+ 
++#elif defined(__CloudABI__)
++
++#include <stdlib.h>
++
++void randombytes(unsigned char *x,unsigned long long xlen)
++{
++    arc4random_buf(x, xlen);
++}
++
++int randombytes_close(void)
++{
++    return 0;
++}
++
+ #else
+ 
+ #include <sys/types.h>

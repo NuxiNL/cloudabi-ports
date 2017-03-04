@@ -1,0 +1,126 @@
+--- src/ipc_listener.cpp
++++ src/ipc_listener.cpp
+@@ -71,6 +71,7 @@
+   0  // Sentinel
+ };
+ 
++#ifndef __CloudABI__
+ int zmq::ipc_listener_t::create_wildcard_address(std::string& path_,
+         std::string& file_)
+ {
+@@ -129,6 +130,7 @@
+ 
+     return 0;
+ }
++#endif
+ 
+ zmq::ipc_listener_t::ipc_listener_t (io_thread_t *io_thread_,
+       socket_base_t *socket_, const options_t &options_) :
+@@ -213,6 +215,7 @@
+     //  Create addr on stack for auto-cleanup
+     std::string addr (addr_);
+ 
++#ifndef __CloudABI__
+     //  Allow wildcard file
+     if (options.use_fd == -1 && addr [0] == '*') {
+         if ( create_wildcard_address(tmp_socket_dirname, addr) < 0 ) {
+@@ -228,12 +231,14 @@
+     if (options.use_fd == -1) {
+         ::unlink (addr.c_str());
+     }
++#endif
+     filename.clear ();
+ 
+     //  Initialise the address structure.
+     ipc_address_t address;
+     int rc = address.resolve (addr.c_str());
+     if (rc != 0) {
++#ifndef __CloudABI__
+         if ( !tmp_socket_dirname.empty() ) {
+             // We need to preserve errno to return to the user
+             int errno_ = errno;
+@@ -241,11 +246,15 @@
+             tmp_socket_dirname.clear();
+             errno = errno_;
+         }
++#endif
+         return -1;
+     }
+ 
+     address.to_string (endpoint);
+ 
++#ifdef __CloudABI__
++    s = options.use_fd;
++#else
+     if (options.use_fd != -1) {
+         s = options.use_fd;
+     } else {
+@@ -272,6 +281,7 @@
+         if (rc != 0)
+             goto error;
+     }
++#endif
+ 
+     filename.assign (addr.c_str());
+     has_file = true;
+@@ -294,6 +304,7 @@
+ 
+     s = retired_fd;
+ 
++#ifndef __CloudABI__
+     //  If there's an underlying UNIX domain socket, get rid of the file it
+     //  is associated with.
+     //  MUST NOT unlink if the FD is managed by the user, or it will stop
+@@ -316,6 +327,7 @@
+             return -1;
+         }
+     }
++#endif
+ 
+     socket->event_closed (endpoint, s);
+     return 0;
+--- src/ipc_listener.hpp
++++ src/ipc_listener.hpp
+@@ -72,8 +72,10 @@
+         int close ();
+ 
+         // Create wildcard path address
++#ifndef __CloudABI__
+         static int create_wildcard_address(std::string& path_,
+                 std::string& file_);
++#endif
+ 
+         //  Filter new connections if the OS provides a mechanism to get
+         //  the credentials of the peer process.  Called from accept().
+@@ -91,7 +93,9 @@
+ 
+         //  Name of the temporary directory (if any) that has the
+         //  the UNIX domain socket
++#ifndef __CloudABI__
+         std::string tmp_socket_dirname;
++#endif
+ 
+         //  Name of the file associated with the UNIX domain address.
+         std::string filename;
+--- src/tcp_listener.cpp
++++ src/tcp_listener.cpp
+@@ -165,6 +165,11 @@
+ 
+     address.to_string (endpoint);
+ 
++#ifdef __CloudABI__
++    s = options.use_fd;
++    socket->event_listening (endpoint, (int) s);
++    return 0;
++#else
+     if (options.use_fd != -1) {
+         s = options.use_fd;
+         socket->event_listening (endpoint, (int) s);
+@@ -257,6 +262,7 @@
+     close ();
+     errno = err;
+     return -1;
++#endif
+ }
+ 
+ zmq::fd_t zmq::tcp_listener_t::accept ()

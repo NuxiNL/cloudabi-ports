@@ -1,0 +1,388 @@
+--- src/curve_server.cpp
++++ src/curve_server.cpp
+@@ -102,7 +102,7 @@
+             break;
+         default:
+             //  Temporary support for security debugging
+-            puts ("CURVE I: invalid handshake command");
++            fputs ("CURVE I: invalid handshake command", stderr);
+             errno = EPROTO;
+             rc = -1;
+             break;
+@@ -174,7 +174,7 @@
+ 
+     if (msg_->size () < 33) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: invalid CURVE client, sent malformed command");
++        fputs ("CURVE I: invalid CURVE client, sent malformed command", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -182,7 +182,7 @@
+     const uint8_t *message = static_cast <uint8_t *> (msg_->data ());
+     if (memcmp (message, "\x07MESSAGE", 8)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: invalid CURVE client, did not send MESSAGE");
++        fputs ("CURVE I: invalid CURVE client, did not send MESSAGE", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -230,7 +230,7 @@
+     }
+     else {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: connection key used for MESSAGE is wrong");
++        fputs ("CURVE I: connection key used for MESSAGE is wrong", stderr);
+         errno = EPROTO;
+     }
+     free (message_plaintext);
+@@ -268,7 +268,7 @@
+ {
+     if (msg_->size () != 200) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client HELLO is not correct size");
++        fputs ("CURVE I: client HELLO is not correct size", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -276,7 +276,7 @@
+     const uint8_t * const hello = static_cast <uint8_t *> (msg_->data ());
+     if (memcmp (hello, "\x05HELLO", 6)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client HELLO has invalid command name");
++        fputs ("CURVE I: client HELLO has invalid command name", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -286,7 +286,7 @@
+ 
+     if (major != 1 || minor != 0) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client HELLO has unknown version number");
++        fputs ("CURVE I: client HELLO has unknown version number", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -311,7 +311,7 @@
+                               hello_nonce, cn_client, secret_key);
+     if (rc != 0) {
+         //  Temporary support for security debugging
+-        puts("CURVE I: cannot open client HELLO -- wrong server key?");
++        fputs("CURVE I: cannot open client HELLO -- wrong server key?", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -385,7 +385,7 @@
+ {
+     if (msg_->size () < 257) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client INITIATE is not correct size");
++        fputs ("CURVE I: client INITIATE is not correct size", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -393,7 +393,7 @@
+     const uint8_t *initiate = static_cast <uint8_t *> (msg_->data ());
+     if (memcmp (initiate, "\x08INITIATE", 9)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client INITIATE has invalid command name");
++        fputs ("CURVE I: client INITIATE has invalid command name", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -414,7 +414,7 @@
+                                     cookie_nonce, cookie_key);
+     if (rc != 0) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: cannot open client INITIATE cookie");
++        fputs ("CURVE I: cannot open client INITIATE cookie", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -423,7 +423,7 @@
+     if (memcmp (cookie_plaintext + crypto_secretbox_ZEROBYTES, cn_client, 32)
+     ||  memcmp (cookie_plaintext + crypto_secretbox_ZEROBYTES + 32, cn_secret, 32)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: client INITIATE cookie is not valid");
++        fputs ("CURVE I: client INITIATE cookie is not valid", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -447,7 +447,7 @@
+                           clen, initiate_nonce, cn_client, cn_secret);
+     if (rc != 0) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: cannot open client INITIATE");
++        fputs ("CURVE I: cannot open client INITIATE", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -472,7 +472,7 @@
+                           vouch_nonce, client_key, cn_secret);
+     if (rc != 0) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: cannot open client INITIATE vouch");
++        fputs ("CURVE I: cannot open client INITIATE vouch", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -480,7 +480,7 @@
+     //  What we decrypted must be the client's short-term public key
+     if (memcmp (vouch_plaintext + crypto_box_ZEROBYTES, cn_client, 32)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: invalid handshake from client (public key)");
++        fputs ("CURVE I: invalid handshake from client (public key)", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -654,7 +654,7 @@
+             break;
+         if ((msg [i].flags () & msg_t::more) == (i < 6? 0: msg_t::more)) {
+             //  Temporary support for security debugging
+-            puts ("CURVE I: ZAP handler sent incomplete reply message");
++            fputs ("CURVE I: ZAP handler sent incomplete reply message", stderr);
+             errno = EPROTO;
+             rc = -1;
+             break;
+@@ -667,7 +667,7 @@
+     //  Address delimiter frame
+     if (msg [0].size () > 0) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: ZAP handler sent malformed reply message");
++        fputs ("CURVE I: ZAP handler sent malformed reply message", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -676,7 +676,7 @@
+     //  Version frame
+     if (msg [1].size () != 3 || memcmp (msg [1].data (), "1.0", 3)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: ZAP handler sent bad version number");
++        fputs ("CURVE I: ZAP handler sent bad version number", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -685,7 +685,7 @@
+     //  Request id frame
+     if (msg [2].size () != 1 || memcmp (msg [2].data (), "1", 1)) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: ZAP handler sent bad request ID");
++        fputs ("CURVE I: ZAP handler sent bad request ID", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -694,7 +694,7 @@
+     //  Status code frame
+     if (msg [3].size () != 3) {
+         //  Temporary support for security debugging
+-        puts ("CURVE I: ZAP handler rejected client authentication");
++        fputs ("CURVE I: ZAP handler rejected client authentication", stderr);
+         errno = EACCES;
+         rc = -1;
+         goto error;
+--- src/null_mechanism.cpp
++++ src/null_mechanism.cpp
+@@ -130,7 +130,7 @@
+ {
+     if (ready_command_received || error_command_received) {
+         //  Temporary support for security debugging
+-        puts ("NULL I: client sent invalid NULL handshake (duplicate READY)");
++        fputs ("NULL I: client sent invalid NULL handshake (duplicate READY)\n", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -147,7 +147,7 @@
+         rc = process_error_command (cmd_data, data_size);
+     else {
+         //  Temporary support for security debugging
+-        puts ("NULL I: client sent invalid NULL handshake (not READY)");
++        fputs ("NULL I: client sent invalid NULL handshake (not READY)", stderr);
+         errno = EPROTO;
+         rc = -1;
+     }
+@@ -289,7 +289,7 @@
+             break;
+         if ((msg [i].flags () & msg_t::more) == (i < 6? 0: msg_t::more)) {
+             //  Temporary support for security debugging
+-            puts ("NULL I: ZAP handler sent incomplete reply message");
++            fputs ("NULL I: ZAP handler sent incomplete reply message", stderr);
+             errno = EPROTO;
+             rc = -1;
+             break;
+@@ -302,7 +302,7 @@
+     //  Address delimiter frame
+     if (msg [0].size () > 0) {
+         //  Temporary support for security debugging
+-        puts ("NULL I: ZAP handler sent malformed reply message");
++        fputs ("NULL I: ZAP handler sent malformed reply message", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -311,7 +311,7 @@
+     //  Version frame
+     if (msg [1].size () != 3 || memcmp (msg [1].data (), "1.0", 3)) {
+         //  Temporary support for security debugging
+-        puts ("NULL I: ZAP handler sent bad version number");
++        fputs ("NULL I: ZAP handler sent bad version number", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -320,7 +320,7 @@
+     //  Request id frame
+     if (msg [2].size () != 1 || memcmp (msg [2].data (), "1", 1)) {
+         //  Temporary support for security debugging
+-        puts ("NULL I: ZAP handler sent bad request ID");
++        fputs ("NULL I: ZAP handler sent bad request ID", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -329,7 +329,7 @@
+     //  Status code frame
+     if (msg [3].size () != 3) {
+         //  Temporary support for security debugging
+-        puts ("NULL I: ZAP handler rejected client authentication");
++        fputs ("NULL I: ZAP handler rejected client authentication", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+--- src/plain_client.cpp
++++ src/plain_client.cpp
+@@ -85,7 +85,7 @@
+         rc = process_error (cmd_data, data_size);
+     else {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid handshake command");
++        fputs ("PLAIN I: invalid handshake command", stderr);
+         errno = EPROTO;
+         rc = -1;
+     }
+--- src/plain_server.cpp
++++ src/plain_server.cpp
+@@ -91,7 +91,7 @@
+             break;
+         default:
+             //  Temporary support for security debugging
+-            puts ("PLAIN I: invalid handshake command");
++            fputs ("PLAIN I: invalid handshake command", stderr);
+             errno = EPROTO;
+             rc = -1;
+             break;
+@@ -137,7 +137,7 @@
+ 
+     if (bytes_left < 6 || memcmp (ptr, "\x05HELLO", 6)) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, did not send HELLO");
++        fputs ("PLAIN I: invalid PLAIN client, did not send HELLO", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -146,7 +146,7 @@
+ 
+     if (bytes_left < 1) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, did not send username");
++        fputs ("PLAIN I: invalid PLAIN client, did not send username", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -155,7 +155,7 @@
+ 
+     if (bytes_left < username_length) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, sent malformed username");
++        fputs ("PLAIN I: invalid PLAIN client, sent malformed username", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -164,7 +164,7 @@
+     bytes_left -= username_length;
+     if (bytes_left < 1) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, did not send password");
++        fputs ("PLAIN I: invalid PLAIN client, did not send password", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -173,7 +173,7 @@
+     bytes_left -= 1;
+     if (bytes_left < password_length) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, sent malformed password");
++        fputs ("PLAIN I: invalid PLAIN client, sent malformed password", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -183,7 +183,7 @@
+     bytes_left -= password_length;
+     if (bytes_left > 0) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, sent extraneous data");
++        fputs ("PLAIN I: invalid PLAIN client, sent extraneous data", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -224,7 +224,7 @@
+ 
+     if (bytes_left < 9 || memcmp (ptr, "\x08INITIATE", 9)) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: invalid PLAIN client, did not send INITIATE");
++        fputs ("PLAIN I: invalid PLAIN client, did not send INITIATE", stderr);
+         errno = EPROTO;
+         return -1;
+     }
+@@ -371,7 +371,7 @@
+             break;
+         if ((msg [i].flags () & msg_t::more) == (i < 6? 0: msg_t::more)) {
+             //  Temporary support for security debugging
+-            puts ("PLAIN I: ZAP handler sent incomplete reply message");
++            fputs ("PLAIN I: ZAP handler sent incomplete reply message", stderr);
+             errno = EPROTO;
+             rc = -1;
+             break;
+@@ -384,7 +384,7 @@
+     //  Address delimiter frame
+     if (msg [0].size () > 0) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: ZAP handler sent malformed reply message");
++        fputs ("PLAIN I: ZAP handler sent malformed reply message", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -393,7 +393,7 @@
+     //  Version frame
+     if (msg [1].size () != 3 || memcmp (msg [1].data (), "1.0", 3)) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: ZAP handler sent bad version number");
++        fputs ("PLAIN I: ZAP handler sent bad version number", stderr);
+         errno = EPROTO;
+         rc = -1;
+         goto error;
+@@ -402,7 +402,7 @@
+     //  Request id frame
+     if (msg [2].size () != 1 || memcmp (msg [2].data (), "1", 1)) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: ZAP handler sent bad request ID");
++        fputs ("PLAIN I: ZAP handler sent bad request ID", stderr);
+         rc = -1;
+         errno = EPROTO;
+         goto error;
+@@ -411,7 +411,7 @@
+     //  Status code frame
+     if (msg [3].size () != 3) {
+         //  Temporary support for security debugging
+-        puts ("PLAIN I: ZAP handler rejected client authentication");
++        fputs ("PLAIN I: ZAP handler rejected client authentication", stderr);
+         errno = EACCES;
+         rc = -1;
+         goto error;
+--- src/proxy.cpp
++++ src/proxy.cpp
+@@ -181,7 +181,7 @@
+                 state = terminated;
+             else {
+                 //  This is an API error, we should assert
+-                puts ("E: invalid command sent to proxy");
++                fputs ("E: invalid command sent to proxy", stderr);
+                 zmq_assert (false);
+             }
+         }

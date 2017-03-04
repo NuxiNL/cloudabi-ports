@@ -1,0 +1,33 @@
+--- include/zmq.h
++++ include/zmq.h
+@@ -442,7 +442,6 @@
+ #define ZMQ_POLLIN 1
+ #define ZMQ_POLLOUT 2
+ #define ZMQ_POLLERR 4
+-#define ZMQ_POLLPRI 8
+ 
+ typedef struct zmq_pollitem_t
+ {
+--- src/socket_poller.cpp
++++ src/socket_poller.cpp
+@@ -291,8 +291,7 @@
+                 pollfds [item_nbr].fd = it->fd;
+                 pollfds [item_nbr].events =
+                     (it->events & ZMQ_POLLIN ? POLLIN : 0) |
+-                    (it->events & ZMQ_POLLOUT ? POLLOUT : 0) |
+-                    (it->events & ZMQ_POLLPRI ? POLLPRI : 0);
++                    (it->events & ZMQ_POLLOUT ? POLLOUT : 0);
+                 it->pollfd_index = item_nbr;
+                 item_nbr++;
+             }
+@@ -473,9 +472,7 @@
+                     events |= ZMQ_POLLIN;
+                 if (revents & POLLOUT)
+                     events |= ZMQ_POLLOUT;
+-                if (revents & POLLPRI)
+-                    events |= ZMQ_POLLPRI;
+-                if (revents & ~(POLLIN | POLLOUT | POLLPRI))
++                if (revents & ~(POLLIN | POLLOUT))
+                     events |= ZMQ_POLLERR;
+ 
+                 if (events) {
