@@ -118,7 +118,7 @@
      switch (reason) {
          case stream_engine_t::timeout_error:
          case stream_engine_t::connection_error:
-+#ifndef __CloudABI__
++#ifdef __CloudABI__
 +            zmq_assert (!active);
 +#else
              if (active)
