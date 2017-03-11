@@ -1,6 +1,6 @@
 --- src/libFLAC/stream_decoder.c
 +++ src/libFLAC/stream_decoder.c
-@@ -80,7 +80,6 @@
+@@ -74,7 +74,6 @@
   ***********************************************************************/
  
  static void set_defaults_(FLAC__StreamDecoder *decoder);
@@ -8,7 +8,7 @@
  static FLAC__bool allocate_output_(FLAC__StreamDecoder *decoder, unsigned size, unsigned channels);
  static FLAC__bool has_id_filtered_(FLAC__StreamDecoder *decoder, FLAC__byte *id);
  static FLAC__bool find_metadata_(FLAC__StreamDecoder *decoder);
-@@ -532,22 +531,15 @@
+@@ -520,22 +519,15 @@
  	if(0 == write_callback || 0 == error_callback)
  		return decoder->protected_->initstate = FLAC__STREAM_DECODER_INIT_STATUS_INVALID_CALLBACKS;
  
@@ -34,7 +34,7 @@
  		file_eof_callback_,
  		write_callback,
  		metadata_callback,
-@@ -581,6 +573,7 @@
+@@ -569,6 +561,7 @@
  	return init_FILE_internal_(decoder, file, write_callback, metadata_callback, error_callback, client_data, /*is_ogg=*/true);
  }
  
@@ -42,7 +42,7 @@
  static FLAC__StreamDecoderInitStatus init_file_internal_(
  	FLAC__StreamDecoder *decoder,
  	const char *filename,
-@@ -637,6 +630,7 @@
+@@ -625,6 +618,7 @@
  {
  	return init_file_internal_(decoder, filename, write_callback, metadata_callback, error_callback, client_data, /*is_ogg=*/true);
  }
@@ -50,7 +50,7 @@
  
  FLAC_API FLAC__bool FLAC__stream_decoder_finish(FLAC__StreamDecoder *decoder)
  {
-@@ -686,8 +680,7 @@
+@@ -673,8 +667,7 @@
  #endif
  
  	if(0 != decoder->private_->file) {
@@ -60,7 +60,7 @@
  		decoder->private_->file = 0;
  	}
  
-@@ -976,8 +969,6 @@
+@@ -965,8 +958,6 @@
  	 * not seekable.
  	 */
  	if(!decoder->private_->internal_reset_hack) {
@@ -69,7 +69,7 @@
  		if(decoder->private_->seek_callback && decoder->private_->seek_callback(decoder, 0, decoder->private_->client_data) == FLAC__STREAM_DECODER_SEEK_STATUS_ERROR)
  			return false; /* seekable and seek fails, reset fails */
  	}
-@@ -1258,6 +1249,7 @@
+@@ -1245,6 +1236,7 @@
  /*
   * This will forcibly set stdin to binary mode (for OSes that require it)
   */
@@ -77,7 +77,7 @@
  FILE *get_binary_stdin_(void)
  {
  	/* if something breaks here it is probably due to the presence or
-@@ -1275,6 +1267,7 @@
+@@ -1262,6 +1254,7 @@
  
  	return stdin;
  }
@@ -85,7 +85,7 @@
  
  FLAC__bool allocate_output_(FLAC__StreamDecoder *decoder, unsigned size, unsigned channels)
  {
-@@ -3343,9 +3336,7 @@
+@@ -3354,9 +3347,7 @@
  {
  	(void)client_data;
  
@@ -96,7 +96,7 @@
  		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
  	else
  		return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
-@@ -3356,9 +3347,7 @@
+@@ -3367,9 +3358,7 @@
  	FLAC__off_t pos;
  	(void)client_data;
  
@@ -107,7 +107,7 @@
  		return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
  	else {
  		*absolute_byte_offset = (FLAC__uint64)pos;
-@@ -3371,9 +3360,7 @@
+@@ -3382,9 +3371,7 @@
  	struct flac_stat_s filestats;
  	(void)client_data;
  

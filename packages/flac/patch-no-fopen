@@ -140,12 +140,13 @@
   *  Flushes the encoding buffer, releases resources, resets the encoder
 --- include/FLAC++/decoder.h
 +++ include/FLAC++/decoder.h
-@@ -226,11 +226,7 @@
- 			virtual ~File();
+@@ -227,12 +227,8 @@
  
+ 			using Stream::init;
  			virtual ::FLAC__StreamDecoderInitStatus init(FILE *file);                      ///< See FLAC__stream_decoder_init_FILE()
 -			virtual ::FLAC__StreamDecoderInitStatus init(const char *filename);            ///< See FLAC__stream_decoder_init_file()
 -			virtual ::FLAC__StreamDecoderInitStatus init(const std::string &filename);     ///< See FLAC__stream_decoder_init_file()
+ 			using Stream::init_ogg;
  			virtual ::FLAC__StreamDecoderInitStatus init_ogg(FILE *file);                  ///< See FLAC__stream_decoder_init_ogg_FILE()
 -			virtual ::FLAC__StreamDecoderInitStatus init_ogg(const char *filename);        ///< See FLAC__stream_decoder_init_ogg_file()
 -			virtual ::FLAC__StreamDecoderInitStatus init_ogg(const std::string &filename); ///< See FLAC__stream_decoder_init_ogg_file()
@@ -154,12 +155,13 @@
  			virtual ::FLAC__StreamDecoderReadStatus read_callback(FLAC__byte buffer[], size_t *bytes);
 --- include/FLAC++/encoder.h
 +++ include/FLAC++/encoder.h
-@@ -236,11 +236,7 @@
- 			virtual ~File();
+@@ -237,12 +237,8 @@
  
+ 			using Stream::init;
  			virtual ::FLAC__StreamEncoderInitStatus init(FILE *file);                      ///< See FLAC__stream_encoder_init_FILE()
 -			virtual ::FLAC__StreamEncoderInitStatus init(const char *filename);            ///< See FLAC__stream_encoder_init_file()
 -			virtual ::FLAC__StreamEncoderInitStatus init(const std::string &filename);     ///< See FLAC__stream_encoder_init_file()
+ 			using Stream::init_ogg;
  			virtual ::FLAC__StreamEncoderInitStatus init_ogg(FILE *file);                  ///< See FLAC__stream_encoder_init_ogg_FILE()
 -			virtual ::FLAC__StreamEncoderInitStatus init_ogg(const char *filename);        ///< See FLAC__stream_encoder_init_ogg_file()
 -			virtual ::FLAC__StreamEncoderInitStatus init_ogg(const std::string &filename); ///< See FLAC__stream_encoder_init_ogg_file()
@@ -330,7 +332,7 @@
  FLAC_API FLAC__bool FLAC__metadata_simple_iterator_set_block(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool use_padding)
  {
  	FLAC__ASSERT_DECLARATION(FLAC__off_t debug_target_offset = iterator->offset[iterator->depth];)
-@@ -867,6 +870,7 @@
+@@ -872,6 +875,7 @@
  		return ret;
  	}
  }
@@ -338,7 +340,7 @@
  
  
  
-@@ -1359,6 +1363,7 @@
+@@ -1380,6 +1384,7 @@
  	return true;
  }
  
@@ -346,7 +348,7 @@
  static FLAC__bool chain_rewrite_metadata_in_place_(FLAC__Metadata_Chain *chain)
  {
  	FILE *file;
-@@ -1439,6 +1444,7 @@
+@@ -1460,6 +1465,7 @@
  	cleanup_tempfile_(&tempfile, &tempfilename);
  	return false;
  }
@@ -354,7 +356,7 @@
  
  /* assumes 'handle' is already at beginning of file */
  static FLAC__bool chain_rewrite_file_cb_(FLAC__Metadata_Chain *chain, FLAC__IOHandle handle, FLAC__IOCallback_Read read_cb, FLAC__IOCallback_Seek seek_cb, FLAC__IOCallback_Eof eof_cb, FLAC__IOHandle temp_handle, FLAC__IOCallback_Write temp_write_cb)
-@@ -1512,6 +1518,7 @@
+@@ -1533,6 +1539,7 @@
  	return status;
  }
  
@@ -362,7 +364,7 @@
  static FLAC__bool chain_read_(FLAC__Metadata_Chain *chain, const char *filename, FLAC__bool is_ogg)
  {
  	FILE *file;
-@@ -1555,6 +1562,7 @@
+@@ -1576,6 +1583,7 @@
  {
  	return chain_read_(chain, filename, /*is_ogg=*/true);
  }
@@ -370,7 +372,7 @@
  
  static FLAC__bool chain_read_with_callbacks_(FLAC__Metadata_Chain *chain, FLAC__IOHandle handle, FLAC__IOCallbacks callbacks, FLAC__bool is_ogg)
  {
-@@ -1631,6 +1639,7 @@
+@@ -1702,6 +1710,7 @@
  	return (current_length != chain->initial_length);
  }
  
@@ -378,7 +380,7 @@
  FLAC_API FLAC__bool FLAC__metadata_chain_write(FLAC__Metadata_Chain *chain, FLAC__bool use_padding, FLAC__bool preserve_file_stats)
  {
  	struct flac_stat_s stats;
-@@ -1681,6 +1690,7 @@
+@@ -1752,6 +1761,7 @@
  
  	return true;
  }
@@ -386,7 +388,7 @@
  
  FLAC_API FLAC__bool FLAC__metadata_chain_write_with_callbacks(FLAC__Metadata_Chain *chain, FLAC__bool use_padding, FLAC__IOHandle handle, FLAC__IOCallbacks callbacks)
  {
-@@ -2913,6 +2923,7 @@
+@@ -2989,6 +2999,7 @@
  	return read_metadata_block_header_(iterator);
  }
  
@@ -394,7 +396,7 @@
  FLAC__bool rewrite_whole_file_(FLAC__Metadata_SimpleIterator *iterator, FLAC__StreamMetadata *block, FLAC__bool append)
  {
  	FILE *tempfile = NULL;
-@@ -2963,6 +2974,7 @@
+@@ -3039,6 +3050,7 @@
  
  	return true;
  }
@@ -402,7 +404,7 @@
  
  void simple_iterator_push_(FLAC__Metadata_SimpleIterator *iterator)
  {
-@@ -3044,6 +3056,7 @@
+@@ -3120,6 +3132,7 @@
  	return seek_to_first_metadata_block_cb_((FLAC__IOHandle)f, (FLAC__IOCallback_Read)fread, fseek_wrapper_);
  }
  
@@ -410,7 +412,7 @@
  FLAC__bool simple_iterator_copy_file_prefix_(FLAC__Metadata_SimpleIterator *iterator, FILE **tempfile, char **tempfilename, FLAC__bool append)
  {
  	const FLAC__off_t offset_end = append? iterator->offset[iterator->depth] + (FLAC__off_t)FLAC__STREAM_METADATA_HEADER_LENGTH + (FLAC__off_t)iterator->length : iterator->offset[iterator->depth];
-@@ -3142,6 +3155,7 @@
+@@ -3218,6 +3231,7 @@
  		return simple_iterator_pop_(iterator);
  	}
  }
@@ -418,7 +420,7 @@
  
  FLAC__bool copy_n_bytes_from_file_(FILE *file, FILE *tempfile, FLAC__off_t bytes, FLAC__Metadata_SimpleIteratorStatus *status)
  {
-@@ -3251,6 +3265,7 @@
+@@ -3330,6 +3344,7 @@
  	return rc;
  }
  
@@ -426,7 +428,7 @@
  FLAC__bool open_tempfile_(const char *filename, const char *tempfile_path_prefix, FILE **tempfile, char **tempfilename, FLAC__Metadata_SimpleIteratorStatus *status)
  {
  	static const char *tempfile_suffix = ".metadata_edit";
-@@ -3357,6 +3372,7 @@
+@@ -3436,6 +3451,7 @@
  	FLAC_CHECK_RETURN(chown(filename, -1, stats->st_gid));
  #endif
  }
@@ -436,7 +438,7 @@
  {
 --- src/libFLAC++/metadata.cpp
 +++ src/libFLAC++/metadata.cpp
-@@ -1328,6 +1328,7 @@
+@@ -1329,6 +1329,7 @@
  		//
  		// ============================================================
  
@@ -444,7 +446,7 @@
  		FLACPP_API bool get_streaminfo(const char *filename, StreamInfo &streaminfo)
  		{
  			FLAC__ASSERT(0 != filename);
-@@ -1431,6 +1432,7 @@
+@@ -1432,6 +1433,7 @@
  			else
  				return false;
  		}
@@ -452,7 +454,7 @@
  
  
  		// ============================================================
-@@ -1455,12 +1457,14 @@
+@@ -1456,12 +1458,14 @@
  			iterator_ = 0;
  		}
  
@@ -467,7 +469,7 @@
  
  		bool SimpleIterator::is_valid() const
  		{
-@@ -1531,6 +1535,7 @@
+@@ -1532,6 +1536,7 @@
  			return local::construct_block(::FLAC__metadata_simple_iterator_get_block(iterator_));
  		}
  
@@ -475,7 +477,7 @@
  		bool SimpleIterator::set_block(Prototype *block, bool use_padding)
  		{
  			FLAC__ASSERT(0 != block);
-@@ -1550,6 +1555,7 @@
+@@ -1551,6 +1556,7 @@
  			FLAC__ASSERT(is_valid());
  			return (bool)::FLAC__metadata_simple_iterator_delete_block(iterator_, use_padding);
  		}
@@ -483,7 +485,7 @@
  
  
  		// ============================================================
-@@ -1585,6 +1591,7 @@
+@@ -1586,6 +1592,7 @@
  			return Status(::FLAC__metadata_chain_status(chain_));
  		}
  
@@ -491,7 +493,7 @@
  		bool Chain::read(const char *filename, bool is_ogg)
  		{
  			FLAC__ASSERT(0 != filename);
-@@ -1594,6 +1601,7 @@
+@@ -1595,6 +1602,7 @@
  				(bool)::FLAC__metadata_chain_read(chain_, filename)
  			;
  		}
@@ -499,7 +501,7 @@
  
  		bool Chain::read(FLAC__IOHandle handle, ::FLAC__IOCallbacks callbacks, bool is_ogg)
  		{
-@@ -1610,11 +1618,13 @@
+@@ -1611,11 +1619,13 @@
  			return (bool)::FLAC__metadata_chain_check_if_tempfile_needed(chain_, use_padding);
  		}
  

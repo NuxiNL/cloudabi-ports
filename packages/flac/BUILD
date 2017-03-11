@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2016-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -17,15 +17,15 @@ def build(ctx):
 
 package(
     name='flac',
-    version='1.3.1',
+    version='1.3.2',
     homepage='https://xiph.org/flac/',
     lib_depends={'cxx-runtime', 'libogg'},
     build_cmd=build,
 )
 
 distfile(
-    name='flac-1.3.1.tar.xz',
-    checksum='4773c0099dba767d963fd92143263be338c48702172e8754b9bc5103efe1c56c',
+    name='flac-1.3.2.tar.xz',
+    checksum='91cfc3ed61dc40f47f050a109b08610667d73477af6ef36dcad31c31a4a8d53f',
     master_sites={'http://downloads.xiph.org/releases/flac/'},
     unsafe_string_sources={
         'src/libFLAC/metadata_iterators.c',

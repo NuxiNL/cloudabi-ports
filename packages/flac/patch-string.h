@@ -1,11 +1,11 @@
 --- src/libFLAC/cpu.c
 +++ src/libFLAC/cpu.c
-@@ -36,7 +36,7 @@
- 
+@@ -37,7 +37,7 @@
  #include "private/cpu.h"
+ #include "share/compat.h"
  #include <stdlib.h>
 -#include <memory.h>
 +#include <string.h>
- #ifdef DEBUG
- # include <stdio.h>
- #endif
+ 
+ #if defined(_MSC_VER)
+ #  include <intrin.h> /* for __cpuid() and _xgetbv() */
