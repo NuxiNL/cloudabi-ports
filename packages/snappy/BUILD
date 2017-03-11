@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2016-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -11,14 +11,14 @@ def build(ctx):
 
 package(
     name='snappy',
-    version='1.1.3',
+    version='1.1.4',
     homepage='https://google.github.io/snappy/',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='snappy-1.1.3.tar.gz',
-    checksum='2f1e82adf0868c9e26a5a7a3115111b6da7e432ddbac268a7ca2fae2a247eef3',
-    master_sites={'https://github.com/google/snappy/releases/download/1.1.3/'},
+    name='snappy-1.1.4.tar.gz',
+    checksum='134bfe122fd25599bb807bb8130e7ba6d9bdb851e0b16efcb83ac4f5d0b70057',
+    master_sites={'https://github.com/google/snappy/releases/download/1.1.4/'},
 )
