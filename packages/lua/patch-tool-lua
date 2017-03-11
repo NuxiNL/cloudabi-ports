@@ -8,7 +8,7 @@
  
  #include <signal.h>
  #include <stdio.h>
-@@ -119,10 +120,12 @@
+@@ -121,10 +122,12 @@
  ** this function only sets a hook that, when called, will stop the
  ** interpreter.
  */
@@ -21,7 +21,7 @@
  
  
  static void print_usage (const char *badoption) {
-@@ -199,13 +202,12 @@
+@@ -201,13 +204,12 @@
    lua_pushcfunction(L, msghandler);  /* push message handler */
    lua_insert(L, base);  /* put it under function and args */
    globalL = L;  /* to be available to 'laction' */
@@ -36,7 +36,7 @@
  
  static void print_version (void) {
    lua_writestring(LUA_COPYRIGHT, strlen(LUA_COPYRIGHT));
-@@ -240,9 +242,11 @@
+@@ -242,9 +244,11 @@
  }
  
  
@@ -48,7 +48,7 @@
  
  
  static int dostring (lua_State *L, const char *s, const char *name) {
-@@ -432,6 +436,7 @@
+@@ -434,6 +438,7 @@
  }
  
  
@@ -56,7 +56,7 @@
  static int handle_script (lua_State *L, char **argv) {
    int status;
    const char *fname = argv[0];
-@@ -444,6 +449,7 @@
+@@ -446,6 +451,7 @@
    }
    return report(L, status);
  }
@@ -64,15 +64,15 @@
  
  
  
-@@ -529,6 +535,7 @@
- }
+@@ -532,6 +538,7 @@
+ 
  
  
 +#if 0
  static int handle_luainit (lua_State *L) {
    const char *name = "=" LUA_INITVARVERSION;
    const char *init = getenv(name + 1);
-@@ -542,6 +549,7 @@
+@@ -545,6 +552,7 @@
    else
      return dostring(L, init, name);
  }
@@ -80,7 +80,7 @@
  
  
  /*
-@@ -567,36 +575,52 @@
+@@ -570,36 +578,52 @@
    }
    luaL_openlibs(L);  /* open standard libraries */
    createargtable(L, argv, argc, script);  /* create table 'arg' */

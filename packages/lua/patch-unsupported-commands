@@ -1,6 +1,6 @@
 --- src/lauxlib.c
 +++ src/lauxlib.c
-@@ -250,6 +250,7 @@
+@@ -249,6 +249,7 @@
  }
  
  
@@ -8,7 +8,7 @@
  #if !defined(l_inspectstat)	/* { */
  
  #if defined(LUA_USE_POSIX)
-@@ -287,6 +288,7 @@
+@@ -286,6 +287,7 @@
      return 3;  /* return true/nil,what,code */
    }
  }
@@ -16,7 +16,7 @@
  
  /* }====================================================== */
  
-@@ -701,6 +703,7 @@
+@@ -700,6 +702,7 @@
  }
  
  
@@ -24,7 +24,7 @@
  LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
                                               const char *mode) {
    LoadF lf;
-@@ -735,6 +738,7 @@
+@@ -734,6 +737,7 @@
    lua_remove(L, fnameindex);
    return status;
  }
@@ -34,7 +34,7 @@
  typedef struct LoadS {
 --- src/lauxlib.h
 +++ src/lauxlib.h
-@@ -63,7 +63,6 @@
+@@ -71,7 +71,6 @@
                                     const char *const lst[]);
  
  LUALIB_API int (luaL_fileresult) (lua_State *L, int stat, const char *fname);
@@ -42,7 +42,7 @@
  
  /* predefined references */
  #define LUA_NOREF       (-2)
-@@ -72,10 +71,6 @@
+@@ -80,10 +79,6 @@
  LUALIB_API int (luaL_ref) (lua_State *L, int t);
  LUALIB_API void (luaL_unref) (lua_State *L, int t, int ref);
  
@@ -162,7 +162,7 @@
  #define LUAI_THROW(L,c)		_longjmp((c)->b, 1)
 --- src/liolib.c
 +++ src/liolib.c
-@@ -239,6 +239,7 @@
+@@ -240,6 +240,7 @@
  }
  
  
@@ -170,7 +170,7 @@
  static void opencheck (lua_State *L, const char *fname, const char *mode) {
    LStream *p = newfile(L);
    p->f = fopen(fname, mode);
-@@ -275,6 +276,7 @@
+@@ -276,6 +277,7 @@
    p->closef = &io_pclose;
    return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
  }
@@ -178,7 +178,7 @@
  
  
  static int io_tmpfile (lua_State *L) {
-@@ -294,6 +296,7 @@
+@@ -295,6 +297,7 @@
  }
  
  
@@ -186,7 +186,7 @@
  static int g_iofile (lua_State *L, const char *f, const char *mode) {
    if (!lua_isnoneornil(L, 1)) {
      const char *filename = lua_tostring(L, 1);
-@@ -319,6 +322,7 @@
+@@ -320,6 +323,7 @@
  static int io_output (lua_State *L) {
    return g_iofile(L, IO_OUTPUT, "w");
  }
@@ -194,7 +194,7 @@
  
  
  static int io_readline (lua_State *L);
-@@ -347,6 +351,7 @@
+@@ -348,6 +352,7 @@
  }
  
  
@@ -202,7 +202,7 @@
  static int io_lines (lua_State *L) {
    int toclose;
    if (lua_isnone(L, 1)) lua_pushnil(L);  /* at least one argument */
-@@ -365,6 +370,7 @@
+@@ -366,6 +371,7 @@
    aux_lines(L, toclose);
    return 1;
  }
@@ -210,7 +210,7 @@
  
  
  /*
-@@ -692,11 +698,6 @@
+@@ -695,11 +701,6 @@
  static const luaL_Reg iolib[] = {
    {"close", io_close},
    {"flush", io_flush},
@@ -222,7 +222,7 @@
    {"read", io_read},
    {"tmpfile", io_tmpfile},
    {"type", io_type},
-@@ -760,8 +761,6 @@
+@@ -763,8 +764,6 @@
    luaL_newlib(L, iolib);  /* new module */
    createmeta(L);
    /* create (and set) default files */
@@ -233,7 +233,7 @@
  }
 --- src/lmathlib.c
 +++ src/lmathlib.c
-@@ -271,11 +271,13 @@
+@@ -274,11 +274,13 @@
  }
  
  
@@ -247,7 +247,7 @@
  
  
  static int math_type (lua_State *L) {
-@@ -365,7 +367,6 @@
+@@ -368,7 +370,6 @@
    {"modf",   math_modf},
    {"rad",   math_rad},
    {"random",     math_random},
@@ -257,7 +257,7 @@
    {"tan",   math_tan},
 --- src/loadlib.c
 +++ src/loadlib.c
-@@ -374,6 +374,7 @@
+@@ -413,6 +413,7 @@
  */
  
  
@@ -265,7 +265,7 @@
  static int readable (const char *filename) {
    FILE *f = fopen(filename, "r");  /* try to open file */
    if (f == NULL) return 0;  /* open failed */
-@@ -516,6 +517,7 @@
+@@ -555,6 +556,7 @@
    lua_pushstring(L, filename);  /* will be 2nd argument to module */
    return 2;
  }
@@ -273,7 +273,7 @@
  
  
  static int searcher_preload (lua_State *L) {
-@@ -703,7 +705,6 @@
+@@ -707,7 +709,6 @@
  
  static const luaL_Reg pk_funcs[] = {
    {"loadlib", ll_loadlib},
@@ -281,7 +281,7 @@
  #if defined(LUA_COMPAT_MODULE)
    {"seeall", ll_seeall},
  #endif
-@@ -726,6 +727,7 @@
+@@ -730,6 +731,7 @@
  };
  
  
@@ -289,7 +289,7 @@
  static void createsearcherstable (lua_State *L) {
    static const lua_CFunction searchers[] =
      {searcher_preload, searcher_Lua, searcher_C, searcher_Croot, NULL};
-@@ -744,6 +746,7 @@
+@@ -748,6 +750,7 @@
  #endif
    lua_setfield(L, -2, "searchers");  /* put it in field 'searchers' */
  }
@@ -297,14 +297,14 @@
  
  
  /*
-@@ -763,7 +766,6 @@
+@@ -767,7 +770,6 @@
  LUAMOD_API int luaopen_package (lua_State *L) {
    createclibstable(L);
    luaL_newlib(L, pk_funcs);  /* create 'package' table */
 -  createsearcherstable(L);
-   /* set field 'path' */
-   setpath(L, "path", LUA_PATHVARVERSION, LUA_PATH_VAR, LUA_PATH_DEFAULT);
-   /* set field 'cpath' */
+   /* set paths */
+   setpath(L, "path", LUA_PATH_VAR, LUA_PATH_DEFAULT);
+   setpath(L, "cpath", LUA_CPATH_VAR, LUA_CPATH_DEFAULT);
 --- src/loslib.c
 +++ src/loslib.c
 @@ -138,6 +138,7 @@
@@ -323,7 +323,7 @@
  
  
  static int os_getenv (lua_State *L) {
-@@ -381,14 +383,10 @@
+@@ -385,14 +387,10 @@
    {"clock",     os_clock},
    {"date",      os_date},
    {"difftime",  os_difftime},
