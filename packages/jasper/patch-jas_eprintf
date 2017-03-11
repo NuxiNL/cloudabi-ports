@@ -1,0 +1,10 @@
+--- src/libjasper/jp2/jp2_enc.c
++++ src/libjasper/jp2/jp2_enc.c
+@@ -72,6 +72,7 @@
+ \******************************************************************************/
+ 
+ #include <assert.h>
++#include "jasper/jas_debug.h"
+ #include "jasper/jas_malloc.h"
+ #include "jasper/jas_image.h"
+ #include "jasper/jas_stream.h"
