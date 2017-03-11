@@ -1,6 +1,6 @@
 --- build_detect_platform
 +++ build_detect_platform
-@@ -72,6 +72,11 @@
+@@ -73,6 +73,11 @@
  fi
  
  case "$TARGET_OS" in

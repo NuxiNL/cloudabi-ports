@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2016-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -17,14 +17,14 @@ def build(ctx):
 
 package(
     name='leveldb',
-    version='1.19',
+    version='1.20',
     homepage='http://leveldb.org/',
     lib_depends={'cxx-runtime', 'snappy'},
     build_cmd=build,
 )
 
 distfile(
-    name='leveldb/v1.19.tar.gz',
-    checksum='7d7a14ae825e66aabeb156c1c3fae9f9a76d640ef6b40ede74cc73da937e5202',
+    name='leveldb/v1.20.tar.gz',
+    checksum='f5abe8b5b209c2f36560b75f32ce61412f39a2922f7045ae764a2c23335b6664',
     master_sites={'https://github.com/google/leveldb/archive/'},
 )

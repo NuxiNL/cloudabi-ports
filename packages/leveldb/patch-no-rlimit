@@ -1,0 +1,20 @@
+--- util/env_posix.cc
++++ util/env_posix.cc
+@@ -586,6 +586,7 @@
+   if (open_read_only_file_limit >= 0) {
+     return open_read_only_file_limit;
+   }
++#ifdef RLIMIT_NOFILE
+   struct rlimit rlim;
+   if (getrlimit(RLIMIT_NOFILE, &rlim)) {
+     // getrlimit failed, fallback to hard-coded default.
+@@ -596,6 +597,9 @@
+     // Allow use of 20% of available file descriptors for read-only files.
+     open_read_only_file_limit = rlim.rlim_cur / 5;
+   }
++#else
++  open_read_only_file_limit = 50;
++#endif
+   return open_read_only_file_limit;
+ }
+ 

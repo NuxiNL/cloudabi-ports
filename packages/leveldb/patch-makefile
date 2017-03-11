@@ -1,6 +1,6 @@
 --- Makefile
 +++ Makefile
-@@ -284,11 +284,11 @@
+@@ -285,11 +285,11 @@
  else
  $(STATIC_OUTDIR)/libleveldb.a:$(STATIC_LIBOBJECTS)
  	rm -f $@
