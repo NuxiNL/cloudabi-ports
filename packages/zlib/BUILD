@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -12,14 +12,14 @@ def build(ctx):
 
 package(
     name='zlib',
-    version='1.2.8',
+    version='1.2.11',
     homepage='http://www.zlib.net/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='zlib-1.2.8.tar.xz',
-    checksum='831df043236df8e9a7667b9e3bb37e1fcb1220a0f163b6de2626774b9590d057',
+    name='zlib-1.2.11.tar.xz',
+    checksum='4ff941449631ace0d4d203e3483be9dbc9da454084111f97ea0a2114e19bf066',
     master_sites={'http://zlib.net/'},
 )

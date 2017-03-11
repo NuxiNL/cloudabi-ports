@@ -5,7 +5,7 @@
  
      /* open the file with the appropriate flags (or just use fd) */
 -    state->fd = fd > -1 ? fd : (
--#ifdef _WIN32
+-#ifdef WIDECHAR
 -        fd == -2 ? _wopen(path, oflag, 0666) :
 -#endif
 -        open((const char *)path, oflag, 0666));
@@ -13,7 +13,7 @@
      if (state->fd == -1) {
          free(state->path);
          free(state);
-@@ -265,22 +261,6 @@
+@@ -267,22 +263,6 @@
  }
  
  /* -- see zlib.h -- */
@@ -38,7 +38,7 @@
      const char *mode;
 --- zlib.h
 +++ zlib.h
-@@ -1689,7 +1689,6 @@
+@@ -1836,7 +1836,6 @@
   * without large file support, _LFS64_LARGEFILE must also be true
   */
  #ifdef Z_LARGE64
@@ -46,7 +46,7 @@
     ZEXTERN z_off64_t ZEXPORT gzseek64 OF((gzFile, z_off64_t, int));
     ZEXTERN z_off64_t ZEXPORT gztell64 OF((gzFile));
     ZEXTERN z_off64_t ZEXPORT gzoffset64 OF((gzFile));
-@@ -1699,14 +1698,12 @@
+@@ -1846,14 +1845,12 @@
  
  #if !defined(ZLIB_INTERNAL) && defined(Z_WANT64)
  #  ifdef Z_PREFIX_SET
@@ -61,7 +61,7 @@
  #    define gzseek gzseek64
  #    define gztell gztell64
  #    define gzoffset gzoffset64
-@@ -1714,7 +1711,6 @@
+@@ -1861,7 +1858,6 @@
  #    define crc32_combine crc32_combine64
  #  endif
  #  ifndef Z_LARGE64
@@ -69,7 +69,7 @@
       ZEXTERN z_off_t ZEXPORT gzseek64 OF((gzFile, z_off_t, int));
       ZEXTERN z_off_t ZEXPORT gztell64 OF((gzFile));
       ZEXTERN z_off_t ZEXPORT gzoffset64 OF((gzFile));
-@@ -1722,7 +1718,6 @@
+@@ -1869,7 +1865,6 @@
       ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off_t));
  #  endif
  #else
