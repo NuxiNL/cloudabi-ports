@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -20,16 +20,19 @@ def build(ctx):
 
 package(
     name='cairo',
-    version='1.14.6',
+    version='1.14.8',
     homepage='http://cairographics.org/',
     lib_depends={'c-runtime', 'freetype', 'libpng', 'pixman'},
     build_cmd=build,
 )
 
 distfile(
-    name='cairo-1.14.6.tar.xz',
-    checksum='613cb38447b76a93ff7235e17acd55a78b52ea84a9df128c3f2257f8eaa7b252',
-    master_sites={'http://cairographics.org/releases/'},
+    name='cairo-1.14.8.tar.xz',
+    checksum='d1f2d98ae9a4111564f6de4e013d639cf77155baf2556582295a0f00a9bc5e20',
+    master_sites={
+        'http://cairographics.org/releases/',
+        'http://ftp.osuosl.org/pub/blfs/conglomeration/cairo/',
+    },
     unsafe_string_sources={
         'src/cairo-cff-subset.c',
         'src/cairo-pdf-surface.c',
