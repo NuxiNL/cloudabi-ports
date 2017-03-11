@@ -146,7 +146,7 @@
  
    /* parse known args */
    for (i = 1; i < argc; i++)
-@@ -2612,6 +2620,7 @@
+@@ -2615,6 +2623,7 @@
      g_main_loop_quit (data->loop);
  }
  
@@ -154,7 +154,7 @@
  static void
  child_exited (GPid     pid,
                gint     status,
-@@ -2997,6 +3006,7 @@
+@@ -3000,6 +3009,7 @@
                    stderr_fd, !!(test_flags & G_TEST_SUBPROCESS_INHERIT_STDERR),
                    usec_timeout);
  }

@@ -1,6 +1,6 @@
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1143,7 +1143,7 @@
+@@ -1165,7 +1165,7 @@
    if ((log_level & G_LOG_FLAG_FATAL) != 0 && !g_test_initialized ())
      win32_keep_fatal_message = TRUE;
  #endif
@@ -9,7 +9,7 @@
  }
  
  typedef struct {
-@@ -1364,11 +1364,7 @@
+@@ -1386,11 +1386,7 @@
  static FILE *
  log_level_to_file (GLogLevelFlags log_level)
  {
@@ -22,7 +22,7 @@
  }
  
  static const gchar *
-@@ -2859,6 +2855,7 @@
+@@ -2939,6 +2935,7 @@
   * use g_log(), g_log_structured(), or the convenience macros g_message(),
   * g_warning() and g_error().
   */
@@ -30,7 +30,7 @@
  void
  g_print (const gchar *format,
           ...)
-@@ -2896,6 +2893,7 @@
+@@ -2976,6 +2973,7 @@
      }
    g_free (string);
  }
@@ -219,7 +219,7 @@
                    "  %s [OPTION...]\n\n"
                    "Help Options:\n"
                    "  -h, --help                     Show help options\n\n"
-@@ -2677,7 +2684,11 @@
+@@ -2680,7 +2687,11 @@
      {
        g_string_append_len (data->stdout_str, buf, nread);
        if (data->echo_stdout)

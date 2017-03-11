@@ -1,6 +1,6 @@
 --- glib/gmessages.c
 +++ glib/gmessages.c
-@@ -1970,12 +1970,19 @@
+@@ -2050,12 +2050,19 @@
        (log_level & G_LOG_LEVEL_MASK))
      {
        const gchar *prg_name = g_get_prgname ();
@@ -20,7 +20,7 @@
      }
  
    if (log_domain != NULL)
-@@ -2429,7 +2436,7 @@
+@@ -2509,7 +2516,7 @@
        write_string_sized (stream, field->value, field->length);
      }
  
@@ -29,7 +29,7 @@
    {
      gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
  
-@@ -2623,7 +2630,7 @@
+@@ -2703,7 +2710,7 @@
  			 gpointer       unused_data)
  {
    gchar level_prefix[STRING_BUFFER_SIZE];
@@ -38,7 +38,7 @@
    gchar pid_string[FORMAT_UNSIGNED_BUFSIZE];
  #endif
    FILE *stream;
-@@ -2639,7 +2646,7 @@
+@@ -2719,7 +2726,7 @@
    if (!message)
      message = "(NULL) message";
  
@@ -47,7 +47,7 @@
    format_unsigned (pid_string, getpid (), 10);
  #endif
  
-@@ -2648,7 +2655,7 @@
+@@ -2728,7 +2735,7 @@
    else
      write_string (stream, "\n** ");
  
