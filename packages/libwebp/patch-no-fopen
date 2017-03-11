@@ -1,0 +1,93 @@
+--- imageio/image_enc.c
++++ imageio/image_enc.c
+@@ -538,6 +538,7 @@
+ //------------------------------------------------------------------------------
+ // Generic top-level call
+ 
++#if 0
+ int WebPSaveImage(const WebPDecBuffer* const buffer,
+                   WebPOutputFileFormat format, const char* const out_file) {
+   FILE* fout = NULL;
+@@ -589,3 +590,4 @@
+   }
+   return ok;
+ }
++#endif
+--- imageio/image_enc.h
++++ imageio/image_enc.h
+@@ -49,8 +49,6 @@
+ // RAW_YUV, YUV and YUVA formats.
+ // If 'out_file_name' is "-", data is saved to stdout.
+ // Returns false if an error occurred, true otherwise.
+-int WebPSaveImage(const WebPDecBuffer* const buffer,
+-                  WebPOutputFileFormat format, const char* const out_file_name);
+ 
+ // Save to PNG.
+ #ifdef HAVE_WINCODEC_H
+--- imageio/imageio_util.c
++++ imageio/imageio_util.c
+@@ -32,6 +32,7 @@
+   return file;
+ }
+ 
++#if 0
+ int ImgIoUtilReadFromStdin(const uint8_t** data, size_t* data_size) {
+   static const size_t kBlockSize = 16384;  // default initial size
+   size_t max_size = 0;
+@@ -121,6 +122,7 @@
+   if (out != stdout) fclose(out);
+   return ok;
+ }
++#endif
+ 
+ // -----------------------------------------------------------------------------
+ 
+--- imageio/imageio_util.h
++++ imageio/imageio_util.h
+@@ -32,16 +32,10 @@
+ // be deleted using free().
+ // If 'file_name' is NULL or equal to "-", input is read from stdin by calling
+ // the function ImgIoUtilReadFromStdin().
+-int ImgIoUtilReadFile(const char* const file_name,
+-                      const uint8_t** data, size_t* data_size);
+ 
+ // Same as ImgIoUtilReadFile(), but reads until EOF from stdin instead.
+-int ImgIoUtilReadFromStdin(const uint8_t** data, size_t* data_size);
+-
+ // Write a data segment into a file named 'file_name'. Returns true if ok.
+ // If 'file_name' is NULL or equal to "-", output is written to stdout.
+-int ImgIoUtilWriteFile(const char* const file_name,
+-                       const uint8_t* data, size_t data_size);
+ 
+ //------------------------------------------------------------------------------
+ 
+--- imageio/webpdec.c
++++ imageio/webpdec.c
+@@ -45,6 +45,7 @@
+   fprintf(stderr, "\n");
+ }
+ 
++#if 0
+ int LoadWebP(const char* const in_file,
+              const uint8_t** data, size_t* data_size,
+              WebPBitstreamFeatures* bitstream) {
+@@ -66,6 +67,7 @@
+   }
+   return 1;
+ }
++#endif
+ 
+ //------------------------------------------------------------------------------
+ 
+--- imageio/webpdec.h
++++ imageio/webpdec.h
+@@ -32,9 +32,6 @@
+ // Reads a WebP from 'in_file', returning the contents and size in 'data' and
+ // 'data_size'. If not NULL, 'bitstream' is populated using WebPGetFeatures().
+ // Returns true on success.
+-int LoadWebP(const char* const in_file,
+-             const uint8_t** data, size_t* data_size,
+-             WebPBitstreamFeatures* bitstream);
+ 
+ // Decodes the WebP contained in 'data'.
+ // 'config' is a structure previously initialized by WebPInitDecoderConfig().

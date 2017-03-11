@@ -1,11 +1,11 @@
 --- Makefile.in
 +++ Makefile.in
-@@ -333,7 +333,7 @@
+@@ -334,7 +334,7 @@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  ACLOCAL_AMFLAGS = -I m4
--SUBDIRS = src examples man
-+SUBDIRS = src
+-SUBDIRS = src imageio man $(am__append_1) examples
++SUBDIRS = src imageio $(am__append_1)
  EXTRA_DIST = COPYING autogen.sh
  all: all-recursive
  
