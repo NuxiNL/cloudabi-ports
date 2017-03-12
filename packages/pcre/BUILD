@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -18,15 +18,15 @@ def build(ctx):
 
 package(
     name='pcre',
-    version='8.39',
+    version='8.40',
     homepage='http://www.pcre.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='pcre-8.39.tar.bz2',
-    checksum='b858099f82483031ee02092711689e7245586ada49e534a06e678b8ea9549e8b',
+    name='pcre-8.40.tar.bz2',
+    checksum='00e27a29ead4267e3de8111fcaa59b132d0533cdfdbdddf4b0604279acbcf4f4',
     master_sites={'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/'},
     unsafe_string_sources={'pcreposix.c'},
 )

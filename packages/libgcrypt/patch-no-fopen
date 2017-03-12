@@ -229,7 +229,7 @@
        fd_set rfds;
        struct timeval tv;
        int rc;
-@@ -293,6 +295,9 @@
+@@ -294,6 +296,9 @@
        while (n == -1 && errno == EINTR);
        if  (n == -1)
          log_fatal("read error on random device: %s\n", strerror(errno));
@@ -275,7 +275,7 @@
        fips_new_state (STATE_INIT);
 --- src/gcrypt-int.h
 +++ src/gcrypt-int.h
-@@ -148,7 +148,6 @@
+@@ -150,7 +150,6 @@
  int _gcry_md_map_name (const char* name) _GCRY_GCC_ATTR_PURE;
  gpg_err_code_t _gcry_md_setkey (gcry_md_hd_t hd,
                                  const void *key, size_t keylen);

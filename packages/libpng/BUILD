@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -14,14 +14,14 @@ def build(ctx):
 
 package(
     name='libpng',
-    version='1.6.26',
+    version='1.6.28',
     homepage='http://www.libpng.org/',
     lib_depends={'c-runtime', 'zlib'},
     build_cmd=build,
 )
 
 distfile(
-    name='libpng-1.6.26.tar.xz',
-    checksum='266743a326986c3dbcee9d89b640595f6b16a293fd02b37d8c91348d317b73f9',
-    master_sites=sites_sourceforge('libpng/libpng16/1.6.26'),
+    name='libpng-1.6.28.tar.xz',
+    checksum='d8d3ec9de6b5db740fefac702c37ffcf96ae46cb17c18c1544635a3852f78f7a',
+    master_sites=sites_sourceforge('libpng/libpng16/1.6.28'),
 )

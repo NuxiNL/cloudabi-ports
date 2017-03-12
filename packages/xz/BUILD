@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -18,7 +18,7 @@ def build(ctx):
 
 package(
     name='xz',
-    version='5.2.2',
+    version='5.2.3',
     homepage='http://tukaani.org/xz/',
     lib_depends={'c-runtime'},
     build_cmd=build,
@@ -26,13 +26,13 @@ package(
 
 host_package(
     name='xz',
-    version='5.2.2',
+    version='5.2.3',
     homepage='http://tukaani.org/xz/',
     build_cmd=build,
 )
 
 distfile(
-    name='xz-5.2.2.tar.xz',
-    checksum='f341b1906ebcdde291dd619399ae944600edc9193619dd0c0110a5f05bfcc89e',
+    name='xz-5.2.3.tar.xz',
+    checksum='7876096b053ad598c31f6df35f7de5cd9ff2ba3162e5a5554e4fc198447e0347',
     master_sites={'http://tukaani.org/xz/'},
 )

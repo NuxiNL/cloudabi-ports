@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -11,14 +11,14 @@ def build(ctx):
 
 package(
     name='opus',
-    version='1.1.3',
+    version='1.1.4',
     homepage='http://www.opus-codec.org/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='opus-1.1.3.tar.gz',
-    checksum='58b6fe802e7e30182e95d0cde890c0ace40b6f125cffc50635f0ad2eef69b633',
+    name='opus-1.1.4.tar.gz',
+    checksum='9122b6b380081dd2665189f97bfd777f04f92dc3ab6698eea1dbb27ad59d8692',
     master_sites={'http://downloads.xiph.org/releases/opus/'},
 )

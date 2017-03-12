@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -14,15 +14,15 @@ def build(ctx):
 
 package(
     name='freetype',
-    version='2.7',
+    version='2.7.1',
     homepage='http://www.freetype.org/',
     lib_depends={'bzip2', 'c-runtime', 'libpng', 'zlib'},
     build_cmd=build,
 )
 
 distfile(
-    name='freetype-2.7.tar.bz2',
-    checksum='d6a451f5b754857d2aa3964fd4473f8bc5c64e879b24516d780fb26bec7f7d48',
-    master_sites=sites_sourceforge('freetype/freetype2/2.7'),
+    name='freetype-2.7.1.tar.bz2',
+    checksum='3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88',
+    master_sites=sites_sourceforge('freetype/freetype2/2.7.1'),
     unsafe_string_sources={'include/freetype/config/ftstdlib.h'},
 )

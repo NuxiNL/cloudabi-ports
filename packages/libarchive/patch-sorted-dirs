@@ -12,7 +12,7 @@
  	struct dirent		*de;
  #if defined(USE_READDIR_R)
  	struct dirent		*dirent;
-@@ -2142,7 +2143,7 @@
+@@ -2130,7 +2131,7 @@
  	t->depth = 0;
  	t->descend = 0;
  	t->current = NULL;
@@ -21,7 +21,7 @@
  	t->symlink_mode = t->initial_symlink_mode;
  	archive_string_empty(&t->path);
  	t->entry_fd = -1;
-@@ -2307,7 +2308,7 @@
+@@ -2295,7 +2296,7 @@
  
  	while (t->stack != NULL) {
  		/* If there's an open dir, get the next entry from there. */
@@ -30,7 +30,7 @@
  			r = tree_dir_next_posix(t);
  			if (r == 0)
  				continue;
-@@ -2359,82 +2360,41 @@
+@@ -2347,82 +2348,41 @@
  }
  
  static int
@@ -131,7 +131,7 @@
  		name = t->de->d_name;
  		namelen = D_NAMELEN(t->de);
  		t->flags &= ~hasLstat;
-@@ -2621,6 +2581,7 @@
+@@ -2609,6 +2569,7 @@
  static void
  tree_close(struct tree *t)
  {
@@ -139,7 +139,7 @@
  
  	if (t == NULL)
  		return;
-@@ -2629,9 +2590,11 @@
+@@ -2617,9 +2578,11 @@
  		t->entry_fd = -1;
  	}
  	/* Close the handle of readdir(). */

@@ -1,6 +1,6 @@
 --- gmp-h.in
 +++ gmp-h.in
-@@ -592,9 +592,6 @@
+@@ -588,9 +588,6 @@
  __GMP_DECLSPEC int gmp_fscanf (FILE *, const char *, ...);
  #endif
  
@@ -10,7 +10,7 @@
  #define gmp_sscanf __gmp_sscanf
  __GMP_DECLSPEC int gmp_sscanf (const char *, const char *, ...);
  
-@@ -603,11 +600,6 @@
+@@ -599,11 +596,6 @@
  __GMP_DECLSPEC int gmp_vfscanf (FILE *, const char *, va_list);
  #endif
  
@@ -48,7 +48,7 @@
  
 --- mpz/inp_raw.c
 +++ mpz/inp_raw.c
-@@ -71,9 +71,6 @@
+@@ -72,9 +72,6 @@
    mp_ptr         xp, sp, ep;
    mp_limb_t      slimb, elimb;
  

@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -19,15 +19,15 @@ def build(ctx):
 
 package(
     name='pcre2',
-    version='10.22',
+    version='10.23',
     homepage='http://www.pcre.org/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='pcre2-10.22.tar.bz2',
-    checksum='b2b44619f4ac6c50ad74c2865fd56807571392496fae1c9ad7a70993d018f416',
+    name='pcre2-10.23.tar.bz2',
+    checksum='dfc79b918771f02d33968bd34a749ad7487fa1014aeb787fad29dd392b78c56e',
     master_sites={'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/'},
     unsafe_string_sources={
         'src/pcre2_error.c',

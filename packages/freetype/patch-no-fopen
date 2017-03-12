@@ -11,7 +11,7 @@
    FT_BASE( FT_Error )
 --- src/base/ftobjs.c
 +++ src/base/ftobjs.c
-@@ -194,12 +194,6 @@
+@@ -203,12 +203,6 @@
  
  #ifndef FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
  
