@@ -126,7 +126,7 @@
  
  static int
  module_run(const CONF *cnf, char *name, char *value, unsigned long flags)
-@@ -541,6 +543,7 @@
+@@ -540,6 +542,7 @@
  
  /* Return default config file name */
  
@@ -134,7 +134,7 @@
  char *
  CONF_get1_default_config_file(void)
  {
-@@ -551,6 +554,7 @@
+@@ -550,6 +553,7 @@
  		return (NULL);
  	return file;
  }
@@ -232,7 +232,7 @@
  
  /* Function definitions for handling configuration options. */
  
-@@ -256,6 +258,7 @@
+@@ -255,6 +257,7 @@
  
  #endif
  
@@ -240,7 +240,7 @@
  int
  TS_CONF_set_signer_cert(CONF *conf, const char *section, const char *cert,
      TS_RESP_CTX *ctx)
-@@ -329,6 +332,7 @@
+@@ -328,6 +331,7 @@
  	EVP_PKEY_free(key_obj);
  	return ret;
  }
@@ -273,7 +273,7 @@
  static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
      long argl, char **ret);
  
-@@ -271,4 +272,5 @@
+@@ -268,4 +269,5 @@
  	sk_X509_INFO_pop_free(inf, X509_INFO_free);
  	return count;
  }
@@ -314,7 +314,7 @@
 +#endif
 --- crypto/x509v3/v3_pci.c
 +++ crypto/x509v3/v3_pci.c
-@@ -160,6 +160,7 @@
+@@ -153,6 +153,7 @@
  			}
  			free(tmp_data2);
  		}
@@ -322,7 +322,7 @@
  		else if (strncmp(val->value, "file:", 5) == 0) {
  			unsigned char buf[2048];
  			int n;
-@@ -196,6 +197,7 @@
+@@ -187,6 +188,7 @@
  				goto err;
  			}
  		}
@@ -453,7 +453,7 @@
  int RAND_poll(void);
 --- include/openssl/ssl.h
 +++ include/openssl/ssl.h
-@@ -1567,19 +1567,7 @@
+@@ -1261,19 +1261,7 @@
  int	SSL_use_certificate(SSL *ssl, X509 *x);
  int	SSL_use_certificate_ASN1(SSL *ssl, const unsigned char *d, int len);
  
@@ -473,7 +473,7 @@
  
  void	SSL_load_error_strings(void );
  const char *SSL_state_string(const SSL *s);
-@@ -1741,9 +1729,6 @@
+@@ -1432,9 +1420,6 @@
  void SSL_set_shutdown(SSL *ssl,int mode);
  int SSL_get_shutdown(const SSL *ssl);
  int SSL_version(const SSL *ssl);
@@ -485,7 +485,7 @@
  SSL_SESSION *SSL_get_session(const SSL *ssl);
 --- include/openssl/ts.h
 +++ include/openssl/ts.h
-@@ -707,21 +707,12 @@
+@@ -704,21 +704,12 @@
  /* Function declarations for handling configuration options,
     defined in ts/ts_conf.c */
  
@@ -509,7 +509,7 @@
  int TS_CONF_set_policies(CONF *conf, const char *section, TS_RESP_CTX *ctx);
 --- include/openssl/x509.h
 +++ include/openssl/x509.h
-@@ -779,12 +779,6 @@
+@@ -772,12 +772,6 @@
  				int offset_day, long offset_sec, time_t *t);
  ASN1_TIME *	X509_gmtime_adj(ASN1_TIME *s, long adj);
  
@@ -524,7 +524,7 @@
  X509 *		X509_REQ_to_X509(X509_REQ *r, int days,EVP_PKEY *pkey);
 --- include/openssl/x509_vfy.h
 +++ include/openssl/x509_vfy.h
-@@ -429,8 +429,6 @@
+@@ -451,8 +451,6 @@
  
  X509_LOOKUP *X509_STORE_add_lookup(X509_STORE *v, X509_LOOKUP_METHOD *m);
  
@@ -533,7 +533,7 @@
  X509_LOOKUP_METHOD *X509_LOOKUP_mem(void);
  
  int X509_STORE_add_cert(X509_STORE *ctx, X509 *x);
-@@ -442,9 +440,6 @@
+@@ -464,9 +462,6 @@
  int X509_LOOKUP_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc,
  	long argl, char **ret);
  
@@ -543,7 +543,7 @@
  
  
  X509_LOOKUP *X509_LOOKUP_new(X509_LOOKUP_METHOD *method);
-@@ -460,10 +455,7 @@
+@@ -482,10 +477,7 @@
  	int len, X509_OBJECT *ret);
  int X509_LOOKUP_shutdown(X509_LOOKUP *ctx);
  
@@ -556,7 +556,7 @@
  	CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func);
 --- include/tls.h
 +++ include/tls.h
-@@ -57,28 +57,19 @@
+@@ -85,44 +85,28 @@
  struct tls_config *tls_config_new(void);
  void tls_config_free(struct tls_config *_config);
  
@@ -564,7 +564,12 @@
 -    const char *_cert_file, const char *_key_file);
  int tls_config_add_keypair_mem(struct tls_config *_config, const uint8_t *_cert,
      size_t _cert_len, const uint8_t *_key, size_t _key_len);
- 
+-int tls_config_add_keypair_ocsp_file(struct tls_config *_config,
+-    const char *_cert_file, const char *_key_file,
+-    const char *_ocsp_staple_file);
+ int tls_config_add_keypair_ocsp_mem(struct tls_config *_config, const uint8_t *_cert,
+     size_t _cert_len, const uint8_t *_key, size_t _key_len,
+     const uint8_t *_staple, size_t _staple_len);
  int tls_config_set_alpn(struct tls_config *_config, const char *_alpn);
 -int tls_config_set_ca_file(struct tls_config *_config, const char *_ca_file);
 -int tls_config_set_ca_path(struct tls_config *_config, const char *_ca_path);
@@ -584,18 +589,29 @@
 -    const char *_cert_file, const char *_key_file);
  int tls_config_set_keypair_mem(struct tls_config *_config, const uint8_t *_cert,
      size_t _cert_len, const uint8_t *_key, size_t _key_len);
- void tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
-@@ -136,7 +127,6 @@
+-int tls_config_set_keypair_ocsp_file(struct tls_config *_config,
+-    const char *_cert_file, const char *_key_file, const char *_staple_file);
+ int tls_config_set_keypair_ocsp_mem(struct tls_config *_config, const uint8_t *_cert,
+     size_t _cert_len, const uint8_t *_key, size_t _key_len,
+     const uint8_t *_staple, size_t staple_len);
+ int tls_config_set_ocsp_staple_mem(struct tls_config *_config,
+     const uint8_t *_staple, size_t _len);
+-int tls_config_set_ocsp_staple_file(struct tls_config *_config,
+-    const char *_staple_file);
+ int tls_config_set_protocols(struct tls_config *_config, uint32_t _protocols);
+ int tls_config_set_verify_depth(struct tls_config *_config, int _verify_depth);
+ 
+@@ -185,7 +169,6 @@
  const char *tls_conn_servername(struct tls *_ctx);
  const char *tls_conn_version(struct tls *_ctx);
  
 -uint8_t *tls_load_file(const char *_file, size_t *_len, char *_password);
  
- #ifdef __cplusplus
- }
+ int tls_ocsp_process_response(struct tls *_ctx, const unsigned char *_response,
+     size_t _size);
 --- ssl/ssl_cert.c
 +++ ssl/ssl_cert.c
-@@ -563,6 +563,7 @@
+@@ -561,6 +561,7 @@
   * \param file the file containing one or more certs.
   * \return a ::STACK containing the certs.
   */
@@ -603,14 +619,14 @@
  STACK_OF(X509_NAME) *
  SSL_load_client_CA_file(const char *file)
  {
-@@ -720,3 +721,4 @@
+@@ -715,3 +716,4 @@
  	}
  	return ret;
  }
 +#endif
 --- ssl/ssl_lib.c
 +++ ssl/ssl_lib.c
-@@ -2867,6 +2867,7 @@
+@@ -2780,6 +2780,7 @@
  	return (ssl->ctx);
  }
  
@@ -618,7 +634,7 @@
  int
  SSL_CTX_set_default_verify_paths(SSL_CTX *ctx)
  {
-@@ -2879,6 +2880,7 @@
+@@ -2792,6 +2793,7 @@
  {
  	return (X509_STORE_load_locations(ctx->cert_store, CAfile, CApath));
  }
@@ -708,15 +724,15 @@
  
  int
  SSL_CTX_use_RSAPrivateKey_ASN1(SSL_CTX *ctx, const unsigned char *d, long len)
-@@ -576,6 +586,7 @@
- 	return (ssl_set_pkey(ctx->cert, pkey));
+@@ -575,6 +585,7 @@
+ 	return (ssl_set_pkey(ctx->internal->cert, pkey));
  }
  
 +#if 0
  int
  SSL_CTX_use_PrivateKey_file(SSL_CTX *ctx, const char *file, int type)
  {
-@@ -616,6 +627,7 @@
+@@ -614,6 +625,7 @@
  	BIO_free(in);
  	return (ret);
  }
@@ -724,7 +740,7 @@
  
  int
  SSL_CTX_use_PrivateKey_ASN1(int type, SSL_CTX *ctx, const unsigned char *d,
-@@ -707,6 +719,7 @@
+@@ -703,6 +715,7 @@
  	return (ret);
  }
  
@@ -732,7 +748,7 @@
  int
  SSL_CTX_use_certificate_chain_file(SSL_CTX *ctx, const char *file)
  {
-@@ -730,6 +743,7 @@
+@@ -726,6 +739,7 @@
  	BIO_free(in);
  	return (ret);
  }
@@ -742,15 +758,15 @@
  SSL_CTX_use_certificate_chain_mem(SSL_CTX *ctx, void *buf, int len)
 --- tls/tls.c
 +++ tls/tls.c
-@@ -347,6 +347,7 @@
- 
- 	SSL_CTX_set_verify(ssl_ctx, verify, NULL);
+@@ -410,6 +410,7 @@
+ 	if (ctx->config->verify_cert == 0)
+ 		goto done;
  
 +#if 0
  	/* If no CA has been specified, attempt to load the default. */
  	if (ctx->config->ca_mem == NULL && ctx->config->ca_path == NULL) {
  		if (tls_config_load_file(&ctx->error, "CA", _PATH_SSL_CA_FILE,
-@@ -354,6 +355,7 @@
+@@ -417,6 +418,7 @@
  			goto err;
  		ca_free = ca_mem;
  	}
@@ -758,7 +774,7 @@
  
  	if (ca_mem != NULL) {
  		if (ca_len > INT_MAX) {
-@@ -364,10 +366,12 @@
+@@ -427,10 +429,12 @@
  			tls_set_errorx(ctx, "ssl verify memory setup failure");
  			goto err;
  		}
@@ -769,8 +785,8 @@
  		goto err;
 +#endif
  	}
- 	if (ctx->config->verify_depth >= 0)
- 		SSL_CTX_set_verify_depth(ssl_ctx, ctx->config->verify_depth);
+ 
+  done:
 --- tls/tls_config.c
 +++ tls/tls_config.c
 @@ -67,6 +67,7 @@
@@ -805,7 +821,23 @@
  
  static int
  tls_keypair_set_key_mem(struct tls_keypair *keypair, const uint8_t *key,
-@@ -122,6 +126,7 @@
+@@ -101,6 +105,7 @@
+ 	return set_mem(&keypair->key_mem, &keypair->key_len, key, len);
+ }
+ 
++#if 0
+ static int
+ tls_keypair_set_ocsp_staple_file(struct tls_keypair *keypair,
+     struct tls_error *error, const char *ocsp_file)
+@@ -108,6 +113,7 @@
+ 	return tls_config_load_file(error, "ocsp", ocsp_file,
+ 	    &keypair->ocsp_staple, &keypair->ocsp_staple_len);
+ }
++#endif
+ 
+ static int
+ tls_keypair_set_ocsp_staple_mem(struct tls_keypair *keypair,
+@@ -139,6 +145,7 @@
  	free(keypair);
  }
  
@@ -813,7 +845,7 @@
  int
  tls_config_load_file(struct tls_error *error, const char *filetype,
      const char *filename, char **buf, size_t *len)
-@@ -168,6 +173,7 @@
+@@ -189,6 +196,7 @@
  
  	return -1;
  }
@@ -821,7 +853,7 @@
  
  struct tls_config *
  tls_config_new(void)
-@@ -221,7 +227,6 @@
+@@ -256,7 +264,6 @@
  
  	free(config->alpn);
  	free((char *)config->ca_mem);
@@ -829,31 +861,47 @@
  	free((char *)config->ciphers);
  
  	free(config);
-@@ -381,6 +386,7 @@
+@@ -416,6 +423,7 @@
  	    &config->alpn_len);
+ }
+ 
++#if 0
+ static int
+ tls_config_add_keypair_file_internal(struct tls_config *config,
+     const char *cert_file, const char *key_file, const char *ocsp_file)
+@@ -441,6 +449,7 @@
+ 	tls_keypair_free(keypair);
+ 	return (-1);
+ }
++#endif
+ 
+ static int
+ tls_config_add_keypair_mem_internal(struct tls_config *config, const uint8_t *cert,
+@@ -476,6 +485,7 @@
+ 	    key_len, NULL, 0);
  }
  
 +#if 0
  int
  tls_config_add_keypair_file(struct tls_config *config,
      const char *cert_file, const char *key_file)
-@@ -402,6 +408,7 @@
- 	tls_keypair_free(keypair);
- 	return (-1);
+@@ -483,6 +493,7 @@
+ 	return tls_config_add_keypair_file_internal(config, cert_file,
+ 	    key_file, NULL);
  }
 +#endif
  
  int
- tls_config_add_keypair_mem(struct tls_config *config, const uint8_t *cert,
-@@ -425,6 +432,7 @@
- 	return (-1);
+ tls_config_add_keypair_ocsp_mem(struct tls_config *config, const uint8_t *cert,
+@@ -493,6 +504,7 @@
+ 	    key_len, staple, staple_len);
  }
  
 +#if 0
  int
- tls_config_set_ca_file(struct tls_config *config, const char *ca_file)
- {
-@@ -437,6 +445,7 @@
+ tls_config_add_keypair_ocsp_file(struct tls_config *config,
+     const char *cert_file, const char *key_file, const char *ocsp_file)
+@@ -513,6 +525,7 @@
  {
  	return set_string(&config->ca_path, ca_path);
  }
@@ -861,7 +909,7 @@
  
  int
  tls_config_set_ca_mem(struct tls_config *config, const uint8_t *ca, size_t len)
-@@ -444,12 +453,14 @@
+@@ -520,12 +533,14 @@
  	return set_mem(&config->ca_mem, &config->ca_len, ca, len);
  }
  
@@ -876,7 +924,7 @@
  
  int
  tls_config_set_cert_mem(struct tls_config *config, const uint8_t *cert,
-@@ -532,12 +543,14 @@
+@@ -608,12 +623,14 @@
  	return (0);
  }
  
@@ -891,25 +939,72 @@
  
  int
  tls_config_set_key_mem(struct tls_config *config, const uint8_t *key,
-@@ -546,6 +559,7 @@
+@@ -622,6 +639,7 @@
  	return tls_keypair_set_key_mem(config->keypair, key, len);
+ }
+ 
++#if 0
+ static int
+ tls_config_set_keypair_file_internal(struct tls_config *config,
+     const char *cert_file, const char *key_file, const char *ocsp_file)
+@@ -638,6 +656,7 @@
+ 
+ 	return (0);
+ }
++#endif
+ 
+ static int
+ tls_config_set_keypair_mem_internal(struct tls_config *config, const uint8_t *cert,
+@@ -655,6 +674,7 @@
+ 	return (0);
  }
  
 +#if 0
  int
  tls_config_set_keypair_file(struct tls_config *config,
      const char *cert_file, const char *key_file)
-@@ -557,6 +571,7 @@
- 
- 	return (0);
+@@ -662,6 +682,7 @@
+ 	return tls_config_set_keypair_file_internal(config, cert_file, key_file,
+ 	    NULL);
  }
 +#endif
  
  int
  tls_config_set_keypair_mem(struct tls_config *config, const uint8_t *cert,
+@@ -671,6 +692,7 @@
+ 	    key, key_len, NULL, 0);
+ }
+ 
++#if 0
+ int
+ tls_config_set_keypair_ocsp_file(struct tls_config *config,
+     const char *cert_file, const char *key_file, const char *ocsp_file)
+@@ -678,6 +700,7 @@
+ 	return tls_config_set_keypair_file_internal(config, cert_file, key_file,
+ 	    ocsp_file);
+ }
++#endif
+ 
+ int
+ tls_config_set_keypair_ocsp_mem(struct tls_config *config, const uint8_t *cert,
+@@ -761,12 +784,14 @@
+ 	config->verify_client = 2;
+ }
+ 
++#if 0
+ int
+ tls_config_set_ocsp_staple_file(struct tls_config *config, const char *staple_file)
+ {
+ 	return tls_keypair_set_ocsp_staple_file(config->keypair, &config->error,
+ 	    staple_file);
+ }
++#endif
+ 
+ int
+ tls_config_set_ocsp_staple_mem(struct tls_config *config, const uint8_t *staple,
 --- tls/tls_internal.h
 +++ tls/tls_internal.h
-@@ -57,7 +57,6 @@
+@@ -78,7 +78,6 @@
  
  	char *alpn;
  	size_t alpn_len;
@@ -917,26 +1012,17 @@
  	char *ca_mem;
  	size_t ca_len;
  	const char *ciphers;
-@@ -142,8 +141,6 @@
- int tls_handshake_client(struct tls *ctx);
- int tls_handshake_server(struct tls *ctx);
- 
--int tls_config_load_file(struct tls_error *error, const char *filetype,
--    const char *filename, char **buf, size_t *len);
- int tls_host_port(const char *hostport, char **host, char **port);
- 
- int tls_set_cbs(struct tls *ctx,
 --- tls/tls_util.c
 +++ tls/tls_util.c
-@@ -86,6 +86,7 @@
- 	return (rv);
+@@ -105,6 +105,7 @@
+ 	return (len);
  }
  
 +#if 0
- static int
- tls_password_cb(char *buf, int size, int rwflag, void *u)
+ uint8_t *
+ tls_load_file(const char *name, size_t *len, char *password)
  {
-@@ -167,3 +168,4 @@
+@@ -178,3 +179,4 @@
  
  	return (NULL);
  }

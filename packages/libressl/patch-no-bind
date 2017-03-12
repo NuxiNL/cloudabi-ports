@@ -1,6 +1,6 @@
 --- crypto/bio/b_sock.c
 +++ crypto/bio/b_sock.c
-@@ -203,6 +203,7 @@
+@@ -165,6 +165,7 @@
  	return (ret);
  }
  
@@ -8,7 +8,7 @@
  int
  BIO_get_accept_socket(char *host, int bind_mode)
  {
-@@ -360,6 +361,7 @@
+@@ -319,6 +320,7 @@
  	}
  	return (s);
  }
@@ -24,14 +24,14 @@
  	case ACPT_S_BEFORE:
 +#if 0
  		if (c->param_addr == NULL) {
- 			BIOerr(BIO_F_ACPT_STATE, BIO_R_NO_ACCEPT_PORT_SPECIFIED);
+ 			BIOerror(BIO_R_NO_ACCEPT_PORT_SPECIFIED);
  			return (-1);
 @@ -220,6 +221,9 @@
  		c->state = ACPT_S_GET_ACCEPT_SOCKET;
  		return (1);
  		/* break; */
 +#endif
-+		BIOerr(BIO_F_ACPT_STATE, BIO_R_UNABLE_TO_BIND_SOCKET);
++		BIOerror(BIO_R_UNABLE_TO_BIND_SOCKET);
 +		return (-1);
  	case ACPT_S_GET_ACCEPT_SOCKET:
  		if (b->next_bio != NULL) {

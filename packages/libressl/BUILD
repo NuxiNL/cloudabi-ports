@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -13,14 +13,14 @@ def build(ctx):
 
 package(
     name='libressl',
-    version='2.5.0',
+    version='2.5.1',
     homepage='http://www.libressl.org/',
     lib_depends={'c-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='libressl-2.5.0.tar.gz',
-    checksum='8652bf6b55ab51fb37b686a3f604a2643e0e8fde2c56e6a936027d12afda6eae',
+    name='libressl-2.5.1.tar.gz',
+    checksum='f71ae0a824b78fb1a47ffa23c9c26e9d96c5c9b29234eacedce6b4c7740287cd',
     master_sites={'http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'},
 )

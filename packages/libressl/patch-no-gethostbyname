@@ -8,18 +8,18 @@
  	/* do a gethostbyname */
  	CRYPTO_w_lock(CRYPTO_LOCK_GETHOSTBYNAME);
  	he = BIO_gethostbyname(str);
-@@ -109,6 +110,10 @@
+@@ -108,6 +109,10 @@
  		return 0;
  	} else
  		return 1;
 +#endif
-+	BIOerr(BIO_F_BIO_GET_HOST_IP, BIO_R_BAD_HOSTNAME_LOOKUP);
++	BIOerror(BIO_R_BAD_HOSTNAME_LOOKUP);
 +	ERR_asprintf_error_data("host=%s", str);
 +	return 0;
  }
  
  int
-@@ -186,11 +191,13 @@
+@@ -148,11 +153,13 @@
  	return (err);
  }
  

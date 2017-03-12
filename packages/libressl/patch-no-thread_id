@@ -1,6 +1,6 @@
 --- crypto/cryptlib.c
 +++ crypto/cryptlib.c
-@@ -511,7 +511,9 @@
+@@ -507,7 +507,9 @@
  {
  	id_callback = func;
  }

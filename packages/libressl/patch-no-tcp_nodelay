@@ -1,6 +1,6 @@
 --- crypto/bio/b_sock.c
 +++ crypto/bio/b_sock.c
-@@ -437,8 +437,10 @@
+@@ -396,8 +396,10 @@
  	return (ret);
  }
  

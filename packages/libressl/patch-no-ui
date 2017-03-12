@@ -10,7 +10,7 @@
  UI_new(void)
  {
 @@ -84,10 +82,7 @@
- 		UIerr(UI_F_UI_NEW_METHOD, ERR_R_MALLOC_FAILURE);
+ 		UIerror(ERR_R_MALLOC_FAILURE);
  		return NULL;
  	}
 -	if (method == NULL)
@@ -21,7 +21,7 @@
  
  	ret->strings = NULL;
  	ret->user_data = NULL;
-@@ -556,6 +551,7 @@
+@@ -552,6 +547,7 @@
  	return (CRYPTO_get_ex_data(&r->ex_data, idx));
  }
  
@@ -29,7 +29,7 @@
  void
  UI_set_default_method(const UI_METHOD *meth)
  {
-@@ -570,6 +566,7 @@
+@@ -566,6 +562,7 @@
  	}
  	return default_UI_meth;
  }
