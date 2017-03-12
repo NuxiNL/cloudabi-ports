@@ -19,7 +19,7 @@
  
 --- source/common/param.cpp
 +++ source/common/param.cpp
-@@ -1532,6 +1532,7 @@
+@@ -1654,6 +1654,7 @@
  
  bool parseLambdaFile(x265_param* param)
  {
@@ -27,7 +27,7 @@
      if (!param->rc.lambdaFileName)
          return false;
  
-@@ -1598,6 +1599,9 @@
+@@ -1720,6 +1721,9 @@
  
      fclose(lfn);
      return false;
@@ -47,7 +47,7 @@
      FILE *fp = fopen(filename, "r");
      if (!fp)
      {
-@@ -320,6 +321,9 @@
+@@ -336,6 +337,9 @@
      m_bDataPresent = true;
  
      return false;
@@ -59,7 +59,7 @@
  /** set quantized matrix coefficient for encode */
 --- source/encoder/encoder.cpp
 +++ source/encoder/encoder.cpp
-@@ -320,6 +320,7 @@
+@@ -341,6 +341,7 @@
  
      if (m_param->analysisMode)
      {
@@ -67,7 +67,7 @@
          const char* name = m_param->analysisFileName;
          if (!name)
              name = defaultAnalysisFileName;
-@@ -330,6 +331,9 @@
+@@ -351,6 +352,9 @@
              x265_log(NULL, X265_LOG_ERROR, "Analysis load/save: failed to open file %s\n", name);
              m_aborted = true;
          }
@@ -76,10 +76,57 @@
 +        m_aborted = true;
      }
  
-     m_bZeroLatency = !m_param->bframes && !m_param->lookaheadDepth && m_param->frameNumThreads == 1;
+     if (m_param->analysisMultiPassRefine || m_param->analysisMultiPassDistortion)
+@@ -360,6 +364,7 @@
+             name = defaultAnalysisFileName;
+         if (m_param->rc.bStatWrite)
+         {
++#if 0
+             char* temp = strcatFilename(name, ".temp");
+             if (!temp)
+                 m_aborted = true;
+@@ -373,15 +378,22 @@
+                 x265_log(NULL, X265_LOG_ERROR, "Analysis 2 pass: failed to open file %s\n", temp);
+                 m_aborted = true;
+             }
++#endif
++            x265_log(NULL, X265_LOG_ERROR, "filesystem access not supported\n");
++            m_aborted = true;
+         }
+         if (m_param->rc.bStatRead)
+         {
++#if 0
+             m_analysisFileIn = fopen(name, "rb");
+             if (!m_analysisFileIn)
+             {
+                 x265_log(NULL, X265_LOG_ERROR, "Analysis 2 pass: failed to open file %s\n", name);
+                 m_aborted = true;
+             }
++#endif
++            x265_log(NULL, X265_LOG_ERROR, "filesystem access not supported\n");
++            m_aborted = true;
+         }
+     }
+ 
+@@ -471,6 +483,7 @@
+     if (m_analysisFileIn)
+         fclose(m_analysisFileIn);
+ 
++#if 0
+     if (m_analysisFileOut)
+     {
+         int bError = 1;
+@@ -490,6 +503,7 @@
+         }
+         X265_FREE(temp);
+      }
++#endif
+     if (m_param)
+     {
+         /* release string arguments that were strdup'd */
 --- source/encoder/ratecontrol.cpp
 +++ source/encoder/ratecontrol.cpp
-@@ -400,6 +400,7 @@
+@@ -402,6 +402,7 @@
                  return false;
              if (m_param->rc.cuTree)
              {
@@ -87,7 +134,7 @@
                  char *tmpFile = strcatFilename(fileName, ".cutree");
                  if (!tmpFile)
                      return false;
-@@ -410,6 +411,9 @@
+@@ -412,6 +413,9 @@
                      x265_log_file(m_param, X265_LOG_ERROR, "can't open stats file %s.cutree\n", fileName);
                      return false;
                  }
@@ -97,7 +144,7 @@
              }
  
              /* check whether 1st pass options were compatible with current options */
-@@ -587,6 +591,7 @@
+@@ -634,6 +638,7 @@
           * and move it to the real name only when it's complete */
          if (m_param->rc.bStatWrite)
          {
@@ -105,7 +152,7 @@
              char *p, *statFileTmpname;
              statFileTmpname = strcatFilename(fileName, ".temp");
              if (!statFileTmpname)
-@@ -615,6 +620,9 @@
+@@ -662,6 +667,9 @@
                      return false;
                  }
              }
@@ -115,7 +162,7 @@
          }
          if (m_param->rc.cuTree)
          {
-@@ -2683,6 +2691,7 @@
+@@ -2793,6 +2801,7 @@
      if (!fileName)
          fileName = s_defaultStatFileName;
  
@@ -123,7 +170,7 @@
      if (m_statFileOut)
      {
          fclose(m_statFileOut);
-@@ -2718,6 +2727,7 @@
+@@ -2828,6 +2837,7 @@
          X265_FREE(tmpFileName);
          X265_FREE(newFileName);
      }

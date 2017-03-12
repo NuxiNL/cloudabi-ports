@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -14,15 +14,15 @@ def build(ctx):
 
 package(
     name='x265',
-    version='2.1',
+    version='2.3',
     homepage='http://x265.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='x265_2.1.tar.gz',
-    checksum='88fcb9af4ba52c0757ac9c0d8cd5ec79951a22905ae886897e06954353d6a643',
+    name='x265_2.3.tar.gz',
+    checksum='47520ac3424790168ea5c2db4a3cf12ca4d55a1790720007916652f07af3e41f',
     master_sites={'https://bitbucket.org/multicoreware/x265/downloads/'},
     unsafe_string_sources={'source/common/common.h'},
 )

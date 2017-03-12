@@ -1,6 +1,6 @@
 --- source/encoder/api.cpp
 +++ source/encoder/api.cpp
-@@ -356,6 +356,7 @@
+@@ -376,6 +376,7 @@
  
  static int g_recursion /* = 0 */;
  
@@ -8,7 +8,7 @@
  const x265_api* x265_api_get(int bitDepth)
  {
      if (bitDepth && bitDepth != X265_DEPTH)
-@@ -529,5 +530,6 @@
+@@ -549,5 +550,6 @@
  
      return &libapi;
  }
@@ -17,7 +17,7 @@
  } /* end namespace or extern "C" */
 --- source/x265.h
 +++ source/x265.h
-@@ -1570,7 +1570,6 @@
+@@ -1640,7 +1640,6 @@
   *     8bit:  libx265_main.so
   *     10bit: libx265_main10.so
   *   Obviously the shared library file extension is platform specific */
@@ -25,7 +25,7 @@
  
  /* x265_api_query:
   *   Retrieve the programming interface for a linked x265 library, like
-@@ -1593,7 +1592,6 @@
+@@ -1663,7 +1662,6 @@
   *   application dereferences a x265_param pointer, then it must check that
   *   api->sizeof_param matches the sizeof(x265_param) that your application
   *   compiled with. */
