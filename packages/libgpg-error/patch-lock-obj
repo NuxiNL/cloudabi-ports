@@ -1,6 +1,6 @@
 --- src/mkheader.c
 +++ src/mkheader.c
-@@ -506,7 +506,7 @@
+@@ -513,7 +513,7 @@
    else if (!strcmp (tag, "include:lock-obj"))
      {
        if (try_include_file (fname, lnr, "./lock-obj-pub.native.h", write_line))
