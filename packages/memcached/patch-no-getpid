@@ -1,6 +1,6 @@
 --- memcached.c
 +++ memcached.c
-@@ -2821,7 +2821,9 @@
+@@ -2872,7 +2872,9 @@
  
  /* return server specific stats only */
  static void server_stats(ADD_STAT add_stats, conn *c) {
@@ -10,7 +10,7 @@
      rel_time_t now = current_time;
  
      struct thread_stats thread_stats;
-@@ -2836,7 +2838,9 @@
+@@ -2887,7 +2889,9 @@
  
      STATS_LOCK();
  

@@ -1,10 +1,10 @@
 --- memcached.c
 +++ memcached.c
-@@ -319,8 +319,8 @@
+@@ -325,8 +325,8 @@
          for (i = 0; i < max_fds; i++) {
              if ((i % CONNS_PER_SLICE) == 0) {
                  if (settings.verbose > 2)
--                    fprintf(stderr, "idle timeout thread sleeping for %dus\n",
+-                    fprintf(stderr, "idle timeout thread sleeping for %ulus\n",
 -                        timeslice);
 +                    fprintf(stderr, "idle timeout thread sleeping for %juus\n",
 +                        (uintmax_t)timeslice);

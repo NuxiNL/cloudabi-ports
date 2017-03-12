@@ -42,7 +42,7 @@
      settings.factor = 1.25;
      settings.chunk_size = 48;         /* space for a modest key and value */
      settings.num_threads = 4;         /* N workers */
-@@ -4878,6 +4882,7 @@
+@@ -5026,6 +5030,7 @@
      return;
  }
  
@@ -50,7 +50,7 @@
  static int new_socket(struct addrinfo *ai) {
      int sfd;
      int flags;
-@@ -5224,6 +5229,7 @@
+@@ -5372,6 +5377,7 @@
  
      return 0;
  }
@@ -58,7 +58,7 @@
  
  /*
   * We keep the current time of day in a global variable that's updated by a
-@@ -5284,6 +5290,7 @@
+@@ -5432,6 +5438,7 @@
      }
  }
  
@@ -66,7 +66,7 @@
  static void usage(void) {
      printf(PACKAGE " " VERSION "\n");
      printf("-p <num>      TCP port number to listen on (default: 11211)\n"
-@@ -5555,6 +5562,7 @@
+@@ -5710,6 +5717,7 @@
      return -1;
  #endif
  }
@@ -74,7 +74,7 @@
  
  /**
   * Do basic sanity check of the runtime environment
-@@ -5578,6 +5586,7 @@
+@@ -5733,6 +5741,7 @@
      return true;
  }
  
@@ -82,7 +82,7 @@
  static bool _parse_slab_sizes(char *s, uint32_t *slab_sizes) {
      char *b = NULL;
      uint32_t size = 0;
-@@ -5615,6 +5624,148 @@
+@@ -5770,6 +5779,148 @@
      slab_sizes[i] = 0;
      return true;
  }
@@ -231,7 +231,7 @@
  
  int main (int argc, char **argv) {
      int c;
-@@ -6439,3 +6590,5 @@
+@@ -6641,3 +6792,5 @@
  
      return retval;
  }
@@ -239,7 +239,7 @@
 +#endif
 --- memcached.h
 +++ memcached.h
-@@ -335,6 +335,7 @@
+@@ -337,6 +337,7 @@
      int evict_to_free;
      char *socketpath;   /* path to unix socket if using local socket */
      int access;  /* access mask (a la chmod) for unix domain socket */
@@ -247,7 +247,7 @@
      double factor;          /* chunk size growth factor */
      int chunk_size;
      int num_threads;        /* number of worker (without dispatcher) libevent threads to run */
-@@ -599,7 +600,9 @@
+@@ -608,7 +609,9 @@
  enum store_item_type do_store_item(item *item, int comm, conn* c, const uint32_t hv);
  conn *conn_new(const int sfd, const enum conn_states init_state, const int event_flags, const int read_buffer_size, enum network_transport transport, struct event_base *base);
  void conn_worker_readd(conn *c);
