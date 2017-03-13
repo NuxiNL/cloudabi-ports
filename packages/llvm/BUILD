@@ -43,7 +43,7 @@ host_package(
 
 distfile(
     name='cfe-4.0.0.src.tar.xz',
-    checksum='a5f88ebddb30e296ca89130c83b9d46c2d833685e2912303c828054c4dc98a',
+    checksum='cea5f88ebddb30e296ca89130c83b9d46c2d833685e2912303c828054c4dc98a',
     master_sites={'http://www.llvm.org/releases/4.0.0/'},
     patches=set(),
 )
