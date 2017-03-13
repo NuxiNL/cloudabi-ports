@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)src2.src')
-    cxxabi = ctx.extract('libcxxabi-%(version)src2.src')
+    root = ctx.extract('%(name)s-%(version)s.src')
+    cxxabi = ctx.extract('libcxxabi-%(version)s.src')
 
     # Install header files.
     headers = root.path('include')
@@ -44,7 +44,7 @@ package(
 )
 
 distfile(
-    name='libcxx-4.0.0rc2.src.tar.xz',
-    checksum='d631c653c2b05b63683f62a9eea2b1284ce9ac49256f6a1744b462e7dca60c8c',
-    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
+    name='libcxx-4.0.0.src.tar.xz',
+    checksum='4f4d33c4ad69bf9e360eebe6b29b7b19486948b1a41decf89d4adec12473cf96',
+    master_sites={'http://www.llvm.org/releases/4.0.0/'},
 )

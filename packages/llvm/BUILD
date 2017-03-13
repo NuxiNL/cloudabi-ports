@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)src2.src')
-    ctx.extract('cfe-%(version)src2.src').rename(root.path('tools/clang'))
-    ctx.extract('lld-%(version)src2.src').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
+    ctx.extract('lld-%(version)s.src').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake([
@@ -42,20 +42,20 @@ host_package(
 )
 
 distfile(
-    name='cfe-4.0.0rc2.src.tar.xz',
-    checksum='76d6c9b7f388a93a0303dbbac0e42b183b242f822b65eb44064679e7c36aa5dc',
-    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
+    name='cfe-4.0.0.src.tar.xz',
+    checksum='a5f88ebddb30e296ca89130c83b9d46c2d833685e2912303c828054c4dc98a',
+    master_sites={'http://www.llvm.org/releases/4.0.0/'},
     patches=set(),
 )
 distfile(
-    name='lld-4.0.0rc2.src.tar.xz',
-    checksum='37381d14b13fee27bffef0b6d2650d82c79d69100385f6fa181a0034c2aa9b90',
-    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
+    name='lld-4.0.0.src.tar.xz',
+    checksum='33e06457b9ce0563c89b11ccc7ccabf9cff71b83571985a5bf8684c9150e7502',
+    master_sites={'http://www.llvm.org/releases/4.0.0/'},
     patches={'r295240'},
 )
 distfile(
-    name='llvm-4.0.0rc2.src.tar.xz',
-    checksum='2257faed3795fedfc509d6dd5905be158231c508c6fcaaa02e4a09c5e8dadbe1',
-    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
+    name='llvm-4.0.0.src.tar.xz',
+    checksum='8d10511df96e73b8ff9e7abbfb4d4d432edbdbe965f1f4f07afaf370b8a533be',
+    master_sites={'http://www.llvm.org/releases/4.0.0/'},
     patches=set(),
 )

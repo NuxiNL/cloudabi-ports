@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)src2.src')
-    ctx.extract('libunwind-%(version)src2.src').rename(root.path('libunwind'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('libunwind-%(version)s.src').rename(root.path('libunwind'))
     sources = {
         'abort_message.cpp', 'cxa_aux_runtime.cpp',
         'cxa_default_handlers.cpp', 'cxa_demangle.cpp',
@@ -37,7 +37,7 @@ package(
 )
 
 distfile(
-    name='libcxxabi-4.0.0rc2.src.tar.xz',
-    checksum='05a93b8e5188f2170daf0690ce3b19ed4972e11c64669b081911dbdb17c51426',
-    master_sites={'http://www.llvm.org/pre-releases/4.0.0/rc2/'},
+    name='libcxxabi-4.0.0.src.tar.xz',
+    checksum='dca9cb619662ad2d3a0d685c4366078345247218c3702dd35bcaaa23f63481d8',
+    master_sites={'http://www.llvm.org/releases/4.0.0/'},
 )
