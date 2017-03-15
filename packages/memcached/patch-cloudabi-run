@@ -82,7 +82,7 @@
  static bool _parse_slab_sizes(char *s, uint32_t *slab_sizes) {
      char *b = NULL;
      uint32_t size = 0;
-@@ -5770,6 +5779,148 @@
+@@ -5770,6 +5779,161 @@
      slab_sizes[i] = 0;
      return true;
  }
@@ -119,9 +119,22 @@
 +    const argdata_t *key, *value;
 +    while (argdata_map_next(&it, &key, &value)) {
 +        const char *keystr;
-+        if (argdata_get_str_c(key, &keystr) == 0 &&
-+            strcmp(keystr, "socket") == 0)
-+            argdata_get_fd(value, &settings.socketfd);
++        if (argdata_get_str_c(key, &keystr) == 0) {
++            if (strcmp(keystr, "socket") == 0) {
++                argdata_get_fd(value, &settings.socketfd);
++            } else if (strcmp(keystr, "verbose") == 0) {
++                argdata_get_int(value, &settings.verbose);
++            } else if (strcmp(keystr, "logfile") == 0) {
++                int fd = -1;
++                argdata_get_fd(value, &fd);
++                FILE *fp = fdopen(fd, "w");
++                if (fp != NULL) {
++                    setvbuf(fp, NULL, _IONBF, 0);
++                    fswap(fp, stderr);
++                    fclose(fp);
++                }
++            }
++        }
 +    }
 +
 +    if (settings.lru_maintainer_thread && settings.hot_lru_pct + settings.warm_lru_pct > 80) {
@@ -231,7 +244,7 @@
  
  int main (int argc, char **argv) {
      int c;
-@@ -6641,3 +6792,5 @@
+@@ -6641,3 +6805,5 @@
  
      return retval;
  }
