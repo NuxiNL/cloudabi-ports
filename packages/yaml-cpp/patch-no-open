@@ -1,0 +1,45 @@
+--- include/yaml-cpp/node/parse.h
++++ include/yaml-cpp/node/parse.h
+@@ -19,12 +19,10 @@
+ YAML_CPP_API Node Load(const std::string& input);
+ YAML_CPP_API Node Load(const char* input);
+ YAML_CPP_API Node Load(std::istream& input);
+-YAML_CPP_API Node LoadFile(const std::string& filename);
+ 
+ YAML_CPP_API std::vector<Node> LoadAll(const std::string& input);
+ YAML_CPP_API std::vector<Node> LoadAll(const char* input);
+ YAML_CPP_API std::vector<Node> LoadAll(std::istream& input);
+-YAML_CPP_API std::vector<Node> LoadAllFromFile(const std::string& filename);
+ }
+ 
+ #endif  // VALUE_PARSE_H_62B23520_7C8E_11DE_8A39_0800200C9A66
+--- src/parse.cpp
++++ src/parse.cpp
+@@ -28,12 +28,14 @@
+   return builder.Root();
+ }
+ 
++#if 0
+ Node LoadFile(const std::string& filename) {
+   std::ifstream fin(filename.c_str());
+   if (!fin)
+     throw BadFile();
+   return Load(fin);
+ }
++#endif
+ 
+ std::vector<Node> LoadAll(const std::string& input) {
+   std::stringstream stream(input);
+@@ -59,10 +61,12 @@
+   return docs;
+ }
+ 
++#if 0
+ std::vector<Node> LoadAllFromFile(const std::string& filename) {
+   std::ifstream fin(filename.c_str());
+   if (!fin)
+     throw BadFile();
+   return LoadAll(fin);
+ }
++#endif
+ }
