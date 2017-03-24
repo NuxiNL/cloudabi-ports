@@ -29,5 +29,5 @@ distfile(
     unsafe_string_sources={
         'src/ipc_listener.cpp',
         'src/udp_engine.cpp',
-    }
+    },
 )
