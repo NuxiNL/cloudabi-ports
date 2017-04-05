@@ -1,0 +1,11 @@
+--- os/os_mkdir.c
++++ os/os_mkdir.c
+@@ -40,7 +40,7 @@
+ 		return (__os_posix_err(ret));
+ 
+ 	/* Set the absolute permissions, if specified. */
+-#if !defined(HAVE_VXWORKS)
++#if !defined(HAVE_VXWORKS) && !defined(__CloudABI__)
+ 	if (mode != 0) {
+ 		RETRY_CHK((chmod(name, mode)), ret);
+ 		if (ret != 0)

@@ -1,0 +1,273 @@
+--- btree/bt_recno.c
++++ btree/bt_recno.c
+@@ -1028,7 +1028,7 @@
+ 	 * much care other than we'll complain if there are any modifications
+ 	 * when it comes time to write the database back to the source.
+ 	 */
+-	if ((t->re_fp = fopen(t->re_source, "rb")) == NULL) {
++	if ((t->re_fp = fopenat(env->dbenv->directory_descriptor, t->re_source, "rb")) == NULL) {
+ 		ret = __os_get_errno();
+ 		__db_err(env, ret, "%s", t->re_source);
+ 		return (ret);
+@@ -1126,7 +1126,7 @@
+ 		}
+ 		t->re_fp = NULL;
+ 	}
+-	if ((fp = fopen(t->re_source, "wb")) == NULL) {
++	if ((fp = fopenat(env->dbenv->directory_descriptor, t->re_source, "wb")) == NULL) {
+ 		ret = __os_get_errno();
+ 		__db_err(env, ret, "%s", t->re_source);
+ 		goto err;
+--- db/db_method.c
++++ db/db_method.c
+@@ -47,6 +47,8 @@
+ static int  __db_set_cachesize __P((DB *, u_int32_t, u_int32_t, int));
+ static int  __db_get_create_dir __P((DB *, const char **));
+ static int  __db_set_create_dir __P((DB *, const char *));
++static void __db_get_directory_descriptor __P((DB *, int *));
++static void __db_set_directory_descriptor __P((DB *, int));
+ static int  __db_get_dup_compare
+ 		__P((DB *, int (**)(DB *, const DBT *, const DBT *)));
+ static int  __db_set_dup_compare
+@@ -225,6 +227,7 @@
+ 	dbp->get_cachesize = __db_get_cachesize;
+ 	dbp->get_create_dir = __db_get_create_dir;
+ 	dbp->get_dbname = __db_get_dbname;
++	dbp->get_directory_descriptor = __db_get_directory_descriptor;
+ 	dbp->get_dup_compare = __db_get_dup_compare;
+ 	dbp->get_encrypt_flags = __db_get_encrypt_flags;
+ 	dbp->get_env = __db_get_env;
+@@ -257,6 +260,7 @@
+ 	dbp->set_append_recno = __db_set_append_recno;
+ 	dbp->set_cachesize = __db_set_cachesize;
+ 	dbp->set_create_dir = __db_set_create_dir;
++	dbp->set_directory_descriptor = __db_set_directory_descriptor;
+ 	dbp->set_dup_compare = __db_set_dup_compare;
+ 	dbp->set_encrypt = __db_set_encrypt;
+ 	dbp->set_errcall = __db_set_errcall;
+@@ -580,6 +584,22 @@
+ 	return (0);
+ }
+ 
++static void
++__db_get_directory_descriptor(dbp, directory_descriptor)
++	DB *dbp;
++	int *directory_descriptor;
++{
++	__env_get_directory_descriptor(dbp->dbenv, directory_descriptor);
++}
++
++static void
++__db_set_directory_descriptor(dbp, directory_descriptor)
++	DB *dbp;
++	int directory_descriptor;
++{
++	__env_set_directory_descriptor(dbp->dbenv, directory_descriptor);
++}
++
+ /*
+  * __db_get_dup_compare --
+  *	Get duplicate comparison routine.
+--- dbinc/db.in
++++ dbinc/db.in
+@@ -1427,6 +1427,7 @@
+ 	int  (*get_cachesize) __P((DB *, u_int32_t *, u_int32_t *, int *));
+ 	int  (*get_create_dir) __P((DB *, const char **));
+ 	int  (*get_dbname) __P((DB *, const char **, const char **));
++	void (*get_directory_descriptor) __P((DB *, int *));
+ 	int  (*get_dup_compare)
+ 		__P((DB *, int (**)(DB *, const DBT *, const DBT *)));
+ 	int  (*get_encrypt_flags) __P((DB *, u_int32_t *));
+@@ -1486,6 +1487,7 @@
+ 		__P((DB *, size_t (*)(DB *, const DBT *, const DBT *)));
+ 	int  (*set_cachesize) __P((DB *, u_int32_t, u_int32_t, int));
+ 	int  (*set_create_dir) __P((DB *, const char *));
++	void (*set_directory_descriptor) __P((DB *, int));
+ 	int  (*set_dup_compare)
+ 		__P((DB *, int (*)(DB *, const DBT *, const DBT *)));
+ 	int  (*set_encrypt) __P((DB *, const char *, u_int32_t));
+@@ -2002,6 +2004,8 @@
+ 	 */
+ 	db_mutex_t mtx_db_env;		/* DB_ENV structure mutex */
+ 
++	int directory_descriptor;
++
+ 					/* Error message callback */
+ 	void (*db_errcall) __P((const DB_ENV *, const char *, const char *));
+ 	FILE		*db_errfile;	/* Error message file stream */
+@@ -2147,6 +2151,7 @@
+ 	int  (*get_cachesize) __P((DB_ENV *, u_int32_t *, u_int32_t *, int *));
+ 	int  (*get_create_dir) __P((DB_ENV *, const char **));
+ 	int  (*get_data_dirs) __P((DB_ENV *, const char ***));
++	void (*get_directory_descriptor) __P((DB_ENV *, int *));
+ 	int  (*get_encrypt_flags) __P((DB_ENV *, u_int32_t *));
+ 	void (*get_errcall) __P((DB_ENV *,
+ 		void (**)(const DB_ENV *, const char *, const char *)));
+@@ -2278,6 +2283,7 @@
+ 	int  (*set_cachesize) __P((DB_ENV *, u_int32_t, u_int32_t, int));
+ 	int  (*set_create_dir) __P((DB_ENV *, const char *));
+ 	int  (*set_data_dir) __P((DB_ENV *, const char *));
++	void (*set_directory_descriptor) __P((DB_ENV *, int));
+ 	int  (*set_encrypt) __P((DB_ENV *, const char *, u_int32_t));
+ 	void (*set_errcall) __P((DB_ENV *,
+ 		void (*)(const DB_ENV *, const char *, const char *)));
+--- dbinc_auto/env_ext.h
++++ dbinc_auto/env_ext.h
+@@ -33,6 +33,8 @@
+ int  __env_set_flags __P((DB_ENV *, u_int32_t, int));
+ int  __env_set_data_dir __P((DB_ENV *, const char *));
+ int  __env_add_data_dir __P((DB_ENV *, const char *));
++void __env_get_directory_descriptor __P((DB_ENV *, int *));
++void __env_set_directory_descriptor __P((DB_ENV *, int));
+ int  __env_set_create_dir __P((DB_ENV *, const char *));
+ int  __env_set_intermediate_dir_mode __P((DB_ENV *, const char *));
+ void __env_get_errcall __P((DB_ENV *, void (**)(const DB_ENV *, const char *, const char *)));
+--- env/env_config.c
++++ env/env_config.c
+@@ -38,7 +38,7 @@
+ 	if (p == NULL)
+ 		fp = NULL;
+ 	else {
+-		fp = fopen(p, "r");
++		fp = fopenat(env->dbenv->directory_descriptor, p, "r");
+ 		__os_free(env, p);
+ 	}
+ 
+--- env/env_method.c
++++ env/env_method.c
+@@ -188,6 +188,7 @@
+ 	 * Initialize the method handles.
+ 	 */
+ 	/* DB_ENV PUBLIC HANDLE LIST BEGIN */
++	dbenv->directory_descriptor = -1;
+ 	dbenv->add_data_dir = __env_add_data_dir;
+ 	dbenv->cdsgroup_begin = __cdsgroup_begin;
+ 	dbenv->close = __env_close_pp;
+@@ -203,6 +204,7 @@
+ 	dbenv->get_cachesize = __memp_get_cachesize;
+ 	dbenv->get_create_dir = __env_get_create_dir;
+ 	dbenv->get_data_dirs = __env_get_data_dirs;
++	dbenv->get_directory_descriptor = __env_get_directory_descriptor;
+ 	dbenv->get_encrypt_flags = __env_get_encrypt_flags;
+ 	dbenv->get_errcall = __env_get_errcall;
+ 	dbenv->get_errfile = __env_get_errfile;
+@@ -318,6 +320,7 @@
+ 	dbenv->set_cachesize = __memp_set_cachesize;
+ 	dbenv->set_create_dir = __env_set_create_dir;
+ 	dbenv->set_data_dir = __env_set_data_dir;
++	dbenv->set_directory_descriptor = __env_set_directory_descriptor;
+ 	dbenv->set_encrypt = __env_set_encrypt;
+ 	dbenv->set_errcall = __env_set_errcall;
+ 	dbenv->set_errfile = __env_set_errfile;
+@@ -926,6 +929,22 @@
+ 	return (0);
+ }
+ 
++void
++__env_get_directory_descriptor(dbenv, directory_descriptor)
++	DB_ENV *dbenv;
++	int *directory_descriptor;
++{
++	*directory_descriptor = dbenv->directory_descriptor;
++}
++
++void
++__env_set_directory_descriptor(dbenv, directory_descriptor)
++	DB_ENV *dbenv;
++	int directory_descriptor;
++{
++	dbenv->directory_descriptor = directory_descriptor;
++}
++
+ static int
+ __env_get_intermediate_dir_mode(dbenv, modep)
+ 	DB_ENV *dbenv;
+--- os/os_dir.c
++++ os/os_dir.c
+@@ -43,13 +43,14 @@
+ 	if (DB_GLOBAL(j_dirlist) != NULL)
+ 		return (DB_GLOBAL(j_dirlist)(dir, namesp, cntp));
+ 
+-	if ((dirp = opendir(CHAR_STAR_CAST dir)) == NULL)
++	int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
++	if ((dirp = opendirat(dirfd, CHAR_STAR_CAST dir)) == NULL)
+ 		return (__os_get_errno());
+ 	names = NULL;
+ 	for (arraysz = cnt = 0; (dp = readdir(dirp)) != NULL;) {
+ 		snprintf(buf, sizeof(buf), "%s/%s", dir, dp->d_name);
+ 
+-		RETRY_CHK(stat(buf, &sb), ret);
++		RETRY_CHK(fstatat(dirfd, buf, &sb, 0), ret);
+ 		if (ret != 0) {
+ 			ret = __os_posix_err(ret);
+ 			goto err;
+--- os/os_handle.c
++++ os/os_handle.c
+@@ -120,7 +120,9 @@
+ 		 */
+ 		fhp->fd = open(name, flags, mode, "shr=get,put,upd,del,upi");
+ #else
+-		fhp->fd = open(name, flags, mode);
++		DB_ENV *dbenv = env == NULL ? NULL : env->dbenv;
++		int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
++		fhp->fd = openat(dirfd, name, flags, mode);
+ #endif
+ 		if (fhp->fd != -1) {
+ 			ret = 0;
+--- os/os_mkdir.c
++++ os/os_mkdir.c
+@@ -31,10 +31,11 @@
+ 		__db_msg(env, "fileops: mkdir %s", name);
+ 
+ 	/* Make the directory, with paranoid permissions. */
++	int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
+ #if defined(HAVE_VXWORKS)
+ 	RETRY_CHK((mkdir(CHAR_STAR_CAST name)), ret);
+ #else
+-	RETRY_CHK((mkdir(name, DB_MODE_700)), ret);
++	RETRY_CHK((mkdirat(dirfd, name, DB_MODE_700)), ret);
+ #endif
+ 	if (ret != 0)
+ 		return (__os_posix_err(ret));
+--- os/os_rename.c
++++ os/os_rename.c
+@@ -33,10 +33,11 @@
+ 
+ 	LAST_PANIC_CHECK_BEFORE_IO(env);
+ 
++	int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
+ 	if (DB_GLOBAL(j_rename) != NULL)
+ 		ret = DB_GLOBAL(j_rename)(oldname, newname);
+ 	else
+-		RETRY_CHK((rename(oldname, newname)), ret);
++		RETRY_CHK((renameat(dirfd, oldname, dirfd, newname)), ret);
+ 
+ 	/*
+ 	 * If "silent" is not set, then errors are OK and we should not output
+--- os/os_stat.c
++++ os/os_stat.c
+@@ -35,7 +35,8 @@
+ 	if (DB_GLOBAL(j_exists) != NULL)
+ 		return (DB_GLOBAL(j_exists)(path, isdirp));
+ 
+-	RETRY_CHK((stat(CHAR_STAR_CAST path, &sb)), ret);
++	int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
++	RETRY_CHK((fstatat(dirfd, CHAR_STAR_CAST path, &sb, 0)), ret);
+ 	if (ret != 0)
+ 		return (__os_posix_err(ret));
+ 
+--- os/os_unlink.c
++++ os/os_unlink.c
+@@ -37,10 +37,11 @@
+ 
+ 	LAST_PANIC_CHECK_BEFORE_IO(env);
+ 
++	int dirfd = dbenv != NULL ? dbenv->directory_descriptor : -1;
+ 	if (DB_GLOBAL(j_unlink) != NULL)
+ 		ret = DB_GLOBAL(j_unlink)(path);
+ 	else {
+-		RETRY_CHK((unlink(CHAR_STAR_CAST path)), ret);
++		RETRY_CHK((unlinkat(dirfd, CHAR_STAR_CAST path, 0)), ret);
+ #ifdef HAVE_QNX
+ 		/*
+ 		 * The file may be a region file created by shm_open, not a

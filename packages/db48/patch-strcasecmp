@@ -1,0 +1,11 @@
+--- env/env_config.c
++++ env/env_config.c
+@@ -6,6 +6,8 @@
+  * $Id$
+  */
+ 
++#include <strings.h>
++
+ #include "db_config.h"
+ 
+ #include "db_int.h"

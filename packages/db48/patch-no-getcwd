@@ -1,0 +1,11 @@
+--- log/log_archive.c
++++ log/log_archive.c
+@@ -113,7 +113,7 @@
+ 	 * Prepend the original absolute pathname if the user wants an
+ 	 * absolute path to the database environment directory.
+ 	 */
+-#ifdef HAVE_GETCWD
++#if defined(HAVE_GETCWD) && !defined(__CloudABI__)
+ 	if (LF_ISSET(DB_ARCH_ABS)) {
+ 		/*
+ 		 * XXX

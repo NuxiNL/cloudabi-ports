@@ -1,0 +1,11 @@
+--- dbinc/db.in
++++ dbinc/db.in
+@@ -99,7 +99,7 @@
+ 
+ @FILE_t_decl@
+ @off_t_decl@
+-@pid_t_decl@
++typedef int pid_t;
+ @size_t_decl@
+ @ssize_t_decl@
+ @time_t_decl@

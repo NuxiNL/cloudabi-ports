@@ -1,0 +1,11 @@
+--- os/os_flock.c
++++ os/os_flock.c
+@@ -23,7 +23,7 @@
+ 	int acquire, nowait;
+ 	off_t offset;
+ {
+-#ifdef HAVE_FCNTL
++#if defined(HAVE_FCNTL) && defined(F_SETLK)
+ 	DB_ENV *dbenv;
+ 	struct flock fl;
+ 	int ret, t_ret;

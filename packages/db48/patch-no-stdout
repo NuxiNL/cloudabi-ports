@@ -1,0 +1,11 @@
+--- common/db_err.c
++++ common/db_err.c
+@@ -640,7 +640,7 @@
+ 	FILE *fp;
+ 
+ 	fp = dbenv == NULL ||
+-	    dbenv->db_msgfile == NULL ? stdout : dbenv->db_msgfile;
++	    dbenv->db_msgfile == NULL ? stderr : dbenv->db_msgfile;
+ 	(void)vfprintf(fp, fmt, ap);
+ 
+ 	(void)fprintf(fp, "\n");

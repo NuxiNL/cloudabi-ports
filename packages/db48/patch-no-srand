@@ -1,0 +1,15 @@
+--- os/os_uid.c
++++ os/os_uid.c
+@@ -45,10 +45,12 @@
+ 	 * that's not all that easy to do.  Seed and use srand()/rand(), if
+ 	 * we can find them.
+ 	 */
++#ifndef __CloudABI__
+ 	if (DB_GLOBAL(uid_init) == 0) {
+ 		DB_GLOBAL(uid_init) = 1;
+ 		srand((u_int)id);
+ 	}
++#endif
+ 	id ^= (u_int)rand();
+ 
+ 	*idp = id;

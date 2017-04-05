@@ -1,0 +1,11 @@
+--- os/os_pid.c
++++ os/os_pid.c
+@@ -33,6 +33,8 @@
+ 		if (dbenv == NULL) {
+ #if defined(HAVE_VXWORKS)
+ 			*pidp = taskIdSelf();
++#elif defined(__CloudABI__)
++			*pidp = 1;
+ #else
+ 			*pidp = getpid();
+ #endif

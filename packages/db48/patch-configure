@@ -1,0 +1,10 @@
+--- dist/configure
++++ dist/configure
+@@ -18438,7 +18438,6 @@
+ if test "x$ac_cv_type_pid_t" = x""yes; then :
+ 
+ else
+-  as_fn_error "No pid_t type." "$LINENO" 5
+ fi
+ 
+ 
