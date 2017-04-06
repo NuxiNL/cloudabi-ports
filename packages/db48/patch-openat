@@ -18,6 +18,32 @@
  		ret = __os_get_errno();
  		__db_err(env, ret, "%s", t->re_source);
  		goto err;
+--- cxx/cxx_db.cpp
++++ cxx/cxx_db.cpp
+@@ -640,6 +640,10 @@
+     (db, bt_minkey), DB_RETOK_STD)
+ DB_METHOD(set_bt_prefix, (bt_prefix_fcn_type func),
+     (db, func), DB_RETOK_STD)
++DB_METHOD_VOID(get_directory_descriptor,
++    (int *directory_descriptor), (db, directory_descriptor))
++DB_METHOD_VOID(set_directory_descriptor,
++    (int directory_descriptor), (db, directory_descriptor))
+ DB_METHOD(set_dup_compare, (dup_compare_fcn_type func),
+     (db, func), DB_RETOK_STD)
+ DB_METHOD(get_encrypt_flags, (u_int32_t *flagsp),
+--- cxx/cxx_env.cpp
++++ cxx/cxx_env.cpp
+@@ -709,6 +709,10 @@
+ // for comparison with Java's list.
+ //
+ DBENV_METHOD(set_data_dir, (const char *dir), (dbenv, dir))
++DBENV_METHOD_VOID(get_directory_descriptor,
++    (int *directory_descriptor), (dbenv, directory_descriptor))
++DBENV_METHOD_VOID(set_directory_descriptor,
++    (int directory_descriptor), (dbenv, directory_descriptor))
+ DBENV_METHOD(get_encrypt_flags, (u_int32_t *flagsp),
+     (dbenv, flagsp))
+ DBENV_METHOD(set_encrypt, (const char *passwd, u_int32_t flags),
 --- db/db_method.c
 +++ db/db_method.c
 @@ -47,6 +47,8 @@
@@ -111,6 +137,33 @@
  	int  (*set_encrypt) __P((DB_ENV *, const char *, u_int32_t));
  	void (*set_errcall) __P((DB_ENV *,
  		void (*)(const DB_ENV *, const char *, const char *)));
+--- dbinc/db_cxx.in
++++ dbinc/db_cxx.in
+@@ -212,6 +212,7 @@
+ 	virtual int get_cachesize(u_int32_t *, u_int32_t *, int *);
+ 	virtual int get_create_dir(const char **);
+ 	virtual int get_dbname(const char **, const char **);
++	virtual void get_directory_descriptor(int *);
+ 	virtual int get_dup_compare(int (**)(Db *, const Dbt *, const Dbt *));
+ 	virtual int get_encrypt_flags(u_int32_t *);
+ 	virtual void get_errcall(
+@@ -266,6 +267,7 @@
+ 	virtual int set_bt_prefix(size_t (*)(Db *, const Dbt *, const Dbt *));
+ 	virtual int set_cachesize(u_int32_t, u_int32_t, int);
+ 	virtual int set_create_dir(const char *);
++	virtual void set_directory_descriptor(int);
+ 	virtual int set_dup_compare(dup_compare_fcn_type); /*deprecated*/
+ 	virtual int set_dup_compare(int (*)(Db *, const Dbt *, const Dbt *));
+ 	virtual int set_encrypt(const char *, u_int32_t);
+@@ -476,6 +478,8 @@
+ 	virtual int set_create_dir(const char *);
+ 	virtual int get_data_dirs(const char ***);
+ 	virtual int set_data_dir(const char *);
++	virtual void get_directory_descriptor(int *);
++	virtual void set_directory_descriptor(int);
+ 	virtual int get_encrypt_flags(u_int32_t *);
+ 	virtual int get_intermediate_dir_mode(const char **);
+ 	virtual int set_intermediate_dir_mode(const char *);
 --- dbinc_auto/env_ext.h
 +++ dbinc_auto/env_ext.h
 @@ -33,6 +33,8 @@

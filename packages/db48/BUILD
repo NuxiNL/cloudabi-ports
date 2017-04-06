@@ -8,6 +8,7 @@ def build(ctx):
     build = ctx.extract('db-%(version)s').path('dist').gnu_configure([
         '--disable-mutexsupport',
         '--disable-replication',
+        '--enable-cxx',
         'ac_cv_func_getcwd=yes',
         'ac_cv_func_printf=yes',
     ])
@@ -20,7 +21,7 @@ package(
     name='db48',
     version='4.8.30',
     homepage='http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/',
-    lib_depends={'c-runtime'},
+    lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 
@@ -29,6 +30,7 @@ distfile(
     checksum='e0491a07cdb21fb9aa82773bbbedaeb7639cbd0e7f96147ab46141e0045db72a',
     master_sites={'http://download.oracle.com/berkeley-db/'},
     unsafe_string_sources={
+        'cxx/cxx_except.cpp',
         'db/partition.c',
         'dbm/dbm.c',
         'log/log_put.c',
