@@ -1,0 +1,12 @@
+--- build_detect_platform
++++ build_detect_platform
+@@ -225,6 +225,9 @@
+ 
+     # Test if gcc SSE 4.2 is supported
+     $CXX $CXXFLAGS -x c++ - -o $CXXOUTPUT -msse4.2 2>/dev/null  <<EOF
++      #ifndef __SSE4_2__
++      #error "We need SSE 4.2"
++      #endif
+       int main() {}
+ EOF
+     if [ "$?" = 0 ]; then

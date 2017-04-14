@@ -1,6 +1,6 @@
 --- build_detect_platform
 +++ build_detect_platform
-@@ -73,6 +73,11 @@
+@@ -73,6 +73,12 @@
  fi
  
  case "$TARGET_OS" in
@@ -8,6 +8,7 @@
 +        PLATFORM=OS_CLOUDABI
 +        COMMON_FLAGS="$MEMCMP_FLAG -DOS_CLOUDABI"
 +        PORT_FILE=port/port_posix.cc
++        PORT_SSE_FILE=port/port_posix_sse.cc
 +        ;;
      CYGWIN_*)
          PLATFORM=OS_LINUX
