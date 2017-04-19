@@ -1,0 +1,11 @@
+--- build/cmake/CMakeLists.txt
++++ build/cmake/CMakeLists.txt
+@@ -23,8 +23,6 @@
+ ENDIF (ZSTD_LEGACY_SUPPORT)
+ 
+ ADD_SUBDIRECTORY(lib)
+-ADD_SUBDIRECTORY(programs)
+-ADD_SUBDIRECTORY(tests)
+ IF (ZSTD_BUILD_CONTRIB)
+     ADD_SUBDIRECTORY(contrib)
+ ENDIF (ZSTD_BUILD_CONTRIB)
