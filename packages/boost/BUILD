@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # This file is distributed under a 2-clause BSD license.
 # See the LICENSE file for details.
@@ -19,6 +19,7 @@ def build(ctx):
         '--without-python', '--prefix=%s' % stage, 'install',
     ] + {
         'armv6': ['abi=aapcs', 'address-model=32', 'architecture=arm'],
+        'armv7': ['abi=aapcs', 'address-model=32', 'architecture=arm'],
         'aarch64': ['abi=aapcs', 'address-model=64', 'architecture=arm'],
         'i686': ['abi=sysv', 'address-model=32', 'architecture=x86'],
         'x86_64': ['abi=sysv', 'address-model=64', 'architecture=x86'],
