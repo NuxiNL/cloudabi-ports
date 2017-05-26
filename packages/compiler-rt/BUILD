@@ -49,7 +49,7 @@ def build(ctx):
         'x86_64/floatundidf.S', 'x86_64/floatundisf.S',
         'x86_64/floatundixf.S',
     }
-    if ctx.cpu() == 'armv6':
+    if ctx.cpu().startswith('armv'):
         sources |= {
             'arm/aeabi_idivmod.S', 'arm/aeabi_ldivmod.S',
             'arm/aeabi_uidivmod.S', 'arm/aeabi_uldivmod.S',
