@@ -116,7 +116,7 @@ class FileHandle:
     def debug_shell(self):
         self.run([
             'HOME=' + os.getenv('HOME'),
-            'LC_CTYPE=' + os.getenv('LC_CTYPE'),
+            'LC_CTYPE=' + os.getenv('LC_CTYPE', 'en_US.UTF-8'),
             'TERM=' + os.getenv('TERM'),
             'sh',
         ])
