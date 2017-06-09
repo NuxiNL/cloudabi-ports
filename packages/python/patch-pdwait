@@ -189,7 +189,7 @@
  #undef HAVE_FORK
  
 +/* Define to 1 if you have the `pdwait' function. */
-+#define HAVE_PDWAIT 1
++#undef HAVE_PDWAIT
 +
  /* Define to 1 if you have the `forkpty' function. */
  #undef HAVE_FORKPTY

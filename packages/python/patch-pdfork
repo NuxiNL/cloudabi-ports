@@ -49,7 +49,7 @@
  #endif
  #endif
  
-+#ifdef HAVE_PDFORK
++#ifdef HAVE_SYS_PROCDESC_H
 +#include <sys/procdesc.h>
 +#endif
 +
@@ -114,7 +114,7 @@
  #undef HAVE_FORK
  
 +/* Define to 1 if you have the `pdfork' function. */
-+#define HAVE_PDFORK 1
++#undef HAVE_PDFORK
 +
  /* Define to 1 if you have the `forkpty' function. */
  #undef HAVE_FORKPTY
