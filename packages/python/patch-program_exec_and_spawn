@@ -1,0 +1,441 @@
+--- pyconfig.h.in
++++ pyconfig.h.in
+@@ -305,6 +305,12 @@
+ /* Define to 1 if you have the `pdwait' function. */
+ #define HAVE_PDWAIT 1
+ 
++/* Define to 1 if you have the `program_exec' function. */
++#undef HAVE_PROGRAM_EXEC
++
++/* Define to 1 if you have the `program_spawn' function. */
++#undef HAVE_PROGRAM_SPAWN
++
+ /* Define to 1 if you have the `forkpty' function. */
+ #undef HAVE_FORKPTY
+ 
+--- Modules/clinic/posixmodule.c.h
++++ Modules/clinic/posixmodule.c.h
+@@ -5752,6 +5752,93 @@
+ 
+ #endif /* defined(HAVE_GETRANDOM_SYSCALL) */
+ 
++#if defined(HAVE_PROGRAM_EXEC)
++
++PyDoc_STRVAR(os_program_exec__doc__,
++"program_exec($module, /, fd, argdata)\n"
++"--\n"
++"\n"
++"Replace current process with another process image.\n"
++"\n"
++"  fd\n"
++"    File descriptor to executable file.\n"
++"  argdata\n"
++"    Object to convert to Argdata and pass as parameters.\n"
++"\n"
++"Execute the binary from the given file descriptor with the given\n"
++"argdata as arguments, replacing current process.");
++
++#define OS_PROGRAM_EXEC_METHODDEF    \
++    {"program_exec", (PyCFunction)os_program_exec, METH_FASTCALL, os_program_exec__doc__},
++
++static PyObject *
++os_program_exec_impl(PyObject *module, int fd, PyObject *argdata);
++
++static PyObject *
++os_program_exec(PyObject *module, PyObject **args, Py_ssize_t nargs, PyObject *kwnames)
++{
++    PyObject *return_value = NULL;
++    static const char * const _keywords[] = {"fd", "argdata", NULL};
++    static _PyArg_Parser _parser = {"O&O:program_exec", _keywords, 0};
++    int fd;
++    PyObject *argdata;
++
++    if (!_PyArg_ParseStack(args, nargs, kwnames, &_parser,
++        fildes_converter, &fd, &argdata)) {
++        goto exit;
++    }
++    return_value = os_program_exec_impl(module, fd, argdata);
++
++exit:
++    return return_value;
++}
++
++#endif /* defined(HAVE_PROGRAM_EXEC) */
++
++#if defined(HAVE_PROGRAM_SPAWN)
++
++PyDoc_STRVAR(os_program_spawn__doc__,
++"program_spawn($module, /, fd, argdata)\n"
++"--\n"
++"\n"
++"Start a binary as a new process.\n"
++"\n"
++"  fd\n"
++"    File descriptor to executable file.\n"
++"  argdata\n"
++"    Object to convert to Argdata and pass as parameters.\n"
++"\n"
++"Execute the binary from the given file descriptor with the given\n"
++"argdata as arguments, in a child process. Returns a child file\n"
++"descriptor.");
++
++#define OS_PROGRAM_SPAWN_METHODDEF    \
++    {"program_spawn", (PyCFunction)os_program_spawn, METH_FASTCALL, os_program_spawn__doc__},
++
++static PyObject *
++os_program_spawn_impl(PyObject *module, int fd, PyObject *argdata);
++
++static PyObject *
++os_program_spawn(PyObject *module, PyObject **args, Py_ssize_t nargs, PyObject *kwnames)
++{
++    PyObject *return_value = NULL;
++    static const char * const _keywords[] = {"fd", "argdata", NULL};
++    static _PyArg_Parser _parser = {"O&O:program_spawn", _keywords, 0};
++    int fd;
++    PyObject *argdata;
++
++    if (!_PyArg_ParseStack(args, nargs, kwnames, &_parser,
++        fildes_converter, &fd, &argdata)) {
++        goto exit;
++    }
++    return_value = os_program_spawn_impl(module, fd, argdata);
++
++exit:
++    return return_value;
++}
++
++#endif /* defined(HAVE_PROGRAM_SPAWN) */
++
+ #ifndef OS_TTYNAME_METHODDEF
+     #define OS_TTYNAME_METHODDEF
+ #endif /* !defined(OS_TTYNAME_METHODDEF) */
+@@ -6263,4 +6350,12 @@
+ #ifndef OS_GETRANDOM_METHODDEF
+     #define OS_GETRANDOM_METHODDEF
+ #endif /* !defined(OS_GETRANDOM_METHODDEF) */
+-/*[clinic end generated code: output=50cfb7ebc44efb67 input=a9049054013a1b77]*/
++
++#ifndef OS_PROGRAM_EXEC_METHODDEF
++    #define OS_PROGRAM_EXEC_METHODDEF
++#endif /* !defined(OS_PROGRAM_EXEC_METHODDEF) */
++
++#ifndef OS_PROGRAM_SPAWN_METHODDEF
++    #define OS_PROGRAM_SPAWN_METHODDEF
++#endif /* !defined(OS_PROGRAM_SPAWN_METHODDEF) */
++/*[clinic end generated code: output=7c0b9fece967ff63 input=a9049054013a1b77]*/
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -122,6 +122,14 @@
+ #include <sys/procdesc.h>
+ #endif
+ 
++#ifdef HAVE_PROGRAM_H
++#include <sys/program.h>
++#endif
++
++#ifdef HAVE_ARGDATA_H
++#include <sys/argdata.h>
++#endif
++
+ #ifdef HAVE_DLFCN_H
+ #include <dlfcn.h>
+ #endif
+@@ -12248,6 +12252,289 @@
+ }
+ #endif   /* HAVE_GETRANDOM_SYSCALL */
+ 
++#if defined(HAVE_PROGRAM_EXEC) || defined(HAVE_PROGRAM_SPAWN)
++struct argdata_list {
++    argdata_t *argdata;
++    void *pymem;
++    struct argdata_list *next;
++};
++
++static void
++add_argdata_freelist(argdata_t *a, struct argdata_list **freelist)
++{
++    struct argdata_list *obj;
++
++    obj = PyMem_New(struct argdata_list, 1);
++    obj->argdata = a;
++    obj->pymem = NULL;
++    obj->next = *freelist;
++    *freelist = obj;
++}
++
++static void
++add_pymem_freelist(void *p, struct argdata_list **freelist)
++{
++    struct argdata_list *obj;
++
++    obj = PyMem_New(struct argdata_list, 1);
++    obj->argdata = NULL;
++    obj->pymem = p;
++    obj->next = *freelist;
++    *freelist = obj;
++}
++
++static const argdata_t *
++convert_argdata(PyObject *thing, struct argdata_list **freelist)
++{
++    if (thing == NULL || thing == Py_None) {
++        return &argdata_null;
++    }
++
++    if (thing == Py_False) {
++        return &argdata_false;
++    } else if (thing == Py_True) {
++        return &argdata_true;
++    }
++
++    if (PyBytes_Check(thing)) {
++        Py_ssize_t size = PyBytes_Size(thing);
++        char *bytes = PyBytes_AsString(thing);
++        if (bytes == NULL || PyErr_Occurred()) {
++            return NULL;
++        }
++        argdata_t *res = argdata_create_str(bytes, size);
++        add_argdata_freelist(res, freelist);
++        // PyByes object keeps ownership of bytes buffer
++        return res;
++    }
++
++    if (PyFloat_Check(thing)) {
++        double d = PyFloat_AsDouble(thing);
++        if (PyErr_Occurred()) {
++            return NULL;
++        }
++        argdata_t *res = argdata_create_float(d);
++        add_argdata_freelist(res, freelist);
++        return res;
++    }
++
++    if (PyLong_Check(thing)) {
++        int value = PyLong_AsUnsignedLongLong(thing);
++        if (PyErr_Occurred()) {
++            return NULL;
++        }
++        argdata_t *res = argdata_create_int(value);
++        add_argdata_freelist(res, freelist);
++        return res;
++    }
++
++    if (PyUnicode_Check(thing)) {
++        Py_ssize_t size;
++        char *utf8 = PyUnicode_AsUTF8AndSize(thing, &size);
++        argdata_t *res = argdata_create_str(utf8, size);
++        add_argdata_freelist(res, freelist);
++        // PyUnicode object keeps ownership of utf8 buffer
++        return res;
++    }
++
++    if (PySequence_Check(thing)) {
++        Py_ssize_t num_items = PySequence_Size(thing);
++        if (num_items < 0) {
++            return &argdata_null;
++        }
++
++        PyObject *items_it = PyObject_GetIter(thing);
++        if (items_it == NULL) {
++            return &argdata_null;
++        }
++
++        argdata_t **arg_items = PyMem_New(argdata_t*, num_items);
++        add_pymem_freelist(arg_items, freelist);
++
++        PyObject *item;
++        size_t i = 0;
++        while ((item = PyIter_Next(items_it))) {
++            arg_items[i] = convert_argdata(item, freelist);
++            Py_DECREF(item);
++            if(PyErr_Occurred()) {
++                Py_DECREF(items_it);
++                return NULL;
++            }
++            ++i;
++        }
++        assert(i == num_items);
++
++        Py_DECREF(items_it);
++
++        argdata_t *res = argdata_create_seq(arg_items, num_items);
++        add_argdata_freelist(res, freelist);
++        return res;
++    }
++
++    if (PyMapping_Check(thing)) {
++        Py_ssize_t num_items = PyMapping_Size(thing);
++        if (num_items < 0) {
++            return &argdata_null;
++        }
++
++        PyObject *items = PyMapping_Items(thing);
++        if (items == NULL) {
++            return &argdata_null;
++        }
++        PyObject *items_it = PyObject_GetIter(items);
++        if (items_it == NULL) {
++            Py_DECREF(items);
++            return &argdata_null;
++        }
++
++        argdata_t **keys = PyMem_New(argdata_t*, num_items);
++        argdata_t **values = PyMem_New(argdata_t*, num_items);
++        add_pymem_freelist(keys, freelist);
++        add_pymem_freelist(values, freelist);
++
++        PyObject *item;
++        size_t i = 0;
++        while ((item = PyIter_Next(items_it))) {
++            PyObject *key = PyTuple_GetItem(item, 0);
++            if (PyErr_Occurred()) goto pyerr1;
++            PyObject *value = PyTuple_GetItem(item, 1);
++            if (PyErr_Occurred()) goto pyerr1;
++
++            keys[i] = convert_argdata(key, freelist);
++            if (PyErr_Occurred()) goto pyerr1;
++            values[i] = convert_argdata(value, freelist);
++            if (PyErr_Occurred()) goto pyerr1;
++
++            Py_DECREF(item);
++            ++i;
++            continue;
++
++pyerr1:
++            Py_DECREF(item);
++            Py_DECREF(items_it);
++            Py_DECREF(items);
++            return NULL;
++        }
++        assert(i == num_items);
++
++        Py_DECREF(items_it);
++        Py_DECREF(items);
++
++        argdata_t *res = argdata_create_map(keys, values, num_items);
++        add_argdata_freelist(res, freelist);
++        return res;
++    }
++
++    PyObject *func_fileno = PyObject_GetAttrString(thing, "fileno");
++    if (func_fileno != NULL && PyCallable_Check(func_fileno)) {
++        // Can call fileno() on it, so it's an FD
++        PyObject *res = PyObject_CallFunctionObjArgs(func_fileno, /*thing,*/ NULL);
++        Py_DECREF(func_fileno);
++        if (res != NULL && PyLong_Check(res)) {
++            int fd = PyLong_AsUnsignedLongLong(res);
++            Py_DECREF(res);
++            if (PyErr_Occurred()) {
++                return NULL;
++            }
++            argdata_t *res = argdata_create_fd(fd);
++            add_argdata_freelist(res, freelist);
++            return res;
++        }
++        Py_XDECREF(res);
++        return &argdata_null;
++    }
++
++    // TODO: datetime object, call argdata_create_datetime
++
++    // It's something else, no clue, return argdata_null
++    return &argdata_null;
++}
++
++static int
++argdata_call(int (*program_func)(int, const argdata_t*), int fd, PyObject *arguments)
++{
++    struct argdata_list *freelist = NULL;
++    const argdata_t *argdata = convert_argdata(arguments, &freelist);
++    int result = -1;
++    if (!PyErr_Occurred()) {
++        result = program_func(fd, argdata);
++    }
++
++    while (freelist) {
++      struct argdata_list *obj = freelist;
++      freelist = obj->next;
++      if (obj->argdata != NULL) {
++          argdata_free(obj->argdata);
++      }
++      if (obj->pymem != NULL) {
++          PyMem_Free(obj->pymem);
++      }
++      PyMem_Free(obj);
++    }
++
++    return result;
++}
++#endif
++
++#ifdef HAVE_PROGRAM_EXEC
++/*[clinic input]
++os.program_exec
++
++    fd: fildes
++      File descriptor to executable file.
++    argdata: object
++      Object to convert to Argdata and pass as parameters.
++
++Replace current process with another process image.
++
++Execute the binary from the given file descriptor with the given
++argdata as arguments, replacing current process.
++[clinic start generated code]*/
++
++static PyObject *
++os_program_exec_impl(PyObject *module, int fd, PyObject *argdata)
++/*[clinic end generated code: output=b80b3a06df881875 input=6aa4feb87a3eea03]*/
++{
++    errno = argdata_call(program_exec, fd, argdata);
++    if (PyErr_Occurred()) {
++        return NULL;
++    }
++    return posix_error();
++}
++#endif
++
++#ifdef HAVE_PROGRAM_SPAWN
++/*[clinic input]
++os.program_spawn
++
++    fd: fildes
++      File descriptor to executable file.
++    argdata: object
++      Object to convert to Argdata and pass as parameters.
++
++Start a binary as a new process.
++
++Execute the binary from the given file descriptor with the given
++argdata as arguments, in a child process. Returns a child file
++descriptor.
++[clinic start generated code]*/
++
++static PyObject *
++os_program_spawn_impl(PyObject *module, int fd, PyObject *argdata)
++/*[clinic end generated code: output=ac72314dc7fa73c0 input=4ffcf387e04cc9e9]*/
++{
++    int result = argdata_call(program_spawn, fd, argdata);
++    if (PyErr_Occurred()) {
++        return NULL;
++    }
++    if (result < 0) {
++      return posix_error();
++    } else {
++      return PyLong_FromUnsignedLong(result);
++    }
++}
++#endif
++
+ #include "clinic/posixmodule.c.h"
+ 
+ /*[clinic input]
+@@ -12742,6 +12742,8 @@
+                         posix_scandir__doc__},
+     OS_FSPATH_METHODDEF
+     OS_GETRANDOM_METHODDEF
++    OS_PROGRAM_EXEC_METHODDEF
++    OS_PROGRAM_SPAWN_METHODDEF
+     {NULL,              NULL}            /* Sentinel */
+ };
+ 

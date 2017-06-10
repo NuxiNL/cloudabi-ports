@@ -101,7 +101,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+sys/procdesc.h \
++sys/procdesc.h sys/program.h sys/argdata.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -151,7 +151,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ pdfork pdwait \
++ pdfork pdwait program_exec program_spawn \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty
  do :
    as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -191,7 +191,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+sys/procdesc.h \
++sys/procdesc.h sys/program.h sys/argdata.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -241,7 +241,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ pdfork pdwait \
++ pdfork pdwait program_exec program_spawn \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty)
  
  AC_CHECK_DECL(dirfd,
