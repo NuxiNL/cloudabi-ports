@@ -105,7 +105,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -11214,27 +11217,35 @@
+@@ -11214,27 +11218,35 @@
  fi
  
  # checks for library functions
@@ -195,7 +195,7 @@
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
-@@ -3400,27 +3403,35 @@
+@@ -3400,27 +3404,35 @@
  fi
  
  # checks for library functions
@@ -549,7 +549,7 @@
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H
  
-@@ -1099,6 +1195,9 @@
+@@ -1099,6 +1198,9 @@
  /* Define to 1 if you have the <term.h> header file. */
  #undef HAVE_TERM_H
  
@@ -559,7 +559,7 @@
  /* Define to 1 if you have the `tgamma' function. */
  #undef HAVE_TGAMMA
  
-@@ -1124,6 +1223,9 @@
+@@ -1124,6 +1226,9 @@
  /* Define to 1 if you have the `truncate' function. */
  #undef HAVE_TRUNCATE
  
@@ -569,7 +569,7 @@
  /* Define to 1 if you don't have `tm_zone' but do have the external array
     `tzname'. */
  #undef HAVE_TZNAME
-@@ -1131,12 +1233,18 @@
+@@ -1131,12 +1236,18 @@
  /* Define this if you have tcl and TCL_UTF_MAX==6 */
  #undef HAVE_UCS4_TCL
  
@@ -588,7 +588,7 @@
  /* Define to 1 if you have the `unlinkat' function. */
  #undef HAVE_UNLINKAT
  
-@@ -1160,6 +1268,9 @@
+@@ -1160,6 +1271,9 @@
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
  

@@ -1,21 +1,6 @@
---- pyconfig.h.in
-+++ pyconfig.h.in
-@@ -305,6 +305,12 @@
- /* Define to 1 if you have the `pdwait' function. */
- #define HAVE_PDWAIT 1
- 
-+/* Define to 1 if you have the `program_exec' function. */
-+#undef HAVE_PROGRAM_EXEC
-+
-+/* Define to 1 if you have the `program_spawn' function. */
-+#undef HAVE_PROGRAM_SPAWN
-+
- /* Define to 1 if you have the `forkpty' function. */
- #undef HAVE_FORKPTY
- 
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -5752,6 +5752,93 @@
+@@ -5666,6 +5666,93 @@
  
  #endif /* defined(HAVE_GETRANDOM_SYSCALL) */
  
@@ -109,7 +94,7 @@
  #ifndef OS_TTYNAME_METHODDEF
      #define OS_TTYNAME_METHODDEF
  #endif /* !defined(OS_TTYNAME_METHODDEF) */
-@@ -6263,4 +6350,12 @@
+@@ -6149,4 +6236,12 @@
  #ifndef OS_GETRANDOM_METHODDEF
      #define OS_GETRANDOM_METHODDEF
  #endif /* !defined(OS_GETRANDOM_METHODDEF) */
@@ -125,8 +110,8 @@
 +/*[clinic end generated code: output=7c0b9fece967ff63 input=a9049054013a1b77]*/
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
-@@ -122,6 +122,14 @@
- #include <sys/procdesc.h>
+@@ -117,6 +117,14 @@
+ #endif
  #endif
  
 +#ifdef HAVE_PROGRAM_H
@@ -140,7 +125,7 @@
  #ifdef HAVE_DLFCN_H
  #include <dlfcn.h>
  #endif
-@@ -12248,6 +12252,289 @@
+@@ -12139,6 +12147,289 @@
  }
  #endif   /* HAVE_GETRANDOM_SYSCALL */
  
@@ -430,7 +415,7 @@
  #include "clinic/posixmodule.c.h"
  
  /*[clinic input]
-@@ -12742,6 +12742,8 @@
+@@ -12340,6 +12631,8 @@
                          posix_scandir__doc__},
      OS_FSPATH_METHODDEF
      OS_GETRANDOM_METHODDEF
@@ -438,4 +423,19 @@
 +    OS_PROGRAM_SPAWN_METHODDEF
      {NULL,              NULL}            /* Sentinel */
  };
+ 
+--- pyconfig.h.in
++++ pyconfig.h.in
+@@ -302,6 +302,12 @@
+ /* Define to 1 if you have the `fork' function. */
+ #undef HAVE_FORK
+ 
++/* Define to 1 if you have the `program_exec' function. */
++#undef HAVE_PROGRAM_EXEC
++
++/* Define to 1 if you have the `program_spawn' function. */
++#undef HAVE_PROGRAM_SPAWN
++
+ /* Define to 1 if you have the `forkpty' function. */
+ #undef HAVE_FORKPTY
  
