@@ -29,48 +29,48 @@ Py_ProgramMain(const argdata_t *ad)
     PySys_ResetWarnOptions();
 
     argdata_map_iterate(ad, &it);
-    while (argdata_map_next(&it, &key, &val)) {
+    while (argdata_map_get(&it, &key, &val)) {
         const char *keystr;
-        if (argdata_get_str_c(key, &keystr) != 0)
-            continue;
-
-        if (strcmp(keystr, "bytescompare") == 0) {
-            Py_BytesWarningFlag++;
-        } else if (strcmp(keystr, "command") == 0) {
-            if (argdata_get_str_c(val, &command) != 0) {
-                fprintf(stderr, "Fatal Python error: "
-                                "unable to decode the 'command' argument\n");
-                exit(1);
+        if (argdata_get_str_c(key, &keystr) == 0) {
+            if (strcmp(keystr, "bytescompare") == 0) {
+                Py_BytesWarningFlag++;
+            } else if (strcmp(keystr, "command") == 0) {
+                if (argdata_get_str_c(val, &command) != 0) {
+                    fprintf(stderr, "Fatal Python error: "
+                                    "unable to decode the 'command' argument\n");
+                    exit(1);
+                }
+            } else if (strcmp(keystr, "debug") == 0) {
+                Py_DebugFlag++;
+            } else if (strcmp(keystr, "dontwritebytecode") == 0) {
+                Py_DontWriteBytecodeFlag++;
+            } else if (strcmp(keystr, "inspect") == 0) {
+                Py_InspectFlag++;
+                Py_InteractiveFlag++;
+            } else if (strcmp(keystr, "optimize") == 0) {
+                Py_OptimizeFlag++;
+            } else if (strcmp(keystr, "script") == 0) {
+                int fd;
+                if (argdata_get_fd(val, &fd) != 0 ||
+                    (script = fdopen(fd, "r")) == NULL) {
+                    fprintf(stderr, "Fatal Python error: "
+                                    "unable to decode the 'script' argument\n");
+                    exit(1);
+                }
+            } else if (strcmp(keystr, "stderr") == 0) {
+                int fd;
+                if (argdata_get_fd(val, &fd) == 0) {
+                    FILE *fp = fdopen(fd, "w");
+                    if (fp != NULL)
+                        fswap(stderr, fp);
+                }
+            } else if (strcmp(keystr, "unbufferedstdio") == 0) {
+                Py_UnbufferedStdioFlag = 1;
+            } else if (strcmp(keystr, "verbose") == 0) {
+                Py_VerboseFlag++;
             }
-        } else if (strcmp(keystr, "debug") == 0) {
-            Py_DebugFlag++;
-        } else if (strcmp(keystr, "dontwritebytecode") == 0) {
-            Py_DontWriteBytecodeFlag++;
-        } else if (strcmp(keystr, "inspect") == 0) {
-            Py_InspectFlag++;
-            Py_InteractiveFlag++;
-        } else if (strcmp(keystr, "optimize") == 0) {
-            Py_OptimizeFlag++;
-        } else if (strcmp(keystr, "script") == 0) {
-            int fd;
-            if (argdata_get_fd(val, &fd) != 0 ||
-                (script = fdopen(fd, "r")) == NULL) {
-                fprintf(stderr, "Fatal Python error: "
-                                "unable to decode the 'script' argument\n");
-                exit(1);
-            }
-        } else if (strcmp(keystr, "stderr") == 0) {
-            int fd;
-            if (argdata_get_fd(val, &fd) == 0) {
-                FILE *fp = fdopen(fd, "w");
-                if (fp != NULL)
-                    fswap(stderr, fp);
-            }
-        } else if (strcmp(keystr, "unbufferedstdio") == 0) {
-            Py_UnbufferedStdioFlag = 1;
-        } else if (strcmp(keystr, "verbose") == 0) {
-            Py_VerboseFlag++;
         }
+        argdata_map_next(&it);
     }
 
     /*
@@ -78,15 +78,15 @@ Py_ProgramMain(const argdata_t *ad)
      * install it as sys.path.
      */
     argdata_map_iterate(ad, &itpath);
-    while (argdata_map_next(&itpath, &key, &val)) {
+    while (argdata_map_get(&itpath, &key, &val)) {
         const char *keystr;
-        if (argdata_get_str_c(key, &keystr) != 0)
-            continue;
-
-        if (strcmp(keystr, "path") == 0) {
-           path_argdata = val;
-           break;
+        if (argdata_get_str_c(key, &keystr) == 0) {
+            if (strcmp(keystr, "path") == 0) {
+                path_argdata = val;
+                break;
+            }
         }
+        argdata_map_next(&itpath);
     }
 
     Py_NoUserSiteDirectory = 1;
@@ -95,14 +95,14 @@ Py_ProgramMain(const argdata_t *ad)
 
     /* Extract the "args" key and expose it as sys.argdata. */
     argdata_map_iterate(ad, &it);
-    while (argdata_map_next(&it, &key, &val)) {
+    while (argdata_map_get(&it, &key, &val)) {
         const char *keystr;
-        if (argdata_get_str_c(key, &keystr) != 0)
-            continue;
-
-        if (strcmp(keystr, "args") == 0) {
-            PySys_SetArgdata("argdata", val);
+        if (argdata_get_str_c(key, &keystr) == 0) {
+            if (strcmp(keystr, "args") == 0) {
+                PySys_SetArgdata("argdata", val);
+            }
         }
+        argdata_map_next(&itpath);
     }
 
     if (Py_VerboseFlag) {

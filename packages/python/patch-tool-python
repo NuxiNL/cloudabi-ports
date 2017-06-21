@@ -102,7 +102,7 @@
  static PyObject *
  makepathobject(const wchar_t *path, wchar_t delim)
  {
-@@ -2277,6 +2281,236 @@
+@@ -2277,6 +2281,241 @@
      PySys_SetArgvEx(argc, argv, Py_IsolatedFlag == 0);
  }
  
@@ -239,12 +239,13 @@
 +    /* Dictionaries. */
 +    {
 +        argdata_map_iterator_t it;
-+        if (argdata_map_iterate(ad, &it) == 0) {
++        argdata_map_iterate(ad, &it);
++        if (it.index != ARGDATA_ITERATOR_INVALID) {
 +            PyObject *v = PyDict_New();
 +            if (v == NULL)
 +                return NULL;
 +            const argdata_t *key, *value;
-+            while (argdata_map_next(&it, &key, &value)) {
++            while (argdata_map_get(&it, &key, &value)) {
 +                PyObject *keyv = convertargdata(key, true);
 +                if (keyv == NULL) {
 +                    Py_DECREF(v);
@@ -262,6 +263,7 @@
 +                    Py_DECREF(v);
 +                    return NULL;
 +                }
++                argdata_map_next(&it);
 +            }
 +            return v;
 +        }
@@ -270,14 +272,15 @@
 +    /* Lists or tuples, depending on whether mutability is permitted. */
 +    {
 +        argdata_seq_iterator_t it;
-+        if (argdata_seq_iterate(ad, &it) == 0) {
++        argdata_seq_iterate(ad, &it);
++        if (it.index != ARGDATA_ITERATOR_INVALID) {
 +            if (immutable) {
 +                PyObject *v = PyTuple_New(0);
 +                if (v == NULL)
 +                    return NULL;
 +                const argdata_t *value;
 +                size_t i = 0;
-+                while (argdata_seq_next(&it, &value)) {
++                while (argdata_seq_get(&it, &value)) {
 +                    PyObject *valuev = convertargdata(value, true);
 +                    if (valuev == NULL) {
 +                        Py_DECREF(v);
@@ -290,6 +293,7 @@
 +                        return NULL;
 +                    }
 +                    ++i;
++                    argdata_seq_next(&it);
 +                }
 +                return v;
 +            } else {
@@ -297,7 +301,7 @@
 +                if (v == NULL)
 +                    return NULL;
 +                const argdata_t *value;
-+                while (argdata_seq_next(&it, &value)) {
++                while (argdata_seq_get(&it, &value)) {
 +                    PyObject *valuev = convertargdata(value, false);
 +                    if (valuev == NULL) {
 +                        Py_DECREF(v);
@@ -308,6 +312,7 @@
 +                        Py_DECREF(v);
 +                        return NULL;
 +                    }
++                    argdata_seq_next(&it);
 +                }
 +                return v;
 +            }

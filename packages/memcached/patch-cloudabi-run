@@ -82,7 +82,7 @@
  static bool _parse_slab_sizes(char *s, uint32_t *slab_sizes) {
      char *b = NULL;
      uint32_t size = 0;
-@@ -5770,6 +5779,161 @@
+@@ -5770,6 +5779,162 @@
      slab_sizes[i] = 0;
      return true;
  }
@@ -117,7 +117,7 @@
 +    argdata_map_iterator_t it;
 +    argdata_map_iterate(ad, &it);
 +    const argdata_t *key, *value;
-+    while (argdata_map_next(&it, &key, &value)) {
++    while (argdata_map_get(&it, &key, &value)) {
 +        const char *keystr;
 +        if (argdata_get_str_c(key, &keystr) == 0) {
 +            if (strcmp(keystr, "socket") == 0) {
@@ -135,6 +135,7 @@
 +                }
 +            }
 +        }
++        argdata_map_next(&it);
 +    }
 +
 +    if (settings.lru_maintainer_thread && settings.hot_lru_pct + settings.warm_lru_pct > 80) {
@@ -244,7 +245,7 @@
  
  int main (int argc, char **argv) {
      int c;
-@@ -6641,3 +6805,5 @@
+@@ -6641,3 +6806,5 @@
  
      return retval;
  }
