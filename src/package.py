@@ -6,6 +6,7 @@
 import logging
 import os
 import shutil
+import sys
 
 from . import config
 from . import util
@@ -203,3 +204,10 @@ class TargetPackage:
         prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
         for dep in lib_depends:
             dep.extract(prefix, prefix)
+
+        # Also allow us to call into Python from within the buildroot.
+        # TODO(ed): Should we add Python as a host package as well?
+        os.symlink(sys.executable,
+                   os.path.join(config.DIR_BUILDROOT, 'bin/python'))
+        os.symlink(sys.executable,
+                   os.path.join(config.DIR_BUILDROOT, 'bin/python3'))
