@@ -102,7 +102,7 @@ Py_ProgramMain(const argdata_t *ad)
                 PySys_SetArgdata("argdata", val);
             }
         }
-        argdata_map_next(&itpath);
+        argdata_map_next(&it);
     }
 
     if (Py_VerboseFlag) {
