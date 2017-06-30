@@ -12,14 +12,14 @@ def build(ctx):
 
 package(
     name='arpc',
-    version='0.1',
+    version='0.2',
     homepage='https://github.com/NuxiNL/arpc',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
 )
 
 distfile(
-    name='arpc/v0.1.tar.gz',
-    checksum='ba7bbf6ad14835a333f44726a37f545e30aba133c0a5f49c0e7ea2d44138edad',
+    name='arpc/v0.2.tar.gz',
+    checksum='1dc3af67a287f0e773348dfb5abe2619159f91b8d27d4e8c66b81de04a25f3cb',
     master_sites={'https://github.com/NuxiNL/arpc/archive/'},
 )
