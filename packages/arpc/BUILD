@@ -12,7 +12,7 @@ def build(ctx):
 
 package(
     name='arpc',
-    version='0.2',
+    version='0.3',
     homepage='https://github.com/NuxiNL/arpc',
     lib_depends={'cxx-runtime'},
     build_cmd=build,
@@ -24,13 +24,13 @@ def host_build(ctx):
 
 host_package(
     name='arpc',
-    version='0.2',
+    version='0.3',
     homepage='https://github.com/NuxiNL/arpc',
     build_cmd=host_build,
 )
 
 distfile(
-    name='arpc/v0.2.tar.gz',
-    checksum='1dc3af67a287f0e773348dfb5abe2619159f91b8d27d4e8c66b81de04a25f3cb',
+    name='arpc/v0.3.tar.gz',
+    checksum='6c1e6b5374c414ac4f58145ff0dc262a9e742aa2a55f093350cc803ec4f6f1c3',
     master_sites={'https://github.com/NuxiNL/arpc/archive/'},
 )
