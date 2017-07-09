@@ -18,6 +18,17 @@ package(
     build_cmd=build,
 )
 
+def host_build(ctx):
+    srcdir = ctx.extract('%(name)s/v%(version)s')
+    srcdir.path('scripts/aprotoc.py').install('bin/aprotoc')
+
+host_package(
+    name='arpc',
+    version='0.2',
+    homepage='https://github.com/NuxiNL/arpc',
+    build_cmd=host_build,
+)
+
 distfile(
     name='arpc/v0.2.tar.gz',
     checksum='1dc3af67a287f0e773348dfb5abe2619159f91b8d27d4e8c66b81de04a25f3cb',
