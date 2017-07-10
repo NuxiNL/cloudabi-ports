@@ -74,8 +74,14 @@ redhat_catalog = RedHatCatalog(DIR_REDHAT_CATALOG, redhat_path)
 
 # Build all packages.
 catalog_set = CatalogSet({
-    archlinux_catalog, cygwin_catalog, debian_catalog, freebsd_catalog,
-    homebrew_catalog, netbsd_catalog, openbsd_catalog, redhat_catalog,
+    archlinux_catalog,
+    cygwin_catalog,
+    debian_catalog,
+    freebsd_catalog,
+    homebrew_catalog,
+    netbsd_catalog,
+    openbsd_catalog,
+    redhat_catalog,
 })
 for package in target_packages.values():
     catalog_set.package_and_insert(package, os.path.join(DIR_TMP, 'catalog'))

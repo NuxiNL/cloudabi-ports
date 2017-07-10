@@ -9,13 +9,13 @@ def build(ctx):
     build.ninja()
     build.ninja_install().install()
 
+
 package(
     name='jasper',
     version='2.0.12',
     homepage='http://www.ece.uvic.ca/~frodo/jasper/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='jasper-2.0.12.tar.gz',
@@ -27,5 +27,4 @@ distfile(
         'src/libjasper/jp2/jp2_enc.c',
         'src/libjasper/jpc/jpc_enc.c',
         'src/libjasper/pnm/pnm_enc.c',
-    },
-)
+    })

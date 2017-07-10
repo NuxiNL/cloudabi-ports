@@ -16,8 +16,12 @@ def build(ctx):
     # Build a copy of ICU for the target system, providing it the
     # directory for the host build.
     build = srcdir.gnu_configure([
-        '--disable-dyload', '--disable-extras', '--disable-samples',
-        '--disable-shared', '--disable-tools', '--enable-static',
+        '--disable-dyload',
+        '--disable-extras',
+        '--disable-samples',
+        '--disable-shared',
+        '--disable-tools',
+        '--enable-static',
         '--with-cross-build=%s' % hostbuild,
     ])
     build.make()
@@ -27,13 +31,13 @@ def build(ctx):
     stage.path('lib/icu/current/pkgdata.inc').unhardcode_paths()
     stage.install()
 
+
 package(
     name='icu4c',
     version='58.2',
     homepage='http://site.icu-project.org/',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='icu4c-58_2-src.tgz',
@@ -46,5 +50,4 @@ distfile(
         'source/i18n/decNumber.c',
         'source/i18n/digitlst.cpp',
         'source/i18n/plurrule.cpp',
-    },
-)
+    })

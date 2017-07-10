@@ -9,17 +9,16 @@ def build(ctx):
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 
+
 package(
     name='yaml',
     version='0.1.7',
     homepage='http://pyyaml.org/wiki/LibYAML',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='yaml-0.1.7.tar.gz',
     checksum='8088e457264a98ba451a90b8661fcb4f9d6f478f7265d48322a196cec2480729',
     master_sites={'http://pyyaml.org/download/libyaml/'},
-    unsafe_string_sources={'src/dumper.c'},
-)
+    unsafe_string_sources={'src/dumper.c'})

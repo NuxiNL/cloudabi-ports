@@ -25,7 +25,6 @@ log = logging.getLogger(__name__)
 
 
 class Catalog:
-
     def __init__(self, old_path, new_path):
         self._old_path = old_path
         self._new_path = new_path
@@ -54,13 +53,12 @@ class Catalog:
 
     @staticmethod
     def _run_tar(args):
-        subprocess.check_call([
-            os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')
-        ] + args)
+        subprocess.check_call(
+            [os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')] + args)
 
     def insert(self, package, version, source):
-        target = os.path.join(
-            self._new_path, self._get_filename(package, version))
+        target = os.path.join(self._new_path,
+                              self._get_filename(package, version))
         util.make_dir(self._new_path)
         util.remove(target)
         os.link(source, target)
@@ -68,9 +66,8 @@ class Catalog:
 
     def lookup_at_version(self, package, version):
         if self._old_path:
-            path = os.path.join(
-                self._old_path,
-                self._get_filename(package, version))
+            path = os.path.join(self._old_path,
+                                self._get_filename(package, version))
             if os.path.exists(path):
                 return path
         return None
@@ -106,8 +103,8 @@ class DebianCatalog(Catalog):
 
     @staticmethod
     def _get_filename(package, version):
-        return '%s_%s_all.deb' % (
-            package.get_debian_name(), version.get_debian_version())
+        return '%s_%s_all.deb' % (package.get_debian_name(),
+                                  version.get_debian_version())
 
     @staticmethod
     def _get_control_snippet(package, version, installed_size=None):
@@ -116,20 +113,19 @@ class DebianCatalog(Catalog):
         For the fields refer to the Debian Policy Manual
         https://www.debian.org/doc/debian-policy/ch-controlfields.html
         """
-        snippet = (
-            'Package: %(debian_name)s\n'
-            'Version: %(version)s\n'
-            'Architecture: all\n'
-            'Maintainer: %(maintainer)s\n'
-            'Description: %(name)s for %(arch)s\n'
-            'Homepage: %(homepage)s\n' % {
-                'arch': package.get_arch(),
-                'homepage': package.get_homepage(),
-                'maintainer': package.get_maintainer(),
-                'name': package.get_name(),
-                'debian_name': package.get_debian_name(),
-                'version': version.get_debian_version(),
-            })
+        snippet = ('Package: %(debian_name)s\n'
+                   'Version: %(version)s\n'
+                   'Architecture: all\n'
+                   'Maintainer: %(maintainer)s\n'
+                   'Description: %(name)s for %(arch)s\n'
+                   'Homepage: %(homepage)s\n' % {
+                       'arch': package.get_arch(),
+                       'homepage': package.get_homepage(),
+                       'maintainer': package.get_maintainer(),
+                       'name': package.get_name(),
+                       'debian_name': package.get_debian_name(),
+                       'version': version.get_debian_version(),
+                   })
 
         # Optional, estimate in kB of disk space needed to install the package
         if installed_size is not None:
@@ -138,8 +134,8 @@ class DebianCatalog(Catalog):
 
         lib_depends = package.get_lib_depends()
         if lib_depends:
-            snippet += 'Depends: %s\n' % ', '.join(sorted(
-                dep.get_debian_name() for dep in lib_depends))
+            snippet += 'Depends: %s\n' % ', '.join(
+                sorted(dep.get_debian_name() for dep in lib_depends))
         return snippet
 
     def finish(self, private_key):
@@ -148,16 +144,13 @@ class DebianCatalog(Catalog):
             f.write(self._get_control_snippet(package, version))
             filename = self._get_filename(package, version)
             path = os.path.join(self._new_path, filename)
-            f.write(
-                'Filename: %s\n'
-                'Size: %u\n'
-                'SHA256: %s\n' % (
-                    filename,
-                    os.path.getsize(path),
-                    util.sha256(path).hexdigest(),
-                ))
+            f.write('Filename: %s\n'
+                    'Size: %u\n'
+                    'SHA256: %s\n' % (filename, os.path.getsize(path),
+                                      util.sha256(path).hexdigest()))
 
             f.write('\n')
+
         index = os.path.join(self._new_path, 'Packages')
         with open(index, 'wt') as f, lzma.open(index + '.xz', 'wt') as f_xz:
             for package, version in self._packages:
@@ -181,24 +174,34 @@ class DebianCatalog(Catalog):
 
         # Create the InRelease file.
         with open(
-            os.path.join(self._new_path, 'dists/cloudabi/InRelease'), 'w'
-        ) as f, subprocess.Popen([
-            'gpg', '--local-user', private_key, '--armor',
-            '--sign', '--clearsign', '--digest-algo', 'SHA256',
-        ], stdin=subprocess.PIPE, stdout=f) as proc:
+                os.path.join(self._new_path, 'dists/cloudabi/InRelease'),
+                'w') as f, subprocess.Popen(
+                    [
+                        'gpg',
+                        '--local-user',
+                        private_key,
+                        '--armor',
+                        '--sign',
+                        '--clearsign',
+                        '--digest-algo',
+                        'SHA256',
+                    ],
+                    stdin=subprocess.PIPE,
+                    stdout=f) as proc:
+
             def append(text):
                 proc.stdin.write(bytes(text, encoding='ASCII'))
-            append(
-                'Suite: cloudabi\n'
-                'Components: cloudabi\n'
-                'Architectures: %s\n'
-                'Date: %s\n'
-                'SHA256:\n' % (
-                    ' '.join(sorted(self._architectures)),
+
+            append('Suite: cloudabi\n'
+                   'Components: cloudabi\n'
+                   'Architectures: %s\n'
+                   'Date: %s\n'
+                   'SHA256:\n' %
+                   (' '.join(sorted(self._architectures)),
                     time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime())))
             for arch in sorted(self._architectures):
-                append(' %s %d cloudabi/binary-%s/Packages\n' %
-                       (checksum, size, arch))
+                append(' %s %d cloudabi/binary-%s/Packages\n' % (checksum,
+                                                                 size, arch))
                 append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
                        (checksum_xz, size_xz, arch))
 
@@ -222,8 +225,10 @@ class DebianCatalog(Catalog):
         def tar(directory):
             self._sanitize_permissions(directory)
             self._run_tar([
-                '-cJf', directory + '.tar.xz',
-                '-C', directory,
+                '-cJf',
+                directory + '.tar.xz',
+                '-C',
+                directory,
                 '.',
             ])
 
@@ -248,14 +253,17 @@ class DebianCatalog(Catalog):
 
         path = os.path.join(rootdir, 'output.txz')
         subprocess.check_call([
-            os.path.join(rootdir, 'bin/llvm-ar'), 'rc', path,
-            debian_binary, controldir + '.tar.xz', datadir + '.tar.xz',
+            os.path.join(rootdir, 'bin/llvm-ar'),
+            'rc',
+            path,
+            debian_binary,
+            controldir + '.tar.xz',
+            datadir + '.tar.xz',
         ])
         return path
 
 
 class FreeBSDCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(FreeBSDCatalog, self).__init__(old_path, new_path)
 
@@ -281,7 +289,10 @@ class FreeBSDCatalog(Catalog):
 
     def finish(self, private_key):
         subprocess.check_call([
-            'pkg', 'repo', self._new_path, private_key,
+            'pkg',
+            'repo',
+            self._new_path,
+            private_key,
         ])
         # TODO(ed): Copy in some of the old files to keep clients happy.
 
@@ -326,8 +337,7 @@ class FreeBSDCatalog(Catalog):
         if deps:
             base_manifest += ',"deps":{%s}' % ','.join(
                 '\"%s\":{"origin":"devel/%s","version":"0"}' % (dep, dep)
-                for dep in sorted(pkg.get_freebsd_name() for pkg in deps)
-            )
+                for dep in sorted(pkg.get_freebsd_name() for pkg in deps))
         compact_manifest = os.path.join(config.DIR_BUILDROOT,
                                         '+COMPACT_MANIFEST')
         with open(compact_manifest, 'w') as f:
@@ -340,11 +350,9 @@ class FreeBSDCatalog(Catalog):
             with open(manifest, 'w') as f:
                 f.write(base_manifest)
                 f.write(',"files":{')
-                f.write(','.join(
-                    '"%s":"1$%s"' % (
-                        os.path.join(prefix, os.path.relpath(path, installdir)),
-                        util.sha256(path).hexdigest())
-                    for path in files))
+                f.write(','.join('"%s":"1$%s"' % (os.path.join(
+                    prefix, os.path.relpath(path, installdir)), util.sha256(
+                        path).hexdigest()) for path in files))
                 f.write('}}')
         else:
             manifest = compact_manifest
@@ -356,24 +364,24 @@ class FreeBSDCatalog(Catalog):
             # Leading files in tarball.
             f.write('#mtree\n')
             f.write(
-                '+COMPACT_MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n' %
-                compact_manifest)
+                '+COMPACT_MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n'
+                % compact_manifest)
             f.write(
-                '+MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n' %
-                manifest)
+                '+MANIFEST type=file mode=0644 uname=root gname=wheel time=0 contents=%s\n'
+                % manifest)
             for path in files:
                 fullpath = os.path.join(prefix,
                                         os.path.relpath(path, installdir))
                 if os.path.islink(path):
                     # Symbolic links.
                     f.write(
-                        '%s type=link mode=0777 uname=root gname=wheel time=0 link=%s\n' %
-                        (fullpath, os.readlink(path)))
+                        '%s type=link mode=0777 uname=root gname=wheel time=0 link=%s\n'
+                        % (fullpath, os.readlink(path)))
                 else:
                     # Regular files.
                     f.write(
-                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n' %
-                        (fullpath, self._get_suggested_mode(path), path))
+                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n'
+                        % (fullpath, self._get_suggested_mode(path), path))
         self._run_tar(['-cJf', output, '-C', installdir, '@' + listing])
         return output
 
@@ -419,38 +427,41 @@ class HomebrewCatalog(Catalog):
         linksdir = os.path.join(self._new_path, 'links')
         util.make_dir(linksdir)
         for osx_version in self._OSX_VERSIONS:
-            link = os.path.join(
-                linksdir,
-                '%s-%s.%s.bottle.tar.gz' %
-                (package.get_homebrew_name(),
-                 version.get_homebrew_version(),
-                 osx_version))
+            link = os.path.join(linksdir, '%s-%s.%s.bottle.tar.gz' %
+                                (package.get_homebrew_name(),
+                                 version.get_homebrew_version(), osx_version))
             util.remove(link)
             os.symlink(os.path.join('..', filename), link)
 
         # Create a formula.
         formulaedir = os.path.join(self._new_path, 'formulae')
         util.make_dir(formulaedir)
-        with open(os.path.join(formulaedir,
-                               package.get_homebrew_name() + '.rb'), 'w') as f:
+        with open(
+                os.path.join(formulaedir, package.get_homebrew_name() + '.rb'),
+                'w') as f:
             # Header.
-            f.write(
-                """class %(homebrew_class)s < Formula
+            f.write("""class %(homebrew_class)s < Formula
   desc "%(name)s for %(arch)s"
   homepage "%(homepage)s"
   url "http://this.package.cannot.be.built.from.source/"
   version "%(version)s"
   revision %(revision)d
 """ % {
-                    'arch': package.get_arch(),
-                    'homebrew_class': self._get_classname(
-                        package.get_homebrew_name()),
-                    'homepage': package.get_homepage(),
-                    'name': package.get_name(),
-                    'revision': version.get_revision(),
-                    'url': self._url,
-                    'version': version.get_version(),
-                })
+                'arch':
+                package.get_arch(),
+                'homebrew_class':
+                self._get_classname(package.get_homebrew_name()),
+                'homepage':
+                package.get_homepage(),
+                'name':
+                package.get_name(),
+                'revision':
+                version.get_revision(),
+                'url':
+                self._url,
+                'version':
+                version.get_version(),
+            })
 
             # Dependencies.
             for dep in sorted(pkg.get_homebrew_name()
@@ -481,11 +492,13 @@ class HomebrewCatalog(Catalog):
         # on the Mac OS X system. In the tarball, pathnames need to be
         # prefixed with <name>/<version>.
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
-        extractdir = os.path.join(installdir, package.get_homebrew_name(),
+        extractdir = os.path.join(installdir,
+                                  package.get_homebrew_name(),
                                   version.get_homebrew_version())
         util.make_dir(extractdir)
-        package.extract(os.path.join(extractdir, 'share', package.get_arch()),
-                        os.path.join('/usr/local/share', package.get_arch()))
+        package.extract(
+            os.path.join(extractdir, 'share', package.get_arch()),
+            os.path.join('/usr/local/share', package.get_arch()))
 
         # Add a placeholder install receipt file. Homebrew depends on it
         # being present with at least these fields.
@@ -496,14 +509,18 @@ class HomebrewCatalog(Catalog):
         self._sanitize_permissions(installdir, directory_mode=0o755)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         self._run_tar([
-            '--options', 'gzip:!timestamp', '-czf', output, '-C', installdir,
+            '--options',
+            'gzip:!timestamp',
+            '-czf',
+            output,
+            '-C',
+            installdir,
             package.get_homebrew_name(),
         ])
         return output
 
 
 class NetBSDCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(NetBSDCatalog, self).__init__(old_path, new_path)
 
@@ -532,11 +549,9 @@ class NetBSDCatalog(Catalog):
         # Package contents list.
         util.make_dir(installdir)
         with open(os.path.join(installdir, '+CONTENTS'), 'w') as f:
-            f.write(
-                '@cwd /usr/pkg/%s\n'
-                '@name %s-%s\n' % (
-                    arch, package.get_netbsd_name(),
-                    version.get_netbsd_version()))
+            f.write('@cwd /usr/pkg/%s\n'
+                    '@name %s-%s\n' % (arch, package.get_netbsd_name(),
+                                       version.get_netbsd_version()))
             for dep in sorted(pkg.get_netbsd_name()
                               for pkg in package.get_lib_depends()):
                 f.write('@pkgdep %s-[0-9]*\n' % dep)
@@ -547,16 +562,14 @@ class NetBSDCatalog(Catalog):
         with open(os.path.join(installdir, '+COMMENT'), 'w') as f:
             f.write('%s for %s\n' % (package.get_name(), package.get_arch()))
         with open(os.path.join(installdir, '+DESC'), 'w') as f:
-            f.write(
-                '%(name)s for %(arch)s\n'
-                '\n'
-                'Homepage:\n'
-                '%(homepage)s\n' % {
-                    'arch': package.get_arch(),
-                    'name': package.get_name(),
-                    'homepage': package.get_homepage(),
-                }
-            )
+            f.write('%(name)s for %(arch)s\n'
+                    '\n'
+                    'Homepage:\n'
+                    '%(homepage)s\n' % {
+                        'arch': package.get_arch(),
+                        'name': package.get_name(),
+                        'homepage': package.get_homepage(),
+                    })
 
         # Build information file.
         # TODO(ed): We MUST specify a machine architecture and operating
@@ -564,12 +577,10 @@ class NetBSDCatalog(Catalog):
         # installable on NetBSD/x86-64. Figure out a way we can create
         # packages that are installable on any system that uses pkgsrc.
         with open(os.path.join(installdir, '+BUILD_INFO'), 'w') as f:
-            f.write(
-                'MACHINE_ARCH=x86_64\n'
-                'PKGTOOLS_VERSION=00000000\n'
-                'OPSYS=NetBSD\n'
-                'OS_VERSION=\n'
-            )
+            f.write('MACHINE_ARCH=x86_64\n'
+                    'PKGTOOLS_VERSION=00000000\n'
+                    'OPSYS=NetBSD\n'
+                    'OS_VERSION=\n')
 
         self._sanitize_permissions(installdir)
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.xz')
@@ -583,7 +594,6 @@ class NetBSDCatalog(Catalog):
 
 
 class OpenBSDCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(OpenBSDCatalog, self).__init__(old_path, new_path)
 
@@ -612,11 +622,9 @@ class OpenBSDCatalog(Catalog):
         # Package contents list.
         contents = os.path.join(config.DIR_BUILDROOT, 'contents')
         with open(contents, 'w') as f:
-            f.write(
-                '@name %s-%s\n'
-                '@cwd %s\n' % (
-                    package.get_openbsd_name(), version.get_openbsd_version(),
-                    prefix))
+            f.write('@name %s-%s\n'
+                    '@cwd %s\n' % (package.get_openbsd_name(),
+                                   version.get_openbsd_version(), prefix))
             # TODO(ed): Encode dependencies.
             written_dirs = set()
             for path in files:
@@ -631,36 +639,31 @@ class OpenBSDCatalog(Catalog):
 
                 if os.path.islink(path):
                     # Write entry for symbolic link.
-                    f.write(
-                        '%s\n'
-                        '@symlink %s\n' % (relpath, os.readlink(path)))
+                    f.write('%s\n'
+                            '@symlink %s\n' % (relpath, os.readlink(path)))
                 else:
                     # Write entry for regular file.
-                    f.write(
-                        '%s\n'
-                        '@sha %s\n'
-                        '@size %d\n' % (
-                            relpath,
-                            str(base64.b64encode(
-                                util.sha256(path).digest()), encoding='ASCII'),
-                            os.lstat(path).st_size))
+                    f.write('%s\n'
+                            '@sha %s\n'
+                            '@size %d\n' %
+                            (relpath,
+                             str(base64.b64encode(util.sha256(path).digest()),
+                                 encoding='ASCII'), os.lstat(path).st_size))
 
         # Package description.
         desc = os.path.join(config.DIR_BUILDROOT, 'desc')
         with open(desc, 'w') as f:
-            f.write(
-                '%(name)s for %(arch)s\n'
-                '\n'
-                'Maintainer: %(maintainer)s\n'
-                '\n'
-                'WWW:\n'
-                '%(homepage)s\n' % {
-                    'arch': package.get_arch(),
-                    'name': package.get_name(),
-                    'maintainer': package.get_maintainer(),
-                    'homepage': package.get_homepage(),
-                }
-            )
+            f.write('%(name)s for %(arch)s\n'
+                    '\n'
+                    'Maintainer: %(maintainer)s\n'
+                    '\n'
+                    'WWW:\n'
+                    '%(homepage)s\n' % {
+                        'arch': package.get_arch(),
+                        'name': package.get_name(),
+                        'maintainer': package.get_maintainer(),
+                        'homepage': package.get_homepage(),
+                    })
 
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
@@ -668,32 +671,36 @@ class OpenBSDCatalog(Catalog):
             # Leading files in tarball.
             f.write('#mtree\n')
             f.write(
-                '+CONTENTS type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n' %
-                contents)
+                '+CONTENTS type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n'
+                % contents)
             f.write(
-                '+DESC type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n' %
-                desc)
+                '+DESC type=file mode=0666 uname=root gname=wheel time=0 contents=%s\n'
+                % desc)
             for path in files:
                 relpath = os.path.relpath(path, installdir)
                 if os.path.islink(path):
                     # Symbolic links need to use 0o555 on OpenBSD.
                     f.write(
-                        '%s type=link mode=0555 uname=root gname=wheel time=0 link=%s\n' %
-                        (relpath, os.readlink(path)))
+                        '%s type=link mode=0555 uname=root gname=wheel time=0 link=%s\n'
+                        % (relpath, os.readlink(path)))
                 else:
                     # Regular files.
                     f.write(
-                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n' %
-                        (relpath, self._get_suggested_mode(path), path))
+                        '%s type=file mode=0%o uname=root gname=wheel time=0 contents=%s\n'
+                        % (relpath, self._get_suggested_mode(path), path))
         self._run_tar([
-            '--options', 'gzip:!timestamp', '-czf', output, '-C', installdir,
+            '--options',
+            'gzip:!timestamp',
+            '-czf',
+            output,
+            '-C',
+            installdir,
             '@' + listing,
         ])
         return output
 
 
 class ArchLinuxCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(ArchLinuxCatalog, self).__init__(old_path, new_path)
 
@@ -746,8 +753,7 @@ class ArchLinuxCatalog(Catalog):
                     'flatsize': sum(os.lstat(path).st_size for path in files),
                     'name': package.get_name(),
                     'version': version.get_archlinux_version(),
-                }
-            )
+                })
             lib_depends = package.get_lib_depends()
             for dep in sorted(pkg.get_archlinux_name()
                               for pkg in package.get_lib_depends()):
@@ -769,29 +775,27 @@ class ArchLinuxCatalog(Catalog):
         with open(listing, 'w') as f:
             f.write('#mtree\n')
             f.write(
-                '.PKGINFO type=file mode=0644 uname=root gname=root time=0 contents=%s\n' %
-                pkginfo)
+                '.PKGINFO type=file mode=0644 uname=root gname=root time=0 contents=%s\n'
+                % pkginfo)
             f.write(
-                '.MTREE type=file mode=0644 uname=root gname=root time=0 contents=%s\n' %
-                mtree)
+                '.MTREE type=file mode=0644 uname=root gname=root time=0 contents=%s\n'
+                % mtree)
             for path in files:
                 relpath = os.path.relpath(path, installdir)
                 if os.path.islink(path):
                     f.write(
-                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n' %
-                        (relpath, os.readlink(path)))
+                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n'
+                        % (relpath, os.readlink(path)))
                 else:
                     f.write(
-                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n' %
-                        (relpath, self._get_suggested_mode(path), path))
+                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n'
+                        % (relpath, self._get_suggested_mode(path), path))
 
         self._run_tar([
-            '-czf', mtree,
-            '-C', installdir,
-            '--format=mtree',
+            '-czf', mtree, '-C', installdir, '--format=mtree',
             '--options=gzip:!timestamp,!all,use-set,type,uid,gid,mode,time,size,md5,sha256,link',
-            '--exclude=.MTREE',
-            '@' + listing])
+            '--exclude=.MTREE', '@' + listing
+        ])
 
         self._run_tar(['-cJf', output, '-C', installdir, '@' + listing])
 
@@ -803,18 +807,20 @@ class ArchLinuxCatalog(Catalog):
             subprocess.check_call([
                 'gpg', '--detach-sign', '--local-user', private_key,
                 '--no-armor', '--digest-algo', 'SHA256',
-                os.path.join(self._new_path, package_file)])
+                os.path.join(self._new_path, package_file)
+            ])
         db_file = os.path.join(self._new_path, 'cloudabi-ports.db.tar.xz')
-        packages = [os.path.join(self._new_path, self._get_filename(*p))
-                    for p in self._packages]
+        packages = [
+            os.path.join(self._new_path, self._get_filename(*p))
+            for p in self._packages
+        ]
         # Ensure that repo-add as a valid working directory.
         os.chdir('/')
-        subprocess.check_call(
-            ['repo-add', '-s', '-k', private_key, db_file] + packages)
+        subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] +
+                              packages)
 
 
 class CygwinCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(CygwinCatalog, self).__init__(old_path, new_path)
 
@@ -867,41 +873,40 @@ class CygwinCatalog(Catalog):
                 for package, version in sorted(
                         self._packages, key=lambda p: p[0].get_cygwin_name()):
                     package_file_name = self._get_filename(package, version)
-                    package_file = os.path.join(
-                        self._new_path, package_file_name)
-                    f.write(
-                        '\n'
-                        '@ %(cygwinname)s\n'
-                        'sdesc: "%(name)s for %(arch)s"\n'
-                        'version: %(version)s\n'
-                        'category: CloudABI\n' % {
-                            'cygwinname': package.get_cygwin_name(),
-                            'arch': package.get_arch(),
-                            'name': package.get_name(),
-                            'version': version.get_cygwin_version(),
-                        }
-                    )
+                    package_file = os.path.join(self._new_path,
+                                                package_file_name)
+                    f.write('\n'
+                            '@ %(cygwinname)s\n'
+                            'sdesc: "%(name)s for %(arch)s"\n'
+                            'version: %(version)s\n'
+                            'category: CloudABI\n' % {
+                                'cygwinname': package.get_cygwin_name(),
+                                'arch': package.get_arch(),
+                                'name': package.get_name(),
+                                'version': version.get_cygwin_version(),
+                            })
                     if len(package.get_lib_depends()) > 0:
-                        f.write(
-                            'requires: %s\n' %
-                            ' '.join(
-                                sorted(pkg.get_cygwin_name()
-                                       for pkg in package.get_lib_depends())))
-                    f.write(
-                        'install: %(filename)s %(size)s %(sha512)s\n' % {
-                            'size': os.lstat(package_file).st_size,
-                            'filename': package_file_name,
-                            'sha512': util.sha512(package_file).hexdigest(),
-                        }
-                    )
+                        f.write('requires: %s\n' % ' '.join(
+                            sorted(pkg.get_cygwin_name()
+                                   for pkg in package.get_lib_depends())))
+                    f.write('install: %(filename)s %(size)s %(sha512)s\n' % {
+                        'size': os.lstat(package_file).st_size,
+                        'filename': package_file_name,
+                        'sha512': util.sha512(package_file).hexdigest(),
+                    })
             subprocess.check_call([
-                'gpg', '--sign', '--detach-sign', '--local-user', private_key,
-                '--batch', '--yes', setup_file,
+                'gpg',
+                '--sign',
+                '--detach-sign',
+                '--local-user',
+                private_key,
+                '--batch',
+                '--yes',
+                setup_file,
             ])
 
 
 class RedHatCatalog(Catalog):
-
     def __init__(self, old_path, new_path):
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
@@ -970,15 +975,20 @@ class RedHatCatalog(Catalog):
                                        os.path.relpath(path, installdir))
                 if os.path.islink(path):
                     f.write(
-                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n' %
-                        (relpath, os.readlink(path)))
+                        '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n'
+                        % (relpath, os.readlink(path)))
                 else:
                     f.write(
-                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n' %
-                        (relpath, self._get_suggested_mode(path), path))
+                        '%s type=file mode=0%o uname=root gname=root time=0 contents=%s\n'
+                        % (relpath, self._get_suggested_mode(path), path))
         data = os.path.join(config.DIR_BUILDROOT, 'data.cpio.xz')
         self._run_tar([
-            '-cJf', data, '--format=newc', '-C', installdir, '@' + listing,
+            '-cJf',
+            data,
+            '--format=newc',
+            '-C',
+            installdir,
+            '@' + listing,
         ])
 
         # The header, based on the following documentation:
@@ -988,57 +998,95 @@ class RedHatCatalog(Catalog):
         lib_depends = sorted(dep.get_redhat_name()
                              for dep in package.get_lib_depends())
         dirs = sorted({os.path.dirname(f) for f in files})
-        header = bytes(rpm.Header({
-            100: rpm.StringArray(['C']),
-            1000: rpm.String(name),
-            1001: rpm.String(str(version.get_version())),
-            1002: rpm.String(str(version.get_revision())),
-            1003: rpm.Int32([version.get_epoch()]),
-            1004: rpm.I18NString('%s for %s' % (name, arch)),
-            1005: rpm.I18NString('%s for %s' % (name, arch)),
-            1009: rpm.Int32([sum(self._file_size(f) for f in files)]),
-            1014: rpm.String('Unknown'),
-            1016: rpm.I18NString('Development/Libraries'),
-            1020: rpm.String(package.get_homepage()),
-            1021: rpm.String('linux'),
-            1022: rpm.String('noarch'),
-            1028: rpm.Int32(os.lstat(f).st_size for f in files),
-            1030: rpm.Int16(self._file_mode(f) for f in files),
-            1033: rpm.Int16(0 for f in files),
-            1034: rpm.Int32(0 for f in files),
-            1035: rpm.StringArray(self._file_md5(f) for f in files),
-            1036: rpm.StringArray(self._file_linkto(f) for f in files),
-            1037: rpm.Int32(0 for f in files),
-            1039: rpm.StringArray('root' for f in files),
-            1040: rpm.StringArray('root' for f in files),
-            1047: rpm.StringArray([name]),
-            1048: rpm.Int32(0 for dep in lib_depends),
-            1049: rpm.StringArray(lib_depends),
-            1050: rpm.StringArray('' for dep in lib_depends),
-            1095: rpm.Int32(1 for f in files),
-            1096: rpm.Int32(range(1, len(files) + 1)),
-            1097: rpm.StringArray('' for f in files),
-            1112: rpm.Int32(8 for dep in lib_depends),
-            1113: rpm.StringArray([version.get_redhat_version()]),
-            1116: rpm.Int32(dirs.index(os.path.dirname(f)) for f in files),
-            1117: rpm.StringArray(os.path.basename(f) for f in files),
-            1118: rpm.StringArray(os.path.join(prefix,
-                                               os.path.relpath(d, installdir)) +
-                                  '/'
-                                  for d in dirs),
-            1124: rpm.String('cpio'),
-            1125: rpm.String('xz'),
-            1126: rpm.String('9'),
-        }))
+        header = bytes(
+            rpm.Header({
+                100:
+                rpm.StringArray(['C']),
+                1000:
+                rpm.String(name),
+                1001:
+                rpm.String(str(version.get_version())),
+                1002:
+                rpm.String(str(version.get_revision())),
+                1003:
+                rpm.Int32([version.get_epoch()]),
+                1004:
+                rpm.I18NString('%s for %s' % (name, arch)),
+                1005:
+                rpm.I18NString('%s for %s' % (name, arch)),
+                1009:
+                rpm.Int32([sum(self._file_size(f) for f in files)]),
+                1014:
+                rpm.String('Unknown'),
+                1016:
+                rpm.I18NString('Development/Libraries'),
+                1020:
+                rpm.String(package.get_homepage()),
+                1021:
+                rpm.String('linux'),
+                1022:
+                rpm.String('noarch'),
+                1028:
+                rpm.Int32(os.lstat(f).st_size for f in files),
+                1030:
+                rpm.Int16(self._file_mode(f) for f in files),
+                1033:
+                rpm.Int16(0 for f in files),
+                1034:
+                rpm.Int32(0 for f in files),
+                1035:
+                rpm.StringArray(self._file_md5(f) for f in files),
+                1036:
+                rpm.StringArray(self._file_linkto(f) for f in files),
+                1037:
+                rpm.Int32(0 for f in files),
+                1039:
+                rpm.StringArray('root' for f in files),
+                1040:
+                rpm.StringArray('root' for f in files),
+                1047:
+                rpm.StringArray([name]),
+                1048:
+                rpm.Int32(0 for dep in lib_depends),
+                1049:
+                rpm.StringArray(lib_depends),
+                1050:
+                rpm.StringArray('' for dep in lib_depends),
+                1095:
+                rpm.Int32(1 for f in files),
+                1096:
+                rpm.Int32(range(1, len(files) + 1)),
+                1097:
+                rpm.StringArray('' for f in files),
+                1112:
+                rpm.Int32(8 for dep in lib_depends),
+                1113:
+                rpm.StringArray([version.get_redhat_version()]),
+                1116:
+                rpm.Int32(dirs.index(os.path.dirname(f)) for f in files),
+                1117:
+                rpm.StringArray(os.path.basename(f) for f in files),
+                1118:
+                rpm.StringArray(
+                    os.path.join(prefix, os.path.relpath(d, installdir)) + '/'
+                    for d in dirs),
+                1124:
+                rpm.String('cpio'),
+                1125:
+                rpm.String('xz'),
+                1126:
+                rpm.String('9'),
+            }))
 
         # The signature.
         checksum = hashlib.md5()
         checksum.update(header)
         util.hash_file(data, checksum)
-        signature = bytes(rpm.Header({
-            1000: rpm.Int32([len(header) + os.stat(data).st_size]),
-            1004: rpm.Bin(checksum.digest()),
-        }))
+        signature = bytes(
+            rpm.Header({
+                1000: rpm.Int32([len(header) + os.stat(data).st_size]),
+                1004: rpm.Bin(checksum.digest()),
+            }))
 
         # Create the RPM file.
         output = os.path.join(config.DIR_BUILDROOT, 'output.rpm')
@@ -1065,6 +1113,10 @@ class RedHatCatalog(Catalog):
     def finish(self, private_key):
         subprocess.check_call(['createrepo', self._new_path])
         subprocess.check_call([
-            'gpg', '--detach-sign', '--local-user', private_key,
-            '--armor', os.path.join(self._new_path, 'repodata/repomd.xml'),
+            'gpg',
+            '--detach-sign',
+            '--local-user',
+            private_key,
+            '--armor',
+            os.path.join(self._new_path, 'repodata/repomd.xml'),
         ])

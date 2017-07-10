@@ -8,18 +8,21 @@ def build(ctx):
     build = ctx.extract().gnu_configure()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'man_MANS='])
     stage = build.make_install([
-        'bin_PROGRAMS=', 'noinst_PROGRAMS=', 'man_MANS=', 'install',
+        'bin_PROGRAMS=',
+        'noinst_PROGRAMS=',
+        'man_MANS=',
+        'install',
     ])
     stage.path('bin/gpg-error-config').unhardcode_paths()
     stage.install()
+
 
 package(
     name='libgpg-error',
     version='1.27',
     homepage='https://www.gnupg.org/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libgpg-error-1.27.tar.bz2',
@@ -28,5 +31,4 @@ distfile(
     unsafe_string_sources={
         'src/estream.c',
         'src/estream-printf.c',
-    },
-)
+    })

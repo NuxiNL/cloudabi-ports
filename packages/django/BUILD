@@ -9,16 +9,15 @@ def build(ctx):
     srcdir = ctx.extract('Django-%(version)s')
     srcdir.path('django').install('lib/python3.6/site-packages/django')
 
+
 package(
     name='django',
     version='1.10.4',
     homepage='https://www.djangoproject.com/',
     lib_depends={'python'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='Django-1.10.4.tar.gz',
     checksum='fff7f062e510d812badde7cfc57745b7779edb4d209b2bc5ea8d954c22305c2b',
-    master_sites={'https://www.djangoproject.com/m/releases/1.10/'},
-)
+    master_sites={'https://www.djangoproject.com/m/releases/1.10/'})

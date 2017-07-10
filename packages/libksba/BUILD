@@ -13,13 +13,13 @@ def build(ctx):
     stage.path('bin/ksba-config').unhardcode_paths()
     stage.install()
 
+
 package(
     name='libksba',
     version='1.3.5',
     homepage='https://www.gnupg.org/',
     lib_depends={'c-runtime', 'libgpg-error'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libksba-1.3.5.tar.bz2',
@@ -40,5 +40,4 @@ distfile(
         'src/oid.c',
         'src/time.c',
         'src/util.c',
-    },
-)
+    })

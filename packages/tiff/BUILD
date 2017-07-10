@@ -7,16 +7,16 @@
 def build(ctx):
     build = ctx.extract().gnu_configure()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    build.make_install(
-        ['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install']).install()
+    build.make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=',
+                        'install']).install()
+
 
 package(
     name='tiff',
     version='4.0.6',
     homepage='http://www.remotesensing.org/libtiff/',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='tiff-4.0.6.tar.gz',
@@ -31,5 +31,4 @@ distfile(
         'libtiff/tif_compress.c',
         'libtiff/tif_extension.c',
         'libtiff/tif_open.c',
-    },
-)
+    })

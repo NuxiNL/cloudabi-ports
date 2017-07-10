@@ -16,18 +16,20 @@ def build(ctx):
     stage.path('bin/nspr-config').unhardcode_paths()
     stage.install()
 
+
 package(
     name='nspr',
     version='4.13.1',
     homepage='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='nspr-4.13.1.tar.gz',
     checksum='5e4c1751339a76e7c772c0c04747488d7f8c98980b434dc846977e43117833ab',
-    master_sites={'https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.13.1/src/'},
+    master_sites={
+        'https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.13.1/src/'
+    },
     unsafe_string_sources={
         'lib/libc/src/strcat.c',
         'lib/libc/src/strcpy.c',
@@ -39,5 +41,4 @@ distfile(
         'pr/src/misc/pripc.c',
         'pr/src/misc/prtrace.c',
         'pr/src/threads/prrwlock.c',
-    },
-)
+    })

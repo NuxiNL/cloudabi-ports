@@ -14,16 +14,17 @@ def build(ctx):
         'install',
     ]).install()
 
+
 package(
     name='libtomcrypt',
     version='1.17',
     homepage='http://www.libtom.net/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libtom/crypt-1.17.tar.bz2',
     checksum='e33b47d77a495091c8703175a25c8228aff043140b2554c08a3c3cd71f79d116',
-    master_sites={'https://github.com/libtom/libtomcrypt/releases/download/1.17/'},
-)
+    master_sites={
+        'https://github.com/libtom/libtomcrypt/releases/download/1.17/'
+    })

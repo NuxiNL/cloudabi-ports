@@ -24,13 +24,13 @@ def build(ctx):
     stage.path('share/gdb').remove()
     stage.install()
 
+
 package(
     name='glib',
     version='2.50.3',
     homepage='https://developer.gnome.org/glib/',
     lib_depends={'c-runtime', 'libffi', 'pcre', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 
 def host_build(ctx):
@@ -38,13 +38,13 @@ def host_build(ctx):
     build.make()
     build.make_install().install()
 
+
 host_package(
     name='glib',
     version='2.50.3',
     homepage='https://developer.gnome.org/glib/',
     lib_depends={'gettext'},
-    build_cmd=host_build,
-)
+    build_cmd=host_build)
 
 distfile(
     name='glib-2.50.3.tar.xz',
@@ -63,5 +63,4 @@ distfile(
         'glib/libcharset/localcharset.c',
         'gobject/gobject-query.c',
         'gobject/gtype.c',
-    },
-)
+    })

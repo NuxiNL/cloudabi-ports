@@ -14,7 +14,6 @@ from .version import SimpleVersion
 
 
 class Repository:
-
     def __init__(self, install_directory):
         self._install_directory = install_directory
 
@@ -36,7 +35,12 @@ class Repository:
             distfile = kwargs
             name = distfile['name']
             for ext in {
-                '.tar.bz2', '.tar.gz', '.tar.lzma', '.tar.xz', '.tgz', '.zip',
+                    '.tar.bz2',
+                    '.tar.gz',
+                    '.tar.lzma',
+                    '.tar.xz',
+                    '.tgz',
+                    '.zip',
             }:
                 if distfile['name'].endswith(ext):
                     name = distfile['name'][:-len(ext)]
@@ -45,22 +49,20 @@ class Repository:
             # Automatically add patches if none are given.
             dirname = os.path.dirname(path)
             if 'patches' not in distfile:
-                distfile['patches'] = (name[6:]
-                                       for name in os.listdir(dirname)
+                distfile['patches'] = (name[6:] for name in os.listdir(dirname)
                                        if name.startswith('patch-'))
             if 'unsafe_string_sources' not in distfile:
                 distfile['unsafe_string_sources'] = frozenset()
 
             # Turn patch filenames into full paths.
-            distfile['patches'] = {os.path.join(dirname, 'patch-' + patch)
-                                   for patch in distfile['patches']}
+            distfile['patches'] = {
+                os.path.join(dirname, 'patch-' + patch)
+                for patch in distfile['patches']
+            }
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))
-            self._distfiles[name] = Distfile(
-                distdir=distdir,
-                **distfile
-            )
+            self._distfiles[name] = Distfile(distdir=distdir, **distfile)
 
         def op_host_package(**kwargs):
             package = kwargs
@@ -76,34 +78,39 @@ class Repository:
             name = package['name']
             for arch in config.ARCHITECTURES:
                 if (name, arch) in self._deferred_target_packages:
-                    raise Exception(
-                        '%s is redeclaring package %s/%s' %
-                        (path, arch, name))
+                    raise Exception('%s is redeclaring package %s/%s' %
+                                    (path, arch, name))
                 self._deferred_target_packages[(name, arch)] = package
 
         def op_sites_gnu(suffix):
-            return {fmt + suffix + '/' for fmt in {
-                'http://ftp.gnu.org/gnu/',
-                'http://ftp.nluug.nl/gnu/',
-            }}
+            return {
+                fmt + suffix + '/'
+                for fmt in {
+                    'http://ftp.gnu.org/gnu/',
+                    'http://ftp.nluug.nl/gnu/',
+                }
+            }
 
         def op_sites_sourceforge(suffix):
-            return {fmt + suffix + '/' for fmt in {
-                'http://downloads.sourceforge.net/project/',
-                'http://freefr.dl.sourceforge.net/project/',
-                'http://heanet.dl.sourceforge.net/project/',
-                'http://internode.dl.sourceforge.net/project/',
-                'http://iweb.dl.sourceforge.net/project/',
-                'http://jaist.dl.sourceforge.net/project/',
-                'http://kent.dl.sourceforge.net/project/',
-                'http://master.dl.sourceforge.net/project/',
-                'http://nchc.dl.sourceforge.net/project/',
-                'http://ncu.dl.sourceforge.net/project/',
-                'http://netcologne.dl.sourceforge.net/project/',
-                'http://superb-dca3.dl.sourceforge.net/project/',
-                'http://tenet.dl.sourceforge.net/project/',
-                'http://ufpr.dl.sourceforge.net/project/',
-            }}
+            return {
+                fmt + suffix + '/'
+                for fmt in {
+                    'http://downloads.sourceforge.net/project/',
+                    'http://freefr.dl.sourceforge.net/project/',
+                    'http://heanet.dl.sourceforge.net/project/',
+                    'http://internode.dl.sourceforge.net/project/',
+                    'http://iweb.dl.sourceforge.net/project/',
+                    'http://jaist.dl.sourceforge.net/project/',
+                    'http://kent.dl.sourceforge.net/project/',
+                    'http://master.dl.sourceforge.net/project/',
+                    'http://nchc.dl.sourceforge.net/project/',
+                    'http://ncu.dl.sourceforge.net/project/',
+                    'http://netcologne.dl.sourceforge.net/project/',
+                    'http://superb-dca3.dl.sourceforge.net/project/',
+                    'http://tenet.dl.sourceforge.net/project/',
+                    'http://ufpr.dl.sourceforge.net/project/',
+                }
+            }
 
         identifiers = {
             'ARCHITECTURES': config.ARCHITECTURES,
@@ -131,20 +138,22 @@ class Repository:
                     raise Exception('%s is declared multiple times' % name)
                 build_depends = set()
                 if 'build_depends' in package:
-                    build_depends = {get_host_package(dep)
-                                     for dep in package['build_depends']}
+                    build_depends = {
+                        get_host_package(dep)
+                        for dep in package['build_depends']
+                    }
                     del package['build_depends']
                 lib_depends = set()
                 if 'lib_depends' in package:
-                    lib_depends = {get_host_package(dep)
-                                   for dep in package['lib_depends']}
+                    lib_depends = {
+                        get_host_package(dep)
+                        for dep in package['lib_depends']
+                    }
                     del package['lib_depends']
                 package['version'] = SimpleVersion(package['version'])
                 self._host_packages[name] = HostPackage(
-                    install_directory=os.path.join(
-                        self._install_directory,
-                        'host',
-                        name),
+                    install_directory=os.path.join(self._install_directory,
+                                                   'host', name),
                     distfiles=self._distfiles,
                     build_depends=build_depends,
                     lib_depends=lib_depends,
@@ -153,9 +162,7 @@ class Repository:
 
         while self._deferred_host_packages:
             get_host_package(
-                random.sample(
-                    self._deferred_host_packages.keys(),
-                    1)[0])
+                random.sample(self._deferred_host_packages.keys(), 1)[0])
 
         # Create target packages that haven't been instantiated yet.
         def get_target_package(name, arch):
@@ -167,13 +174,14 @@ class Repository:
                 lib_depends = set()
                 if 'lib_depends' in package:
                     lib_depends = {
-                        get_target_package(
-                            dep, arch) for dep in package['lib_depends']}
+                        get_target_package(dep, arch)
+                        for dep in package['lib_depends']
+                    }
                     del package['lib_depends']
                 package['version'] = SimpleVersion(package['version'])
                 self._target_packages[(name, arch)] = TargetPackage(
-                    install_directory=os.path.join(
-                        self._install_directory, arch, name),
+                    install_directory=os.path.join(self._install_directory,
+                                                   arch, name),
                     arch=arch,
                     distfiles=self._distfiles,
                     host_packages=self._host_packages,
@@ -182,9 +190,8 @@ class Repository:
             return self._target_packages[(name, arch)]
 
         while self._deferred_target_packages:
-            get_target_package(
-                *random.sample(
-                    self._deferred_target_packages.keys(), 1)[0])
+            get_target_package(*random.sample(
+                self._deferred_target_packages.keys(), 1)[0])
 
         # Generate per-architecture 'everything' meta packages. These
         # packages depend on all of the packages for one architecture.

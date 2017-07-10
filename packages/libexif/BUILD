@@ -8,8 +8,7 @@ package(
     version='0.6.21',
     homepage='http://libexif.sourceforge.net/',
     lib_depends={'c-runtime'},
-    build_cmd=build_autoconf_automake,
-)
+    build_cmd=build_autoconf_automake)
 
 distfile(
     name='libexif-0.6.21.tar.bz2',
@@ -21,5 +20,4 @@ distfile(
         'libexif/olympus/exif-mnote-data-olympus.c',
         'libexif/olympus/mnote-olympus-entry.c',
         'libexif/pentax/exif-mnote-data-pentax.c',
-    },
-)
+    })

@@ -21,10 +21,12 @@ def build(ctx):
 
     # Some source files that are part of the codebase simply don't apply
     # to this environment. Replace them by customized versions.
-    for f in {'Lib/signal.py', 'Lib/subprocess.py', 'Modules/Setup.dist',
-              'Modules/faulthandler.c', 'Modules/getpath.c',
-              'Modules/main.c', 'Modules/signalmodule.c',
-              'Programs/python.c', 'Python/frozenmain.c'}:
+    for f in {
+            'Lib/signal.py', 'Lib/subprocess.py', 'Modules/Setup.dist',
+            'Modules/faulthandler.c', 'Modules/getpath.c', 'Modules/main.c',
+            'Modules/signalmodule.c', 'Programs/python.c',
+            'Python/frozenmain.c'
+    }:
         ctx.resource(f).rename(srcdir.path(f))
     build = srcdir.gnu_configure([
         '--build=%s' % ctx.host().gnu_triple(),
@@ -57,33 +59,28 @@ def build(ctx):
     stage = build.make_install()
 
     # Fix up pathnames in shebangs and build configurations.
-    for f in {'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
-              'bin/python3.6dm-config', 'bin/pyvenv-3.6',
-              'lib/python3.6/config-3.6dm/Makefile',
-              'lib/python3.6/config-3.6dm/python-config.py'}:
+    for f in {
+            'bin/2to3-3.6', 'bin/idle3.6', 'bin/pydoc3.6',
+            'bin/python3.6dm-config', 'bin/pyvenv-3.6',
+            'lib/python3.6/config-3.6dm/Makefile',
+            'lib/python3.6/config-3.6dm/python-config.py'
+    }:
         stage.path(f).unhardcode_paths()
 
     # TODO(ed): Figure out what to do with this!
     stage.path(
-        'lib/python3.6/lib-dynload/_sysconfigdata_m_freebsd10_.py'
-    ).remove()
+        'lib/python3.6/lib-dynload/_sysconfigdata_m_freebsd10_.py').remove()
     stage.install()
+
 
 package(
     name='python',
     version='3.6.0',
     homepage='https://www.python.org/',
     lib_depends={
-        'bzip2',
-        'c-runtime',
-        'expat',
-        'libffi',
-        'libressl',
-        'xz',
-        'zlib'
+        'bzip2', 'c-runtime', 'expat', 'libffi', 'libressl', 'xz', 'zlib'
     },
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='Python-3.6.0.tar.xz',
@@ -114,5 +111,4 @@ distfile(
         'Python/codecs.c',
         'Python/pystrtod.c',
         'Python/traceback.c',
-    },
-)
+    })

@@ -11,16 +11,15 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='libucl',
     version='0.8.0',
     homepage='https://github.com/vstakhov/libucl',
     lib_depends={'c-runtime', 'libressl'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libucl/0.8.0.tar.gz',
     checksum='af361cd1f0b7b66c228a1c04a662ccaa9ee8af79842046c04446d915db349ee1',
-    master_sites={'https://github.com/vstakhov/libucl/archive/'},
-)
+    master_sites={'https://github.com/vstakhov/libucl/archive/'})

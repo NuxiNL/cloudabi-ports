@@ -9,13 +9,13 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='lcms2',
     version='2.8',
     homepage='http://www.littlecms.com/',
     lib_depends={'c-runtime', 'jpeg', 'tiff', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='lcms2-2.8.tar.gz',
@@ -25,5 +25,4 @@ distfile(
         'src/cmscgats.c',
         'src/cmsnamed.c',
         'src/cmsps2.c',
-    },
-)
+    })

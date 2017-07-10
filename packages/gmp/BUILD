@@ -9,17 +9,16 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='gmp',
     version='6.1.2',
     homepage='https://gmplib.org/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='gmp-6.1.2.tar.xz',
     checksum='87b565e89a9a684fe4ebeeddb8399dce2599f9c9049854ca8c0dfbdea0e21912',
     master_sites=sites_gnu('gmp'),
-    unsafe_string_sources={'printf/sprintffuns.c'},
-)
+    unsafe_string_sources={'printf/sprintffuns.c'})

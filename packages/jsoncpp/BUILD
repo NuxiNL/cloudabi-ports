@@ -11,17 +11,16 @@ def build(ctx):
     build.ninja()
     build.ninja_install().install()
 
+
 package(
     name='jsoncpp',
     version='1.8.0',
     homepage='https://github.com/open-source-parsers/jsoncpp',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='jsoncpp/1.8.0.tar.gz',
     checksum='5deb2462cbf0c0121c9d6c9823ec72fe71417e34242e3509bc7c003d526465bc',
     master_sites={'https://github.com/open-source-parsers/jsoncpp/archive/'},
-    unsafe_string_sources={'src/lib_json/json_writer.cpp'},
-)
+    unsafe_string_sources={'src/lib_json/json_writer.cpp'})

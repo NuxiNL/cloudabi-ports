@@ -7,21 +7,26 @@
 def build(ctx):
     build = ctx.extract().gnu_configure()
     build.make([
-        'bin_PROGRAMS=', 'man_MANS=',
-        'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=',
+        'bin_PROGRAMS=',
+        'man_MANS=',
+        'noinst_PROGRAMS=',
+        'noinst_LTLIBRARIES=',
     ])
     build.make_install([
-        'bin_PROGRAMS=', 'man_MANS=',
-        'noinst_PROGRAMS=', 'noinst_LTLIBRARIES=', 'install',
+        'bin_PROGRAMS=',
+        'man_MANS=',
+        'noinst_PROGRAMS=',
+        'noinst_LTLIBRARIES=',
+        'install',
     ]).install()
+
 
 package(
     name='flac',
     version='1.3.2',
     homepage='https://xiph.org/flac/',
     lib_depends={'cxx-runtime', 'libogg'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='flac-1.3.2.tar.xz',
@@ -33,5 +38,4 @@ distfile(
         'src/share/grabbag/replaygain.c',
         'src/share/utf8/iconvert.c',
         'src/share/utf8/utf8.c',
-    },
-)
+    })

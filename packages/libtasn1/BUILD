@@ -12,13 +12,13 @@ def build(ctx):
     stage.path('share/man/man1').remove()
     stage.install()
 
+
 package(
     name='libtasn1',
     version='4.10',
     homepage='https://www.gnu.org/software/libtasn1/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libtasn1-4.10.tar.gz',
@@ -31,5 +31,4 @@ distfile(
         'lib/gstr.h',
         'lib/int.h',
         'lib/parser_aux.c',
-    },
-)
+    })

@@ -14,17 +14,16 @@ def build(ctx):
         '--enable-xlib=no',
     ])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
-    build.make_install([
-        'noinst_LTLIBRARIES=', 'noinst_PROGRAMS=', 'install'
-    ]).install()
+    build.make_install(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS=',
+                        'install']).install()
+
 
 package(
     name='cairo',
     version='1.14.8',
     homepage='http://cairographics.org/',
     lib_depends={'c-runtime', 'freetype', 'libpng', 'pixman'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='cairo-1.14.8.tar.xz',
@@ -36,5 +35,4 @@ distfile(
     unsafe_string_sources={
         'src/cairo-cff-subset.c',
         'src/cairo-pdf-surface.c',
-    },
-)
+    })

@@ -14,9 +14,16 @@ def build(ctx):
         f.write('using gcc : cloudabi : %s ;\n' % ctx.cxx())
     stage = srcdir.path('stage')
     srcdir.run([
-        './b2', '-j8', '-d+2', 'binary-format=elf', 'link=static',
-        'toolset=gcc-cloudabi', 'cxxflags=' + ctx.cxxflags(),
-        '--without-python', '--prefix=%s' % stage, 'install',
+        './b2',
+        '-j8',
+        '-d+2',
+        'binary-format=elf',
+        'link=static',
+        'toolset=gcc-cloudabi',
+        'cxxflags=' + ctx.cxxflags(),
+        '--without-python',
+        '--prefix=%s' % stage,
+        'install',
     ] + {
         'armv6': ['abi=aapcs', 'address-model=32', 'architecture=arm'],
         'armv7': ['abi=aapcs', 'address-model=32', 'architecture=arm'],
@@ -26,16 +33,15 @@ def build(ctx):
     }[ctx.cpu()])
     stage.install()
 
+
 package(
     name='boost',
     version='1.61.0',
     homepage='http://www.boost.org/',
     lib_depends={'bzip2', 'cxx-runtime', 'icu4c', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='boost_1_61_0.tar.bz2',
     checksum='a547bd06c2fd9a71ba1d169d9cf0339da7ebf4753849a8f7d6fdb8feee99b640',
-    master_sites=sites_sourceforge('boost/boost/1.61.0'),
-)
+    master_sites=sites_sourceforge('boost/boost/1.61.0'))

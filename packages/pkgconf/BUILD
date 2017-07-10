@@ -13,11 +13,14 @@ def build(ctx):
     # right copy, based on the host type.
     for arch in ARCHITECTURES:
         prefix = os.path.join(ctx.prefix(), arch)
-        build = ctx.extract().gnu_configure([
-            '--with-pkg-config-dir=' + os.path.join(prefix, 'lib/pkgconfig'),
-            '--with-system-libdir=' + os.path.join(prefix, 'lib'),
-            '--with-system-includedir=' + os.path.join(prefix, 'include'),
-        ], inplace=True)
+        build = ctx.extract().gnu_configure(
+            [
+                '--with-pkg-config-dir=' + os.path.join(
+                    prefix, 'lib/pkgconfig'),
+                '--with-system-libdir=' + os.path.join(prefix, 'lib'),
+                '--with-system-includedir=' + os.path.join(prefix, 'include'),
+            ],
+            inplace=True)
         build.make()
         stage = build.make_install()
         stage.path('bin/pkgconf').install('bin/%s-pkg-config' % arch)
@@ -26,15 +29,14 @@ def build(ctx):
     # packages using PKG_CHECK_MODULES() works.
     ctx.extract().path('pkg.m4').install('share/aclocal/pkg.m4')
 
+
 host_package(
     name='pkgconf',
     version='0.9.12',
     homepage='https://github.com/pkgconf/pkgconf',
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='pkgconf-0.9.12.tar.bz2',
     checksum='7ec8b516e655e247f4ba976837cee808134785819ab8f538f652fe919cc6c09f',
-    master_sites={'http://rabbit.dereferenced.org/~nenolod/distfiles/'},
-)
+    master_sites={'http://rabbit.dereferenced.org/~nenolod/distfiles/'})

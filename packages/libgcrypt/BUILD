@@ -10,18 +10,21 @@ def build(ctx):
     ])
     build.make(['bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS='])
     stage = build.make_install([
-        'bin_PROGRAMS=', 'man_MANS=', 'noinst_PROGRAMS=', 'install',
+        'bin_PROGRAMS=',
+        'man_MANS=',
+        'noinst_PROGRAMS=',
+        'install',
     ])
     stage.path('bin/libgcrypt-config').unhardcode_paths()
     stage.install()
+
 
 package(
     name='libgcrypt',
     version='1.7.6',
     homepage='https://www.gnupg.org/',
     lib_depends={'c-runtime', 'libgpg-error'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libgcrypt-1.7.6.tar.bz2',
@@ -32,5 +35,4 @@ distfile(
         'src/global.c',
         'src/misc.c',
         'src/sexp.c',
-    },
-)
+    })

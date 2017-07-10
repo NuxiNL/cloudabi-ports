@@ -13,16 +13,17 @@ def build(ctx):
         'install',
     ]).install()
 
+
 package(
     name='libtommath',
     version='1.0',
     homepage='http://www.libtom.net/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libtom/ltm-1.0.tar.xz',
     checksum='993a7df9ee091fca430cdde3263df57d88ef62af8103903214da49fc51bbb56c',
-    master_sites={'https://github.com/libtom/libtommath/releases/download/v1.0/'},
-)
+    master_sites={
+        'https://github.com/libtom/libtommath/releases/download/v1.0/'
+    })

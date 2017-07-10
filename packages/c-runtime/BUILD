@@ -8,5 +8,4 @@ package(
     version='1.0',
     homepage='https://github.com/NuxiNL/cloudlibc',
     lib_depends={'cloudlibc', 'compiler-rt'},
-    build_cmd=None,
-)
+    build_cmd=None)

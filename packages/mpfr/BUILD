@@ -8,8 +8,7 @@ package(
     version='3.1.5',
     homepage='http://www.mpfr.org/',
     lib_depends={'c-runtime', 'gmp'},
-    build_cmd=build_autoconf_automake,
-)
+    build_cmd=build_autoconf_automake)
 
 distfile(
     name='mpfr-3.1.5.tar.xz',
@@ -18,5 +17,4 @@ distfile(
     unsafe_string_sources={
         'src/get_str.c',
         'src/vasprintf.c',
-    },
-)
+    })

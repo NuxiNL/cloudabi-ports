@@ -10,13 +10,13 @@ def build(ctx):
     srcdir.make(['install', 'INSTALL_TOP=%s/stage' % srcdir])
     srcdir.path('stage').install()
 
+
 package(
     name='lua',
     version='5.3.4',
     homepage='http://www.lua.org/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='lua-5.3.4.tar.gz',
@@ -25,5 +25,4 @@ distfile(
     unsafe_string_sources={
         'src/lobject.c',
         'src/lstrlib.c',
-    },
-)
+    })

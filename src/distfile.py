@@ -17,7 +17,6 @@ log = logging.getLogger(__name__)
 
 
 class Distfile:
-
     def __init__(self, distdir, name, checksum, master_sites, patches,
                  unsafe_string_sources):
         for patch in patches:
@@ -34,10 +33,10 @@ class Distfile:
         # Compute distfile URLs based on the provided list of sites.
         # Also add fallback URLs in case the master sites are down.
         self._urls = {
-            site + os.path.basename(self._name) for site in master_sites
-        } | {
-            site + self._name for site in config.FALLBACK_MIRRORS
-        }
+            site + os.path.basename(self._name)
+            for site in master_sites
+        } | {site + self._name
+             for site in config.FALLBACK_MIRRORS}
 
     @staticmethod
     def _apply_patch(patch, target):
@@ -47,8 +46,8 @@ class Distfile:
         with open(patch, 'rb') as f:
             for l in f.readlines():
                 if l.startswith(b'--- '):
-                    filename = str(l[4:-1].split(b'\t', 1)[0],
-                                   encoding='ASCII')
+                    filename = str(
+                        l[4:-1].split(b'\t', 1)[0], encoding='ASCII')
                     while True:
                         if os.path.exists(os.path.join(target, filename)):
                             # Correct patchlevel determined.
@@ -67,7 +66,8 @@ class Distfile:
         # Apply the patch.
         with open(patch) as f:
             subprocess.check_call(
-                ['patch', '-d', target, '-tsp%d' % patchlevel], stdin=f)
+                ['patch', '-d', target,
+                 '-tsp%d' % patchlevel], stdin=f)
 
         # Delete .orig files that patch leaves behind.
         for path in util.walk_files(target):
@@ -107,7 +107,8 @@ class Distfile:
             log.info('FETCH %s', url)
             try:
                 util.make_parent_dir(self._pathname)
-                with util.unsafe_fetch(url) as fin, open(self._pathname, 'wb') as fout:
+                with util.unsafe_fetch(url) as fin, open(self._pathname,
+                                                         'wb') as fout:
                     shutil.copyfileobj(fin, fout)
             except ConnectionResetError as e:
                 log.warning(e)
@@ -125,8 +126,9 @@ class Distfile:
             path = os.path.join(target, filename)
             with open(path, 'rb') as fin, open(path + '.new', 'wb') as fout:
                 fout.write(
-                    bytes('#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS\n',
-                          encoding='ASCII'))
+                    bytes(
+                        '#define _CLOUDLIBC_UNSAFE_STRING_FUNCTIONS\n',
+                        encoding='ASCII'))
                 fout.write(fin.read())
                 os.rename(path + '.new', path)
         return target

@@ -14,16 +14,19 @@ def build(ctx):
     ])
     build.make(['UTIL_PROGS='])
     build.make_install([
-        'UTIL_PROGS=', 'install_include', 'install_lib',
+        'UTIL_PROGS=',
+        'install_include',
+        'install_lib',
     ]).install()
+
 
 package(
     name='db48',
     version='4.8.30',
-    homepage='http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/',
+    homepage=
+    'http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='db-4.8.30.tar.gz',
@@ -36,5 +39,4 @@ distfile(
         'log/log_put.c',
         'os/os_getenv.c',
         'qam/qam_files.c',
-    },
-)
+    })

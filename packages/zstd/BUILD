@@ -12,16 +12,15 @@ def build(ctx):
     stage.path('include').install('include')
     stage.path('lib/libzstd.a').install('lib/libzstd.a')
 
+
 package(
     name='zstd',
     version='1.1.4',
     homepage='https://facebook.github.io/zstd/',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='zstd/v1.1.4.tar.gz',
     checksum='6aae2b586e359344cb8ecfe6917a407dc7e01b5d7d7388559714de37900fb9fb',
-    master_sites={'https://github.com/facebook/zstd/archive/'},
-)
+    master_sites={'https://github.com/facebook/zstd/archive/'})

@@ -10,16 +10,15 @@ def build(ctx):
     build.ninja()
     build.ninja_install().install()
 
+
 package(
     name='flower',
     version='0.1',
     homepage='https://github.com/NuxiNL/flower',
     lib_depends={'arpc', 'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='flower/v0.1.tar.gz',
     checksum='ffd0c6dc89e2df09fe513899801dfbc97c6711c3ee9f2cce48163733b60ea8dd',
-    master_sites={'https://github.com/NuxiNL/flower/archive/'},
-)
+    master_sites={'https://github.com/NuxiNL/flower/archive/'})

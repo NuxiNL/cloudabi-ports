@@ -13,16 +13,17 @@ def build(ctx):
         'install',
     ]).install()
 
+
 package(
     name='libtomfloat',
     version='0.2',
     homepage='http://www.libtom.net/',
     lib_depends={'c-runtime', 'libtommath'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libtom/ltf-0.02.tar.bz2',
     checksum='7e80498e526888e3999cb711bd9b2ffc6738723adb89c7dd400f133b46a88707',
-    master_sites={'https://github.com/libtom/libtomfloat/releases/download/0.02/'},
-)
+    master_sites={
+        'https://github.com/libtom/libtomfloat/releases/download/0.02/'
+    })

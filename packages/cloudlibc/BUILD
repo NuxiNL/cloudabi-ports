@@ -11,16 +11,15 @@ def build(ctx):
     root.run(['DESTDIR=stage', 'PREFIX=/', './install'])
     root.path('stage').install()
 
+
 package(
     name='cloudlibc',
     version='0.78',
     homepage='https://github.com/NuxiNL/cloudlibc',
     lib_depends={'cloudabi', 'compiler-rt'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='cloudlibc/v0.78.tar.gz',
     checksum='17a85b46580d25ad20cb9a4abf491b4d0be2b264701e3febc0a3bf026355bed3',
-    master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'},
-)
+    master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'})

@@ -9,16 +9,15 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='libmng',
     version='2.0.3',
     homepage='http://libmng.com/',
     lib_depends={'c-runtime', 'jpeg', 'lcms2', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libmng-2.0.3.tar.xz',
     checksum='4a462fdd48d4bc82c1d7a21106c8a18b62f8cc0042454323058e6da0dbb57dd3',
-    master_sites=sites_sourceforge('libmng/libmng-devel/2.0.3'),
-)
+    master_sites=sites_sourceforge('libmng/libmng-devel/2.0.3'))

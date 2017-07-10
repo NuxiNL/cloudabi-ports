@@ -8,16 +8,16 @@ def build(ctx):
     root = ctx.extract()
     build = root.gnu_configure(['--disable-test'])
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    build.make_install(
-        ['bin_PROGRAMS=', 'noinst_PROGRAMS=', 'install']).install()
+    build.make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=',
+                        'install']).install()
+
 
 package(
     name='libxspf',
     version='1.2.0',
     homepage='http://libspiff.sourceforge.net/',
     lib_depends={'cxx-runtime', 'expat', 'uriparser'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libxspf-1.2.0.tar.bz2',
@@ -27,5 +27,4 @@ distfile(
         'bindings/c/xspf_c.cpp',
         'src/XspfToolbox.cpp',
         'src/XspfXmlFormatter.cpp',
-    },
-)
+    })

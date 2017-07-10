@@ -5,7 +5,6 @@
 
 
 class SimpleVersion:
-
     def __init__(self, version):
         # Turn the numbers into a list of integer values.
         self._numbers = [int(part) for part in version.split('.')]
@@ -25,7 +24,6 @@ class SimpleVersion:
 
 
 class FullVersion:
-
     def __init__(self, epoch=0, version=SimpleVersion('0'), revision=1):
         self._epoch = epoch
         self._version = version
@@ -57,7 +55,8 @@ class FullVersion:
             # revision number.
             self._epoch += 1
             self._revision = 1
-        elif (self._version == other._version and self._revision < other._revision):
+        elif (self._version == other._version and
+              self._revision < other._revision):
             # Package of the same version already exists. Ensure that we
             # don't decrement the revision number.
             self._revision = other._revision

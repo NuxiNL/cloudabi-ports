@@ -22,7 +22,6 @@ def _chdir(path):
 
 
 class DiffCreator:
-
     def __init__(self, source_directory, build_directory, filename):
         self._source_directory = source_directory
         self._build_directory = build_directory
@@ -43,7 +42,6 @@ class DiffCreator:
 
 
 class FileHandle:
-
     def __init__(self, builder, path):
         self._builder = builder
         self._path = path
@@ -69,14 +67,16 @@ class FileHandle:
                 with open(path, 'r') as fin, open(path + '.new', 'w') as fout:
                     for l in fin.readlines():
                         # Add sort to the pipeline.
-                        fout.write(l.replace(
-                            '-print | $NL2SP', '-print | sort | $NL2SP'))
+                        fout.write(
+                            l.replace('-print | $NL2SP',
+                                      '-print | sort | $NL2SP'))
                 shutil.copymode(path, path + '.new')
                 os.rename(path + '.new', path)
             elif filename == 'configure':
                 # Patch up configure scripts to remove constructs that are known
                 # to fail, for example due to functions being missing.
-                with open(path, 'rb') as fin, open(path + '.new', 'wb') as fout:
+                with open(path, 'rb') as fin, open(path + '.new',
+                                                   'wb') as fout:
                     for l in fin.readlines():
                         # Bad C99 features test.
                         if l.startswith(b'#define showlist(...)'):
@@ -88,11 +88,11 @@ class FileHandle:
                 os.rename(path + '.new', path)
 
         # Run the configure script in a separate directory.
-        builddir = (self._path
-                    if inplace
-                    else self._builder._build_directory.get_new_directory())
-        self._builder.gnu_configure(
-            builddir, os.path.join(self._path, 'configure'), args)
+        builddir = (self._path if inplace else
+                    self._builder._build_directory.get_new_directory())
+        self._builder.gnu_configure(builddir,
+                                    os.path.join(self._path, 'configure'),
+                                    args)
         return FileHandle(self._builder, builddir)
 
     def compile(self, args=[]):
@@ -101,14 +101,14 @@ class FileHandle:
         ext = os.path.splitext(self._path)[1]
         if ext in {'.c', '.S'}:
             log.info('CC %s', self._path)
-            subprocess.check_call(
-                [self._builder.get_cc()] + self._builder.get_cflags() +
-                args + ['-c', '-o', output, self._path])
+            subprocess.check_call([self._builder.get_cc()
+                                   ] + self._builder.get_cflags() + args +
+                                  ['-c', '-o', output, self._path])
         elif ext == '.cpp':
             log.info('CXX %s', self._path)
-            subprocess.check_call(
-                [self._builder.get_cxx()] + self._builder.get_cxxflags() +
-                args + ['-c', '-o', output, self._path])
+            subprocess.check_call([self._builder.get_cxx()
+                                   ] + self._builder.get_cxxflags() + args +
+                                  ['-c', '-o', output, self._path])
         else:
             raise Exception('Unknown file extension: %s' % ext)
         return FileHandle(self._builder, output)
@@ -145,9 +145,9 @@ class FileHandle:
     def make_install(self, args=['install']):
         stagedir = self._builder._build_directory.get_new_directory()
         self.run(['make', 'DESTDIR=' + stagedir] + args)
-        return FileHandle(
-            self._builder,
-            os.path.join(stagedir, self._builder.get_prefix()[1:]))
+        return FileHandle(self._builder,
+                          os.path.join(stagedir,
+                                       self._builder.get_prefix()[1:]))
 
     def ninja(self):
         self.run(['ninja'])
@@ -155,9 +155,9 @@ class FileHandle:
     def ninja_install(self):
         stagedir = self._builder._build_directory.get_new_directory()
         self.run(['DESTDIR=' + stagedir, 'ninja', 'install'])
-        return FileHandle(
-            self._builder,
-            os.path.join(stagedir, self._builder.get_prefix()[1:]))
+        return FileHandle(self._builder,
+                          os.path.join(stagedir,
+                                       self._builder.get_prefix()[1:]))
 
     def open(self, mode):
         return open(self._path, mode)
@@ -180,7 +180,6 @@ class FileHandle:
 
 
 class BuildHandle:
-
     def __init__(self, builder, name, version, distfiles, resource_directory):
         self._builder = builder
         self._name = name
@@ -221,19 +220,18 @@ class BuildHandle:
 
     def extract(self, name='%(name)s-%(version)s'):
         return FileHandle(
-            self._builder,
-            self._distfiles[
-                name % {'name': self._name, 'version': self._version}
-            ].extract(self._builder._build_directory.get_new_directory())
-        )
+            self._builder, self._distfiles[name % {
+                'name': self._name,
+                'version': self._version
+            }].extract(self._builder._build_directory.get_new_directory()))
 
     def gnu_triple(self):
         return self._builder.get_gnu_triple()
 
     def host(self):
-        return BuildHandle(
-            self._builder._host_builder, self._name, self._version,
-            self._distfiles, self._resource_directory)
+        return BuildHandle(self._builder._host_builder, self._name,
+                           self._version, self._distfiles,
+                           self._resource_directory)
 
     def localbase(self):
         return self._builder.get_localbase()
@@ -255,7 +253,6 @@ class BuildHandle:
 
 
 class BuildDirectory:
-
     def __init__(self):
         self._sequence_number = 0
         self._builddir = os.path.join(config.DIR_BUILDROOT, 'build')
@@ -280,13 +277,13 @@ class BuildDirectory:
 
 
 class HostBuilder:
-
     def __init__(self, build_directory, install_directory):
         self._build_directory = build_directory
         self._install_directory = install_directory
 
         self._cflags = [
-            '-O2', '-I' + os.path.join(self.get_prefix(), 'include'),
+            '-O2',
+            '-I' + os.path.join(self.get_prefix(), 'include'),
         ]
 
     def gnu_configure(self, builddir, script, args):
@@ -295,7 +292,8 @@ class HostBuilder:
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [
             'cmake', sourcedir, '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release',
-            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()] + args)
+            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()
+        ] + args)
 
     @staticmethod
     def get_cc():
@@ -351,7 +349,6 @@ class HostBuilder:
 
 
 class TargetBuilder:
-
     def __init__(self, build_directory, install_directory, arch):
         self._build_directory = build_directory
         self._install_directory = install_directory
@@ -385,12 +382,17 @@ class TargetBuilder:
         return output
 
     def gnu_configure(self, builddir, script, args):
-        self.run(builddir, [script, '--host=' + self._arch,
-                            '--prefix=' + self.get_prefix()] + args)
+        self.run(
+            builddir,
+            [script, '--host=' + self._arch, '--prefix=' + self.get_prefix()
+             ] + args)
 
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [
-            'cmake', sourcedir, '-G', 'Ninja',
+            'cmake',
+            sourcedir,
+            '-G',
+            'Ninja',
             '-DCMAKE_AR=' + self._tool('ar'),
             '-DCMAKE_BUILD_TYPE=Release',
             '-DCMAKE_FIND_ROOT_PATH=' + self._localbase,
@@ -403,7 +405,8 @@ class TargetBuilder:
             '-DCMAKE_RANLIB=' + self._tool('ranlib'),
             '-DCMAKE_SYSTEM_NAME=Generic',
             '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0],
-            '-DUNIX=YES'] + args)
+            '-DUNIX=YES',
+        ] + args)
 
     def get_cc(self):
         return self._tool('cc')
@@ -433,9 +436,8 @@ class TargetBuilder:
         assert not os.path.islink(source)
         with open(source, 'r') as f:
             contents = f.read()
-        contents = (contents
-                    .replace(self.get_prefix(), '%%PREFIX%%')
-                    .replace(self._localbase, '%%PREFIX%%'))
+        contents = (contents.replace(self.get_prefix(), '%%PREFIX%%').replace(
+            self._localbase, '%%PREFIX%%'))
         with open(target, 'w') as f:
             f.write(contents)
 
@@ -475,7 +477,8 @@ class TargetBuilder:
     def run(self, cwd, command):
         _chdir(cwd)
         subprocess.check_call([
-            'env', '-i',
+            'env',
+            '-i',
             'AR=' + self._tool('ar'),
             'CC=' + self._tool('cc'),
             'CC_FOR_BUILD=' + self._host_builder.get_cc(),

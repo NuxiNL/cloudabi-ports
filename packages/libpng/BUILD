@@ -12,16 +12,15 @@ def build(ctx):
     stage.path('bin/libpng16-config').unhardcode_paths()
     stage.install()
 
+
 package(
     name='libpng',
     version='1.6.28',
     homepage='http://www.libpng.org/',
     lib_depends={'c-runtime', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libpng-1.6.28.tar.xz',
     checksum='d8d3ec9de6b5db740fefac702c37ffcf96ae46cb17c18c1544635a3852f78f7a',
-    master_sites=sites_sourceforge('libpng/libpng16/1.6.28'),
-)
+    master_sites=sites_sourceforge('libpng/libpng16/1.6.28'))

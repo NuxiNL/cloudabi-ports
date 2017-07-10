@@ -16,13 +16,13 @@ def build(ctx):
     stage.path('lib/xsltConf.sh').unhardcode_paths()
     stage.install()
 
+
 package(
     name='libxslt',
     version='1.1.29',
     homepage='http://xmlsoft.org/libxslt/',
     lib_depends={'c-runtime', 'libxml2'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libxslt-1.1.29.tar.gz',
@@ -31,5 +31,4 @@ distfile(
     unsafe_string_sources={
         'libxslt/functions.c',
         'libxslt/xsltutils.c',
-    },
-)
+    })

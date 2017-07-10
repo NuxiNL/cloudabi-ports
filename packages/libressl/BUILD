@@ -11,16 +11,15 @@ def build(ctx):
     stage.path('share/man/man1').remove()
     stage.install()
 
+
 package(
     name='libressl',
     version='2.5.1',
     homepage='http://www.libressl.org/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libressl-2.5.1.tar.gz',
     checksum='f71ae0a824b78fb1a47ffa23c9c26e9d96c5c9b29234eacedce6b4c7740287cd',
-    master_sites={'http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'},
-)
+    master_sites={'http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'})

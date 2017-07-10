@@ -16,7 +16,6 @@ log = logging.getLogger(__name__)
 
 
 class HostPackage:
-
     def __init__(self, install_directory, name, version, homepage,
                  build_depends, lib_depends, distfiles, build_cmd,
                  resource_directory):
@@ -60,9 +59,9 @@ class HostPackage:
         log.info('BUILD %s', self._name)
         self._build_cmd(
             BuildHandle(
-                HostBuilder(BuildDirectory(), self._install_directory),
-                self._name, self._version, self._distfiles,
-                self._resource_directory))
+                HostBuilder(BuildDirectory(),
+                            self._install_directory), self._name,
+                self._version, self._distfiles, self._resource_directory))
 
     def extract(self):
         # Copy files literally.
@@ -73,10 +72,18 @@ class HostPackage:
 
 
 class TargetPackage:
-
-    def __init__(self, install_directory, arch, name, version, homepage,
-                 host_packages, lib_depends, build_cmd, distfiles,
-                 resource_directory, replaces=frozenset()):
+    def __init__(self,
+                 install_directory,
+                 arch,
+                 name,
+                 version,
+                 homepage,
+                 host_packages,
+                 lib_depends,
+                 build_cmd,
+                 distfiles,
+                 resource_directory,
+                 replaces=frozenset()):
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
@@ -106,18 +113,36 @@ class TargetPackage:
         # Perform the build inside a buildroot with its dependencies
         # installed in place.
         self.initialize_buildroot({
-            'arpc', 'autoconf', 'automake', 'bash', 'bison', 'cmake',
-            'coreutils', 'diffutils', 'findutils', 'flex', 'gawk',
-            'gettext', 'grep', 'help2man', 'libarchive', 'libtool',
-            'llvm', 'm4', 'make', 'ninja', 'pkgconf', 'sed', 'texinfo',
+            'arpc',
+            'autoconf',
+            'automake',
+            'bash',
+            'bison',
+            'cmake',
+            'coreutils',
+            'diffutils',
+            'findutils',
+            'flex',
+            'gawk',
+            'gettext',
+            'grep',
+            'help2man',
+            'libarchive',
+            'libtool',
+            'llvm',
+            'm4',
+            'make',
+            'ninja',
+            'pkgconf',
+            'sed',
+            'texinfo',
         }, self._lib_depends)
         log.info('BUILD %s %s', self._name, self._arch)
         self._build_cmd(
             BuildHandle(
-                TargetBuilder(BuildDirectory(),
-                              self._install_directory, self._arch),
-                self._name, self._version, self._distfiles,
-                self._resource_directory))
+                TargetBuilder(BuildDirectory(), self._install_directory,
+                              self._arch), self._name, self._version,
+                self._distfiles, self._resource_directory))
 
     def clean(self):
         util.remove(self._install_directory)

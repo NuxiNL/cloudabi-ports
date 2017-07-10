@@ -10,7 +10,6 @@ from .version import FullVersion
 
 
 class CatalogSet:
-
     def __init__(self, catalogs):
         self._catalogs = catalogs
 
@@ -47,8 +46,8 @@ class CatalogSet:
                 path2 = catalog.package(package, version)
                 if not util.file_contents_equal(path1, path2):
                     raise Exception(
-                        'Package %s is not deterministic, as %s and %s are not equal' %
-                        (package, path1, path2))
+                        'Package %s is not deterministic, as %s and %s are not equal'
+                        % (package, path1, path2))
                 catalog.insert(package, version, path1)
         for catalog, path in do_preserve:
             catalog.insert(package, version, path)

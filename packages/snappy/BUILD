@@ -9,13 +9,13 @@ def build(ctx):
     build.make(['noinst_PROGRAMS='])
     build.make_install(['noinst_PROGRAMS=', 'install']).install()
 
+
 package(
     name='snappy',
     version='1.1.4',
     homepage='https://google.github.io/snappy/',
     lib_depends={'cxx-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='snappy-1.1.4.tar.gz',

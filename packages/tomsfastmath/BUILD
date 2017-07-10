@@ -13,17 +13,18 @@ def build(ctx):
         'install',
     ]).install()
 
+
 package(
     name='tomsfastmath',
     version='0.13',
     homepage='http://www.libtom.net/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libtom/tfm-0.13.tar.bz2',
     checksum='8defe6f20759a455ade46b2f3c4de46d2358a6222236f78012736a6aeed63407',
-    master_sites={'https://github.com/libtom/tomsfastmath/releases/download/v0.13.0/'},
-    unsafe_string_sources={'src/misc/fp_ident.c'},
-)
+    master_sites={
+        'https://github.com/libtom/tomsfastmath/releases/download/v0.13.0/'
+    },
+    unsafe_string_sources={'src/misc/fp_ident.c'})

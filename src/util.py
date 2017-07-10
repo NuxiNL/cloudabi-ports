@@ -19,9 +19,8 @@ def copy_file(source, target, preserve_attributes):
         # Preserve symbolic links.
         destination = os.readlink(source)
         if os.path.isabs(destination):
-            raise Exception(
-                '%s points to absolute location %s',
-                source, destination)
+            raise Exception('%s points to absolute location %s', source,
+                            destination)
         os.symlink(destination, target)
     elif os.path.isfile(source):
         # Copy regular files.
@@ -34,8 +33,8 @@ def copy_file(source, target, preserve_attributes):
 
 
 def diff(orig_dir, patched_dir, patch):
-    proc = subprocess.Popen(['diff', '-urN', orig_dir, patched_dir],
-                            stdout=subprocess.PIPE)
+    proc = subprocess.Popen(
+        ['diff', '-urN', orig_dir, patched_dir], stdout=subprocess.PIPE)
     minline = bytes('--- %s/' % orig_dir, encoding='ASCII')
     plusline = bytes('+++ %s/' % patched_dir, encoding='ASCII')
     with open(patch, 'wb') as f:
@@ -46,12 +45,10 @@ def diff(orig_dir, patched_dir, patch):
                 pass
             elif l.startswith(minline):
                 # Remove directory name and timestamp.
-                f.write(b'--- ' + l[len(minline):].split(b'\t', 1)[0] +
-                        b'\n')
+                f.write(b'--- ' + l[len(minline):].split(b'\t', 1)[0] + b'\n')
             elif l.startswith(plusline):
                 # Remove directory name and timestamp.
-                f.write(b'+++ ' + l[len(plusline):].split(b'\t', 1)[0] +
-                        b'\n')
+                f.write(b'+++ ' + l[len(plusline):].split(b'\t', 1)[0] + b'\n')
                 pass
             else:
                 f.write(l)

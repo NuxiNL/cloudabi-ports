@@ -9,16 +9,15 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='qpdf',
     version='6.0.0',
     homepage='http://qpdf.sourceforge.net/',
     lib_depends={'c-runtime', 'pcre', 'zlib'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='qpdf-6.0.0.tar.gz',
     checksum='a9fdc7e94d38fcd3831f37b6e0fe36492bf79aa6d54f8f66062cf7f9c4155233',
-    master_sites=sites_sourceforge('qpdf/qpdf/6.0.0'),
-)
+    master_sites=sites_sourceforge('qpdf/qpdf/6.0.0'))

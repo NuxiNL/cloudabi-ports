@@ -9,13 +9,13 @@ def build(ctx):
     build.make()
     build.make_install().install()
 
+
 package(
     name='libatomic-ops',
     version='7.4.0',
     homepage='http://www.hpl.hp.com/research/linux/atomic_ops/',
     lib_depends={'c-runtime'},
-    build_cmd=build,
-)
+    build_cmd=build)
 
 distfile(
     name='libatomic_ops-7.4.0.tar.gz',
