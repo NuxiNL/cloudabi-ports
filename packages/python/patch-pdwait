@@ -182,15 +182,3 @@
      Py_INCREF((PyObject*) &StatResultType);
      PyModule_AddObject(m, "stat_result", (PyObject*) &StatResultType);
      Py_INCREF((PyObject*) &StatVFSResultType);
---- pyconfig.h.in
-+++ pyconfig.h.in
-@@ -302,6 +302,9 @@
- /* Define to 1 if you have the `fork' function. */
- #undef HAVE_FORK
- 
-+/* Define to 1 if you have the `pdwait' function. */
-+#undef HAVE_PDWAIT
-+
- /* Define to 1 if you have the `forkpty' function. */
- #undef HAVE_FORKPTY
- 

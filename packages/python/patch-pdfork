@@ -107,15 +107,3 @@
      OS_SCHED_GET_PRIORITY_MAX_METHODDEF
      OS_SCHED_GET_PRIORITY_MIN_METHODDEF
      OS_SCHED_GETPARAM_METHODDEF
---- pyconfig.h.in
-+++ pyconfig.h.in
-@@ -302,6 +302,9 @@
- /* Define to 1 if you have the `fork' function. */
- #undef HAVE_FORK
- 
-+/* Define to 1 if you have the `pdfork' function. */
-+#undef HAVE_PDFORK
-+
- /* Define to 1 if you have the `forkpty' function. */
- #undef HAVE_FORKPTY
- 

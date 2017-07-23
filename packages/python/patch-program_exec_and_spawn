@@ -424,18 +424,3 @@
      {NULL,              NULL}            /* Sentinel */
  };
  
---- pyconfig.h.in
-+++ pyconfig.h.in
-@@ -302,6 +302,12 @@
- /* Define to 1 if you have the `fork' function. */
- #undef HAVE_FORK
- 
-+/* Define to 1 if you have the `program_exec' function. */
-+#undef HAVE_PROGRAM_EXEC
-+
-+/* Define to 1 if you have the `program_spawn' function. */
-+#undef HAVE_PROGRAM_SPAWN
-+
- /* Define to 1 if you have the `forkpty' function. */
- #undef HAVE_FORKPTY
- 
