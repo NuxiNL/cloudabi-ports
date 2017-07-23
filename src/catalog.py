@@ -222,24 +222,23 @@ class DebianCatalog(Catalog):
         with open(debian_binary, 'w') as f:
             f.write('2.0\n')
 
-        def tar(directory):
-            self._sanitize_permissions(directory)
-            self._run_tar([
-                '-cJf',
-                directory + '.tar.xz',
-                '-C',
-                directory,
-                '.',
-            ])
-
         # Create 'data.tar.xz' tarball that contains the files that need
         # to be installed by the package.
         prefix = os.path.join('/usr', package.get_arch())
         util.make_dir(datadir)
         package.extract(os.path.join(datadir, prefix[1:]), prefix)
-        tar(datadir)
+        self._sanitize_permissions(datadir)
+        self._run_tar([
+           '-cJf',
+           datadir + '.tar.xz',
+           '-C',
+           datadir,
+           '.',
+        ])
 
-        # Create 'control.tar.xz' tarball that contains the control files.
+        # Create 'control.tar.gz' tarball that contains the control files.
+        # We use .gz instead of .xz for the control file, since dpkg only supports
+        # xz for control files since 1.17.6.
         util.make_dir(controldir)
         datadir_files = sorted(util.walk_files(datadir))
         datadir_size = sum(os.path.getsize(fpath) for fpath in datadir_files)
@@ -249,7 +248,15 @@ class DebianCatalog(Catalog):
             f.writelines('%s  %s\n' % (util.md5(fpath).hexdigest(),
                                        os.path.relpath(fpath, datadir))
                          for fpath in datadir_files)
-        tar(controldir)
+        self._sanitize_permissions(controldir)
+        self._run_tar([
+           '-czf',
+           controldir + '.tar.gz',
+           '--options', 'gzip:!timestamp',
+           '-C',
+           controldir,
+           '.',
+        ])
 
         path = os.path.join(rootdir, 'output.txz')
         subprocess.check_call([
@@ -257,7 +264,7 @@ class DebianCatalog(Catalog):
             'rc',
             path,
             debian_binary,
-            controldir + '.tar.xz',
+            controldir + '.tar.gz',
             datadir + '.tar.xz',
         ])
         return path
