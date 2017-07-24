@@ -1,0 +1,44 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -3424,8 +3424,10 @@
+         goto finally;
+     }
+ 
++#ifndef __CloudABI__
+     msg.msg_name = SAS2SA(&addrbuf);
+     msg.msg_namelen = addrbuflen;
++#endif
+     msg.msg_iov = iov;
+     msg.msg_iovlen = iovlen;
+     msg.msg_control = controlbuf;
+@@ -3480,8 +3482,12 @@
+                            cmsg_list,
+                            (int)msg.msg_flags,
+                            makesockaddr(s->sock_fd, SAS2SA(&addrbuf),
++#ifdef __CloudABI__
++                                        addrbuflen,
++#else
+                                         ((msg.msg_namelen > addrbuflen) ?
+                                          addrbuflen : msg.msg_namelen),
++#endif
+                                         s->sock_proto));
+     if (retval == NULL)
+         goto err_closefds;
+@@ -4014,10 +4020,17 @@
+ 
+     /* Parse destination address. */
+     if (addr_arg != NULL && addr_arg != Py_None) {
++#ifdef __CloudABI__
++        PyErr_SetString(PyExc_OSError,
++                        "setting a destination address is not supported "
++                        "on this system");
++        goto finally;
++#else
+         if (!getsockaddrarg(s, addr_arg, SAS2SA(&addrbuf), &addrlen))
+             goto finally;
+         msg.msg_name = &addrbuf;
+         msg.msg_namelen = addrlen;
++#endif
+     }
+ 
+     /* Fill in an iovec for each message part, and save the Py_buffer

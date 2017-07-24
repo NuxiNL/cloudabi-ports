@@ -1,0 +1,29 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -2915,6 +2915,7 @@
+ Return the integer file descriptor of the socket.");
+ 
+ 
++#ifdef HAVE_GETSOCKNAME
+ /* s.getsockname() method */
+ 
+ static PyObject *
+@@ -2941,6 +2942,7 @@
+ \n\
+ Return the address of the local endpoint.  For IP sockets, the address\n\
+ info is a pair (hostaddr, port).");
++#endif /* HAVE_GETSOCKNAME */
+ 
+ 
+ #ifdef HAVE_GETPEERNAME         /* Cray APP doesn't have this :-( */
+@@ -4477,8 +4479,10 @@
+     {"getpeername",       (PyCFunction)sock_getpeername,
+                       METH_NOARGS, getpeername_doc},
+ #endif
++#ifdef HAVE_GETSOCKNAME
+     {"getsockname",       (PyCFunction)sock_getsockname,
+                       METH_NOARGS, getsockname_doc},
++#endif
+     {"getsockopt",        (PyCFunction)sock_getsockopt, METH_VARARGS,
+                       getsockopt_doc},
+ #if defined(MS_WINDOWS) && defined(SIO_RCVALL)

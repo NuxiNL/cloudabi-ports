@@ -1,0 +1,33 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -3174,6 +3174,8 @@
+ \n\
+ See recv() for documentation about the flags.");
+ 
++#ifdef HAVE_RECVFROM
++
+ struct sock_recvfrom {
+     char* cbuf;
+     Py_ssize_t len;
+@@ -3356,6 +3358,8 @@
+ \n\
+ Like recv_into(buffer[, nbytes[, flags]]) but also return the sender's address info.");
+ 
++#endif /* HAVE_RECVFROM */
++
+ /* The sendmsg() and recvmsg[_into]() methods require a working
+    CMSG_LEN().  See the comment near get_CMSG_LEN(). */
+ #ifdef CMSG_LEN
+@@ -4495,10 +4499,12 @@
+                       recv_doc},
+     {"recv_into",         (PyCFunction)sock_recv_into, METH_VARARGS | METH_KEYWORDS,
+                       recv_into_doc},
++#ifdef HAVE_RECVFROM
+     {"recvfrom",          (PyCFunction)sock_recvfrom, METH_VARARGS,
+                       recvfrom_doc},
+     {"recvfrom_into",  (PyCFunction)sock_recvfrom_into, METH_VARARGS | METH_KEYWORDS,
+                       recvfrom_into_doc},
++#endif
+     {"send",              (PyCFunction)sock_send, METH_VARARGS,
+                       send_doc},
+     {"sendall",           (PyCFunction)sock_sendall, METH_VARARGS,
