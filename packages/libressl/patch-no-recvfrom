@@ -1,0 +1,29 @@
+--- crypto/bio/bss_dgram.c
++++ crypto/bio/bss_dgram.c
+@@ -251,25 +251,10 @@
+ 	int ret = 0;
+ 	bio_dgram_data *data = (bio_dgram_data *)b->ptr;
+ 
+-	struct	{
+-		socklen_t len;
+-		union	{
+-			struct sockaddr sa;
+-			struct sockaddr_in sa_in;
+-			struct sockaddr_in6 sa_in6;
+-		} peer;
+-	} sa;
+-
+-	sa.len = sizeof(sa.peer);
+-
+ 	if (out != NULL) {
+ 		errno = 0;
+-		memset(&sa.peer, 0, sizeof(sa.peer));
+ 		dgram_adjust_rcv_timeout(b);
+-		ret = recvfrom(b->num, out, outl, 0, &sa.peer.sa, &sa.len);
+-
+-		if (! data->connected  && ret >= 0)
+-			BIO_ctrl(b, BIO_CTRL_DGRAM_SET_PEER, 0, &sa.peer);
++		ret = recv(b->num, out, outl, 0);
+ 
+ 		BIO_clear_retry_flags(b);
+ 		if (ret < 0) {
