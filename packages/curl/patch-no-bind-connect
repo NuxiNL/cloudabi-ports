@@ -1,16 +1,23 @@
 --- lib/connect.c
 +++ lib/connect.c
-@@ -433,7 +433,8 @@
+@@ -433,6 +433,8 @@
    }
  
    for(;;) {
--    if(bind(sockfd, sock, sizeof_sa) >= 0) {
 +    errno = ENOTCAPABLE;
-+    if(0) {
++#if 0
+     if(bind(sockfd, sock, sizeof_sa) >= 0) {
        /* we succeeded to bind */
        struct Curl_sockaddr_storage add;
-       curl_socklen_t size = sizeof(add);
-@@ -1094,7 +1095,8 @@
+@@ -448,6 +450,7 @@
+       conn->bits.bound = TRUE;
+       return CURLE_OK;
+     }
++#endif
+ 
+     if(--portnum > 0) {
+       infof(data, "Bind to local port %hu failed, trying next\n", port);
+@@ -1094,7 +1097,8 @@
  #endif
      }
      else {

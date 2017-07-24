@@ -1,0 +1,18 @@
+--- lib/connect.c
++++ lib/connect.c
+@@ -663,6 +663,7 @@
+    connection */
+ void Curl_updateconninfo(struct connectdata *conn, curl_socket_t sockfd)
+ {
++#if 0
+   curl_socklen_t len;
+   struct Curl_sockaddr_storage ssrem;
+   struct Curl_sockaddr_storage ssloc;
+@@ -713,6 +714,7 @@
+ 
+   /* persist connection info in session handle */
+   Curl_persistconninfo(conn);
++#endif
+ }
+ 
+ /*
