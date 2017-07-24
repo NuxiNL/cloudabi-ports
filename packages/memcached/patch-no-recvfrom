@@ -1,0 +1,81 @@
+--- memcached.c
++++ memcached.c
+@@ -285,11 +285,6 @@
+ 
+     msg->msg_iov = &c->iov[c->iovused];
+ 
+-    if (IS_UDP(c->transport) && c->request_addr_size > 0) {
+-        msg->msg_name = &c->request_addr;
+-        msg->msg_namelen = c->request_addr_size;
+-    }
+-
+     c->msgbytes = 0;
+     c->msgused++;
+ 
+@@ -532,19 +527,6 @@
+     /* unix socket mode doesn't need this, so zeroed out.  but why
+      * is this done for every command?  presumably for UDP
+      * mode.  */
+-    if (!settings.socketpath) {
+-        c->request_addr_size = sizeof(c->request_addr);
+-    } else {
+-        c->request_addr_size = 0;
+-    }
+-
+-    if (transport == tcp_transport && init_state == conn_new_cmd) {
+-        if (getpeername(sfd, (struct sockaddr *) &c->request_addr,
+-                        &c->request_addr_size)) {
+-            perror("getpeername");
+-            memset(&c->request_addr, 0, sizeof(c->request_addr));
+-        }
+-    }
+ 
+     if (settings.verbose > 1) {
+         if (init_state == conn_listening) {
+@@ -3025,13 +3007,14 @@
+ }
+ 
+ static void conn_to_str(const conn *c, char *buf) {
+-    char addr_text[MAXPATHLEN];
+ 
+     if (!c) {
+         strcpy(buf, "<null>");
+     } else if (c->state == conn_closed) {
+         strcpy(buf, "<closed>");
+     } else {
++        strcpy(buf, "<unknown>");
++#if 0
+         const char *protoname = "?";
+         struct sockaddr_in6 local_addr;
+         struct sockaddr *addr = (void *)&c->request_addr;
+@@ -3099,6 +3082,7 @@
+         } else {
+             sprintf(buf, "%s:%s", protoname, addr_text);
+         }
++#endif
+     }
+ }
+ 
+@@ -4369,10 +4353,7 @@
+ 
+     assert(c != NULL);
+ 
+-    c->request_addr_size = sizeof(c->request_addr);
+-    res = recvfrom(c->sfd, c->rbuf, c->rsize,
+-                   0, (struct sockaddr *)&c->request_addr,
+-                   &c->request_addr_size);
++    res = recv(c->sfd, c->rbuf, c->rsize, 0);
+     if (res > 8) {
+         unsigned char *buf = (unsigned char *)c->rbuf;
+         pthread_mutex_lock(&c->thread->stats.mutex);
+--- memcached.h
++++ memcached.h
+@@ -548,8 +548,6 @@
+ 
+     /* data for UDP clients */
+     int    request_id; /* Incoming UDP request ID, if this is a UDP "connection" */
+-    struct sockaddr_in6 request_addr; /* udp: Who sent the most recent request */
+-    socklen_t request_addr_size;
+     unsigned char *hdrbuf; /* udp packet headers */
+     int    hdrsize;   /* number of headers' worth of space is allocated */
+ 
