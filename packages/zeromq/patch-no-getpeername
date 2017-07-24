@@ -1,0 +1,20 @@
+--- src/ip.cpp
++++ src/ip.cpp
+@@ -119,6 +119,9 @@
+ 
+ int zmq::get_peer_ip_address (fd_t sockfd_, std::string &ip_addr_)
+ {
++#ifdef __CloudABI__
++    return 0;
++#else
+     int rc;
+     struct sockaddr_storage ss;
+ 
+@@ -161,6 +164,7 @@
+ 
+     u.sa_stor = ss;
+     return (int) u.sa.sa_family;
++#endif
+ }
+ 
+ void zmq::set_ip_type_of_service (fd_t s_, int iptos)

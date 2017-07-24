@@ -1,0 +1,42 @@
+--- src/ipc_listener.cpp
++++ src/ipc_listener.cpp
+@@ -192,6 +192,10 @@
+ 
+ int zmq::ipc_listener_t::get_address (std::string &addr_)
+ {
++#ifdef __CloudABI__
++    addr_.clear();
++    return -1;
++#else
+     struct sockaddr_storage ss;
+ #ifdef ZMQ_HAVE_HPUX
+     int sl = sizeof (ss);
+@@ -206,6 +210,7 @@
+ 
+     ipc_address_t addr ((struct sockaddr *) &ss, sl);
+     return addr.to_string (addr_);
++#endif
+ }
+ 
+ int zmq::ipc_listener_t::set_address (const char *addr_)
+--- src/tcp_listener.cpp
++++ src/tcp_listener.cpp
+@@ -138,6 +138,10 @@
+ 
+ int zmq::tcp_listener_t::get_address (std::string &addr_)
+ {
++#ifdef __CloudABI__
++    addr_.clear();
++    return -1;
++#else
+     // Get the details of the TCP socket
+     struct sockaddr_storage ss;
+ #ifdef ZMQ_HAVE_HPUX
+@@ -154,6 +158,7 @@
+ 
+     tcp_address_t addr ((struct sockaddr *) &ss, sl);
+     return addr.to_string (addr_);
++#endif
+ }
+ 
+ int zmq::tcp_listener_t::set_address (const char *addr_)
