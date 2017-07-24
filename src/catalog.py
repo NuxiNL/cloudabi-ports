@@ -229,11 +229,11 @@ class DebianCatalog(Catalog):
         package.extract(os.path.join(datadir, prefix[1:]), prefix)
         self._sanitize_permissions(datadir)
         self._run_tar([
-           '-cJf',
-           datadir + '.tar.xz',
-           '-C',
-           datadir,
-           '.',
+            '-cJf',
+            datadir + '.tar.xz',
+            '-C',
+            datadir,
+            '.',
         ])
 
         # Create 'control.tar.gz' tarball that contains the control files.
@@ -250,12 +250,13 @@ class DebianCatalog(Catalog):
                          for fpath in datadir_files)
         self._sanitize_permissions(controldir)
         self._run_tar([
-           '-czf',
-           controldir + '.tar.gz',
-           '--options', 'gzip:!timestamp',
-           '-C',
-           controldir,
-           '.',
+            '-czf',
+            controldir + '.tar.gz',
+            '--options',
+            'gzip:!timestamp',
+            '-C',
+            controldir,
+            '.',
         ])
 
         path = os.path.join(rootdir, 'output.txz')
