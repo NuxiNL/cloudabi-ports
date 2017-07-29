@@ -1,0 +1,10 @@
+--- Makefile
++++ Makefile
+@@ -1,6 +1,6 @@
+ # $Id$
+ 
+-SUBDIRS = src examples
++SUBDIRS = src
+ 
+ all:
+ 	for subdir in $(SUBDIRS); do \
