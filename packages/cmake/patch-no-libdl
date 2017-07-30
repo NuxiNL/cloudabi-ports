@@ -1,0 +1,11 @@
+--- Modules/CMakeGenericSystem.cmake
++++ Modules/CMakeGenericSystem.cmake
+@@ -19,7 +19,7 @@
+ set(CMAKE_SHARED_LIBRARY_PREFIX "lib")          # lib
+ set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")          # .so
+ set(CMAKE_EXECUTABLE_SUFFIX "")          # .exe
+-set(CMAKE_DL_LIBS "dl")
++set(CMAKE_DL_LIBS "")
+ 
+ set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
+ set(CMAKE_FIND_LIBRARY_SUFFIXES ".so" ".a")
