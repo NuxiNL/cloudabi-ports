@@ -1,0 +1,164 @@
+--- ares.h
++++ ares.h
+@@ -404,10 +404,12 @@
+                                      ares_host_callback callback,
+                                      void *arg);
+ 
++#ifndef __CloudABI__
+ CARES_EXTERN int ares_gethostbyname_file(ares_channel channel,
+                                          const char *name,
+                                          int family,
+                                          struct hostent **host);
++#endif
+ 
+ CARES_EXTERN void ares_gethostbyaddr(ares_channel channel,
+                                      const void *addr,
+--- ares_gethostbyaddr.c
++++ ares_gethostbyaddr.c
+@@ -58,7 +58,9 @@
+                           unsigned char *abuf, int alen);
+ static void end_aquery(struct addr_query *aquery, int status,
+                        struct hostent *host);
++#ifndef __CloudABI__
+ static int file_lookup(struct ares_addr *addr, struct hostent **host);
++#endif
+ static void ptr_rr_name(char *name, const struct ares_addr *addr);
+ 
+ void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
+@@ -116,6 +118,7 @@
+           ares_query(aquery->channel, name, C_IN, T_PTR, addr_callback,
+                      aquery);
+           return;
++#ifndef __CloudABI__
+         case 'f':
+           status = file_lookup(&aquery->addr, &host);
+ 
+@@ -128,6 +131,7 @@
+               return;
+             }
+           break;
++#endif
+         }
+     }
+   end_aquery(aquery, ARES_ENOTFOUND, NULL);
+@@ -172,6 +176,7 @@
+   ares_free(aquery);
+ }
+ 
++#ifndef __CloudABI__
+ static int file_lookup(struct ares_addr *addr, struct hostent **host)
+ {
+   FILE *fp;
+@@ -261,6 +266,7 @@
+     *host = NULL;
+   return status;
+ }
++#endif
+ 
+ static void ptr_rr_name(char *name, const struct ares_addr *addr)
+ {
+--- ares_gethostbyname.c
++++ ares_gethostbyname.c
+@@ -68,7 +68,9 @@
+                        struct hostent *host);
+ static int fake_hostent(const char *name, int family,
+                         ares_host_callback callback, void *arg);
++#ifndef __CloudABI__
+ static int file_lookup(const char *name, int family, struct hostent **host);
++#endif
+ static void sort_addresses(struct hostent *host,
+                            const struct apattern *sortlist, int nsort);
+ static void sort6_addresses(struct hostent *host,
+@@ -150,6 +152,7 @@
+           }
+           return;
+ 
++#ifndef __CloudABI__
+         case 'f':
+           /* Host file lookup */
+           status = file_lookup(hquery->name, hquery->want_family, &host);
+@@ -164,6 +167,7 @@
+             }
+           status = status_code;   /* Use original status code */
+           break;
++#endif
+         }
+     }
+   end_hquery(hquery, status, NULL);
+@@ -305,6 +309,7 @@
+   return 1;
+ }
+ 
++#ifndef __CloudABI__
+ /* This is an API method */
+ int ares_gethostbyname_file(ares_channel channel, const char *name,
+                             int family, struct hostent **host)
+@@ -414,6 +419,7 @@
+     *host = NULL;
+   return status;
+ }
++#endif
+ 
+ static void sort_addresses(struct hostent *host,
+                            const struct apattern *sortlist, int nsort)
+--- ares_init.c
++++ ares_init.c
+@@ -68,7 +68,9 @@
+                            const struct ares_options *options,
+                            int optmask);
+ static int init_by_environment(ares_channel channel);
++#ifndef __CloudABI__
+ static int init_by_resolv_conf(ares_channel channel);
++#endif
+ static int init_by_defaults(ares_channel channel);
+ 
+ #ifndef WATT32
+@@ -202,12 +204,14 @@
+   if (status != ARES_SUCCESS)
+     DEBUGF(fprintf(stderr, "Error: init_by_environment failed: %s\n",
+                    ares_strerror(status)));
++#ifndef __CloudABI__
+   if (status == ARES_SUCCESS) {
+     status = init_by_resolv_conf(channel);
+     if (status != ARES_SUCCESS)
+       DEBUGF(fprintf(stderr, "Error: init_by_resolv_conf failed: %s\n",
+                      ares_strerror(status)));
+   }
++#endif
+ 
+   /*
+    * No matter what failed or succeeded, seed defaults to provide
+@@ -1445,6 +1449,7 @@
+ 
+ #endif
+ 
++#ifndef __CloudABI__
+ static int init_by_resolv_conf(ares_channel channel)
+ {
+ #if !defined(ANDROID) && !defined(__ANDROID__) && !defined(WATT32) && \
+@@ -1784,6 +1789,7 @@
+ 
+   return ARES_SUCCESS;
+ }
++#endif
+ 
+ static int init_by_defaults(ares_channel channel)
+ {
+--- ares_search.c
++++ ares_search.c
+@@ -245,6 +245,7 @@
+       return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
+     }
+ 
++#ifndef __CloudABI__
+   if (!(channel->flags & ARES_FLAG_NOALIASES) && !strchr(name, '.'))
+     {
+       /* The name might be a host alias. */
+@@ -303,6 +304,7 @@
+             }
+         }
+     }
++#endif
+ 
+   if (channel->flags & ARES_FLAG_NOSEARCH || channel->ndomains == 0)
+     {

@@ -1,0 +1,16 @@
+--- ares_init.c
++++ ares_init.c
+@@ -2335,6 +2335,13 @@
+   /* This is out of date in the CIDR world, but some people might
+    * still rely on it.
+    */
++#ifndef IN_CLASSA
++#define IN_CLASSA(i) (((uint32_t)(i) & 0x80000000) == 0)
++#define IN_CLASSA_NET 0xff000000
++#define IN_CLASSB(i) (((uint32_t)(i) & 0xc0000000) == 0x80000000)
++#define IN_CLASSB_NET 0xffff0000
++#define IN_CLASSC_NET 0xffffff00
++#endif
+   if (IN_CLASSA(addr.s_addr))
+     pat->mask.addr4.s_addr = htonl(IN_CLASSA_NET);
+   else if (IN_CLASSB(addr.s_addr))

@@ -1,0 +1,37 @@
+--- ares__get_hostent.c
++++ ares__get_hostent.c
+@@ -138,8 +138,7 @@
+       addr.addrV4.s_addr = INADDR_NONE;
+       if ((family == AF_INET) || (family == AF_UNSPEC))
+         {
+-          addr.addrV4.s_addr = inet_addr(txtaddr);
+-          if (addr.addrV4.s_addr != INADDR_NONE)
++          if (inet_aton(txtaddr, &addr.addrV4))
+             {
+               /* Actual network address family and length. */
+               addr.family = AF_INET;
+--- ares_gethostbyname.c
++++ ares_gethostbyname.c
+@@ -265,7 +265,7 @@
+       if (numdots != 3 || !valid)
+         result = 0;
+       else
+-        result = ((in.s_addr = inet_addr(name)) == INADDR_NONE ? 0 : 1);
++        result = inet_aton(name, &in);
+ 
+       if (result)
+         family = AF_INET;
+--- ares_init.c
++++ ares_init.c
+@@ -2317,10 +2317,7 @@
+   if (len > 15)
+     return -1;
+ 
+-  addr->s_addr = inet_addr(ipbuf);
+-  if (addr->s_addr == INADDR_NONE && strcmp(ipbuf, "255.255.255.255") != 0)
+-    return -1;
+-  return 0;
++  return inet_aton(ipbuf, addr) ? 0 : -1;
+ }
+ 
+ static void natural_mask(struct apattern *pat)

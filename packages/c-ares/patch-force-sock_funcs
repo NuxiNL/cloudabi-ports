@@ -1,0 +1,73 @@
+--- ares_process.c
++++ ares_process.c
+@@ -330,16 +330,20 @@
+    struct sockaddr *from,
+    ares_socklen_t *from_len)
+ {
++#ifndef __CloudABI__
+    if (channel->sock_funcs)
++#endif
+       return channel->sock_funcs->arecvfrom(s, data, data_len,
+ 	 flags, from, from_len,
+ 	 channel->sock_func_cb_data);
+ 
++#ifndef __CloudABI__
+ #ifdef HAVE_RECVFROM
+    return recvfrom(s, data, data_len, flags, from, from_len);
+ #else
+    return sread(s, data, data_len);
+ #endif
++#endif
+ }
+ 
+ static ares_ssize_t socket_recv(ares_channel channel,
+@@ -347,11 +351,15 @@
+    void * data,
+    size_t data_len)
+ {
++#ifndef __CloudABI__
+    if (channel->sock_funcs)
++#endif
+       return channel->sock_funcs->arecvfrom(s, data, data_len, 0, 0, 0,
+ 	 channel->sock_func_cb_data);
+ 
++#ifndef __CloudABI__
+    return sread(s, data, data_len);
++#endif
+ }
+ 
+ /* If any TCP socket selects true for reading, read some data,
+@@ -949,6 +957,7 @@
+ 
+ static int configure_socket(ares_socket_t s, int family, ares_channel channel)
+ {
++#ifndef __CloudABI__
+   union {
+     struct sockaddr     sa;
+     struct sockaddr_in  sa4;
+@@ -1010,6 +1019,7 @@
+         return -1;
+     }
+   }
++#endif
+ 
+   return 0;
+ }
+@@ -1029,13 +1039,17 @@
+ 			  const struct sockaddr * addr,
+ 	                  ares_socklen_t addrlen)
+ {
++#ifndef __CloudABI__
+    if (channel->sock_funcs != 0)
++#endif
+       return channel->sock_funcs->aconnect(sockfd,
+ 	                                   addr,
+ 	                                   addrlen,
+ 	                                   channel->sock_func_cb_data);
+ 
++#ifndef __CloudABI__
+    return connect(sockfd, addr, addrlen);
++#endif
+ }
+ 
+ static int open_tcp_socket(ares_channel channel, struct server_state *server)
