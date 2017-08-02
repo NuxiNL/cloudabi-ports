@@ -1,0 +1,165 @@
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -46,6 +46,7 @@
+ project(${PACKAGE_NAME} C CXX)
+ 
+ # Options
++option(gRPC_BUILD_TOOLS "Build tools" ON)
+ option(gRPC_BUILD_TESTS "Build tests" OFF)
+ 
+ if (NOT MSVC)
+@@ -3522,6 +3523,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_library(grpc_plugin_support
+   src/compiler/cpp_generator.cc
+   src/compiler/csharp_generator.cc
+@@ -3531,6 +3533,7 @@
+   src/compiler/python_generator.cc
+   src/compiler/ruby_generator.cc
+ )
++endif()
+ 
+ if(WIN32 AND MSVC)
+   set_target_properties(grpc_plugin_support PROPERTIES COMPILE_PDB_NAME "grpc_plugin_support"
+@@ -3544,6 +3547,7 @@
+ endif()
+ 
+ 
++if(gRPC_BUILD_TOOLS)
+ target_include_directories(grpc_plugin_support
+   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+@@ -3565,6 +3569,7 @@
+   ${_gRPC_PROTOBUF_LIBRARIES}
+   ${_gRPC_ALLTARGETS_LIBRARIES}
+ )
++endif()
+ 
+ foreach(_hdr
+   include/grpc++/impl/codegen/config_protobuf.h
+@@ -3577,6 +3582,7 @@
+ endforeach()
+ 
+ 
++if(gRPC_BUILD_TOOLS)
+ if (gRPC_INSTALL)
+   install(TARGETS grpc_plugin_support EXPORT gRPCTargets
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+@@ -3584,6 +3590,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ 
+@@ -4897,6 +4904,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(check_epollexclusive
+   test/build/check_epollexclusive.c
+ )
+@@ -4931,6 +4939,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ 
+@@ -5565,6 +5574,7 @@
+ endif()
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(gen_hpack_tables
+   tools/codegen/core/gen_hpack_tables.c
+ )
+@@ -5599,8 +5609,10 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(gen_legal_metadata_characters
+   tools/codegen/core/gen_legal_metadata_characters.c
+ )
+@@ -5667,6 +5679,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ if(_gRPC_PLATFORM_LINUX OR _gRPC_PLATFORM_MAC OR _gRPC_PLATFORM_POSIX)
+@@ -6412,6 +6425,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(grpc_create_jwt
+   test/core/security/create_jwt.c
+ )
+@@ -6447,6 +6461,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ 
+@@ -6606,6 +6621,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(grpc_print_google_default_creds_token
+   test/core/security/print_google_default_creds_token.c
+ )
+@@ -6640,6 +6656,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ 
+@@ -6673,6 +6690,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(grpc_verify_jwt
+   test/core/security/verify_jwt.c
+ )
+@@ -6707,6 +6725,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ if(_gRPC_PLATFORM_LINUX)
+@@ -10271,6 +10290,7 @@
+ 
+ endif (gRPC_BUILD_TESTS)
+ 
++if(gRPC_BUILD_TOOLS)
+ add_executable(grpc_cpp_plugin
+   src/compiler/cpp_plugin.cc
+ )
+@@ -10535,6 +10555,7 @@
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   )
+ endif()
++endif()
+ 
+ if (gRPC_BUILD_TESTS)
+ 

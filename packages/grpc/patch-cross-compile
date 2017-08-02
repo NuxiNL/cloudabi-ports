@@ -1,0 +1,27 @@
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -305,6 +305,11 @@
+     return()
+   endif()
+ 
++  if (NOT DEFINED gRPC_PROTOBUF_GRPC_CPP_PLUGIN)
++    set(gRPC_PROTOBUF_GRPC_CPP_PLUGIN $<TARGET_FILE:grpc_cpp_plugin>)
++    set(gRPC_PROTOBUF_GRPC_CPP_PLUGIN_DEPENDS grpc_cpp_plugin)
++  endif()
++
+   set(_protobuf_include_path -I . -I ${PROTOBUF_WELLKNOWN_IMPORT_DIR})
+   foreach(FIL ${ARGN})
+     get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
+@@ -322,10 +327,10 @@
+       COMMAND ${_gRPC_PROTOBUF_PROTOC}
+       ARGS --grpc_out=generate_mock_code=true:${_gRPC_PROTO_GENS_DIR}
+            --cpp_out=${_gRPC_PROTO_GENS_DIR}
+-           --plugin=protoc-gen-grpc=$<TARGET_FILE:grpc_cpp_plugin>
++           --plugin=protoc-gen-grpc=${gRPC_PROTOBUF_GRPC_CPP_PLUGIN}
+            ${_protobuf_include_path}
+            ${REL_FIL}
+-      DEPENDS ${ABS_FIL} ${_gRPC_PROTOBUF_PROTOC} grpc_cpp_plugin
++      DEPENDS ${ABS_FIL} ${_gRPC_PROTOBUF_PROTOC} ${gRPC_PROTOBUF_GRPC_CPP_PLUGIN_DEPENDS}
+       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+       COMMENT "Running gRPC C++ protocol buffer compiler on ${FIL}"
+       VERBATIM)

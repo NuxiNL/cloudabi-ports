@@ -1,0 +1,539 @@
+--- include/grpc/grpc.h
++++ include/grpc/grpc.h
+@@ -283,8 +283,10 @@
+     clients will want to simply pass NULL. See grpc_channel_args definition for
+     more on this. The data in 'args' need only live through the invocation of
+     this function. */
++#ifndef __CloudABI__
+ GRPCAPI grpc_channel *grpc_insecure_channel_create(
+     const char *target, const grpc_channel_args *args, void *reserved);
++#endif
+ 
+ /** Create a lame client: this client fails every operation attempted on it. */
+ GRPCAPI grpc_channel *grpc_lame_client_channel_create(
+--- include/grpc/grpc_security.h
++++ include/grpc/grpc_security.h
+@@ -127,7 +127,9 @@
+ /** Creates default credentials to connect to a google gRPC service.
+    WARNING: Do NOT use this credentials to connect to a non-google service as
+    this could result in an oauth2 token leak. */
++#ifndef __CloudABI__
+ GRPCAPI grpc_channel_credentials *grpc_google_default_credentials_create(void);
++#endif
+ 
+ /** Callback for getting the SSL roots override from the application.
+    In case of success, *pem_roots_certs must be set to a NULL terminated string
+@@ -197,8 +199,10 @@
+ /** Creates a compute engine credentials object for connecting to Google.
+    WARNING: Do NOT use this credentials to connect to a non-google service as
+    this could result in an oauth2 token leak. */
++#ifndef __CloudABI__
+ GRPCAPI grpc_call_credentials *grpc_google_compute_engine_credentials_create(
+     void *reserved);
++#endif
+ 
+ GRPCAPI gpr_timespec grpc_max_auth_token_lifetime();
+ 
+@@ -218,8 +222,10 @@
+    this could result in an oauth2 token leak.
+    - json_refresh_token is the JSON string containing the refresh token itself
+      along with a client_id and client_secret. */
++#ifndef __CloudABI__
+ GRPCAPI grpc_call_credentials *grpc_google_refresh_token_credentials_create(
+     const char *json_refresh_token, void *reserved);
++#endif
+ 
+ /** Creates an Oauth2 Access Token credentials with an access token that was
+    aquired by an out of band mechanism. */
+@@ -295,9 +301,11 @@
+ /** --- Secure channel creation. --- */
+ 
+ /** Creates a secure channel using the passed-in credentials. */
++#ifndef __CloudABI__
+ GRPCAPI grpc_channel *grpc_secure_channel_create(
+     grpc_channel_credentials *creds, const char *target,
+     const grpc_channel_args *args, void *reserved);
++#endif
+ 
+ /** --- grpc_server_credentials object. ---
+ 
+--- include/grpc++/create_channel.h
++++ include/grpc++/create_channel.h
+@@ -43,6 +43,7 @@
+ 
+ namespace grpc {
+ 
++#ifndef __CloudABI__
+ /// Create a new \a Channel pointing to \a target.
+ ///
+ /// \param target The URI of the endpoint to connect to.
+@@ -67,6 +68,7 @@
+     const grpc::string& target,
+     const std::shared_ptr<ChannelCredentials>& creds,
+     const ChannelArguments& args);
++#endif
+ 
+ }  // namespace grpc
+ 
+--- include/grpc++/security/credentials.h
++++ include/grpc++/security/credentials.h
+@@ -75,8 +75,10 @@
+       const std::shared_ptr<ChannelCredentials>& creds,
+       const ChannelArguments& args);
+ 
++#ifndef __CloudABI__
+   virtual std::shared_ptr<Channel> CreateChannel(
+       const grpc::string& target, const ChannelArguments& args) = 0;
++#endif
+ };
+ 
+ /// A call credentials object encapsulates the state needed by a client to
+@@ -133,7 +135,9 @@
+ /// Using these credentials to connect to any other service may result in this
+ /// service being able to impersonate your client for requests to Google
+ /// services.
++#ifndef __CloudABI__
+ std::shared_ptr<ChannelCredentials> GoogleDefaultCredentials();
++#endif
+ 
+ /// Builds SSL Credentials given SSL specific options
+ std::shared_ptr<ChannelCredentials> SslCredentials(
+@@ -145,7 +149,9 @@
+ /// Using these credentials to connect to any other service may result in this
+ /// service being able to impersonate your client for requests to Google
+ /// services.
++#ifndef __CloudABI__
+ std::shared_ptr<CallCredentials> GoogleComputeEngineCredentials();
++#endif
+ 
+ /// Builds Service Account JWT Access credentials.
+ /// json_key is the JSON key string containing the client's private key.
+@@ -163,8 +169,10 @@
+ /// Using these credentials to connect to any other service may result in this
+ /// service being able to impersonate your client for requests to Google
+ /// services.
++#ifndef __CloudABI__
+ std::shared_ptr<CallCredentials> GoogleRefreshTokenCredentials(
+     const grpc::string& json_refresh_token);
++#endif
+ 
+ /// Builds access token credentials.
+ /// access_token is an oauth2 access token that was fetched using an out of band
+--- src/core/ext/transport/chttp2/client/chttp2_connector.c
++++ src/core/ext/transport/chttp2/client/chttp2_connector.c
+@@ -31,6 +31,7 @@
+  *
+  */
+ 
++#ifndef __CloudABI__
+ #include "src/core/ext/transport/chttp2/client/chttp2_connector.h"
+ 
+ #include <grpc/grpc.h>
+@@ -219,3 +220,4 @@
+   gpr_ref_init(&c->refs, 1);
+   return &c->base;
+ }
++#endif
+--- src/core/ext/transport/chttp2/client/chttp2_connector.h
++++ src/core/ext/transport/chttp2/client/chttp2_connector.h
+@@ -36,6 +36,8 @@
+ 
+ #include "src/core/ext/filters/client_channel/connector.h"
+ 
++#ifndef __CloudABI__
+ grpc_connector* grpc_chttp2_connector_create();
++#endif
+ 
+ #endif /* GRPC_CORE_EXT_TRANSPORT_CHTTP2_CLIENT_CHTTP2_CONNECTOR_H */
+--- src/core/ext/transport/chttp2/client/insecure/channel_create.c
++++ src/core/ext/transport/chttp2/client/insecure/channel_create.c
+@@ -31,6 +31,7 @@
+  *
+  */
+ 
++#ifndef __CloudABI__
+ #include <grpc/grpc.h>
+ 
+ #include <string.h>
+@@ -119,3 +120,4 @@
+                                          target, GRPC_STATUS_INTERNAL,
+                                          "Failed to create client channel");
+ }
++#endif
+--- src/core/ext/transport/chttp2/client/secure/secure_channel_create.c
++++ src/core/ext/transport/chttp2/client/secure/secure_channel_create.c
+@@ -31,6 +31,7 @@
+  *
+  */
+ 
++#ifndef __CloudABI__
+ #include <grpc/grpc.h>
+ 
+ #include <string.h>
+@@ -237,3 +238,4 @@
+                                target, GRPC_STATUS_INTERNAL,
+                                "Failed to create secure client channel");
+ }
++#endif
+--- src/core/lib/http/httpcli.c
++++ src/core/lib/http/httpcli.c
+@@ -74,8 +74,10 @@
+   grpc_resource_quota *resource_quota;
+ } internal_request;
+ 
++#ifndef __CloudABI__
+ static grpc_httpcli_get_override g_get_override = NULL;
+ static grpc_httpcli_post_override g_post_override = NULL;
++#endif
+ 
+ static void plaintext_handshake(grpc_exec_ctx *exec_ctx, void *arg,
+                                 grpc_endpoint *endpoint, const char *host,
+@@ -98,6 +100,7 @@
+   grpc_pollset_set_destroy(exec_ctx, context->pollset_set);
+ }
+ 
++#ifndef __CloudABI__
+ static void next_address(grpc_exec_ctx *exec_ctx, internal_request *req,
+                          grpc_error *due_to_error);
+ 
+@@ -334,3 +337,4 @@
+   g_get_override = get;
+   g_post_override = post;
+ }
++#endif
+--- src/core/lib/http/httpcli.h
++++ src/core/lib/http/httpcli.h
+@@ -86,6 +86,7 @@
+ void grpc_httpcli_context_destroy(grpc_exec_ctx *exec_ctx,
+                                   grpc_httpcli_context *context);
+ 
++#ifndef __CloudABI__
+ /* Asynchronously perform a HTTP GET.
+    'context' specifies the http context under which to do the get
+    'pollset' indicates a grpc_pollset that is interested in the result
+@@ -137,5 +138,6 @@
+ 
+ void grpc_httpcli_set_override(grpc_httpcli_get_override get,
+                                grpc_httpcli_post_override post);
++#endif
+ 
+ #endif /* GRPC_CORE_LIB_HTTP_HTTPCLI_H */
+--- src/core/lib/iomgr/tcp_client.h
++++ src/core/lib/iomgr/tcp_client.h
+@@ -45,11 +45,13 @@
+    NULL on failure).
+    interested_parties points to a set of pollsets that would be interested
+    in this connection being established (in order to continue their work) */
++#ifndef __CloudABI__
+ void grpc_tcp_client_connect(grpc_exec_ctx *exec_ctx, grpc_closure *on_connect,
+                              grpc_endpoint **endpoint,
+                              grpc_pollset_set *interested_parties,
+                              const grpc_channel_args *channel_args,
+                              const grpc_resolved_address *addr,
+                              gpr_timespec deadline);
++#endif
+ 
+ #endif /* GRPC_CORE_LIB_IOMGR_TCP_CLIENT_H */
+--- src/core/lib/iomgr/tcp_client_posix.c
++++ src/core/lib/iomgr/tcp_client_posix.c
+@@ -252,6 +252,7 @@
+   grpc_closure_sched(exec_ctx, closure, error);
+ }
+ 
++#ifndef __CloudABI__
+ static void tcp_client_connect_impl(grpc_exec_ctx *exec_ctx,
+                                     grpc_closure *closure, grpc_endpoint **ep,
+                                     grpc_pollset_set *interested_parties,
+@@ -364,5 +365,6 @@
+   grpc_tcp_client_connect_impl(exec_ctx, closure, ep, interested_parties,
+                                channel_args, addr, deadline);
+ }
++#endif
+ 
+ #endif
+--- src/core/lib/security/credentials/google_default/google_default_credentials.c
++++ src/core/lib/security/credentials/google_default/google_default_credentials.c
+@@ -57,6 +57,7 @@
+ 
+ /* -- Default credentials. -- */
+ 
++#ifndef __CloudABI__
+ static grpc_channel_credentials *default_credentials = NULL;
+ static int compute_engine_detection_done = 0;
+ static gpr_mu g_state_mu;
+@@ -325,6 +326,7 @@
+   gpr_mu_unlock(&g_state_mu);
+   grpc_exec_ctx_finish(&exec_ctx);
+ }
++#endif
+ 
+ /* -- Well known credentials path. -- */
+ 
+--- src/core/lib/security/credentials/google_default/google_default_credentials.h
++++ src/core/lib/security/credentials/google_default/google_default_credentials.h
+@@ -54,7 +54,9 @@
+   "/" GRPC_GOOGLE_WELL_KNOWN_CREDENTIALS_FILE
+ #endif
+ 
++#ifndef __CloudABI__
+ void grpc_flush_cached_google_default_credentials(void);
++#endif
+ 
+ #endif /* GRPC_CORE_LIB_SECURITY_CREDENTIALS_GOOGLE_DEFAULT_GOOGLE_DEFAULT_CREDENTIALS_H \
+           */
+--- src/core/lib/security/credentials/jwt/jwt_verifier.c
++++ src/core/lib/security/credentials/jwt/jwt_verifier.c
+@@ -643,6 +643,7 @@
+   verifier_cb_ctx_destroy(exec_ctx, ctx);
+ }
+ 
++#ifndef __CloudABI__
+ static void on_openid_config_retrieved(grpc_exec_ctx *exec_ctx, void *user_data,
+                                        grpc_error *error) {
+   const grpc_json *cur;
+@@ -696,6 +697,7 @@
+                NULL);
+   verifier_cb_ctx_destroy(exec_ctx, ctx);
+ }
++#endif
+ 
+ static email_key_mapping *verifier_get_mapping(grpc_jwt_verifier *v,
+                                                const char *email_domain) {
+@@ -741,6 +743,7 @@
+ }
+ 
+ /* Takes ownership of ctx. */
++#ifndef __CloudABI__
+ static void retrieve_key_and_verify(grpc_exec_ctx *exec_ctx,
+                                     verifier_cb_ctx *ctx) {
+   const char *email_domain;
+@@ -872,6 +875,7 @@
+   if (claims != NULL) grpc_jwt_claims_destroy(exec_ctx, claims);
+   cb(exec_ctx, user_data, GRPC_JWT_VERIFIER_BAD_FORMAT, NULL);
+ }
++#endif
+ 
+ grpc_jwt_verifier *grpc_jwt_verifier_create(
+     const grpc_jwt_verifier_email_domain_key_url_mapping *mappings,
+--- src/core/lib/security/credentials/jwt/jwt_verifier.h
++++ src/core/lib/security/credentials/jwt/jwt_verifier.h
+@@ -122,12 +122,14 @@
+                                               grpc_jwt_claims *claims);
+ 
+ /* Verifies for the JWT for the given expected audience. */
++#ifndef __CloudABI__
+ void grpc_jwt_verifier_verify(grpc_exec_ctx *exec_ctx,
+                               grpc_jwt_verifier *verifier,
+                               grpc_pollset *pollset, const char *jwt,
+                               const char *audience,
+                               grpc_jwt_verification_done_cb cb,
+                               void *user_data);
++#endif
+ 
+ /* --- TESTING ONLY exposed functions. --- */
+ 
+--- src/core/lib/security/credentials/oauth2/oauth2_credentials.c
++++ src/core/lib/security/credentials/oauth2/oauth2_credentials.c
+@@ -297,6 +297,7 @@
+ static grpc_call_credentials_vtable compute_engine_vtable = {
+     oauth2_token_fetcher_destruct, oauth2_token_fetcher_get_request_metadata};
+ 
++#ifndef __CloudABI__
+ static void compute_engine_fetch_oauth2(
+     grpc_exec_ctx *exec_ctx, grpc_credentials_metadata_request *metadata_req,
+     grpc_httpcli_context *httpcli_context, grpc_polling_entity *pollent,
+@@ -332,6 +333,7 @@
+   c->base.vtable = &compute_engine_vtable;
+   return &c->base;
+ }
++#endif
+ 
+ //
+ // Google Refresh Token credentials.
+@@ -348,6 +350,7 @@
+ static grpc_call_credentials_vtable refresh_token_vtable = {
+     refresh_token_destruct, oauth2_token_fetcher_get_request_metadata};
+ 
++#ifndef __CloudABI__
+ static void refresh_token_fetch_oauth2(
+     grpc_exec_ctx *exec_ctx, grpc_credentials_metadata_request *metadata_req,
+     grpc_httpcli_context *httpcli_context, grpc_polling_entity *pollent,
+@@ -423,6 +426,7 @@
+   GPR_ASSERT(reserved == NULL);
+   return grpc_refresh_token_credentials_create_from_auth_refresh_token(token);
+ }
++#endif
+ 
+ //
+ // Oauth2 Access Token credentials.
+--- src/core/lib/security/credentials/oauth2/oauth2_credentials.h
++++ src/core/lib/security/credentials/oauth2/oauth2_credentials.h
+@@ -96,9 +96,11 @@
+ 
+ // Private constructor for refresh token credentials from an already parsed
+ // refresh token. Takes ownership of the refresh token.
++#ifndef __CloudABI__
+ grpc_call_credentials *
+ grpc_refresh_token_credentials_create_from_auth_refresh_token(
+     grpc_auth_refresh_token token);
++#endif
+ 
+ // Exposed for testing only.
+ grpc_credentials_status
+--- src/cpp/client/create_channel.cc
++++ src/cpp/client/create_channel.cc
+@@ -43,6 +43,7 @@
+ namespace grpc {
+ class ChannelArguments;
+ 
++#ifndef __CloudABI__
+ std::shared_ptr<Channel> CreateChannel(
+     const grpc::string& target,
+     const std::shared_ptr<ChannelCredentials>& creds) {
+@@ -61,5 +62,6 @@
+                                              NULL, GRPC_STATUS_INVALID_ARGUMENT,
+                                              "Invalid credentials."));
+ }
++#endif
+ 
+ }  // namespace grpc
+--- src/cpp/client/cronet_credentials.cc
++++ src/cpp/client/cronet_credentials.cc
+@@ -44,6 +44,7 @@
+  public:
+   CronetChannelCredentialsImpl(void* engine) : engine_(engine) {}
+ 
++#ifndef __CloudABI__
+   std::shared_ptr<grpc::Channel> CreateChannel(
+       const string& target, const grpc::ChannelArguments& args) override {
+     grpc_channel_args channel_args;
+@@ -52,6 +53,7 @@
+         "", grpc_cronet_secure_channel_create(engine_, target.c_str(),
+                                               &channel_args, nullptr));
+   }
++#endif
+ 
+   SecureChannelCredentials* AsSecureCredentials() override { return nullptr; }
+ 
+--- src/cpp/client/insecure_credentials.cc
++++ src/cpp/client/insecure_credentials.cc
+@@ -45,6 +45,7 @@
+ namespace {
+ class InsecureChannelCredentialsImpl final : public ChannelCredentials {
+  public:
++#ifndef __CloudABI__
+   std::shared_ptr<grpc::Channel> CreateChannel(
+       const string& target, const grpc::ChannelArguments& args) override {
+     grpc_channel_args channel_args;
+@@ -53,6 +54,7 @@
+         "",
+         grpc_insecure_channel_create(target.c_str(), &channel_args, nullptr));
+   }
++#endif
+ 
+   SecureChannelCredentials* AsSecureCredentials() override { return nullptr; }
+ };
+--- src/cpp/client/secure_credentials.cc
++++ src/cpp/client/secure_credentials.cc
+@@ -48,6 +48,7 @@
+   g_gli_initializer.summon();
+ }
+ 
++#ifndef __CloudABI__
+ std::shared_ptr<grpc::Channel> SecureChannelCredentials::CreateChannel(
+     const string& target, const grpc::ChannelArguments& args) {
+   grpc_channel_args channel_args;
+@@ -57,6 +58,7 @@
+       grpc_secure_channel_create(c_creds_, target.c_str(), &channel_args,
+                                  nullptr));
+ }
++#endif
+ 
+ SecureCallCredentials::SecureCallCredentials(grpc_call_credentials* c_creds)
+     : c_creds_(c_creds) {
+@@ -81,10 +83,12 @@
+ }
+ }  // namespace
+ 
++#ifndef __CloudABI__
+ std::shared_ptr<ChannelCredentials> GoogleDefaultCredentials() {
+   GrpcLibraryCodegen init;  // To call grpc_init().
+   return WrapChannelCredentials(grpc_google_default_credentials_create());
+ }
++#endif
+ 
+ // Builds SSL Credentials given SSL specific options
+ std::shared_ptr<ChannelCredentials> SslCredentials(
+@@ -100,11 +104,13 @@
+ }
+ 
+ // Builds credentials for use when running in GCE
++#ifndef __CloudABI__
+ std::shared_ptr<CallCredentials> GoogleComputeEngineCredentials() {
+   GrpcLibraryCodegen init;  // To call grpc_init().
+   return WrapCallCredentials(
+       grpc_google_compute_engine_credentials_create(nullptr));
+ }
++#endif
+ 
+ // Builds JWT credentials.
+ std::shared_ptr<CallCredentials> ServiceAccountJWTAccessCredentials(
+@@ -122,12 +128,14 @@
+ }
+ 
+ // Builds refresh token credentials.
++#ifndef __CloudABI__
+ std::shared_ptr<CallCredentials> GoogleRefreshTokenCredentials(
+     const grpc::string& json_refresh_token) {
+   GrpcLibraryCodegen init;  // To call grpc_init().
+   return WrapCallCredentials(grpc_google_refresh_token_credentials_create(
+       json_refresh_token.c_str(), nullptr));
+ }
++#endif
+ 
+ // Builds access token credentials.
+ std::shared_ptr<CallCredentials> AccessTokenCredentials(
+--- src/cpp/client/secure_credentials.h
++++ src/cpp/client/secure_credentials.h
+@@ -49,8 +49,10 @@
+   ~SecureChannelCredentials() { grpc_channel_credentials_release(c_creds_); }
+   grpc_channel_credentials* GetRawCreds() { return c_creds_; }
+ 
++#ifndef __CloudABI__
+   std::shared_ptr<grpc::Channel> CreateChannel(
+       const string& target, const grpc::ChannelArguments& args) override;
++#endif
+   SecureChannelCredentials* AsSecureCredentials() override { return this; }
+ 
+  private:
+--- src/csharp/ext/grpc_csharp_ext.c
++++ src/csharp/ext/grpc_csharp_ext.c
+@@ -391,12 +391,14 @@
+ 
+ /* Channel */
+ 
++#ifndef __CloudABI__
+ GPR_EXPORT grpc_channel *GPR_CALLTYPE
+ 
+ grpcsharp_insecure_channel_create(const char *target,
+                                   const grpc_channel_args *args) {
+   return grpc_insecure_channel_create(target, args, NULL);
+ }
++#endif
+ 
+ GPR_EXPORT void GPR_CALLTYPE grpcsharp_channel_destroy(grpc_channel *channel) {
+   grpc_channel_destroy(channel);
+@@ -963,11 +965,13 @@
+   grpc_call_credentials_release(creds);
+ }
+ 
++#ifndef __CloudABI__
+ GPR_EXPORT grpc_channel *GPR_CALLTYPE grpcsharp_secure_channel_create(
+     grpc_channel_credentials *creds, const char *target,
+     const grpc_channel_args *args) {
+   return grpc_secure_channel_create(creds, target, args, NULL);
+ }
++#endif
+ 
+ GPR_EXPORT grpc_server_credentials *GPR_CALLTYPE
+ grpcsharp_ssl_server_credentials_create(

@@ -1,0 +1,447 @@
+--- include/grpc/grpc.h
++++ include/grpc/grpc.h
+@@ -387,8 +387,10 @@
+ /** Add a HTTP2 over plaintext over tcp listener.
+     Returns bound port number on success, 0 on failure.
+     REQUIRES: server not started */
++#ifndef __CloudABI__
+ GRPCAPI int grpc_server_add_insecure_http2_port(grpc_server *server,
+                                                 const char *addr);
++#endif
+ 
+ /** Start a server - tells all listeners to start listening */
+ GRPCAPI void grpc_server_start(grpc_server *server);
+--- include/grpc/grpc_security.h
++++ include/grpc/grpc_security.h
+@@ -340,9 +340,11 @@
+ /** Add a HTTP2 over an encrypted link over tcp listener.
+    Returns bound port number on success, 0 on failure.
+    REQUIRES: server not started */
++#ifndef __CloudABI__
+ GRPCAPI int grpc_server_add_secure_http2_port(grpc_server *server,
+                                               const char *addr,
+                                               grpc_server_credentials *creds);
++#endif
+ 
+ /** --- Call specific credentials. --- */
+ 
+--- include/grpc++/impl/codegen/server_interface.h
++++ include/grpc++/impl/codegen/server_interface.h
+@@ -113,8 +113,10 @@
+   /// \return bound port number on sucess, 0 on failure.
+   ///
+   /// \warning It's an error to call this method on an already started server.
++#ifndef __CloudABI__
+   virtual int AddListeningPort(const grpc::string& addr,
+                                ServerCredentials* creds) = 0;
++#endif
+ 
+   /// Start the server.
+   ///
+--- include/grpc++/security/server_credentials.h
++++ include/grpc++/security/server_credentials.h
+@@ -64,8 +64,10 @@
+   ///
+   /// \return bound port number on sucess, 0 on failure.
+   // TODO(dgq): the "port" part seems to be a misnomer.
++#ifndef __CloudABI__
+   virtual int AddPortToServer(const grpc::string& addr,
+                               grpc_server* server) = 0;
++#endif
+ };
+ 
+ /// Options to create ServerCredentials with SSL
+--- include/grpc++/server.h
++++ include/grpc++/server.h
+@@ -176,8 +176,10 @@
+   /// \return bound port number on success, 0 on failure.
+   ///
+   /// \warning It is an error to call this method on an already started server.
++#ifndef __CloudABI__
+   int AddListeningPort(const grpc::string& addr,
+                        ServerCredentials* creds) override;
++#endif
+ 
+   /// Start the server.
+   ///
+--- include/grpc++/server_builder.h
++++ include/grpc++/server_builder.h
+@@ -158,9 +158,11 @@
+   /// it is successfully bound, 0 otherwise.
+   ///
+   // TODO(dgq): the "port" part seems to be a misnomer.
++#ifndef __CloudABI__
+   ServerBuilder& AddListeningPort(const grpc::string& addr,
+                                   std::shared_ptr<ServerCredentials> creds,
+                                   int* selected_port = nullptr);
++#endif
+ 
+   /// Add a completion queue for handling asynchronous services.
+   ///
+@@ -243,7 +245,9 @@
+   int max_send_message_size_;
+   std::vector<std::unique_ptr<ServerBuilderOption>> options_;
+   std::vector<std::unique_ptr<NamedService>> services_;
++#ifndef __CloudABI__
+   std::vector<Port> ports_;
++#endif
+ 
+   SyncServerSettings sync_server_settings_;
+ 
+--- src/core/ext/transport/chttp2/server/chttp2_server.c
++++ src/core/ext/transport/chttp2/server/chttp2_server.c
+@@ -203,6 +203,7 @@
+   grpc_tcp_server_unref(exec_ctx, tcp_server);
+ }
+ 
++#ifndef __CloudABI__
+ grpc_error *grpc_chttp2_server_add_port(grpc_exec_ctx *exec_ctx,
+                                         grpc_server *server, const char *addr,
+                                         grpc_channel_args *args,
+@@ -303,3 +304,4 @@
+   }
+   return err;
+ }
++#endif
+--- src/core/ext/transport/chttp2/server/chttp2_server.h
++++ src/core/ext/transport/chttp2/server/chttp2_server.h
+@@ -40,8 +40,10 @@
+ 
+ /// Adds a port to \a server.  Sets \a port_num to the port number.
+ /// Takes ownership of \a args.
++#ifndef __CloudABI__
+ grpc_error *grpc_chttp2_server_add_port(grpc_exec_ctx *exec_ctx,
+                                         grpc_server *server, const char *addr,
+                                         grpc_channel_args *args, int *port_num);
++#endif
+ 
+ #endif /* GRPC_CORE_EXT_TRANSPORT_CHTTP2_SERVER_CHTTP2_SERVER_H */
+--- src/core/ext/transport/chttp2/server/insecure/server_chttp2.c
++++ src/core/ext/transport/chttp2/server/insecure/server_chttp2.c
+@@ -40,6 +40,7 @@
+ #include "src/core/lib/surface/api_trace.h"
+ #include "src/core/lib/surface/server.h"
+ 
++#ifndef __CloudABI__
+ int grpc_server_add_insecure_http2_port(grpc_server *server, const char *addr) {
+   grpc_exec_ctx exec_ctx = GRPC_EXEC_CTX_INIT;
+   int port_num = 0;
+@@ -57,3 +58,4 @@
+   grpc_exec_ctx_finish(&exec_ctx);
+   return port_num;
+ }
++#endif
+--- src/core/ext/transport/chttp2/server/secure/server_secure_chttp2.c
++++ src/core/ext/transport/chttp2/server/secure/server_secure_chttp2.c
+@@ -49,6 +49,7 @@
+ #include "src/core/lib/surface/api_trace.h"
+ #include "src/core/lib/surface/server.h"
+ 
++#ifndef __CloudABI__
+ int grpc_server_add_secure_http2_port(grpc_server *server, const char *addr,
+                                       grpc_server_credentials *creds) {
+   grpc_exec_ctx exec_ctx = GRPC_EXEC_CTX_INIT;
+@@ -99,3 +100,4 @@
+   }
+   return port_num;
+ }
++#endif
+--- src/core/lib/iomgr/socket_utils_common_posix.c
++++ src/core/lib/iomgr/socket_utils_common_posix.c
+@@ -219,6 +219,11 @@
+   return GRPC_ERROR_NONE;
+ }
+ 
++#ifdef __CloudABI__
++int grpc_ipv6_loopback_available(void) {
++  return 1;
++}
++#else
+ static gpr_once g_probe_ipv6_once = GPR_ONCE_INIT;
+ static int g_ipv6_loopback_available;
+ 
+@@ -246,6 +251,7 @@
+   gpr_once_init(&g_probe_ipv6_once, probe_ipv6_once);
+   return g_ipv6_loopback_available;
+ }
++#endif
+ 
+ /* This should be 0 in production, but it may be enabled for testing or
+    debugging purposes, to simulate an environment where IPv6 sockets can't
+--- src/core/lib/iomgr/tcp_server.h
++++ src/core/lib/iomgr/tcp_server.h
+@@ -81,9 +81,11 @@
+    but not dualstack sockets. */
+ /* TODO(ctiller): deprecate this, and make grpc_tcp_server_add_ports to handle
+                   all of the multiple socket port matching logic in one place */
++#ifndef __CloudABI__
+ grpc_error *grpc_tcp_server_add_port(grpc_tcp_server *s,
+                                      const grpc_resolved_address *addr,
+                                      int *out_port);
++#endif
+ 
+ /* Number of fds at the given port_index, or 0 if port_index is out of
+    bounds. */
+--- src/core/lib/iomgr/tcp_server_posix.c
++++ src/core/lib/iomgr/tcp_server_posix.c
+@@ -292,6 +292,7 @@
+   }
+ }
+ 
++#ifndef __CloudABI__
+ /* Treat :: or 0.0.0.0 as a family-agnostic wildcard. */
+ static grpc_error *add_wildcard_addrs_to_server(grpc_tcp_server *s,
+                                                 unsigned port_index,
+@@ -405,7 +406,9 @@
+ 
+   return GRPC_ERROR_NONE;
+ }
++#endif
+ 
++#ifndef __CloudABI__
+ grpc_error *grpc_tcp_server_add_port(grpc_tcp_server *s,
+                                      const grpc_resolved_address *addr,
+                                      int *out_port) {
+@@ -453,6 +456,7 @@
+   }
+   return err;
+ }
++#endif
+ 
+ /* Return listener at port_index or NULL. Should only be called with s->mu
+    locked. */
+@@ -512,6 +516,7 @@
+   s->pollset_count = pollset_count;
+   sp = s->head;
+   while (sp != NULL) {
++#ifndef __CloudABI__
+     if (s->so_reuseport && !grpc_is_unix_socket(&sp->addr) &&
+         pollset_count > 1) {
+       GPR_ASSERT(GRPC_LOG_IF_ERROR(
+@@ -524,7 +529,9 @@
+         s->active_ports++;
+         sp = sp->next;
+       }
+-    } else {
++    } else
++#endif
++    {
+       for (i = 0; i < pollset_count; i++) {
+         grpc_pollset_add_fd(exec_ctx, pollsets[i], sp->emfd);
+       }
+--- src/core/lib/iomgr/tcp_server_utils_posix.h
++++ src/core/lib/iomgr/tcp_server_utils_posix.h
+@@ -109,11 +109,13 @@
+ 
+ /* If successful, add a listener to \a s for \a addr, set \a dsmode for the
+    socket, and return the \a listener. */
++#ifndef __CloudABI__
+ grpc_error *grpc_tcp_server_add_addr(grpc_tcp_server *s,
+                                      const grpc_resolved_address *addr,
+                                      unsigned port_index, unsigned fd_index,
+                                      grpc_dualstack_mode *dsmode,
+                                      grpc_tcp_listener **listener);
++#endif
+ 
+ /* Get all addresses assigned to network interfaces on the machine and create a
+    listener for each. requested_port is the port to use for every listener, or 0
+@@ -126,9 +128,11 @@
+                                                 int *out_port);
+ 
+ /* Prepare a recently-created socket for listening. */
++#ifndef __CloudABI__
+ grpc_error *grpc_tcp_server_prepare_socket(int fd,
+                                            const grpc_resolved_address *addr,
+                                            bool so_reuseport, int *port);
++#endif
+ /* Ruturn true if the platform supports ifaddrs */
+ bool grpc_tcp_server_have_ifaddrs(void);
+ 
+--- src/core/lib/iomgr/tcp_server_utils_posix_common.c
++++ src/core/lib/iomgr/tcp_server_utils_posix_common.c
+@@ -90,6 +90,7 @@
+   return s_max_accept_queue_size;
+ }
+ 
++#ifndef __CloudABI__
+ static grpc_error *add_socket_to_server(grpc_tcp_server *s, int fd,
+                                         const grpc_resolved_address *addr,
+                                         unsigned port_index, unsigned fd_index,
+@@ -217,5 +218,6 @@
+   GRPC_ERROR_UNREF(err);
+   return ret;
+ }
++#endif
+ 
+ #endif /* GRPC_POSIX_SOCKET */
+--- src/core/lib/iomgr/udp_server.c
++++ src/core/lib/iomgr/udp_server.c
+@@ -268,6 +268,7 @@
+   }
+ }
+ 
++#ifndef __CloudABI__
+ static int bind_socket(grpc_socket_factory *socket_factory, int sockfd,
+                        const grpc_resolved_address *addr) {
+   return (socket_factory != NULL)
+@@ -343,6 +344,7 @@
+   }
+   return -1;
+ }
++#endif
+ 
+ /* event manager callback when reads are ready */
+ static void on_read(grpc_exec_ctx *exec_ctx, void *arg, grpc_error *error) {
+@@ -391,6 +393,7 @@
+   gpr_mu_unlock(&sp->server->mu);
+ }
+ 
++#ifndef __CloudABI__
+ static int add_socket_to_server(grpc_udp_server *s, int fd,
+                                 const grpc_resolved_address *addr,
+                                 grpc_udp_server_read_cb read_cb,
+@@ -512,6 +515,7 @@
+   gpr_free(allocated_addr);
+   return allocated_port1 >= 0 ? allocated_port1 : allocated_port2;
+ }
++#endif
+ 
+ int grpc_udp_server_get_fd(grpc_udp_server *s, unsigned port_index) {
+   grpc_udp_listener *sp;
+--- src/core/lib/iomgr/udp_server.h
++++ src/core/lib/iomgr/udp_server.h
+@@ -79,11 +79,13 @@
+ 
+ /* TODO(ctiller): deprecate this, and make grpc_udp_server_add_ports to handle
+                   all of the multiple socket port matching logic in one place */
++#ifndef __CloudABI__
+ int grpc_udp_server_add_port(grpc_udp_server *s,
+                              const grpc_resolved_address *addr,
+                              grpc_udp_server_read_cb read_cb,
+                              grpc_udp_server_write_cb write_cb,
+                              grpc_udp_server_orphan_cb orphan_cb);
++#endif
+ 
+ void grpc_udp_server_destroy(grpc_exec_ctx *exec_ctx, grpc_udp_server *server,
+                              grpc_closure *on_done);
+--- src/cpp/server/insecure_server_credentials.cc
++++ src/cpp/server/insecure_server_credentials.cc
+@@ -40,9 +40,11 @@
+ namespace {
+ class InsecureServerCredentialsImpl final : public ServerCredentials {
+  public:
++#ifndef __CloudABI__
+   int AddPortToServer(const grpc::string& addr, grpc_server* server) override {
+     return grpc_server_add_insecure_http2_port(server, addr.c_str());
+   }
++#endif
+   void SetAuthMetadataProcessor(
+       const std::shared_ptr<AuthMetadataProcessor>& processor) override {
+     (void)processor;
+--- src/cpp/server/secure_server_credentials.cc
++++ src/cpp/server/secure_server_credentials.cc
+@@ -107,10 +107,12 @@
+      status.error_message().c_str());
+ }
+ 
++#ifndef __CloudABI__
+ int SecureServerCredentials::AddPortToServer(const grpc::string& addr,
+                                              grpc_server* server) {
+   return grpc_server_add_secure_http2_port(server, addr.c_str(), creds_);
+ }
++#endif
+ 
+ void SecureServerCredentials::SetAuthMetadataProcessor(
+     const std::shared_ptr<AuthMetadataProcessor>& processor) {
+--- src/cpp/server/secure_server_credentials.h
++++ src/cpp/server/secure_server_credentials.h
+@@ -72,7 +72,9 @@
+     grpc_server_credentials_release(creds_);
+   }
+ 
++#ifndef __CloudABI__
+   int AddPortToServer(const grpc::string& addr, grpc_server* server) override;
++#endif
+ 
+   void SetAuthMetadataProcessor(
+       const std::shared_ptr<AuthMetadataProcessor>& processor) override;
+--- src/cpp/server/server_builder.cc
++++ src/cpp/server/server_builder.cc
+@@ -171,6 +171,7 @@
+   return *this;
+ }
+ 
++#ifndef __CloudABI__
+ ServerBuilder& ServerBuilder::AddListeningPort(
+     const grpc::string& addr, std::shared_ptr<ServerCredentials> creds,
+     int* selected_port) {
+@@ -178,6 +179,7 @@
+   ports_.push_back(port);
+   return *this;
+ }
++#endif
+ 
+ std::unique_ptr<Server> ServerBuilder::BuildAndStart() {
+   for (auto plugin = plugins_.begin(); plugin != plugins_.end(); plugin++) {
+@@ -333,6 +335,7 @@
+     }
+   }
+ 
++#ifndef __CloudABI__
+   bool added_port = false;
+   for (auto port = ports_.begin(); port != ports_.end(); port++) {
+     int r = server->AddListeningPort(port->addr, port->creds.get());
+@@ -345,6 +348,7 @@
+       *port->selected_port = r;
+     }
+   }
++#endif
+ 
+   auto cqs_data = cqs_.empty() ? nullptr : &cqs_[0];
+   server->Start(cqs_data, cqs_.size());
+--- src/cpp/server/server_cc.cc
++++ src/cpp/server/server_cc.cc
+@@ -503,6 +503,7 @@
+   has_generic_service_ = true;
+ }
+ 
++#ifndef __CloudABI__
+ int Server::AddListeningPort(const grpc::string& addr,
+                              ServerCredentials* creds) {
+   GPR_ASSERT(!started_);
+@@ -510,6 +511,7 @@
+   global_callbacks_->AddPort(this, addr, creds, port);
+   return port;
+ }
++#endif
+ 
+ void Server::Start(ServerCompletionQueue** cqs, size_t num_cqs) {
+   GPR_ASSERT(!started_);
+--- src/csharp/ext/grpc_csharp_ext.c
++++ src/csharp/ext/grpc_csharp_ext.c
+@@ -878,10 +878,12 @@
+   grpc_server_register_completion_queue(server, cq, NULL);
+ }
+ 
++#ifndef __CloudABI__
+ GPR_EXPORT int32_t GPR_CALLTYPE grpcsharp_server_add_insecure_http2_port(
+     grpc_server *server, const char *addr) {
+   return grpc_server_add_insecure_http2_port(server, addr);
+ }
++#endif
+ 
+ GPR_EXPORT void GPR_CALLTYPE grpcsharp_server_start(grpc_server *server) {
+   grpc_server_start(server);
+@@ -1001,10 +1003,12 @@
+   grpc_server_credentials_release(creds);
+ }
+ 
++#ifndef __CloudABI__
+ GPR_EXPORT int32_t GPR_CALLTYPE grpcsharp_server_add_secure_http2_port(
+     grpc_server *server, const char *addr, grpc_server_credentials *creds) {
+   return grpc_server_add_secure_http2_port(server, addr, creds);
+ }
++#endif
+ 
+ GPR_EXPORT grpc_channel_credentials *GPR_CALLTYPE
+ grpcsharp_composite_channel_credentials_create(

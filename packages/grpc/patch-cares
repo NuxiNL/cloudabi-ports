@@ -1,0 +1,15 @@
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -150,9 +150,9 @@
+     message(WARNING "gRPC_CARES_PROVIDER is \"module\" but CARES_ROOT_DIR is wrong")
+   endif()
+ elseif("${gRPC_CARES_PROVIDER}" STREQUAL "package")
+-  find_package(CARES)
+-  if(TARGET CARES::CARES)
+-    set(_gRPC_CARES_LIBRARIES CARES::CARES)
++  find_package(c-ares)
++  if(TARGET c-ares::cares)
++    set(_gRPC_CARES_LIBRARIES c-ares::cares)
+   endif()
+   set(_gRPC_FIND_CARES "if(NOT CARES_FOUND)\n  find_package(CARES)\nendif()")
+ endif()

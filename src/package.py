@@ -113,29 +113,10 @@ class TargetPackage:
         # Perform the build inside a buildroot with its dependencies
         # installed in place.
         self.initialize_buildroot({
-            'arpc',
-            'autoconf',
-            'automake',
-            'bash',
-            'bison',
-            'cmake',
-            'coreutils',
-            'diffutils',
-            'findutils',
-            'flex',
-            'gawk',
-            'gettext',
-            'grep',
-            'help2man',
-            'libarchive',
-            'libtool',
-            'llvm',
-            'm4',
-            'make',
-            'ninja',
-            'pkgconf',
-            'sed',
-            'texinfo',
+            'arpc', 'autoconf', 'automake', 'bash', 'bison', 'c-ares', 'cmake',
+            'coreutils', 'diffutils', 'findutils', 'flex', 'gawk', 'gettext',
+            'grep', 'grpc', 'help2man', 'libarchive', 'libtool', 'llvm', 'm4',
+            'make', 'ninja', 'pkgconf', 'protobuf-cpp', 'sed', 'texinfo'
         }, self._lib_depends)
         log.info('BUILD %s %s', self._name, self._arch)
         self._build_cmd(

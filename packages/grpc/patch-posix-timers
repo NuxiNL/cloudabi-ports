@@ -1,0 +1,11 @@
+--- src/core/lib/support/time_posix.c
++++ src/core/lib/support/time_posix.c
+@@ -58,7 +58,7 @@
+   return rv;
+ }
+ 
+-#if _POSIX_TIMERS > 0
++#if _POSIX_TIMERS > 0 || defined(__CloudABI__)
+ static gpr_timespec gpr_from_timespec(struct timespec ts,
+                                       gpr_clock_type clock_type) {
+   /*

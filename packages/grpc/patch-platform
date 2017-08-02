@@ -1,0 +1,41 @@
+--- include/grpc/impl/codegen/port_platform.h
++++ include/grpc/impl/codegen/port_platform.h
+@@ -285,6 +285,22 @@
+ #else /* _LP64 */
+ #define GPR_ARCH_32 1
+ #endif /* _LP64 */
++#elif defined(__CloudABI__)
++#define GPR_PLATFORM_STRING "cloudabi"
++#define GPR_CLOUDABI 1
++#define GPR_CPU_POSIX 1
++#define GPR_GCC_ATOMIC 1
++#define GPR_GCC_TLS 1
++#define GPR_POSIX_LOG 1
++#define GPR_POSIX_ENV 1
++#define GPR_POSIX_STRING 1
++#define GPR_POSIX_SYNC 1
++#define GPR_POSIX_TIME 1
++#if __POINTER_WIDTH__ == 64
++#define GPR_ARCH_64 1
++#elif __POINTER_WIDTH__ == 32
++#define GPR_ARCH_32 1
++#endif
+ #else
+ #error "Could not auto-detect platform"
+ #endif
+--- src/core/lib/iomgr/port.h
++++ src/core/lib/iomgr/port.h
+@@ -125,6 +125,13 @@
+ #define GRPC_POSIX_SOCKETUTILS 1
+ #define GRPC_POSIX_WAKEUP_FD 1
+ #define GRPC_TIMER_USE_GENERIC 1
++#elif defined(GPR_CLOUDABI)
++#define GRPC_POSIX_NO_SPECIAL_WAKEUP_FD 1
++#define GRPC_POSIX_SOCKET 1
++#define GRPC_POSIX_SOCKETADDR 1
++#define GRPC_POSIX_SOCKETUTILS 1
++#define GRPC_POSIX_WAKEUP_FD 1
++#define GRPC_TIMER_USE_GENERIC 1
+ #elif !defined(GPR_NO_AUTODETECT_PLATFORM)
+ #error "Platform not recognized"
+ #endif

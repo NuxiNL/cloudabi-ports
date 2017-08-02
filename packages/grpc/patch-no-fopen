@@ -1,0 +1,66 @@
+--- src/core/lib/iomgr/load_file.c
++++ src/core/lib/iomgr/load_file.c
+@@ -43,6 +43,7 @@
+ #include "src/core/lib/support/block_annotate.h"
+ #include "src/core/lib/support/string.h"
+ 
++#ifndef __CloudABI__
+ grpc_error *grpc_load_file(const char *filename, int add_null_terminator,
+                            grpc_slice *output) {
+   unsigned char *contents = NULL;
+@@ -90,3 +91,4 @@
+   GRPC_SCHEDULING_END_BLOCKING_REGION;
+   return error;
+ }
++#endif
+--- src/core/lib/iomgr/load_file.h
++++ src/core/lib/iomgr/load_file.h
+@@ -46,8 +46,10 @@
+ 
+ /* Loads the content of a file into a slice. add_null_terminator will add
+    a NULL terminator if non-zero. */
++#ifndef __CloudABI__
+ grpc_error *grpc_load_file(const char *filename, int add_null_terminator,
+                            grpc_slice *slice);
++#endif
+ 
+ #ifdef __cplusplus
+ }
+--- src/core/lib/iomgr/tcp_server_utils_posix_common.c
++++ src/core/lib/iomgr/tcp_server_utils_posix_common.c
+@@ -59,6 +59,9 @@
+ 
+ /* get max listen queue size on linux */
+ static void init_max_accept_queue_size(void) {
++#ifdef __CloudABI__
++  s_max_accept_queue_size = SOMAXCONN;
++#else
+   int n = SOMAXCONN;
+   char buf[64];
+   FILE *fp = fopen("/proc/sys/net/core/somaxconn", "r");
+@@ -83,6 +86,7 @@
+             "connection drops",
+             s_max_accept_queue_size);
+   }
++#endif
+ }
+ 
+ static int get_max_accept_queue_size(void) {
+--- src/core/lib/security/transport/security_connector.c
++++ src/core/lib/security/transport/security_connector.c
+@@ -705,6 +705,7 @@
+ static grpc_slice compute_default_pem_root_certs_once(void) {
+   grpc_slice result = grpc_empty_slice();
+ 
++#ifndef __CloudABI__
+   /* First try to load the roots from the environment. */
+   char *default_root_certs_path =
+       gpr_getenv(GRPC_DEFAULT_SSL_ROOTS_FILE_PATH_ENV_VAR);
+@@ -734,6 +735,7 @@
+     GRPC_LOG_IF_ERROR("load_file",
+                       grpc_load_file(installed_roots_path, 1, &result));
+   }
++#endif
+   return result;
+ }
+ 
