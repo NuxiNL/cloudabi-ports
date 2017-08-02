@@ -8,6 +8,7 @@ def build(ctx):
     srcdir = ctx.extract()
     srcdir.path('src/google/protobuf/compiler').remove()
     build = srcdir.path('cmake').cmake([
+        '-Dprotobuf_BUILD_COMPILER=OFF',
         '-Dprotobuf_BUILD_TESTS=OFF',
         '-Dprotobuf_BUILD_EXAMPLES=OFF',
     ])
@@ -17,16 +18,16 @@ def build(ctx):
 
 package(
     name='protobuf-cpp',
-    version='3.2.0',
+    version='3.3.0',
     homepage='https://developers.google.com/protocol-buffers/',
     lib_depends={'cxx-runtime', 'zlib'},
     build_cmd=build)
 
 distfile(
-    name='protobuf-cpp-3.2.0.tar.gz',
-    checksum='51d773e4297238b282eaa4c1dd317099675b12eef2b414732b851c00459225c6',
+    name='protobuf-cpp-3.3.0.tar.gz',
+    checksum='5e2587dea2f9287885e3b04d3a94ed4e8b9b2d2c5dd1f0032ceef3ea1d153bd7',
     master_sites={
-        'https://github.com/google/protobuf/releases/download/v3.2.0/'
+        'https://github.com/google/protobuf/releases/download/v3.3.0/'
     },
     unsafe_string_sources={
         'src/google/protobuf/io/strtod.cc',

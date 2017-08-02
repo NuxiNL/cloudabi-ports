@@ -1,24 +1,27 @@
 --- src/google/protobuf/message.h
 +++ src/google/protobuf/message.h
-@@ -256,8 +256,6 @@
+@@ -265,8 +265,10 @@
    string ShortDebugString() const;
    // Like DebugString(), but do not escape UTF-8 byte sequences.
    string Utf8DebugString() const;
--  // Convenience function useful in GDB.  Prints DebugString() to stdout.
--  void PrintDebugString() const;
++#ifndef __CloudABI__
+   // Convenience function useful in GDB.  Prints DebugString() to stdout.
+   void PrintDebugString() const;
++#endif
  
    // Heavy I/O -------------------------------------------------------
    // Additional parsing and serialization methods not implemented by
 --- src/google/protobuf/text_format.cc
 +++ src/google/protobuf/text_format.cc
-@@ -128,10 +128,6 @@
+@@ -116,9 +116,11 @@
    return debug_string;
  }
  
--void Message::PrintDebugString() const {
--  printf("%s", DebugString().c_str());
--}
--
++#ifndef __CloudABI__
+ void Message::PrintDebugString() const {
+   printf("%s", DebugString().c_str());
+ }
++#endif
+ 
  
  // ===========================================================================
- // Implementation of the parse information tree class.

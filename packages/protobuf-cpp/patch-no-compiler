@@ -1,53 +1,87 @@
 --- cmake/CMakeLists.txt
 +++ cmake/CMakeLists.txt
-@@ -165,8 +165,6 @@
+@@ -12,6 +12,7 @@
+ project(protobuf C CXX)
+ 
+ # Options
++option(protobuf_BUILD_COMPILER "Build compiler" ON)
+ option(protobuf_BUILD_TESTS "Build tests" ON)
+ option(protobuf_BUILD_EXAMPLES "Build examples" OFF)
+ if (BUILD_SHARED_LIBS)
+@@ -165,8 +166,10 @@
  
  include(libprotobuf-lite.cmake)
  include(libprotobuf.cmake)
 -include(libprotoc.cmake)
 -include(protoc.cmake)
++if (protobuf_BUILD_COMPILER)
++  include(libprotoc.cmake)
++  include(protoc.cmake)
++endif()
  
  if (protobuf_BUILD_TESTS)
    include(tests.cmake)
 --- cmake/install.cmake
 +++ cmake/install.cmake
-@@ -2,8 +2,7 @@
+@@ -1,9 +1,17 @@
+ include(GNUInstallDirs)
  
++if (protobuf_BUILD_COMPILER)
++  set(target_libprotoc libprotoc)
++  set(target_protoc protoc)
++else()
++  set(target_libprotoc)
++  set(target_protoc)
++endif()
++
  foreach(_library
    libprotobuf-lite
--  libprotobuf
+   libprotobuf
 -  libprotoc)
-+  libprotobuf)
++  ${target_libprotoc})
    set_property(TARGET ${_library}
      PROPERTY INTERFACE_INCLUDE_DIRECTORIES
      $<BUILD_INTERFACE:${protobuf_source_dir}/src>
-@@ -14,9 +13,6 @@
+@@ -14,8 +22,10 @@
      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT ${_library})
  endforeach()
  
 -install(TARGETS protoc EXPORT protobuf-targets
 -  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc)
--
++if (protobuf_BUILD_COMPILER)
++  install(TARGETS protoc EXPORT protobuf-targets
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc)
++endif()
+ 
  file(STRINGS extract_includes.bat.in _extract_strings
    REGEX "^copy")
- foreach(_extract_string ${_extract_strings})
-@@ -100,7 +96,7 @@
+@@ -94,7 +104,7 @@
    ${CMAKE_INSTALL_CMAKEDIR}/protobuf-options.cmake @ONLY)
  
  # Allows the build directory to be used as a find directory.
 -export(TARGETS libprotobuf-lite libprotobuf libprotoc protoc
-+export(TARGETS libprotobuf-lite libprotobuf
++export(TARGETS libprotobuf-lite libprotobuf ${target_libprotoc} ${target_protoc}
    NAMESPACE protobuf::
    FILE ${CMAKE_INSTALL_CMAKEDIR}/protobuf-targets.cmake
  )
 --- cmake/libprotobuf.cmake
 +++ cmake/libprotobuf.cmake
-@@ -2,8 +2,6 @@
+@@ -1,9 +1,16 @@
++if (protobuf_BUILD_COMPILER)
++  set(sources_compiler
++      ${protobuf_source_dir}/src/google/protobuf/compiler/importer.cc
++      ${protobuf_source_dir}/src/google/protobuf/compiler/parser.cc)
++else()
++  set(sources_compiler)
++endif()
++
+ set(libprotobuf_files
    ${protobuf_source_dir}/src/google/protobuf/any.cc
    ${protobuf_source_dir}/src/google/protobuf/any.pb.cc
    ${protobuf_source_dir}/src/google/protobuf/api.pb.cc
 -  ${protobuf_source_dir}/src/google/protobuf/compiler/importer.cc
 -  ${protobuf_source_dir}/src/google/protobuf/compiler/parser.cc
++  ${sources_compiler}
    ${protobuf_source_dir}/src/google/protobuf/descriptor.cc
    ${protobuf_source_dir}/src/google/protobuf/descriptor.pb.cc
    ${protobuf_source_dir}/src/google/protobuf/descriptor_database.cc
