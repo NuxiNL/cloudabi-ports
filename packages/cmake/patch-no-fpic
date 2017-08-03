@@ -1,0 +1,10 @@
+--- Modules/Compiler/GNU.cmake
++++ Modules/Compiler/GNU.cmake
+@@ -11,7 +11,6 @@
+ macro(__compiler_gnu lang)
+   # Feature flags.
+   set(CMAKE_${lang}_VERBOSE_FLAG "-v")
+-  set(CMAKE_${lang}_COMPILE_OPTIONS_PIC "-fPIC")
+   if(NOT CMAKE_${lang}_COMPILER_VERSION VERSION_LESS 3.4)
+     set(CMAKE_${lang}_COMPILE_OPTIONS_PIE "-fPIE")
+   endif()
