@@ -1,7 +1,7 @@
 --- Makefile
 +++ Makefile
 @@ -1,6 +1,6 @@
- # $Id$
+ # $Id: Makefile 84 2009-01-10 01:37:29Z chromerium $
  
 -SUBDIRS = src examples
 +SUBDIRS = src

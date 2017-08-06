@@ -5,9 +5,11 @@
 
 
 def build(ctx):
-    build = ctx.extract().gnu_configure(['ac_cv_func_malloc_0_nonnull=yes'], inplace=True)
+    build = ctx.extract().gnu_configure(
+        ['ac_cv_func_malloc_0_nonnull=yes'], inplace=True)
     build.make()
     build.make_install().install()
+
 
 package(
     name='libircclient',
@@ -20,4 +22,6 @@ distfile(
     name='libircclient-1.9.tar.gz',
     checksum='81c397eee618667bccfe8960352ba5f829c8c2e9badc270594b91128cd89c064',
     master_sites=sites_sourceforge('libircclient/libircclient/1.9'),
-    unsafe_string_sources={'src/libircclient.c', 'src/colors.c', 'src/utils.c'})
+    unsafe_string_sources={
+        'src/libircclient.c', 'src/colors.c', 'src/utils.c'
+    })

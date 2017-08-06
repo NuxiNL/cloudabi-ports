@@ -1,6 +1,6 @@
 --- include/libircclient.h
 +++ include/libircclient.h
-@@ -278,6 +278,50 @@ int irc_connect6 (irc_session_t * session,
+@@ -278,6 +278,50 @@
  			const char * realname);
  
  /*!
@@ -53,7 +53,7 @@
   *
 --- src/Makefile.in
 +++ src/Makefile.in
-@@ -17,12 +17,14 @@ shared_mingw: libircclient.dll
+@@ -17,12 +17,14 @@
  
  install:
  	-mkdir -p $(DESTDIR)@prefix@/include
@@ -79,14 +79,14 @@
  static irc_dcc_session_t * libirc_find_dcc_session (irc_session_t * session, irc_dcc_t dccid, int lock_list)
  {
  	irc_dcc_session_t * s, *found = 0;
-@@ -895,3 +895,4 @@ int	irc_dcc_sendfile (irc_session_t * session, void * ctx, const char * nick, co
+@@ -895,3 +895,4 @@
  
  	return 0;
  }
 +#endif
 --- src/libircclient.c
 +++ src/libircclient.c
-@@ -131,12 +131,14 @@ void irc_destroy_session (irc_session_t * session)
+@@ -131,12 +131,14 @@
  		SSL_free( session->ssl );
  #endif
  	
@@ -101,7 +101,7 @@
  
  	libirc_mutex_destroy (&session->mutex_dcc);
  
-@@ -149,6 +151,7 @@ void irc_destroy_session (irc_session_t * session)
+@@ -149,6 +151,7 @@
  }
  
  
@@ -109,7 +109,7 @@
  int irc_connect (irc_session_t * session,
  			const char * server, 
  			unsigned short port,
-@@ -432,6 +435,82 @@ int irc_connect6 (irc_session_t * session,
+@@ -432,6 +435,82 @@
  	return 1;
  #endif	
  }
@@ -192,7 +192,7 @@
  
  
  int irc_is_connected (irc_session_t * session)
-@@ -516,7 +595,9 @@ int irc_add_select_descriptors (irc_session_t * session, fd_set *in_set, fd_set
+@@ -516,7 +595,9 @@
  
  	libirc_mutex_unlock (&session->mutex_session);
  
@@ -202,7 +202,7 @@
  	return 0;
  }
  
-@@ -723,9 +804,12 @@ static void libirc_process_incoming_data (irc_session_t * session, size_t proces
+@@ -723,9 +804,12 @@
  					memcpy (ctcp_buf, params[1] + 1, msglen);
  					ctcp_buf[msglen] = '\0';
  
@@ -216,7 +216,7 @@
  					&& session->callbacks.event_ctcp_action )
  					{
  						params[1] = ctcp_buf + 7; // the length of "ACTION "
-@@ -814,7 +898,7 @@ static void libirc_process_incoming_data (irc_session_t * session, size_t proces
+@@ -814,7 +898,7 @@
  
  int irc_process_select_descriptors (irc_session_t * session, fd_set *in_set, fd_set *out_set)
  {
@@ -225,7 +225,7 @@
  
  	if ( session->sock < 0 
  	|| session->state == LIBIRC_STATE_INIT
-@@ -825,7 +909,9 @@ int irc_process_select_descriptors (irc_session_t * session, fd_set *in_set, fd_
+@@ -825,7 +909,9 @@
  	}
  
  	session->lasterror = 0;
@@ -235,7 +235,7 @@
  
  	// Handle "connection succeed" / "connection failed"
  	if ( session->state == LIBIRC_STATE_CONNECTING )
-@@ -834,6 +920,7 @@ int irc_process_select_descriptors (irc_session_t * session, fd_set *in_set, fd_
+@@ -834,6 +920,7 @@
          if ( !FD_ISSET (session->sock, out_set) )
              return 0;
          
@@ -243,7 +243,7 @@
  		// Now we have to determine whether the socket is connected 
  		// or the connect is failed
  		struct sockaddr_storage saddr, laddr;
-@@ -859,11 +946,11 @@ int irc_process_select_descriptors (irc_session_t * session, fd_set *in_set, fd_
+@@ -859,11 +946,11 @@
  			fprintf (stderr, "[DEBUG] Detected local address: %s\n", inet_ntoa(session->local_addr));
  #endif
  
@@ -271,7 +271,7 @@
  	#include <sys/types.h>
 --- src/sockets.c
 +++ src/sockets.c
-@@ -64,11 +64,13 @@ static int socket_error()
+@@ -64,11 +64,13 @@
  }
  
  
@@ -285,7 +285,7 @@
  
  
  static int socket_make_nonblocking (socket_t * sock)
-@@ -95,6 +97,7 @@ static int socket_close (socket_t * sock)
+@@ -95,6 +97,7 @@
  }
  
  
@@ -293,7 +293,7 @@
  static int socket_connect (socket_t * sock, const struct sockaddr *saddr, socklen_t len)
  {
  	while ( 1 )
-@@ -125,6 +128,7 @@ static int socket_accept (socket_t * sock, socket_t * newsock, struct sockaddr *
+@@ -125,6 +128,7 @@
  
  	return 0;
  }
@@ -303,7 +303,7 @@
  static int socket_recv (socket_t * sock, void * buf, size_t len)
 --- src/utils.c
 +++ src/utils.c
-@@ -23,9 +23,9 @@ static void libirc_add_to_set (int fd, fd_set *set, int * maxfd)
+@@ -23,9 +23,9 @@
  #if defined (ENABLE_DEBUG)
  static void libirc_dump_data (const char * prefix, const char * buf, unsigned int length)
  {
@@ -315,7 +315,7 @@
  }
  #endif
  
-@@ -59,6 +59,7 @@ static int libirc_findcrlf_offset(const char *buf, int offset, const int length)
+@@ -59,6 +59,7 @@
  	return offset;
  }
  
@@ -323,7 +323,7 @@
  static int libirc_findcrorlf (char * buf, int length)
  {
  	int offset = 0;
-@@ -78,6 +79,7 @@ static int libirc_findcrorlf (char * buf, int length)
+@@ -78,6 +79,7 @@
  
  	return 0;
  }
