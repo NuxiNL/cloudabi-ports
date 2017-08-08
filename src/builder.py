@@ -405,6 +405,7 @@ class TargetBuilder:
             '-DCMAKE_RANLIB=' + self._tool('ranlib'),
             '-DCMAKE_SYSTEM_NAME=Generic',
             '-DCMAKE_SYSTEM_PROCESSOR=' + self._arch.split('-')[0],
+            '-DPROTOBUF_IMPORT_DIRS=%s/include' % self._localbase,
             '-DUNIX=YES',
         ] + args)
 
