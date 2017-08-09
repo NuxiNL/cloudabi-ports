@@ -1,0 +1,55 @@
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -22,6 +22,7 @@
+ 
+ # civetweb
+ 
++if(0)
+ set(CIVETWEB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/3rdparty/civetweb/include)
+ 
+ add_library(civetweb OBJECT
+@@ -62,6 +63,7 @@
+     3rdparty/googletest/googletest
+     3rdparty/googletest/googlemock
+ )
++endif()
+ 
+ # prometheus-cpp
+ 
+--- lib/CMakeLists.txt
++++ lib/CMakeLists.txt
+@@ -18,11 +18,8 @@
+   check_names.cc
+   counter.cc
+   counter_builder.cc
+-  exposer.cc
+   gauge.cc
+   gauge_builder.cc
+-  handler.cc
+-  handler.h
+   histogram.cc
+   histogram_builder.cc
+   json_serializer.cc
+@@ -34,10 +31,6 @@
+   text_serializer.cc
+   text_serializer.h
+ 
+-  # civetweb
+-
+-  $<TARGET_OBJECTS:civetweb>
+-
+   # Metrics Protocol
+ 
+   ${METRICS_SOURCE_FILE}
+--- tests/CMakeLists.txt
++++ tests/CMakeLists.txt
+@@ -1,3 +1,4 @@
++if(0)
+ if(GoogleBenchmark_FOUND)
+   add_subdirectory(benchmark)
+ endif()
+@@ -20,3 +21,4 @@
+ target_link_libraries(prometheus_test PRIVATE gmock_main)
+ 
+ add_test(NAME prometheus_test COMMAND $<TARGET_FILE:prometheus_test>)
++endif()
