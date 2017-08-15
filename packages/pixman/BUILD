@@ -5,7 +5,8 @@
 
 
 def build(ctx):
-    build = ctx.extract().gnu_configure()
+    build = ctx.extract().gnu_configure(
+        ['--disable-arm-neon', '--disable-arm-simd'])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
     build.make_install([
         'noinst_LTLIBRARIES=',
