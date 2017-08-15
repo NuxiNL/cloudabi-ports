@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    ctx.extract('libunwind-%(version)s.src').rename(root.path('libunwind'))
+    root = ctx.extract('%(name)s-%(version)src2.src')
+    ctx.extract('libunwind-%(version)src2.src').rename(root.path('libunwind'))
     sources = {
         'abort_message.cpp',
         'cxa_aux_runtime.cpp',
@@ -16,7 +16,6 @@ def build(ctx):
         'cxa_exception_storage.cpp',
         'cxa_guard.cpp',
         'cxa_handlers.cpp',
-        'cxa_new_delete.cpp',
         'cxa_noexception.cpp',
         'cxa_personality.cpp',
         'cxa_thread_atexit.cpp',
@@ -26,6 +25,7 @@ def build(ctx):
         'fallback_malloc.cpp',
         'private_typeinfo.cpp',
         'stdlib_exception.cpp',
+        'stdlib_new_delete.cpp',
         'stdlib_stdexcept.cpp',
         'stdlib_typeinfo.cpp',
     }
@@ -42,12 +42,12 @@ def build(ctx):
 
 package(
     name='libcxxabi',
-    version='4.0.0',
+    version='5.0.0',
     homepage='http://libcxxabi.llvm.org/',
     lib_depends={'c-runtime', 'libcxx'},
     build_cmd=build)
 
 distfile(
-    name='libcxxabi-4.0.0.src.tar.xz',
-    checksum='dca9cb619662ad2d3a0d685c4366078345247218c3702dd35bcaaa23f63481d8',
-    master_sites={'http://www.llvm.org/releases/4.0.0/'})
+    name='libcxxabi-5.0.0rc2.src.tar.xz',
+    checksum='41e0ae97b0ea30948408a7574fb42cd2409e3f40548a0bd1dbe9d3b59b86b40c',
+    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'})

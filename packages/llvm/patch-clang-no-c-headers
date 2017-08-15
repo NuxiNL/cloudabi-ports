@@ -1,6 +1,6 @@
 --- lib/Headers/CMakeLists.txt
 +++ lib/Headers/CMakeLists.txt
-@@ -32,7 +32,6 @@
+@@ -34,7 +34,6 @@
    clflushoptintrin.h
    emmintrin.h
    f16cintrin.h
@@ -8,17 +8,17 @@
    fma4intrin.h
    fmaintrin.h
    fxsrintrin.h
-@@ -41,9 +40,6 @@
+@@ -43,9 +42,6 @@
    ia32intrin.h
    immintrin.h
    intrin.h
 -  inttypes.h
 -  iso646.h
 -  limits.h
+   lwpintrin.h
    lzcntintrin.h
    mm3dnow.h
-   mmintrin.h
-@@ -62,16 +58,8 @@
+@@ -65,16 +61,8 @@
    s390intrin.h
    shaintrin.h
    smmintrin.h

@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    cxxabi = ctx.extract('libcxxabi-%(version)s.src')
+    root = ctx.extract('%(name)s-%(version)src2.src')
+    cxxabi = ctx.extract('libcxxabi-%(version)src2.src')
 
     # Install header files.
     headers = root.path('include')
@@ -25,6 +25,7 @@ def build(ctx):
         'debug.cpp',
         'exception.cpp',
         'experimental/memory_resource.cpp',
+        'functional.cpp',
         'future.cpp',
         'hash.cpp',
         'ios.cpp',
@@ -46,6 +47,7 @@ def build(ctx):
         'utility.cpp',
         'valarray.cpp',
         'variant.cpp',
+        'vector.cpp',
     }
     srcdir = root.path('src')
     libcxx = ctx.archive(
@@ -62,12 +64,12 @@ def build(ctx):
 
 package(
     name='libcxx',
-    version='4.0.0',
+    version='5.0.0',
     homepage='http://libcxx.llvm.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='libcxx-4.0.0.src.tar.xz',
-    checksum='4f4d33c4ad69bf9e360eebe6b29b7b19486948b1a41decf89d4adec12473cf96',
-    master_sites={'http://www.llvm.org/releases/4.0.0/'})
+    name='libcxx-5.0.0rc2.src.tar.xz',
+    checksum='9638910b17637d276baefc6ee2e2bf79d68e937c8a8c23adbd6207a3b8c1b655',
+    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'})

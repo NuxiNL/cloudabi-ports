@@ -1,6 +1,6 @@
 --- include/cstdio
 +++ include/cstdio
-@@ -119,13 +119,11 @@
+@@ -116,13 +116,11 @@
  using ::fprintf;
  using ::fscanf;
  using ::snprintf;
@@ -24,14 +24,14 @@
  using ::calloc;
  using ::free;
  using ::malloc;
-@@ -131,7 +130,6 @@
- using ::exit;
+@@ -132,7 +131,6 @@
  using ::_Exit;
+ #ifndef _LIBCPP_WINDOWS_STORE_APP
  using ::getenv;
 -using ::system;
+ #endif
  using ::bsearch;
  using ::qsort;
- using ::abs;
 --- include/cstring
 +++ include/cstring
 @@ -69,10 +69,7 @@

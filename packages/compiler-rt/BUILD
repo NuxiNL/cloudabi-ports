@@ -5,8 +5,8 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)s.src')
-    headers = ctx.extract('cloudlibc/v0.79').path('src/include')
+    root = ctx.extract('%(name)s-%(version)src2.src')
+    headers = ctx.extract('cloudlibc/v0.80').path('src/include')
 
     sources = {
         'absvdi2.c',
@@ -183,11 +183,11 @@ def build(ctx):
 
 package(
     name='compiler-rt',
-    version='4.0.0',
+    version='5.0.0',
     homepage='http://compiler-rt.llvm.org/',
     build_cmd=build)
 
 distfile(
-    name='compiler-rt-4.0.0.src.tar.xz',
-    checksum='d3f25b23bef24c305137e6b44f7e81c51bbec764c119e01512a9bd2330be3115',
-    master_sites={'http://www.llvm.org/releases/4.0.0/'})
+    name='compiler-rt-5.0.0rc2.src.tar.xz',
+    checksum='646544492cc5b5ee4c3f28321efc4bab2a70257e073229fc4fa5336d1c18371e',
+    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'})
