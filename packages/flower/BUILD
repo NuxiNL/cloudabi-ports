@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='flower',
-    version='0.6',
+    version='0.7',
     homepage='https://github.com/NuxiNL/flower',
     lib_depends={'arpc', 'cxx-runtime', 'jsoncpp'},
     build_cmd=build)
 
 distfile(
-    name='flower/v0.6.tar.gz',
-    checksum='31b005919448939ff764ce1254ab9e34e4cabb116ca0283d03b364c26fbe8d49',
+    name='flower/v0.7.tar.gz',
+    checksum='cb5a0b6f0b1b330d0315bf3217b50ab567f821d2f5870ea76fd288ff9154f43c',
     master_sites={'https://github.com/NuxiNL/flower/archive/'})
