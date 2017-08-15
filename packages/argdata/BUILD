@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='argdata',
-    version='0.4',
+    version='0.5',
     homepage='https://github.com/NuxiNL/argdata',
     lib_depends={'cloudlibc', 'libcxx', 'mstd'},
     build_cmd=build)
 
 distfile(
-    name='argdata/v0.4.tar.gz',
-    checksum='8f7afec1c3d832cd559865a8125d47edf70b4368d2e97f79bc36473090378fae',
+    name='argdata/v0.5.tar.gz',
+    checksum='8e1b92bb6dd1cf5f3fefcaf58e1a9d7c7caa8f255e85008ea79150a86319727d',
     master_sites={'https://github.com/NuxiNL/argdata/archive/'})
