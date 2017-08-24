@@ -1,0 +1,16 @@
+--- listener.c
++++ listener.c
+@@ -167,13 +167,6 @@
+ 	}
+ #endif
+ 
+-	if (backlog > 0) {
+-		if (listen(fd, backlog) < 0)
+-			return NULL;
+-	} else if (backlog < 0) {
+-		if (listen(fd, 128) < 0)
+-			return NULL;
+-	}
+ 
+ 	lev = mm_calloc(1, sizeof(struct evconnlistener_event));
+ 	if (!lev)
