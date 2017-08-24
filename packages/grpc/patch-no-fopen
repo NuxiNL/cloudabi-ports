@@ -26,26 +26,6 @@
  
  #ifdef __cplusplus
  }
---- src/core/lib/iomgr/tcp_server_utils_posix_common.c
-+++ src/core/lib/iomgr/tcp_server_utils_posix_common.c
-@@ -59,6 +59,9 @@
- 
- /* get max listen queue size on linux */
- static void init_max_accept_queue_size(void) {
-+#ifdef __CloudABI__
-+  s_max_accept_queue_size = SOMAXCONN;
-+#else
-   int n = SOMAXCONN;
-   char buf[64];
-   FILE *fp = fopen("/proc/sys/net/core/somaxconn", "r");
-@@ -83,6 +86,7 @@
-             "connection drops",
-             s_max_accept_queue_size);
-   }
-+#endif
- }
- 
- static int get_max_accept_queue_size(void) {
 --- src/core/lib/security/transport/security_connector.c
 +++ src/core/lib/security/transport/security_connector.c
 @@ -705,6 +705,7 @@

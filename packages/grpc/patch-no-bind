@@ -259,14 +259,14 @@
  
 --- src/core/lib/iomgr/tcp_server_utils_posix_common.c
 +++ src/core/lib/iomgr/tcp_server_utils_posix_common.c
-@@ -90,6 +90,7 @@
-   return s_max_accept_queue_size;
- }
+@@ -54,6 +54,7 @@
+ 
+ #define MIN_SAFE_ACCEPT_QUEUE_SIZE 100
  
 +#ifndef __CloudABI__
- static grpc_error *add_socket_to_server(grpc_tcp_server *s, int fd,
-                                         const grpc_resolved_address *addr,
-                                         unsigned port_index, unsigned fd_index,
+ static gpr_once s_init_max_accept_queue_size;
+ static int s_max_accept_queue_size;
+ 
 @@ -217,5 +218,6 @@
    GRPC_ERROR_UNREF(err);
    return ret;
