@@ -1,0 +1,46 @@
+--- src/core/lib/iomgr/socket_utils_common_posix.c
++++ src/core/lib/iomgr/socket_utils_common_posix.c
+@@ -275,6 +275,7 @@
+   return err;
+ }
+ 
++#ifndef __CloudABI__
+ grpc_error *grpc_create_dualstack_socket(
+     const grpc_resolved_address *resolved_addr, int type, int protocol,
+     grpc_dualstack_mode *dsmode, int *newfd) {
+@@ -321,6 +322,7 @@
+   *newfd = create_socket(factory, family, type, protocol);
+   return error_for_fd(*newfd, resolved_addr);
+ }
++#endif
+ 
+ const char *grpc_inet_ntop(int af, const void *src, char *dst, size_t size) {
+   GPR_ASSERT(size <= (socklen_t)-1);
+--- src/core/lib/iomgr/socket_utils_posix.h
++++ src/core/lib/iomgr/socket_utils_posix.h
+@@ -133,6 +133,7 @@
+      IPv4, so that bind() or connect() see the correct family.
+    Also, it's important to distinguish between DUALSTACK and IPV6 when
+    listening on the [::] wildcard address. */
++#ifndef __CloudABI__
+ grpc_error *grpc_create_dualstack_socket(const grpc_resolved_address *addr,
+                                          int type, int protocol,
+                                          grpc_dualstack_mode *dsmode,
+@@ -143,5 +144,6 @@
+ grpc_error *grpc_create_dualstack_socket_using_factory(
+     grpc_socket_factory *factory, const grpc_resolved_address *addr, int type,
+     int protocol, grpc_dualstack_mode *dsmode, int *newfd);
++#endif
+ 
+ #endif /* GRPC_CORE_LIB_IOMGR_SOCKET_UTILS_POSIX_H */
+--- src/core/lib/iomgr/tcp_server_posix.c
++++ src/core/lib/iomgr/tcp_server_posix.c
+@@ -73,7 +73,7 @@
+ static bool has_so_reuseport = false;
+ 
+ static void init(void) {
+-#ifndef GPR_MANYLINUX1
++#if !defined(GPR_MANYLINUX1) && !defined(__CloudABI__)
+   int s = socket(AF_INET, SOCK_STREAM, 0);
+   if (s >= 0) {
+     has_so_reuseport = GRPC_LOG_IF_ERROR("check for SO_REUSEPORT",
