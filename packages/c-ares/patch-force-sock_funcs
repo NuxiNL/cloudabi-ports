@@ -45,7 +45,7 @@
    union {
      struct sockaddr     sa;
      struct sockaddr_in  sa4;
-@@ -1010,6 +1019,7 @@
+@@ -1010,32 +1019,41 @@
          return -1;
      }
    }
@@ -53,7 +53,23 @@
  
    return 0;
  }
-@@ -1029,13 +1039,17 @@
+ 
+ static ares_socket_t open_socket(ares_channel channel, int af, int type, int protocol)
+ {
++#ifndef __CloudABI__
+   if (channel->sock_funcs != 0)
++#endif
+     return channel->sock_funcs->asocket(af,
+                                         type,
+                                         protocol,
+                                         channel->sock_func_cb_data);
+ 
++#ifndef __CloudABI__
+   return socket(af, type, protocol);
++#endif
+ }
+ 
+ static int connect_socket(ares_channel channel, ares_socket_t sockfd,
  			  const struct sockaddr * addr,
  	                  ares_socklen_t addrlen)
  {
