@@ -10,6 +10,7 @@ def build(ctx):
         'ac_cv_func_posix_getgrgid_r=no',
         'ac_cv_func_posix_getpwuid_r=no',
         'ac_cv_header_sys_resource_h=no',
+        'ac_cv_lib_socket_socket=yes',
         'glib_cv_stack_grows=' + {
             'down': 'no',
             'up': 'yes',
