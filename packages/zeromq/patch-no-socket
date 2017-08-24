@@ -1,0 +1,30 @@
+--- src/ip.cpp
++++ src/ip.cpp
+@@ -44,6 +44,7 @@
+ #include <ioctl.h>
+ #endif
+ 
++#ifndef __CloudABI__
+ zmq::fd_t zmq::open_socket (int domain_, int type_, int protocol_)
+ {
+     //  Setting this option result in sane behaviour when exec() functions
+@@ -77,6 +78,7 @@
+ 
+     return s;
+ }
++#endif
+ 
+ void zmq::unblock_socket (fd_t s_)
+ {
+--- src/ip.hpp
++++ src/ip.hpp
+@@ -37,7 +37,9 @@
+ {
+ 
+     //  Same as socket(2), but allows for transparent tweaking the options.
++#ifndef __CloudABI__
+     fd_t open_socket (int domain_, int type_, int protocol_);
++#endif
+ 
+     //  Sets the socket into non-blocking mode.
+     void unblock_socket (fd_t s_);
