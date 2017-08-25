@@ -1,0 +1,29 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -2976,6 +2976,7 @@
+ 
+ /* s.listen(n) method */
+ 
++#ifdef HAVE_LISTEN
+ static PyObject *
+ sock_listen(PySocketSockObject *s, PyObject *args)
+ {
+@@ -3007,6 +3008,7 @@
+ at least 0 (if it is lower, it is set to 0); it specifies the number of\n\
+ unaccepted connections that the system will allow before refusing new\n\
+ connections. If not specified, a default reasonable value is chosen.");
++#endif /* HAVE_LISTEN */
+ 
+ struct sock_recv {
+     char *cbuf;
+@@ -4489,8 +4491,10 @@
+     {"share",         (PyCFunction)sock_share, METH_VARARGS,
+                       sock_share_doc},
+ #endif
++#ifdef HAVE_LISTEN
+     {"listen",            (PyCFunction)sock_listen, METH_VARARGS,
+                       listen_doc},
++#endif
+     {"recv",              (PyCFunction)sock_recv, METH_VARARGS,
+                       recv_doc},
+     {"recv_into",         (PyCFunction)sock_recv_into, METH_VARARGS | METH_KEYWORDS,

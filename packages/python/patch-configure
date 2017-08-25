@@ -128,7 +128,7 @@
 - initgroups kill killpg lchmod lchown lockf linkat lstat lutimes mmap \
 - memrchr mbrtowc mkdirat mkfifo \
 - mkfifoat mknod mknodat mktime mremap nice openat pathconf pause pipe2 plock poll \
-+ initgroups kill killpg lchmod lchown localtime lockf linkat lstat lutimes mmap \
++ initgroups kill killpg lchmod lchown localtime lockf linkat listen lstat lutimes mmap \
 + memrchr mbrtowc mkdir mkdirat mkfifo \
 + mkfifoat mknod mknodat mktime mremap nice open openat opendir pathconf pause pipe2 plock poll \
   posix_fallocate posix_fadvise pread \
@@ -148,7 +148,7 @@
 - truncate uname unlinkat unsetenv utimensat utimes waitid waitpid wait3 wait4 \
 + setsockopt \
 + sigaction sigaltstack siginterrupt signal sigpending sigrelse \
-+ sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
++ sigtimedwait sigwait sigwaitinfo snprintf socket stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
 + pdfork pdwait program_exec program_spawn \

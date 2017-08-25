@@ -1,0 +1,15 @@
+--- Modules/socketmodule.c
++++ Modules/socketmodule.c
+@@ -4758,7 +4758,12 @@
+         else
+ #endif
+         {
++#ifdef HAVE_SOCKET
+             fd = socket(family, type, proto);
++#else
++            fd = INVALID_SOCKET;
++            errno = ENOSYS;
++#endif
+         }
+         Py_END_ALLOW_THREADS
+ 
