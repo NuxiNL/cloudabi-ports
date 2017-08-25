@@ -1,6 +1,6 @@
 --- pr/include/prio.h
 +++ pr/include/prio.h
-@@ -316,11 +316,8 @@
+@@ -316,12 +316,8 @@
  typedef PRInt32 (PR_CALLBACK *PRWritevFN)(
      PRFileDesc *fd, const PRIOVec *iov, PRInt32 iov_size,
      PRIntervalTime timeout);
@@ -9,10 +9,11 @@
  typedef PRFileDesc* (PR_CALLBACK *PRAcceptFN) (
      PRFileDesc *fd, PRNetAddr *addr, PRIntervalTime timeout);
 -typedef PRStatus (PR_CALLBACK *PRBindFN)(PRFileDesc *fd, const PRNetAddr *addr);
- typedef PRStatus (PR_CALLBACK *PRListenFN)(PRFileDesc *fd, PRIntn backlog);
+-typedef PRStatus (PR_CALLBACK *PRListenFN)(PRFileDesc *fd, PRIntn backlog);
  typedef PRStatus (PR_CALLBACK *PRShutdownFN)(PRFileDesc *fd, PRIntn how);
  typedef PRInt32 (PR_CALLBACK *PRRecvFN)(
-@@ -329,12 +326,6 @@
+     PRFileDesc *fd, void *buf, PRInt32 amount,
+@@ -329,12 +325,6 @@
  typedef PRInt32 (PR_CALLBACK *PRSendFN) (
      PRFileDesc *fd, const void *buf, PRInt32 amount,
      PRIntn flags, PRIntervalTime timeout);
@@ -25,7 +26,7 @@
  typedef PRInt16 (PR_CALLBACK *PRPollFN)(
      PRFileDesc *fd, PRInt16 in_flags, PRInt16 *out_flags);
  typedef PRInt32 (PR_CALLBACK *PRAcceptreadFN)(
-@@ -343,12 +334,8 @@
+@@ -343,12 +333,8 @@
  typedef PRInt32 (PR_CALLBACK *PRTransmitfileFN)(
       PRFileDesc *sd, PRFileDesc *fd, const void *headers,
       PRInt32 hlen, PRTransmitFileFlags flags, PRIntervalTime t);
@@ -38,14 +39,14 @@
  typedef PRInt32 (PR_CALLBACK *PRSendfileFN)(
  	PRFileDesc *networkSocket, PRSendFileData *sendData,
  	PRTransmitFileFlags flags, PRIntervalTime timeout);
-@@ -369,25 +356,18 @@
+@@ -369,25 +355,17 @@
      PRFileInfoFN fileInfo;          /* Get information about an open file       */
      PRFileInfo64FN fileInfo64;      /*           ditto, 64 bit                  */
      PRWritevFN writev;              /* Write segments as described by iovector  */
 -    PRConnectFN connect;            /* Connect to the specified (net) address   */
      PRAcceptFN accept;              /* Accept a connection for a (net) peer     */
 -    PRBindFN bind;                  /* Associate a (net) address with the fd    */
-     PRListenFN listen;              /* Prepare to listen for (net) connections  */
+-    PRListenFN listen;              /* Prepare to listen for (net) connections  */
      PRShutdownFN shutdown;          /* Shutdown a (net) connection              */
      PRRecvFN recv;                  /* Solicit up the the specified bytes       */
      PRSendFN send;                  /* Send all the bytes specified             */
@@ -64,7 +65,39 @@
                                      /* Set value of specified option            */
      PRSendfileFN sendfile;			/* Send a (partial) file with header/trailer*/
      PRConnectcontinueFN connectcontinue;
-@@ -1254,8 +1234,6 @@
+@@ -1167,7 +1145,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRFileDesc*)    PR_NewUDPSocket(void);
+ 
+ /*
+  *************************************************************************
+@@ -1186,7 +1163,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRFileDesc*)    PR_NewTCPSocket(void);
+ 
+ /*
+  *************************************************************************
+@@ -1206,7 +1182,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRFileDesc*)    PR_OpenUDPSocket(PRIntn af);
+ 
+ /*
+  *************************************************************************
+@@ -1226,7 +1201,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRFileDesc*)    PR_OpenTCPSocket(PRIntn af);
+ 
+ /*
+  *************************************************************************
+@@ -1254,8 +1228,6 @@
   **************************************************************************
   */
  
@@ -73,7 +106,7 @@
  
  /*
   *************************************************************************
-@@ -1365,7 +1343,6 @@
+@@ -1365,7 +1337,6 @@
   **************************************************************************
   */
  
@@ -81,7 +114,15 @@
  
  /*
   *************************************************************************
-@@ -1517,9 +1494,6 @@
+@@ -1387,7 +1358,6 @@
+  **************************************************************************
+  */
+ 
+-NSPR_API(PRStatus) PR_Listen(PRFileDesc *fd, PRIntn backlog);
+ 
+ /*
+  *************************************************************************
+@@ -1517,9 +1487,6 @@
   **************************************************************************
   */
  
@@ -91,7 +132,7 @@
  
  /*
   *************************************************************************
-@@ -1550,9 +1524,6 @@
+@@ -1550,9 +1517,6 @@
   **************************************************************************
   */
  
@@ -101,7 +142,7 @@
  
  /*
  *************************************************************************
-@@ -1740,7 +1711,6 @@
+@@ -1740,7 +1704,6 @@
  **     be obtained by calling PR_GetError().
  **************************************************************************
  **/
@@ -109,7 +150,7 @@
  
  /*
  *************************************************************************
-@@ -1762,13 +1732,10 @@
+@@ -1762,13 +1725,10 @@
  **     be obtained by calling PR_GetError().
  **************************************************************************
  **/
@@ -123,16 +164,26 @@
  
  /*
   *********************************************************************
+--- pr/include/private/pprio.h
++++ pr/include/private/pprio.h
+@@ -122,7 +122,6 @@
+ /*
+ ** Create a new Socket; this function is obsolete.
+ */
+-NSPR_API(PRFileDesc*)	PR_Socket(PRInt32 domain, PRInt32 type, PRInt32 proto);
+ 
+ /* FUNCTION: PR_LockFile
+ ** DESCRIPTION:
 --- pr/src/io/priometh.c
 +++ pr/src/io/priometh.c
-@@ -23,24 +23,17 @@
+@@ -23,24 +23,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      (PRWritevFN)_PR_InvalidInt,        
 -    (PRConnectFN)_PR_InvalidStatus,        
      (PRAcceptFN)_PR_InvalidDesc,        
 -    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
+-    (PRListenFN)_PR_InvalidStatus,        
      (PRShutdownFN)_PR_InvalidStatus,    
      (PRRecvFN)_PR_InvalidInt,        
      (PRSendFN)_PR_InvalidInt,        
@@ -150,7 +201,7 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus,
      (PRReservedFN)_PR_InvalidInt,
-@@ -149,11 +142,6 @@
+@@ -149,11 +141,6 @@
  	return((fd->methods->fsync)(fd));
  }
  
@@ -162,7 +213,7 @@
  
  PR_IMPLEMENT(PRStatus) PR_ConnectContinue(
      PRFileDesc *fd, PRInt16 out_flags)
-@@ -167,10 +155,6 @@
+@@ -167,20 +154,12 @@
  	return((fd->methods->accept)(fd,addr,timeout));
  }
  
@@ -173,7 +224,17 @@
  
  PR_IMPLEMENT(PRStatus) PR_Shutdown(PRFileDesc *fd, PRShutdownHow how)
  {
-@@ -205,18 +189,7 @@
+ 	return((fd->methods->shutdown)(fd,how));
+ }
+ 
+-PR_IMPLEMENT(PRStatus) PR_Listen(PRFileDesc *fd, PRIntn backlog)
+-{
+-	return((fd->methods->listen)(fd,backlog));
+-}
+ 
+ PR_IMPLEMENT(PRInt32) PR_Recv(PRFileDesc *fd, void *buf, PRInt32 amount,
+ PRIntn flags, PRIntervalTime timeout)
+@@ -205,18 +184,7 @@
  	return((fd->methods->writev)(fd,iov,iov_size,timeout));
  }
  
@@ -192,7 +253,7 @@
  
  PR_IMPLEMENT(PRInt32) PR_TransmitFile(
      PRFileDesc *sd, PRFileDesc *fd, const void *hdr, PRInt32 hlen,
-@@ -232,15 +205,7 @@
+@@ -232,15 +200,7 @@
  	return((sd->methods->acceptread)(sd, nd, raddr, buf, amount,timeout));
  }
  
@@ -208,7 +269,7 @@
  
  PR_IMPLEMENT(PRStatus) PR_GetSocketOption(
      PRFileDesc *fd, PRSocketOptionData *data)
-@@ -248,11 +213,6 @@
+@@ -248,11 +208,6 @@
  	return((fd->methods->getsocketoption)(fd, data));
  }
  
@@ -246,13 +307,13 @@
  static PRStatus PR_CALLBACK pl_DefBind (PRFileDesc *fd, const PRNetAddr *addr)
  {
      PR_ASSERT(fd != NULL);
-@@ -220,6 +223,7 @@
+@@ -228,6 +231,7 @@
  
-     return (fd->lower->methods->bind)(fd->lower, addr);
+     return (fd->lower->methods->listen)(fd->lower, backlog);
  }
 +#endif
  
- static PRStatus PR_CALLBACK pl_DefListen (PRFileDesc *fd, PRIntn backlog)
+ static PRStatus PR_CALLBACK pl_DefShutdown (PRFileDesc *fd, PRIntn how)
  {
 @@ -258,6 +262,7 @@
      return (fd->lower->methods->send)(fd->lower, buf, amount, flags, timeout);
@@ -302,14 +363,14 @@
  
  static PRInt32 PR_CALLBACK pl_DefSendfile (
  	PRFileDesc *sd, PRSendFileData *sfd,
-@@ -404,24 +414,17 @@
+@@ -404,24 +414,16 @@
      pl_DefFileInfo,
      pl_DefFileInfo64,
      pl_DefWritev,
 -    pl_DefConnect,
      pl_TopAccept,
 -    pl_DefBind,
-     pl_DefListen,
+-    pl_DefListen,
      pl_DefShutdown,
      pl_DefRecv,
      pl_DefSend,
@@ -329,14 +390,14 @@
      (PRReservedFN)_PR_InvalidInt,
 --- pr/src/io/prpolevt.c
 +++ pr/src/io/prpolevt.c
-@@ -63,24 +63,17 @@
+@@ -63,24 +63,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      (PRWritevFN)_PR_InvalidInt,        
 -    (PRConnectFN)_PR_InvalidStatus,        
      (PRAcceptFN)_PR_InvalidDesc,        
 -    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
+-    (PRListenFN)_PR_InvalidStatus,        
      (PRShutdownFN)_PR_InvalidStatus,    
      (PRRecvFN)_PR_InvalidInt,        
      (PRSendFN)_PR_InvalidInt,        
@@ -430,13 +491,13 @@
  static PRStatus pt_Bind(PRFileDesc *fd, const PRNetAddr *addr)
  {
      PRIntn rv;
-@@ -1775,6 +1780,7 @@
+@@ -1789,6 +1794,7 @@
      }
      return PR_SUCCESS;
- }  /* pt_Bind */
+ }  /* pt_Listen */
 +#endif
  
- static PRStatus pt_Listen(PRFileDesc *fd, PRIntn backlog)
+ static PRStatus pt_Shutdown(PRFileDesc *fd, PRIntn how)
  {
 @@ -1979,6 +1985,7 @@
      return pt_Send(fd, buf, amount, 0, PR_INTERVAL_NO_TIMEOUT);
@@ -486,14 +547,14 @@
  
  /*****************************************************************************/
  /****************************** I/O method objects ***************************/
-@@ -3069,24 +3081,17 @@
+@@ -3069,24 +3081,16 @@
      pt_FileInfo,
      pt_FileInfo64,
      (PRWritevFN)_PR_InvalidInt,        
 -    (PRConnectFN)_PR_InvalidStatus,        
      (PRAcceptFN)_PR_InvalidDesc,        
 -    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
+-    (PRListenFN)_PR_InvalidStatus,        
      (PRShutdownFN)_PR_InvalidStatus,    
      (PRRecvFN)_PR_InvalidInt,        
      (PRSendFN)_PR_InvalidInt,        
@@ -511,14 +572,14 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus, 
      (PRReservedFN)_PR_InvalidInt, 
-@@ -3108,24 +3113,17 @@
+@@ -3108,24 +3112,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      (PRWritevFN)_PR_InvalidInt,        
 -    (PRConnectFN)_PR_InvalidStatus,        
      (PRAcceptFN)_PR_InvalidDesc,        
 -    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
+-    (PRListenFN)_PR_InvalidStatus,        
      (PRShutdownFN)_PR_InvalidStatus,    
      (PRRecvFN)_PR_InvalidInt,        
      (PRSendFN)_PR_InvalidInt,        
@@ -536,14 +597,14 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus, 
      (PRReservedFN)_PR_InvalidInt, 
-@@ -3147,24 +3145,17 @@
+@@ -3147,24 +3143,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      pt_Writev,
 -    pt_Connect,
      pt_Accept,
 -    pt_Bind,
-     pt_Listen,
+-    pt_Listen,
      pt_Shutdown,
      pt_Recv,
      pt_Send,
@@ -561,14 +622,14 @@
      pt_SendFile, 
      pt_ConnectContinue,
      (PRReservedFN)_PR_InvalidInt, 
-@@ -3186,24 +3177,17 @@
+@@ -3186,24 +3174,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      pt_Writev,
 -    pt_Connect,
      (PRAcceptFN)_PR_InvalidDesc,
 -    pt_Bind,
-     pt_Listen,
+-    pt_Listen,
      pt_Shutdown,
      pt_Recv,
      pt_Send,
@@ -586,14 +647,14 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus, 
      (PRReservedFN)_PR_InvalidInt, 
-@@ -3225,24 +3209,17 @@
+@@ -3225,24 +3205,16 @@
      (PRFileInfoFN)_PR_InvalidStatus,
      (PRFileInfo64FN)_PR_InvalidStatus,
      (PRWritevFN)_PR_InvalidInt,        
 -    (PRConnectFN)_PR_InvalidStatus,        
      (PRAcceptFN)_PR_InvalidDesc,        
 -    (PRBindFN)_PR_InvalidStatus,        
-     (PRListenFN)_PR_InvalidStatus,        
+-    (PRListenFN)_PR_InvalidStatus,        
      (PRShutdownFN)_PR_InvalidStatus,    
      (PRRecvFN)_PR_InvalidInt,        
      (PRSendFN)_PR_InvalidInt,        
@@ -611,3 +672,35 @@
      (PRSendfileFN)_PR_InvalidInt, 
      (PRConnectcontinueFN)_PR_InvalidStatus, 
      (PRReservedFN)_PR_InvalidInt, 
+@@ -3432,6 +3404,7 @@
+ #endif	/* _PR_INET6_PROBE */
+ #endif
+ 
++#if 0
+ PR_IMPLEMENT(PRFileDesc*) PR_Socket(PRInt32 domain, PRInt32 type, PRInt32 proto)
+ {
+     PRIntn osfd;
+@@ -3524,6 +3497,7 @@
+ #endif
+     return fd;
+ }  /* PR_Socket */
++#endif
+ 
+ /*****************************************************************************/
+ /****************************** I/O public methods ***************************/
+@@ -4355,6 +4329,7 @@
+     return &dir->d;
+ }  /* PR_ReadDir */
+ 
++#if 0
+ PR_IMPLEMENT(PRFileDesc*) PR_NewUDPSocket(void)
+ {
+     PRIntn domain = PF_INET;
+@@ -4378,6 +4353,7 @@
+ {
+     return PR_Socket(af, SOCK_STREAM, 0);
+ }  /* PR_NewTCPSocket */
++#endif
+ 
+ PR_IMPLEMENT(PRStatus) PR_NewTCPSocketPair(PRFileDesc *fds[2])
+ {
