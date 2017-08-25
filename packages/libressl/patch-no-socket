@@ -1,0 +1,20 @@
+--- crypto/bio/bss_conn.c
++++ crypto/bio/bss_conn.c
+@@ -181,6 +181,7 @@
+ 			break;
+ 
+ 		case BIO_CONN_S_CREATE_SOCKET:
++#if 0
+ 			/* now setup address */
+ 			memset((char *)&c->them, 0, sizeof(c->them));
+ 			c->them.sin_family = AF_INET;
+@@ -204,6 +205,9 @@
+ 			b->num = ret;
+ 			c->state = BIO_CONN_S_NBIO;
+ 			break;
++#endif
++			BIOerror(BIO_R_UNABLE_TO_CREATE_SOCKET);
++			return (-1);
+ 
+ 		case BIO_CONN_S_NBIO:
+ 			if (c->nbio) {
