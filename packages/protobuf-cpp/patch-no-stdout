@@ -1,6 +1,6 @@
 --- src/google/protobuf/message.h
 +++ src/google/protobuf/message.h
-@@ -265,8 +265,10 @@
+@@ -266,8 +266,10 @@
    string ShortDebugString() const;
    // Like DebugString(), but do not escape UTF-8 byte sequences.
    string Utf8DebugString() const;
@@ -13,7 +13,7 @@
    // Additional parsing and serialization methods not implemented by
 --- src/google/protobuf/text_format.cc
 +++ src/google/protobuf/text_format.cc
-@@ -116,9 +116,11 @@
+@@ -117,9 +117,11 @@
    return debug_string;
  }
  

@@ -1,5 +1,6 @@
---- cmake/CMakeLists.txt
-+++ cmake/CMakeLists.txt
+diff -ur protobuf-3.4.0/cmake/CMakeLists.txt protobuf-3.4.0-patched/cmake/CMakeLists.txt
+--- protobuf-3.4.0/cmake/CMakeLists.txt	2017-08-14 23:46:31.000000000 +0200
++++ protobuf-3.4.0-patched/cmake/CMakeLists.txt	2017-08-25 21:57:24.376084478 +0200
 @@ -12,6 +12,7 @@
  project(protobuf C CXX)
  
@@ -21,10 +22,13 @@
  
  if (protobuf_BUILD_TESTS)
    include(tests.cmake)
---- cmake/install.cmake
-+++ cmake/install.cmake
-@@ -1,9 +1,17 @@
- include(GNUInstallDirs)
+Only in protobuf-3.4.0-patched/cmake: CMakeLists.txt.orig
+diff -ur protobuf-3.4.0/cmake/install.cmake protobuf-3.4.0-patched/cmake/install.cmake
+--- protobuf-3.4.0/cmake/install.cmake	2017-08-14 23:46:19.000000000 +0200
++++ protobuf-3.4.0-patched/cmake/install.cmake	2017-08-25 21:57:24.376084478 +0200
+@@ -5,10 +5,18 @@
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/protobuf-lite.pc.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/protobuf-lite.pc @ONLY)
  
 +if (protobuf_BUILD_COMPILER)
 +  set(target_libprotoc libprotoc)
@@ -42,7 +46,7 @@
    set_property(TARGET ${_library}
      PROPERTY INTERFACE_INCLUDE_DIRECTORIES
      $<BUILD_INTERFACE:${protobuf_source_dir}/src>
-@@ -14,8 +22,10 @@
+@@ -19,8 +27,10 @@
      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT ${_library})
  endforeach()
  
@@ -53,9 +57,9 @@
 +    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT protoc)
 +endif()
  
- file(STRINGS extract_includes.bat.in _extract_strings
-   REGEX "^copy")
-@@ -94,7 +104,7 @@
+ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/protobuf.pc ${CMAKE_CURRENT_BINARY_DIR}/protobuf-lite.pc DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+ 
+@@ -101,7 +111,7 @@
    ${CMAKE_INSTALL_CMAKEDIR}/protobuf-options.cmake @ONLY)
  
  # Allows the build directory to be used as a find directory.
@@ -64,15 +68,21 @@
    NAMESPACE protobuf::
    FILE ${CMAKE_INSTALL_CMAKEDIR}/protobuf-targets.cmake
  )
---- cmake/libprotobuf.cmake
-+++ cmake/libprotobuf.cmake
-@@ -1,9 +1,16 @@
+Only in protobuf-3.4.0-patched/cmake: install.cmake.orig
+diff -ur protobuf-3.4.0/cmake/libprotobuf.cmake protobuf-3.4.0-patched/cmake/libprotobuf.cmake
+--- protobuf-3.4.0/cmake/libprotobuf.cmake	2017-08-14 23:46:19.000000000 +0200
++++ protobuf-3.4.0-patched/cmake/libprotobuf.cmake	2017-08-25 21:58:00.030083823 +0200
+@@ -1,9 +1,20 @@
 +if (protobuf_BUILD_COMPILER)
 +  set(sources_compiler
 +      ${protobuf_source_dir}/src/google/protobuf/compiler/importer.cc
 +      ${protobuf_source_dir}/src/google/protobuf/compiler/parser.cc)
++  set(includes_compiler
++      ${protobuf_source_dir}/src/google/protobuf/compiler/importer.h
++      ${protobuf_source_dir}/src/google/protobuf/compiler/parser.h)
 +else()
 +  set(sources_compiler)
++  set(includes_compiler)
 +endif()
 +
  set(libprotobuf_files
@@ -85,3 +95,14 @@
    ${protobuf_source_dir}/src/google/protobuf/descriptor.cc
    ${protobuf_source_dir}/src/google/protobuf/descriptor.pb.cc
    ${protobuf_source_dir}/src/google/protobuf/descriptor_database.cc
+@@ -60,8 +71,7 @@
+   ${protobuf_source_dir}/src/google/protobuf/any.h
+   ${protobuf_source_dir}/src/google/protobuf/any.pb.h
+   ${protobuf_source_dir}/src/google/protobuf/api.pb.h
+-  ${protobuf_source_dir}/src/google/protobuf/compiler/importer.h
+-  ${protobuf_source_dir}/src/google/protobuf/compiler/parser.h
++  ${includes_compiler}
+   ${protobuf_source_dir}/src/google/protobuf/descriptor.h
+   ${protobuf_source_dir}/src/google/protobuf/descriptor.pb.h
+   ${protobuf_source_dir}/src/google/protobuf/descriptor_database.h
+Only in protobuf-3.4.0-patched/cmake: libprotobuf.cmake.orig

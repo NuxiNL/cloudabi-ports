@@ -25,7 +25,7 @@ def build(ctx):
 
 package(
     name='grpc',
-    version='1.4.2',
+    version='1.4.7',
     homepage='http://www.grpc.io/',
     lib_depends={'c-ares', 'cxx-runtime', 'libressl', 'protobuf-cpp'},
     build_cmd=build)
@@ -44,14 +44,14 @@ def host_build(ctx):
 
 host_package(
     name='grpc',
-    version='1.4.2',
+    version='1.4.7',
     homepage='http://www.grpc.io/',
     build_depends={'c-ares', 'cmake', 'protobuf-cpp'},
     build_cmd=host_build)
 
 distfile(
-    name='grpc/v1.4.2.tar.gz',
-    checksum='268481b9cd09aaa0758fcd14236537cbd3ebcd637f43150fdf7937582f2dc4dc',
+    name='grpc/v1.4.7.tar.gz',
+    checksum='9ce1ae3a05932eee41d7de28a59cff9d493b3423c571f51000bb350313e61b72',
     master_sites={'https://github.com/grpc/grpc/archive/'},
     unsafe_string_sources={
         'src/core/ext/filters/client_channel/resolver_registry.c',
