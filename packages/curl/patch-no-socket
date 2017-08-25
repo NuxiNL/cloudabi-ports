@@ -1,0 +1,53 @@
+--- configure
++++ configure
+@@ -37078,10 +37078,7 @@
+   #
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking if socket might be used" >&5
+ $as_echo_n "checking if socket might be used... " >&6; }
+-  if test "$tst_links_socket" = "yes" &&
+-     test "$tst_proto_socket" = "yes" &&
+-     test "$tst_compi_socket" = "yes" &&
+-     test "$tst_allow_socket" = "yes"; then
++  if true; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ 
+--- lib/connect.c
++++ lib/connect.c
+@@ -1339,7 +1339,6 @@
+      addr->addrlen = sizeof(struct Curl_sockaddr_storage);
+   memcpy(&addr->sa_addr, ai->ai_addr, addr->addrlen);
+ 
+-  if(data->set.fopensocket)
+    /*
+     * If the opensocket callback is set, all the destination address
+     * information is passed to the callback. Depending on this information the
+@@ -1352,9 +1351,6 @@
+     *sockfd = data->set.fopensocket(data->set.opensocket_client,
+                                     CURLSOCKTYPE_IPCXN,
+                                     (struct curl_sockaddr *)addr);
+-  else
+-    /* opensocket callback not set, so simply create the socket now */
+-    *sockfd = socket(addr->family, addr->socktype, addr->protocol);
+ 
+   if(*sockfd == CURL_SOCKET_BAD)
+     /* no socket, no connection */
+--- lib/hostip6.c
++++ lib/hostip6.c
+@@ -97,6 +97,7 @@
+  */
+ bool Curl_ipv6works(void)
+ {
++#if 0
+   /* the nature of most system is that IPv6 status doesn't come and go
+      during a program's lifetime so we only probe the first time and then we
+      have the info kept for fast re-use */
+@@ -113,6 +114,8 @@
+     }
+   }
+   return (ipv6_works>0)?TRUE:FALSE;
++#endif
++  return TRUE;
+ }
+ 
+ /*
