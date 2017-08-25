@@ -1,0 +1,18 @@
+--- memcached.c
++++ memcached.c
+@@ -4496,15 +4496,9 @@
+     for (next = listen_conn; next; next = next->next) {
+         if (do_accept) {
+             update_event(next, EV_READ | EV_PERSIST);
+-            if (listen(next->sfd, settings.backlog) != 0) {
+-                perror("listen");
+-            }
+         }
+         else {
+             update_event(next, 0);
+-            if (listen(next->sfd, 0) != 0) {
+-                perror("listen");
+-            }
+         }
+     }
+ 
