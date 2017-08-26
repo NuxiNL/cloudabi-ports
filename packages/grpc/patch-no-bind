@@ -90,7 +90,23 @@
  
 --- src/core/ext/transport/chttp2/server/chttp2_server.c
 +++ src/core/ext/transport/chttp2/server/chttp2_server.c
-@@ -203,6 +203,7 @@
+@@ -155,6 +155,7 @@
+ }
+ 
+ /* Server callback: start listening on our ports */
++#ifndef __CloudABI__
+ static void server_start_listener(grpc_exec_ctx *exec_ctx, grpc_server *server,
+                                   void *arg, grpc_pollset **pollsets,
+                                   size_t pollset_count) {
+@@ -165,6 +166,7 @@
+   grpc_tcp_server_start(exec_ctx, state->tcp_server, pollsets, pollset_count,
+                         on_accept, state);
+ }
++#endif
+ 
+ static void tcp_server_shutdown_complete(grpc_exec_ctx *exec_ctx, void *arg,
+                                          grpc_error *error) {
+@@ -203,6 +205,7 @@
    grpc_tcp_server_unref(exec_ctx, tcp_server);
  }
  
@@ -98,7 +114,7 @@
  grpc_error *grpc_chttp2_server_add_port(grpc_exec_ctx *exec_ctx,
                                          grpc_server *server, const char *addr,
                                          grpc_channel_args *args,
-@@ -303,3 +304,4 @@
+@@ -303,3 +306,4 @@
    }
    return err;
  }
@@ -168,9 +184,51 @@
  
  /* This should be 0 in production, but it may be enabled for testing or
     debugging purposes, to simulate an environment where IPv6 sockets can't
+--- src/core/lib/iomgr/socket_utils_posix.c
++++ src/core/lib/iomgr/socket_utils_posix.c
+@@ -44,6 +44,7 @@
+ #include <grpc/support/log.h>
+ #include "src/core/lib/iomgr/sockaddr.h"
+ 
++#ifndef __CloudABI__
+ int grpc_accept4(int sockfd, grpc_resolved_address *resolved_addr, int nonblock,
+                  int cloexec) {
+   int fd, flags;
+@@ -69,5 +70,6 @@
+   close(fd);
+   return -1;
+ }
++#endif
+ 
+ #endif /* GRPC_POSIX_SOCKETUTILS */
+--- src/core/lib/iomgr/socket_utils_posix.h
++++ src/core/lib/iomgr/socket_utils_posix.h
+@@ -45,8 +45,10 @@
+ #include "src/core/lib/iomgr/socket_mutator.h"
+ 
+ /* a wrapper for accept or accept4 */
++#ifndef __CloudABI__
+ int grpc_accept4(int sockfd, grpc_resolved_address *resolved_addr, int nonblock,
+                  int cloexec);
++#endif
+ 
+ /* set a socket to non blocking mode */
+ grpc_error *grpc_set_socket_nonblocking(int fd, int non_blocking);
 --- src/core/lib/iomgr/tcp_server.h
 +++ src/core/lib/iomgr/tcp_server.h
-@@ -81,9 +81,11 @@
+@@ -68,9 +68,11 @@
+                                    grpc_tcp_server **server);
+ 
+ /* Start listening to bound ports */
++#ifndef __CloudABI__
+ void grpc_tcp_server_start(grpc_exec_ctx *exec_ctx, grpc_tcp_server *server,
+                            grpc_pollset **pollsets, size_t pollset_count,
+                            grpc_tcp_server_cb on_accept_cb, void *cb_arg);
++#endif
+ 
+ /* Add a port to the server, returning the newly allocated port on success, or
+    -1 on failure.
+@@ -81,9 +83,11 @@
     but not dualstack sockets. */
  /* TODO(ctiller): deprecate this, and make grpc_tcp_server_add_ports to handle
                    all of the multiple socket port matching logic in one place */
@@ -184,25 +242,15 @@
     bounds. */
 --- src/core/lib/iomgr/tcp_server_posix.c
 +++ src/core/lib/iomgr/tcp_server_posix.c
-@@ -292,6 +292,7 @@
-   }
+@@ -211,6 +211,7 @@
  }
  
+ /* event manager callback when reads are ready */
 +#ifndef __CloudABI__
- /* Treat :: or 0.0.0.0 as a family-agnostic wildcard. */
- static grpc_error *add_wildcard_addrs_to_server(grpc_tcp_server *s,
-                                                 unsigned port_index,
-@@ -405,7 +406,9 @@
+ static void on_read(grpc_exec_ctx *exec_ctx, void *arg, grpc_error *err) {
+   grpc_tcp_listener *sp = arg;
  
-   return GRPC_ERROR_NONE;
- }
-+#endif
- 
-+#ifndef __CloudABI__
- grpc_error *grpc_tcp_server_add_port(grpc_tcp_server *s,
-                                      const grpc_resolved_address *addr,
-                                      int *out_port) {
-@@ -453,6 +456,7 @@
+@@ -453,6 +454,7 @@
    }
    return err;
  }
@@ -210,25 +258,22 @@
  
  /* Return listener at port_index or NULL. Should only be called with s->mu
     locked. */
-@@ -512,6 +516,7 @@
-   s->pollset_count = pollset_count;
-   sp = s->head;
-   while (sp != NULL) {
+@@ -496,6 +498,7 @@
+   return -1;
+ }
+ 
 +#ifndef __CloudABI__
-     if (s->so_reuseport && !grpc_is_unix_socket(&sp->addr) &&
-         pollset_count > 1) {
-       GPR_ASSERT(GRPC_LOG_IF_ERROR(
-@@ -524,7 +529,9 @@
-         s->active_ports++;
-         sp = sp->next;
-       }
--    } else {
-+    } else
+ void grpc_tcp_server_start(grpc_exec_ctx *exec_ctx, grpc_tcp_server *s,
+                            grpc_pollset **pollsets, size_t pollset_count,
+                            grpc_tcp_server_cb on_accept_cb,
+@@ -537,6 +540,7 @@
+   }
+   gpr_mu_unlock(&s->mu);
+ }
 +#endif
-+    {
-       for (i = 0; i < pollset_count; i++) {
-         grpc_pollset_add_fd(exec_ctx, pollsets[i], sp->emfd);
-       }
+ 
+ grpc_tcp_server *grpc_tcp_server_ref(grpc_tcp_server *s) {
+   gpr_ref_non_zero(&s->refs);
 --- src/core/lib/iomgr/tcp_server_utils_posix.h
 +++ src/core/lib/iomgr/tcp_server_utils_posix.h
 @@ -109,11 +109,13 @@

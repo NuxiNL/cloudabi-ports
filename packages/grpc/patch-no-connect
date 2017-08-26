@@ -236,14 +236,14 @@
  #endif /* GRPC_CORE_LIB_IOMGR_TCP_CLIENT_H */
 --- src/core/lib/iomgr/tcp_client_posix.c
 +++ src/core/lib/iomgr/tcp_client_posix.c
-@@ -252,6 +252,7 @@
-   grpc_closure_sched(exec_ctx, closure, error);
+@@ -140,6 +140,7 @@
+   return grpc_tcp_create(exec_ctx, fd, channel_args, addr_str);
  }
  
 +#ifndef __CloudABI__
- static void tcp_client_connect_impl(grpc_exec_ctx *exec_ctx,
-                                     grpc_closure *closure, grpc_endpoint **ep,
-                                     grpc_pollset_set *interested_parties,
+ static void on_writable(grpc_exec_ctx *exec_ctx, void *acp, grpc_error *error) {
+   async_connect *ac = acp;
+   int so_error = 0;
 @@ -364,5 +365,6 @@
    grpc_tcp_client_connect_impl(exec_ctx, closure, ep, interested_parties,
                                 channel_args, addr, deadline);
