@@ -1,0 +1,137 @@
+--- crypto/bio/b_sock.c
++++ crypto/bio/b_sock.c
+@@ -85,6 +85,7 @@
+ 	if (inet_pton(AF_INET, str, ip) == 1)
+ 		return (1);
+ 
++#if 0
+ 	/* do a gethostbyname */
+ 	CRYPTO_w_lock(CRYPTO_LOCK_GETHOSTBYNAME);
+ 	he = BIO_gethostbyname(str);
+@@ -108,6 +109,10 @@
+ 		return 0;
+ 	} else
+ 		return 1;
++#endif
++	BIOerror(BIO_R_BAD_HOSTNAME_LOOKUP);
++	ERR_asprintf_error_data("host=%s", str);
++	return 0;
+ }
+ 
+ int
+@@ -136,6 +141,7 @@
+ 	return (1);
+ }
+ 
++#if 0
+ int
+ BIO_sock_error(int sock)
+ {
+@@ -153,6 +159,7 @@
+ {
+ 	return gethostbyname(name);
+ }
++#endif
+ 
+ int
+ BIO_socket_ioctl(int fd, long type, void *arg)
+@@ -165,6 +172,7 @@
+ 	return (ret);
+ }
+ 
++#if 0
+ int
+ BIO_get_accept_socket(char *host, int bind_mode)
+ {
+@@ -401,3 +409,4 @@
+ {
+ 	return (setsockopt(s, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == 0);
+ }
++#endif
+--- crypto/bio/bss_acpt.c
++++ crypto/bio/bss_acpt.c
+@@ -200,6 +200,7 @@
+ again:
+ 	switch (c->state) {
+ 	case ACPT_S_BEFORE:
++#if 0
+ 		if (c->param_addr == NULL) {
+ 			BIOerror(BIO_R_NO_ACCEPT_PORT_SPECIFIED);
+ 			return (-1);
+@@ -220,7 +221,11 @@
+ 		c->state = ACPT_S_GET_ACCEPT_SOCKET;
+ 		return (1);
+ 		/* break; */
++#endif
++		BIOerror(BIO_R_UNABLE_TO_BIND_SOCKET);
++		return (-1);
+ 	case ACPT_S_GET_ACCEPT_SOCKET:
++#if 0
+ 		if (b->next_bio != NULL) {
+ 			c->state = ACPT_S_OK;
+ 			goto again;
+@@ -272,6 +277,8 @@
+ 			BIO_free(bio);
+ 		return (0);
+ 		/* break; */
++#endif
++		return (-1);
+ 	case ACPT_S_OK:
+ 		if (b->next_bio == NULL) {
+ 			c->state = ACPT_S_GET_ACCEPT_SOCKET;
+--- crypto/bio/bss_conn.c
++++ crypto/bio/bss_conn.c
+@@ -252,6 +252,7 @@
+ 			break;
+ 
+ 		case BIO_CONN_S_BLOCKED_CONNECT:
++#if 0
+ 			i = BIO_sock_error(b->num);
+ 			if (i) {
+ 				BIO_clear_retry_flags(b);
+@@ -262,6 +263,7 @@
+ 				ret = 0;
+ 				goto exit_loop;
+ 			} else
++#endif
+ 				c->state = BIO_CONN_S_OK;
+ 			break;
+ 
+--- include/compat/netinet/tcp.h
++++ include/compat/netinet/tcp.h
+@@ -3,8 +3,3 @@
+  * netinet/tcp.h compatibility shim
+  */
+ 
+-#ifndef _WIN32
+-#include_next <netinet/tcp.h>
+-#else
+-#include <win32netcompat.h>
+-#endif
+--- include/openssl/bio.h
++++ include/openssl/bio.h
+@@ -640,7 +640,6 @@
+ int BIO_dump_indent(BIO *b, const char *bytes, int len, int indent);
+ int BIO_dump_fp(FILE *fp, const char *s, int len);
+ int BIO_dump_indent_fp(FILE *fp, const char *s, int len, int indent);
+-struct hostent *BIO_gethostbyname(const char *name);
+ /* We might want a thread-safe interface too:
+  * struct hostent *BIO_gethostbyname_r(const char *name,
+  *     struct hostent *result, void *buffer, size_t buflen);
+@@ -649,16 +648,12 @@
+  * substructures; if the buffer does not suffice, NULL is returned
+  * and an appropriate error code is set).
+  */
+-int BIO_sock_error(int sock);
+ int BIO_socket_ioctl(int fd, long type, void *arg);
+ int BIO_socket_nbio(int fd, int mode);
+ int BIO_get_port(const char *str, unsigned short *port_ptr);
+ int BIO_get_host_ip(const char *str, unsigned char *ip);
+-int BIO_get_accept_socket(char *host_port, int mode);
+-int BIO_accept(int sock, char **ip_port);
+ int BIO_sock_init(void );
+ void BIO_sock_cleanup(void);
+-int BIO_set_tcp_ndelay(int sock, int turn_on);
+ 
+ BIO *BIO_new_socket(int sock, int close_flag);
+ BIO *BIO_new_dgram(int fd, int close_flag);
