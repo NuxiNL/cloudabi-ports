@@ -1,7 +1,6 @@
-Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/cloudabi-ports/build/0/zeromq-4.2.1/src/.tcp_listener.cpp.swp differ
 --- src/ipc_listener.cpp
 +++ src/ipc_listener.cpp
-@@ -162,6 +162,7 @@
+@@ -159,6 +159,7 @@
      own_t::process_term (linger_);
  }
  
@@ -9,7 +8,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  void zmq::ipc_listener_t::in_event ()
  {
      fd_t fd = accept ();
-@@ -192,6 +193,7 @@
+@@ -189,6 +190,7 @@
      send_attach (session, engine, false);
      socket->event_accepted (endpoint, fd);
  }
@@ -17,7 +16,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  
  int zmq::ipc_listener_t::get_address (std::string &addr_)
  {
-@@ -402,6 +404,7 @@
+@@ -384,6 +386,7 @@
  
  #endif
  
@@ -25,7 +24,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  zmq::fd_t zmq::ipc_listener_t::accept ()
  {
      //  Accept one connection and deal with different failure modes.
-@@ -438,5 +441,6 @@
+@@ -420,5 +423,6 @@
  
      return sock;
  }
@@ -44,7 +43,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  
          //  Close the listening socket.
          int close ();
-@@ -86,7 +88,9 @@
+@@ -84,7 +86,9 @@
          //  Accept the new connection. Returns the file descriptor of the
          //  newly created connection. The function may return retired_fd
          //  if the connection was dropped while waiting in the listen backlog.
@@ -56,7 +55,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
          bool has_file;
 --- src/tcp_listener.cpp
 +++ src/tcp_listener.cpp
-@@ -85,6 +85,7 @@
+@@ -86,6 +86,7 @@
      own_t::process_term (linger_);
  }
  
@@ -64,7 +63,7 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  void zmq::tcp_listener_t::in_event ()
  {
      fd_t fd = accept ();
-@@ -120,6 +121,7 @@
+@@ -121,6 +122,7 @@
      send_attach (session, engine, false);
      socket->event_accepted (endpoint, (int) fd);
  }
@@ -72,15 +71,15 @@ Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/clo
  
  void zmq::tcp_listener_t::close ()
  {
-@@ -269,6 +271,7 @@
- #endif
+@@ -259,6 +261,7 @@
+     return -1;
  }
  
 +#ifndef __CloudABI__
  zmq::fd_t zmq::tcp_listener_t::accept ()
  {
      //  The situation where connection cannot be accepted due to insufficient
-@@ -346,3 +349,4 @@
+@@ -336,3 +339,4 @@
  
      return sock;
  }
