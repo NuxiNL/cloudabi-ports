@@ -1,6 +1,22 @@
 --- Modules/socketmodule.c
 +++ Modules/socketmodule.c
-@@ -2685,6 +2685,7 @@
+@@ -2316,6 +2316,7 @@
+ #endif    /* CMSG_LEN */
+ 
+ 
++#ifdef HAVE_ACCEPT
+ struct sock_accept {
+     socklen_t *addrlen;
+     sock_addr_t *addrbuf;
+@@ -2435,6 +2436,7 @@
+ Wait for an incoming connection.  Return a new socket file descriptor\n\
+ representing the connection, and the address of the client.\n\
+ For IP sockets, the address info is a pair (hostaddr, port).");
++#endif /* HAVE_ACCEPT */
+ 
+ /* s.setblocking(flag) method.  Argument:
+    False -- non-blocking mode; same as settimeout(0)
+@@ -2685,6 +2687,7 @@
  string of that length; otherwise it is an integer.");
  
  
@@ -8,7 +24,7 @@
  /* s.bind(sockaddr) method */
  
  static PyObject *
-@@ -2711,6 +2712,7 @@
+@@ -2711,6 +2714,7 @@
  Bind the socket to a local address.  For IP sockets, the address is a\n\
  pair (host, port); the host must refer to the local host. For raw packet\n\
  sockets the address is a tuple (ifname, proto [,pkttype [,hatype]])");
@@ -16,10 +32,14 @@
  
  
  /* s.close() method.
-@@ -4461,8 +4463,10 @@
+@@ -4459,10 +4463,14 @@
+ /* List of methods for socket objects */
+ 
  static PyMethodDef sock_methods[] = {
++#if defined(HAVE_ACCEPT)
      {"_accept",           (PyCFunction)sock_accept, METH_NOARGS,
                        accept_doc},
++#endif
 +#if defined(HAVE_BIND)
      {"bind",              (PyCFunction)sock_bind, METH_O,
                        bind_doc},
