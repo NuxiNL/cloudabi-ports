@@ -1,6 +1,22 @@
 --- bufferevent_sock.c
 +++ bufferevent_sock.c
-@@ -349,6 +349,7 @@
+@@ -218,6 +218,7 @@
+ 		what |= BEV_EVENT_TIMEOUT;
+ 		goto error;
+ 	}
++#if 0
+ 	if (bufev_p->connecting) {
+ 		int c = evutil_socket_finished_connecting(fd);
+ 		/* we need to fake the error if the connection was refused
+@@ -256,6 +257,7 @@
+ 			}
+ 		}
+ 	}
++#endif
+ 
+ 	atmost = _bufferevent_get_write_max(bufev_p);
+ 
+@@ -349,6 +351,7 @@
  	return bufev;
  }
  
@@ -8,7 +24,7 @@
  int
  bufferevent_socket_connect(struct bufferevent *bev,
      struct sockaddr *sa, int socklen)
-@@ -505,6 +506,7 @@
+@@ -505,6 +508,7 @@
  		return -1;
  	}
  }
@@ -90,14 +106,14 @@
  int
  evutil_socket_connect(evutil_socket_t *fd_ptr, struct sockaddr *sa, int socklen)
  {
-@@ -496,6 +505,7 @@
- 	}
- 	return -1;
+@@ -519,6 +528,7 @@
+ 
+ 	return 1;
  }
 +#endif
  
- /* Check whether a socket on which we called connect() is done
-    connecting. Return 1 for connected, 0 for not yet, -1 for error.  In the
+ #if (EVUTIL_AI_PASSIVE|EVUTIL_AI_CANONNAME|EVUTIL_AI_NUMERICHOST| \
+      EVUTIL_AI_NUMERICSERV|EVUTIL_AI_V4MAPPED|EVUTIL_AI_ALL| \
 --- http-internal.h
 +++ http-internal.h
 @@ -175,7 +175,6 @@
@@ -149,7 +165,23 @@
  }
  
  static void
-@@ -2178,6 +2175,7 @@
+@@ -1383,6 +1380,7 @@
+ /*
+  * Event callback for asynchronous connection attempt.
+  */
++#if 0
+ static void
+ evhttp_connection_cb(struct bufferevent *bufev, short what, void *arg)
+ {
+@@ -1454,6 +1452,7 @@
+  cleanup:
+ 	evhttp_connection_cb_cleanup(evcon);
+ }
++#endif
+ 
+ /*
+  * Check if we got a valid response code.
+@@ -2178,6 +2177,7 @@
  	*port = evcon->port;
  }
  
@@ -157,7 +189,7 @@
  int
  evhttp_connection_connect(struct evhttp_connection *evcon)
  {
-@@ -2228,6 +2226,7 @@
+@@ -2228,6 +2228,7 @@
  
  	return (0);
  }
@@ -165,7 +197,7 @@
  
  /*
   * Starts an HTTP request on the provided evhttp_connection object.
-@@ -2265,6 +2264,8 @@
+@@ -2265,6 +2266,8 @@
  
  	/* If the connection object is not connected; make it so */
  	if (!evhttp_connected(evcon)) {
@@ -174,7 +206,7 @@
  		int res = evhttp_connection_connect(evcon);
  	       /* evhttp_connection_fail(), which is called through
  		* evhttp_connection_connect(), assumes that req lies in
-@@ -2274,6 +2275,7 @@
+@@ -2274,6 +2277,7 @@
  		       TAILQ_REMOVE(&evcon->requests, req, next);
  
  		return res;
@@ -182,7 +214,7 @@
  	}
  
  	/*
-@@ -3083,6 +3085,7 @@
+@@ -3083,6 +3087,7 @@
  	evhttp_get_request(http, nfd, peer_sa, peer_socklen);
  }
  
@@ -190,15 +222,15 @@
  int
  evhttp_bind_socket(struct evhttp *http, const char *address, ev_uint16_t port)
  {
-@@ -3118,6 +3121,7 @@
- 
- 	return (NULL);
+@@ -3152,6 +3157,7 @@
+ 	}
+ 	return (bound);
  }
 +#endif
  
- int
- evhttp_accept_socket(struct evhttp *http, evutil_socket_t fd)
-@@ -3235,6 +3239,7 @@
+ struct evhttp_bound_socket *
+ evhttp_bind_listener(struct evhttp *http, struct evconnlistener *listener)
+@@ -3235,6 +3241,7 @@
   * Start a web server on the specified address and port.
   */
  
@@ -206,7 +238,7 @@
  struct evhttp *
  evhttp_start(const char *address, unsigned short port)
  {
-@@ -3250,6 +3255,7 @@
+@@ -3250,6 +3257,7 @@
  
  	return (http);
  }
@@ -214,7 +246,7 @@
  
  void
  evhttp_free(struct evhttp* http)
-@@ -3817,6 +3823,7 @@
+@@ -3817,6 +3825,7 @@
  
  /* Create a non-blocking socket and bind it */
  /* todo: rename this function */
@@ -222,7 +254,7 @@
  static evutil_socket_t
  bind_socket_ai(struct evutil_addrinfo *ai, int reuse)
  {
-@@ -3909,6 +3916,7 @@
+@@ -3909,6 +3918,7 @@
  
  	return (fd);
  }
@@ -267,6 +299,22 @@
  
  /**
   * Makes an HTTP server accept connections on the specified socket.
+@@ -122,7 +120,6 @@
+  * @return 0 on success, -1 on failure.
+  * @see evhttp_bind_socket()
+  */
+-int evhttp_accept_socket(struct evhttp *http, evutil_socket_t fd);
+ 
+ /**
+  * Like evhttp_accept_socket(), but returns a handle for referencing the socket.
+@@ -134,7 +131,6 @@
+  * @return Handle for the socket on success, NULL on failure.
+  * @see evhttp_accept_socket(), evhttp_del_accept_socket()
+  */
+-struct evhttp_bound_socket *evhttp_accept_socket_with_handle(struct evhttp *http, evutil_socket_t fd);
+ 
+ /**
+  * The most low-level evhttp_bind/accept method: takes an evconnlistener, and
 --- include/event2/http_compat.h
 +++ include/event2/http_compat.h
 @@ -58,7 +58,6 @@
@@ -279,7 +327,17 @@
   * A connection object that can be used to for making HTTP requests.  The
 --- include/event2/listener.h
 +++ include/event2/listener.h
-@@ -105,9 +105,6 @@
+@@ -87,9 +87,6 @@
+       file descriptor, and it should already be bound to an appropriate
+       port and address.
+ */
+-struct evconnlistener *evconnlistener_new(struct event_base *base,
+-    evconnlistener_cb cb, void *ptr, unsigned flags, int backlog,
+-    evutil_socket_t fd);
+ /**
+    Allocate a new evconnlistener object to listen for incoming TCP connections
+    on a given address.
+@@ -105,9 +102,6 @@
     @param addr The address to listen for connections on.
     @param socklen The length of the address.
   */
@@ -301,14 +359,14 @@
      successful execution of one of the exec*() functions.
 --- listener.c
 +++ listener.c
-@@ -197,6 +197,7 @@
- 	return &lev->base;
- }
+@@ -150,6 +150,7 @@
+ 
+ static void listener_read_cb(evutil_socket_t, short, void *);
  
 +#if 0
  struct evconnlistener *
- evconnlistener_new_bind(struct event_base *base, evconnlistener_cb cb,
-     void *ptr, unsigned flags, int backlog, const struct sockaddr *sa,
+ evconnlistener_new(struct event_base *base,
+     evconnlistener_cb cb, void *ptr, unsigned flags, int backlog,
 @@ -252,6 +253,7 @@
  
  	return listener;
@@ -317,9 +375,25 @@
  
  void
  evconnlistener_free(struct evconnlistener *lev)
+@@ -377,6 +379,7 @@
+ 	UNLOCK(lev);
+ }
+ 
++#if 0
+ static void
+ listener_read_cb(evutil_socket_t fd, short what, void *p)
+ {
+@@ -442,6 +445,7 @@
+ 		event_sock_warn(fd, "Error from accept() call");
+ 	}
+ }
++#endif
+ 
+ #ifdef WIN32
+ struct accepting_socket {
 --- util-internal.h
 +++ util-internal.h
-@@ -164,17 +164,8 @@
+@@ -164,16 +164,6 @@
  /* As open(pathname, flags, mode), except that the file is always opened with
   * the close-on-exec flag set. (And the mode argument is mandatory.)
   */
@@ -330,10 +404,9 @@
 -
 -int evutil_socket_connect(evutil_socket_t *fd_ptr, struct sockaddr *sa, int socklen);
 -
- int evutil_socket_finished_connecting(evutil_socket_t fd);
- 
--int evutil_ersatz_socketpair(int, int , int, evutil_socket_t[]);
+-int evutil_socket_finished_connecting(evutil_socket_t fd);
 -
+-int evutil_ersatz_socketpair(int, int , int, evutil_socket_t[]);
+ 
  int evutil_resolve(int family, const char *hostname, struct sockaddr *sa,
      ev_socklen_t *socklen, int port);
- 
