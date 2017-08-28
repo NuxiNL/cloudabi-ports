@@ -1,0 +1,109 @@
+Files /usr/obj/cloudabi-ports/build/2/src/.tcp_listener.cpp.swp and /usr/obj/cloudabi-ports/build/0/zeromq-4.2.1/src/.tcp_listener.cpp.swp differ
+--- src/ipc_listener.cpp
++++ src/ipc_listener.cpp
+@@ -162,6 +162,7 @@
+     own_t::process_term (linger_);
+ }
+ 
++#ifndef __CloudABI__
+ void zmq::ipc_listener_t::in_event ()
+ {
+     fd_t fd = accept ();
+@@ -192,6 +193,7 @@
+     send_attach (session, engine, false);
+     socket->event_accepted (endpoint, fd);
+ }
++#endif
+ 
+ int zmq::ipc_listener_t::get_address (std::string &addr_)
+ {
+@@ -402,6 +404,7 @@
+ 
+ #endif
+ 
++#ifndef __CloudABI__
+ zmq::fd_t zmq::ipc_listener_t::accept ()
+ {
+     //  Accept one connection and deal with different failure modes.
+@@ -438,5 +441,6 @@
+ 
+     return sock;
+ }
++#endif
+ 
+ #endif
+--- src/ipc_listener.hpp
++++ src/ipc_listener.hpp
+@@ -66,7 +66,9 @@
+         void process_term (int linger_);
+ 
+         //  Handlers for I/O events.
++#ifndef __CloudABI__
+         void in_event ();
++#endif
+ 
+         //  Close the listening socket.
+         int close ();
+@@ -86,7 +88,9 @@
+         //  Accept the new connection. Returns the file descriptor of the
+         //  newly created connection. The function may return retired_fd
+         //  if the connection was dropped while waiting in the listen backlog.
++#ifndef __CloudABI__
+         fd_t accept ();
++#endif
+ 
+         //  True, if the underlying file for UNIX domain socket exists.
+         bool has_file;
+--- src/tcp_listener.cpp
++++ src/tcp_listener.cpp
+@@ -85,6 +85,7 @@
+     own_t::process_term (linger_);
+ }
+ 
++#ifndef __CloudABI__
+ void zmq::tcp_listener_t::in_event ()
+ {
+     fd_t fd = accept ();
+@@ -120,6 +121,7 @@
+     send_attach (session, engine, false);
+     socket->event_accepted (endpoint, (int) fd);
+ }
++#endif
+ 
+ void zmq::tcp_listener_t::close ()
+ {
+@@ -269,6 +271,7 @@
+ #endif
+ }
+ 
++#ifndef __CloudABI__
+ zmq::fd_t zmq::tcp_listener_t::accept ()
+ {
+     //  The situation where connection cannot be accepted due to insufficient
+@@ -346,3 +349,4 @@
+ 
+     return sock;
+ }
++#endif
+--- src/tcp_listener.hpp
++++ src/tcp_listener.hpp
+@@ -63,7 +63,9 @@
+         void process_term (int linger_);
+ 
+         //  Handlers for I/O events.
++#ifndef __CloudABI__
+         void in_event ();
++#endif
+ 
+         //  Close the listening socket.
+         void close ();
+@@ -72,7 +74,9 @@
+         //  newly created connection. The function may return retired_fd
+         //  if the connection was dropped while waiting in the listen backlog
+         //  or was denied because of accept filters.
++#ifndef __CloudABI__
+         fd_t accept ();
++#endif
+ 
+         //  Address to listen on.
+         tcp_address_t address;
