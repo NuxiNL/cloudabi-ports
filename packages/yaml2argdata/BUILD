@@ -11,12 +11,12 @@ def build(ctx):
 
 package(
     name='yaml2argdata',
-    version='0.1',
+    version='0.2',
     homepage='https://github.com/NuxiNL/yaml2argdata',
     lib_depends={'argdata', 'yaml-cpp'},
     build_cmd=build)
 
 distfile(
-    name='yaml2argdata/v0.1.tar.gz',
-    checksum='64651c19ac3281054631595ecfe0f83f9d7a09ef5c8b1d1908b68b410fa2dc42',
+    name='yaml2argdata/v0.2.tar.gz',
+    checksum='ee96a46b83e2259ab36db332bbd4d6d7ebf7a061ca9285786298ebedf9815997',
     master_sites={'https://github.com/NuxiNL/yaml2argdata/archive/'})
