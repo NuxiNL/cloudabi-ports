@@ -98,10 +98,10 @@
 +        if (!follow_symlinks)
 +            result = lchmod(path->narrow, mode);
 +        else
++#endif
++            result = chmod(path->narrow, mode);
  #endif
 -        result = chmod(path->narrow, mode);
-+            result = chmod(path->narrow, mode);
-+#endif
 +    }
      Py_END_ALLOW_THREADS
  
@@ -126,10 +126,10 @@
 +        if (!follow_symlinks)
 +            result = lchown(path->narrow, uid, gid);
 +        else
-+#endif
-+            result = chown(path->narrow, uid, gid);
  #endif
 -        result = chown(path->narrow, uid, gid);
++            result = chown(path->narrow, uid, gid);
++#endif
 +    }
      Py_END_ALLOW_THREADS
  

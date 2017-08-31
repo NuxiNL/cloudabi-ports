@@ -1,6 +1,5 @@
-diff -ur protobuf-3.4.0/cmake/CMakeLists.txt protobuf-3.4.0-patched/cmake/CMakeLists.txt
---- protobuf-3.4.0/cmake/CMakeLists.txt	2017-08-14 23:46:31.000000000 +0200
-+++ protobuf-3.4.0-patched/cmake/CMakeLists.txt	2017-08-25 21:57:24.376084478 +0200
+--- cmake/CMakeLists.txt
++++ cmake/CMakeLists.txt
 @@ -12,6 +12,7 @@
  project(protobuf C CXX)
  
@@ -22,10 +21,8 @@ diff -ur protobuf-3.4.0/cmake/CMakeLists.txt protobuf-3.4.0-patched/cmake/CMakeL
  
  if (protobuf_BUILD_TESTS)
    include(tests.cmake)
-Only in protobuf-3.4.0-patched/cmake: CMakeLists.txt.orig
-diff -ur protobuf-3.4.0/cmake/install.cmake protobuf-3.4.0-patched/cmake/install.cmake
---- protobuf-3.4.0/cmake/install.cmake	2017-08-14 23:46:19.000000000 +0200
-+++ protobuf-3.4.0-patched/cmake/install.cmake	2017-08-25 21:57:24.376084478 +0200
+--- cmake/install.cmake
++++ cmake/install.cmake
 @@ -5,10 +5,18 @@
  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/protobuf-lite.pc.cmake
                 ${CMAKE_CURRENT_BINARY_DIR}/protobuf-lite.pc @ONLY)
@@ -68,10 +65,8 @@ diff -ur protobuf-3.4.0/cmake/install.cmake protobuf-3.4.0-patched/cmake/install
    NAMESPACE protobuf::
    FILE ${CMAKE_INSTALL_CMAKEDIR}/protobuf-targets.cmake
  )
-Only in protobuf-3.4.0-patched/cmake: install.cmake.orig
-diff -ur protobuf-3.4.0/cmake/libprotobuf.cmake protobuf-3.4.0-patched/cmake/libprotobuf.cmake
---- protobuf-3.4.0/cmake/libprotobuf.cmake	2017-08-14 23:46:19.000000000 +0200
-+++ protobuf-3.4.0-patched/cmake/libprotobuf.cmake	2017-08-25 21:58:00.030083823 +0200
+--- cmake/libprotobuf.cmake
++++ cmake/libprotobuf.cmake
 @@ -1,9 +1,20 @@
 +if (protobuf_BUILD_COMPILER)
 +  set(sources_compiler
@@ -105,4 +100,3 @@ diff -ur protobuf-3.4.0/cmake/libprotobuf.cmake protobuf-3.4.0-patched/cmake/lib
    ${protobuf_source_dir}/src/google/protobuf/descriptor.h
    ${protobuf_source_dir}/src/google/protobuf/descriptor.pb.h
    ${protobuf_source_dir}/src/google/protobuf/descriptor_database.h
-Only in protobuf-3.4.0-patched/cmake: libprotobuf.cmake.orig

@@ -1,27 +1,3 @@
---- c++/ekam-provider/c++header/kj/miniposix.h
-+++ c++/ekam-provider/c++header/kj/miniposix.h
-@@ -111,7 +111,9 @@
- // We're on real POSIX.
- 
- using ::pipe;
-+#ifndef __CloudABI__
- using ::mkdir;
-+#endif
- 
- inline size_t iovMax(size_t count) {
-   // Apparently, there is a maximum number of iovecs allowed per call.  I don't understand why.
---- c++/ekam-provider/canonical/kj/miniposix.h
-+++ c++/ekam-provider/canonical/kj/miniposix.h
-@@ -111,7 +111,9 @@
- // We're on real POSIX.
- 
- using ::pipe;
-+#ifndef __CloudABI__
- using ::mkdir;
-+#endif
- 
- inline size_t iovMax(size_t count) {
-   // Apparently, there is a maximum number of iovecs allowed per call.  I don't understand why.
 --- c++/src/kj/miniposix.h
 +++ c++/src/kj/miniposix.h
 @@ -111,7 +111,9 @@

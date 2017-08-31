@@ -44,3 +44,9 @@ for i in ['/usr/bin/perl', '/usr/local/bin/perl']:
     if os.path.exists(i):
         PERL = i
         break
+
+# Name of the diff executable.
+for i in ['/usr/local/bin/gdiff', '/usr/bin/diff']:
+    if os.path.exists(i):
+        DIFF = i
+        break

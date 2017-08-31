@@ -11,6 +11,8 @@ import subprocess
 import ssl
 import urllib.request
 
+from . import config
+
 
 def copy_file(source, target, preserve_attributes):
     if os.path.exists(target):
@@ -34,7 +36,8 @@ def copy_file(source, target, preserve_attributes):
 
 def diff(orig_dir, patched_dir, patch):
     proc = subprocess.Popen(
-        ['diff', '-urN', orig_dir, patched_dir], stdout=subprocess.PIPE)
+        [config.DIFF, '--no-dereference', '-urN', orig_dir, patched_dir],
+        stdout=subprocess.PIPE)
     minline = bytes('--- %s/' % orig_dir, encoding='ASCII')
     plusline = bytes('+++ %s/' % patched_dir, encoding='ASCII')
     with open(patch, 'wb') as f:
