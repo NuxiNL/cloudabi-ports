@@ -1,0 +1,270 @@
+--- c++/ekam-provider/c++header/kj/exception.c++
++++ c++/ekam-provider/c++header/kj/exception.c++
+@@ -680,6 +680,7 @@
+ 
+   void logMessage(LogSeverity severity, const char* file, int line, int contextDepth,
+                   String&& text) override {
++#ifdef STDERR_FILENO
+     text = str(kj::repeat('_', contextDepth), file, ":", line, ": ", severity, ": ",
+                mv(text), '\n');
+ 
+@@ -693,6 +694,7 @@
+       }
+       textPtr = textPtr.slice(n);
+     }
++#endif
+   }
+ 
+   StackTraceMode stackTraceMode() override {
+--- c++/ekam-provider/c++header/kj/main.c++
++++ c++/ekam-provider/c++header/kj/main.c++
+@@ -181,12 +181,16 @@
+ }
+ 
+ void TopLevelProcessContext::warning(StringPtr message) {
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::error(StringPtr message) {
+   hadErrors = true;
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::exitError(StringPtr message) {
+@@ -195,7 +199,9 @@
+ }
+ 
+ void TopLevelProcessContext::exitInfo(StringPtr message) {
++#ifdef STDOUT_FILENO
+   writeLineToFd(STDOUT_FILENO, message);
++#endif
+   exit();
+ }
+ 
+@@ -207,9 +213,15 @@
+ // =======================================================================================
+ 
+ int runMainAndExit(ProcessContext& context, MainFunc&& func, int argc, char* argv[]) {
++#ifdef STDIN_FILENO
+   setStandardIoMode(STDIN_FILENO);
++#endif
++#ifdef STDOUT_FILENO
+   setStandardIoMode(STDOUT_FILENO);
++#endif
++#ifdef STDERR_FILENO
+   setStandardIoMode(STDERR_FILENO);
++#endif
+ 
+ #if !KJ_NO_EXCEPTIONS
+   try {
+--- c++/ekam-provider/c++header/kj/test.c++
++++ c++/ekam-provider/c++header/kj/test.c++
+@@ -183,7 +183,13 @@
+ class TestRunner {
+ public:
+   explicit TestRunner(ProcessContext& context)
+-      : context(context), useColor(isatty(STDOUT_FILENO)) {}
++      : context(context),
++#ifdef STDOUT_FILENO
++        useColor(isatty(STDOUT_FILENO))
++#else
++        useColor(false)
++#endif
++        {}
+ 
+   MainFunc getMain() {
+     return MainBuilder(context, "KJ Test Runner (version not applicable)",
+@@ -326,7 +332,9 @@
+   };
+ 
+   void write(StringPtr text) {
++#ifdef STDOUT_FILENO
+     FdOutputStream(STDOUT_FILENO).write(text.begin(), text.size());
++#endif
+   }
+ 
+   void write(Color color, StringPtr prefix, StringPtr message) {
+--- c++/ekam-provider/canonical/kj/exception.c++
++++ c++/ekam-provider/canonical/kj/exception.c++
+@@ -680,6 +680,7 @@
+ 
+   void logMessage(LogSeverity severity, const char* file, int line, int contextDepth,
+                   String&& text) override {
++#ifdef STDERR_FILENO
+     text = str(kj::repeat('_', contextDepth), file, ":", line, ": ", severity, ": ",
+                mv(text), '\n');
+ 
+@@ -693,6 +694,7 @@
+       }
+       textPtr = textPtr.slice(n);
+     }
++#endif
+   }
+ 
+   StackTraceMode stackTraceMode() override {
+--- c++/ekam-provider/canonical/kj/main.c++
++++ c++/ekam-provider/canonical/kj/main.c++
+@@ -181,12 +181,16 @@
+ }
+ 
+ void TopLevelProcessContext::warning(StringPtr message) {
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::error(StringPtr message) {
+   hadErrors = true;
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::exitError(StringPtr message) {
+@@ -195,7 +199,9 @@
+ }
+ 
+ void TopLevelProcessContext::exitInfo(StringPtr message) {
++#ifdef STDOUT_FILENO
+   writeLineToFd(STDOUT_FILENO, message);
++#endif
+   exit();
+ }
+ 
+@@ -207,9 +213,15 @@
+ // =======================================================================================
+ 
+ int runMainAndExit(ProcessContext& context, MainFunc&& func, int argc, char* argv[]) {
++#ifdef STDIN_FILENO
+   setStandardIoMode(STDIN_FILENO);
++#endif
++#ifdef STDOUT_FILENO
+   setStandardIoMode(STDOUT_FILENO);
++#endif
++#ifdef STDERR_FILENO
+   setStandardIoMode(STDERR_FILENO);
++#endif
+ 
+ #if !KJ_NO_EXCEPTIONS
+   try {
+--- c++/ekam-provider/canonical/kj/test.c++
++++ c++/ekam-provider/canonical/kj/test.c++
+@@ -183,7 +183,13 @@
+ class TestRunner {
+ public:
+   explicit TestRunner(ProcessContext& context)
+-      : context(context), useColor(isatty(STDOUT_FILENO)) {}
++      : context(context),
++#ifdef STDOUT_FILENO
++        useColor(isatty(STDOUT_FILENO))
++#else
++        useColor(false)
++#endif
++        {}
+ 
+   MainFunc getMain() {
+     return MainBuilder(context, "KJ Test Runner (version not applicable)",
+@@ -326,7 +332,9 @@
+   };
+ 
+   void write(StringPtr text) {
++#ifdef STDOUT_FILENO
+     FdOutputStream(STDOUT_FILENO).write(text.begin(), text.size());
++#endif
+   }
+ 
+   void write(Color color, StringPtr prefix, StringPtr message) {
+--- c++/src/kj/exception.c++
++++ c++/src/kj/exception.c++
+@@ -680,6 +680,7 @@
+ 
+   void logMessage(LogSeverity severity, const char* file, int line, int contextDepth,
+                   String&& text) override {
++#ifdef STDERR_FILENO
+     text = str(kj::repeat('_', contextDepth), file, ":", line, ": ", severity, ": ",
+                mv(text), '\n');
+ 
+@@ -693,6 +694,7 @@
+       }
+       textPtr = textPtr.slice(n);
+     }
++#endif
+   }
+ 
+   StackTraceMode stackTraceMode() override {
+--- c++/src/kj/main.c++
++++ c++/src/kj/main.c++
+@@ -181,12 +181,16 @@
+ }
+ 
+ void TopLevelProcessContext::warning(StringPtr message) {
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::error(StringPtr message) {
+   hadErrors = true;
++#ifdef STDERR_FILENO
+   writeLineToFd(STDERR_FILENO, message);
++#endif
+ }
+ 
+ void TopLevelProcessContext::exitError(StringPtr message) {
+@@ -195,7 +199,9 @@
+ }
+ 
+ void TopLevelProcessContext::exitInfo(StringPtr message) {
++#ifdef STDOUT_FILENO
+   writeLineToFd(STDOUT_FILENO, message);
++#endif
+   exit();
+ }
+ 
+@@ -207,9 +213,15 @@
+ // =======================================================================================
+ 
+ int runMainAndExit(ProcessContext& context, MainFunc&& func, int argc, char* argv[]) {
++#ifdef STDIN_FILENO
+   setStandardIoMode(STDIN_FILENO);
++#endif
++#ifdef STDOUT_FILENO
+   setStandardIoMode(STDOUT_FILENO);
++#endif
++#ifdef STDERR_FILENO
+   setStandardIoMode(STDERR_FILENO);
++#endif
+ 
+ #if !KJ_NO_EXCEPTIONS
+   try {
+--- c++/src/kj/test.c++
++++ c++/src/kj/test.c++
+@@ -183,7 +183,13 @@
+ class TestRunner {
+ public:
+   explicit TestRunner(ProcessContext& context)
+-      : context(context), useColor(isatty(STDOUT_FILENO)) {}
++      : context(context),
++#ifdef STDOUT_FILENO
++        useColor(isatty(STDOUT_FILENO))
++#else
++        useColor(false)
++#endif
++        {}
+ 
+   MainFunc getMain() {
+     return MainBuilder(context, "KJ Test Runner (version not applicable)",
+@@ -326,7 +332,9 @@
+   };
+ 
+   void write(StringPtr text) {
++#ifdef STDOUT_FILENO
+     FdOutputStream(STDOUT_FILENO).write(text.begin(), text.size());
++#endif
+   }
+ 
+   void write(Color color, StringPtr prefix, StringPtr message) {
