@@ -5,9 +5,9 @@
 
 
 def build(ctx):
-    root = ctx.extract('%(name)s-%(version)src2.src')
-    ctx.extract('cfe-%(version)src2.src').rename(root.path('tools/clang'))
-    ctx.extract('lld-%(version)src2.src').rename(root.path('tools/lld'))
+    root = ctx.extract('%(name)s-%(version)s.src')
+    ctx.extract('cfe-%(version)s.src').rename(root.path('tools/clang'))
+    ctx.extract('lld-%(version)s.src').rename(root.path('tools/lld'))
 
     # Build and install LLVM, Clang and LLD.
     build = root.cmake([
@@ -42,17 +42,17 @@ host_package(
     build_cmd=build)
 
 distfile(
-    name='cfe-5.0.0rc2.src.tar.xz',
-    checksum='879548d82be18fa74658005bc1740c47e4432d767b79beb4d3aa2f27c0584eaa',
-    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'},
+    name='cfe-5.0.0.src.tar.xz',
+    checksum='019f23c2192df793ac746595e94a403908749f8e0c484b403476d2611dd20970',
+    master_sites={'http://releases.llvm.org/5.0.0/'},
     patches={'clang-no-c-headers'})
 distfile(
-    name='lld-5.0.0rc2.src.tar.xz',
-    checksum='e112d06e8251339d54f9fd85a622c06b1f011847f9fc0547393d5f20f5fd8527',
-    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'},
+    name='lld-5.0.0.src.tar.xz',
+    checksum='399a7920a5278d42c46a7bf7e4191820ec2301457a7d0d4fcc9a4ac05dd53897',
+    master_sites={'http://releases.llvm.org/5.0.0/'},
     patches=set())
 distfile(
-    name='llvm-5.0.0rc2.src.tar.xz',
-    checksum='14442c8f5583c0aa5dcf73809828f9be57fedeb2191b00a8bd706a2954d19468',
-    master_sites={'http://prereleases.llvm.org/5.0.0/rc2/'},
+    name='llvm-5.0.0.src.tar.xz',
+    checksum='e35dcbae6084adcf4abb32514127c5eabd7d63b733852ccdb31e06f1373136da',
+    master_sites={'http://releases.llvm.org/5.0.0/'},
     patches=set())
