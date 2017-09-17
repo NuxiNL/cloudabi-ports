@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='scuba',
-    version='0.4',
+    version='0.5',
     homepage='https://github.com/NuxiNL/scuba',
     lib_depends={'arpc', 'cxx-runtime', 'flower', 'grpc', 'yaml2argdata'},
     build_cmd=build)
 
 distfile(
-    name='scuba/v0.4.tar.gz',
-    checksum='d2d62e306f03d0f203cfe67ab583cb01cac3a0266d2fcb5d62f13e8cd2d55670',
+    name='scuba/v0.5.tar.gz',
+    checksum='fb86345de9dd85ed0a2ef5c00c0760906fb27483436b8e4139c42e9a34355552',
     master_sites={'https://github.com/NuxiNL/scuba/archive/'})
