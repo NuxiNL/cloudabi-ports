@@ -34,6 +34,7 @@ host_package(
     name='protobuf-cpp',
     version='3.4.1',
     homepage='https://developers.google.com/protocol-buffers/',
+    build_depends={'cmake', 'ninja'},
     build_cmd=host_build)
 
 distfile(
