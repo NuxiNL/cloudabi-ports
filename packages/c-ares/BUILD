@@ -21,6 +21,7 @@ host_package(
     name='c-ares',
     version='1.13.0',
     homepage='https://c-ares.haxx.se/',
+    build_depends={'cmake', 'ninja'},
     build_cmd=build)
 
 distfile(
