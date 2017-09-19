@@ -1,3 +1,14 @@
+--- include/csignal
++++ include/csignal
+@@ -49,8 +49,6 @@
+ 
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+-using ::sig_atomic_t;
+-using ::signal;
+ using ::raise;
+ 
+ _LIBCPP_END_NAMESPACE_STD
 --- include/cstdio
 +++ include/cstdio
 @@ -116,13 +116,11 @@
