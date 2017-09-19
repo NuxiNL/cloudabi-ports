@@ -31,33 +31,6 @@
  
      clear_last_error();
  #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-@@ -333,7 +337,7 @@
-       ioctl_arg_type arg = 0;
-       ::ioctlsocket(s, FIONBIO, &arg);
- #else // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
--# if defined(__SYMBIAN32__)
-+# if 1
-       int flags = ::fcntl(s, F_GETFL, 0);
-       if (flags >= 0)
-         ::fcntl(s, F_SETFL, flags & ~O_NONBLOCK);
-@@ -371,7 +375,7 @@
- #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-   ioctl_arg_type arg = (value ? 1 : 0);
-   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
--#elif defined(__SYMBIAN32__)
-+#elif 1
-   int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
-   if (result >= 0)
-   {
-@@ -424,7 +428,7 @@
- #if defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
-   ioctl_arg_type arg = (value ? 1 : 0);
-   int result = error_wrapper(::ioctlsocket(s, FIONBIO, &arg), ec);
--#elif defined(__SYMBIAN32__)
-+#elif 1
-   int result = error_wrapper(::fcntl(s, F_GETFL, 0), ec);
-   if (result >= 0)
-   {
 @@ -465,12 +469,14 @@
    return result;
  }
@@ -105,23 +78,7 @@
  
  template <typename SockLenType>
  inline int call_getsockopt(SockLenType msghdr::*,
-@@ -1725,6 +1735,7 @@
-     // the correct state. This ensures that the underlying socket is put into
-     // the state that has been requested by the user. If the ioctl syscall was
-     // successful then we need to update the flags to match.
-+#if 0
-     if (cmd == static_cast<int>(FIONBIO))
-     {
-       if (*arg)
-@@ -1739,6 +1750,7 @@
-         state &= ~(user_set_non_blocking | internal_non_blocking);
-       }
-     }
-+#endif
-   }
- 
-   return result;
-@@ -2279,6 +2291,7 @@
+@@ -2279,6 +2289,7 @@
  #endif // defined(BOOST_ASIO_WINDOWS) || defined(__CYGWIN__)
  }
  
@@ -129,7 +86,7 @@
  int gethostname(char* name, int namelen, boost::system::error_code& ec)
  {
    clear_last_error();
-@@ -2320,6 +2333,7 @@
+@@ -2320,6 +2331,7 @@
    return result;
  #endif // defined(BOOST_ASIO_WINDOWS_RUNTIME)
  }
@@ -137,24 +94,6 @@
  
  #if !defined(BOOST_ASIO_WINDOWS_RUNTIME)
  
---- boost/asio/detail/io_control.hpp
-+++ boost/asio/detail/io_control.hpp
-@@ -27,6 +27,7 @@
- namespace io_control {
- 
- // IO control command for non-blocking I/O.
-+#if 0
- class non_blocking_io
- {
- public:
-@@ -75,6 +76,7 @@
- private:
-   detail::ioctl_arg_type value_;
- };
-+#endif
- 
- // I/O control command for getting number of bytes available.
- class bytes_readable
 --- boost/asio/detail/posix_signal_blocker.hpp
 +++ boost/asio/detail/posix_signal_blocker.hpp
 @@ -34,6 +34,11 @@
@@ -496,15 +435,6 @@
  #endif
  
    /// Socket option to report aborted connections on accept.
-@@ -472,8 +430,6 @@
-    */
- #if defined(GENERATING_DOCUMENTATION)
-   typedef implementation_defined non_blocking_io;
--#else
--  typedef boost::asio::detail::io_control::non_blocking_io non_blocking_io;
- #endif
- 
-   /// IO control command to get the amount of data that can be read without
 --- boost/log/detail/config.hpp
 +++ boost/log/detail/config.hpp
 @@ -111,7 +111,7 @@
