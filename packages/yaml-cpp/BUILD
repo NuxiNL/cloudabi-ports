@@ -20,5 +20,5 @@ package(
 
 distfile(
     name='yaml-cpp-0.5.3.tar.gz',
-    checksum='668d7df0a43daba06e5b36aaa460ac902713ca4feb6b2d2697661607a0bc66ee',
+    checksum='decc5beabb86e8ed9ebeb04358d5363a5c4f72d458b2c788cb2f3ac9c19467b2',
     master_sites={'https://github.com/jbeder/yaml-cpp/archive/'})
