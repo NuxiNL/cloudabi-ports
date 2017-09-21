@@ -15,12 +15,12 @@ def build(ctx):
 
 package(
     name='libpng',
-    version='1.6.28',
+    version='1.6.32',
     homepage='http://www.libpng.org/',
     lib_depends={'c-runtime', 'zlib'},
     build_cmd=build)
 
 distfile(
-    name='libpng-1.6.28.tar.xz',
-    checksum='d8d3ec9de6b5db740fefac702c37ffcf96ae46cb17c18c1544635a3852f78f7a',
-    master_sites=sites_sourceforge('libpng/libpng16/1.6.28'))
+    name='libpng-1.6.32.tar.xz',
+    checksum='c918c3113de74a692f0a1526ce881dc26067763eb3915c57ef3a0f7b6886f59b',
+    master_sites=sites_sourceforge('libpng/libpng16/1.6.32'))
