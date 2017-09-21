@@ -26,7 +26,7 @@
    str_size = 0;
 --- src/mpfr-impl.h
 +++ src/mpfr-impl.h
-@@ -1903,9 +1903,6 @@
+@@ -1928,9 +1928,6 @@
  #ifdef _MPFR_H_HAVE_FILE
  __MPFR_DECLSPEC void mpfr_fprint_binary _MPFR_PROTO ((FILE *, mpfr_srcptr));
  #endif
@@ -36,7 +36,7 @@
  __MPFR_DECLSPEC void mpfr_set_str_binary _MPFR_PROTO((mpfr_ptr, const char*));
  
  __MPFR_DECLSPEC int mpfr_round_raw _MPFR_PROTO ((mp_limb_t *,
-@@ -1959,10 +1956,6 @@
+@@ -1984,10 +1981,6 @@
  __MPFR_DECLSPEC int mpfr_round_p _MPFR_PROTO ((mp_limb_t *, mp_size_t,
                                                 mpfr_exp_t, mpfr_prec_t));
  
@@ -115,7 +115,7 @@
 +#endif
 --- src/printf.c
 +++ src/printf.c
-@@ -79,6 +79,7 @@
+@@ -78,6 +78,7 @@
          }                                       \
      } while (0)
  
@@ -123,7 +123,7 @@
  int
  mpfr_printf (const char *fmt, ...)
  {
-@@ -104,6 +105,7 @@
+@@ -103,6 +104,7 @@
    mpfr_free_str (str);
    return ret;
  }
@@ -131,7 +131,7 @@
  
  
  int
-@@ -133,6 +135,7 @@
+@@ -132,6 +134,7 @@
  }
  #endif /* _MPFR_H_HAVE_FILE */
  
@@ -139,7 +139,7 @@
  int
  mpfr_sprintf (char *buf, const char *fmt, ...)
  {
-@@ -158,6 +161,7 @@
+@@ -157,6 +160,7 @@
    mpfr_free_str (str);
    return ret;
  }
