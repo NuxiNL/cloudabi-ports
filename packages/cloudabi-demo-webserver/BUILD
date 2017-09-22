@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='cloudabi-demo-webserver',
-    version='0.1',
+    version='0.2',
     homepage='https://github.com/NuxiNL/cloudabi-demo-webserver',
     lib_depends={'arpc', 'cxx-runtime', 'flower'},
     build_cmd=build)
 
 distfile(
-    name='cloudabi-demo-webserver/v0.1.tar.gz',
-    checksum='091fe1cdd4c369edb0ae9d72d8427e8310d01c715fc57541243a6aeec702b016',
+    name='cloudabi-demo-webserver/v0.2.tar.gz',
+    checksum='fd9e4f0bb0e4f68e2ad7d85dbe48ef3b467037831b84cc8a071eff9f4eefb33e',
     master_sites={'https://github.com/NuxiNL/cloudabi-demo-webserver/archive/'})
