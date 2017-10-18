@@ -1,0 +1,45 @@
+Binary files /usr/obj/cloudabi-ports/build/2/src/.stream_engine.cpp.swp and /usr/obj/cloudabi-ports/build/0/zeromq-4.2.1/src/.stream_engine.cpp.swp differ
+--- src/reaper.cpp
++++ src/reaper.cpp
+@@ -35,7 +35,7 @@
+ 
+ zmq::reaper_t::reaper_t (class ctx_t *ctx_, uint32_t tid_) :
+     object_t (ctx_, tid_),
+-    mailbox_handle((poller_t::handle_t)NULL),
++    mailbox_handle((poller_t::handle_t)0),
+     sockets (0),
+     terminating (false)
+ {
+--- src/socket_base.cpp
++++ src/socket_base.cpp
+@@ -186,7 +186,7 @@
+     ctx_terminated (false),
+     destroyed (false),
+     poller(NULL),
+-    handle((poller_t::handle_t)NULL),
++    handle((poller_t::handle_t)0),
+     last_tsc (0),
+     ticks (0),
+     rcvmore (false),
+--- src/stream_engine.cpp
++++ src/stream_engine.cpp
+@@ -66,7 +66,7 @@
+                                        const std::string &endpoint_) :
+     s (fd_),
+     as_server(false),
+-    handle((handle_t)NULL),
++    handle((handle_t)0),
+     inpos (NULL),
+     insize (0),
+     decoder (NULL),
+--- src/tcp_listener.cpp
++++ src/tcp_listener.cpp
+@@ -61,7 +61,7 @@
+     own_t (io_thread_, options_),
+     io_object_t (io_thread_),
+     s (retired_fd),
+-    handle((handle_t)NULL),
++    handle((handle_t)0),
+     socket (socket_)
+ {
+ }
