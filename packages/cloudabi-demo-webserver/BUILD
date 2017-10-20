@@ -21,4 +21,6 @@ package(
 distfile(
     name='cloudabi-demo-webserver/v0.2.tar.gz',
     checksum='fd9e4f0bb0e4f68e2ad7d85dbe48ef3b467037831b84cc8a071eff9f4eefb33e',
-    master_sites={'https://github.com/NuxiNL/cloudabi-demo-webserver/archive/'})
+    master_sites={
+        'https://github.com/NuxiNL/cloudabi-demo-webserver/archive/'
+    })
