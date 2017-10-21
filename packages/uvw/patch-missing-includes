@@ -1,0 +1,11 @@
+--- src/uvw/util.hpp
++++ src/uvw/util.hpp
+@@ -1,5 +1,8 @@
+ #pragma once
+ 
++#include <sys/socket.h>
++
++#include <netinet/in.h>
+ 
+ #include <type_traits>
+ #include <algorithm>

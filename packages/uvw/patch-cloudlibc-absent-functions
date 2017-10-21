@@ -1,0 +1,385 @@
+--- src/uvw/loop.hpp
++++ src/uvw/loop.hpp
+@@ -21,9 +21,11 @@
+ namespace details {
+ 
+ 
++#ifndef __CloudABI__
+ enum class UVLoopOption: std::underlying_type_t<uv_loop_option> {
+     BLOCK_SIGNAL = UV_LOOP_BLOCK_SIGNAL
+ };
++#endif
+ 
+ 
+ enum class UVRunMode: std::underlying_type_t<uv_run_mode> {
+@@ -151,7 +153,9 @@
+ 
+ public:
+     using Time = std::chrono::duration<uint64_t, std::milli>;
++#ifndef __CloudABI__
+     using Configure = details::UVLoopOption;
++#endif
+     using Mode = details::UVRunMode;
+ 
+     /**
+@@ -169,6 +173,7 @@
+         return loop;
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Gets the initialized default loop.
+      *
+@@ -200,6 +205,7 @@
+ 
+         return loop;
+     }
++#endif
+ 
+     Loop(const Loop &) = delete;
+     Loop(Loop &&other) = delete;
+@@ -212,6 +218,7 @@
+         }
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Sets additional loop options.
+      *
+@@ -234,6 +241,7 @@
+         auto err = uv_loop_configure(loop.get(), static_cast<uv_loop_option>(option), std::forward<Args>(args)...);
+         if(err) { publish(ErrorEvent{err}); }
+     }
++#endif
+ 
+     /**
+      * @brief Creates resources of handles' types.
+@@ -327,6 +335,7 @@
+         uv_stop(loop.get());
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Get backend file descriptor.
+      *
+@@ -339,6 +348,7 @@
+     int descriptor() const noexcept {
+         return uv_backend_fd(loop.get());
+     }
++#endif
+ 
+     /**
+      * @brief Gets the poll timeout.
+@@ -397,6 +407,7 @@
+         }, &callback);
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Reinitialize any kernel state necessary in the child process after
+      * a fork(2) system call.
+@@ -431,6 +442,7 @@
+         auto err = uv_loop_fork(loop.get());
+         if(err) { publish(ErrorEvent{err}); }
+     }
++#endif
+ 
+ private:
+     std::unique_ptr<uv_loop_t, Deleter> loop;
+--- src/uvw/pipe.hpp
++++ src/uvw/pipe.hpp
+@@ -53,6 +53,7 @@
+         invoke(&uv_pipe_open, get(), file);
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief bind Binds the pipe to a file path (Unix) or a name (Windows).
+      *
+@@ -117,6 +118,7 @@
+     void pending(int count) noexcept {
+         uv_pipe_pending_instances(get(), count);
+     }
++#endif
+ 
+     /**
+      * @brief Gets the number of pending pipe this instance can handle.
+--- src/uvw/poll.hpp
++++ src/uvw/poll.hpp
+@@ -19,7 +19,9 @@
+     READABLE = UV_READABLE,
+     WRITABLE = UV_WRITABLE,
+     DISCONNECT = UV_DISCONNECT,
++#ifndef __CloudABI__
+     PRIORITIZED = UV_PRIORITIZED
++#endif
+ };
+ 
+ 
+--- src/uvw/stream.hpp
++++ src/uvw/stream.hpp
+@@ -73,6 +73,7 @@
+ namespace details {
+ 
+ 
++#ifndef __CloudABI__
+ struct ConnectReq final: public Request<ConnectReq, uv_connect_t> {
+     using Request::Request;
+ 
+@@ -81,6 +82,7 @@
+         invoke(std::forward<F>(f), get(), std::forward<Args>(args)..., &defaultCallback<ConnectEvent>);
+     }
+ };
++#endif
+ 
+ 
+ struct ShutdownReq final: public Request<ShutdownReq, uv_shutdown_t> {
+@@ -184,6 +186,7 @@
+         shutdown->shutdown(this->template get<uv_stream_t>());
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Starts listening for incoming connections.
+      *
+@@ -197,6 +200,7 @@
+     void listen(int backlog = DEFAULT_BACKLOG) {
+         this->invoke(&uv_listen, this->template get<uv_stream_t>(), backlog, &listenCallback);
+     }
++#endif
+ 
+     /**
+      * @brief Accepts incoming connections.
+--- src/uvw/tcp.hpp
++++ src/uvw/tcp.hpp
+@@ -18,9 +18,11 @@
+ namespace details {
+ 
+ 
++#ifndef __CloudABI__
+ enum class UVTcpFlags: std::underlying_type_t<uv_tcp_flags> {
+     IPV6ONLY = UV_TCP_IPV6ONLY
+ };
++#endif
+ 
+ 
+ }
+@@ -45,7 +47,9 @@
+ class TcpHandle final: public StreamHandle<TcpHandle, uv_tcp_t> {
+ public:
+     using Time = std::chrono::duration<unsigned int>;
++#ifndef __CloudABI__
+     using Bind = details::UVTcpFlags;
++#endif
+     using IPv4 = uvw::IPv4;
+     using IPv6 = uvw::IPv6;
+ 
+@@ -75,6 +79,7 @@
+         invoke(&uv_tcp_open, get(), socket);
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Enables/Disables Nagle’s algorithm.
+      * @param value True to enable it, false otherwise.
+@@ -214,6 +219,7 @@
+     void connect(Addr addr) {
+         connect<I>(addr.ip, addr.port);
+     }
++#endif
+ 
+ private:
+     enum { DEFAULT, FLAGS } tag;
+--- src/uvw/util.hpp
++++ src/uvw/util.hpp
+@@ -30,8 +30,10 @@
+     UNKNOWN = UV_UNKNOWN_HANDLE,
+     ASYNC = UV_ASYNC,
+     CHECK = UV_CHECK,
++#ifndef __CloudABI__
+     FS_EVENT = UV_FS_EVENT,
+     FS_POLL = UV_FS_POLL,
++#endif
+     HANDLE = UV_HANDLE,
+     IDLE = UV_IDLE,
+     PIPE = UV_NAMED_PIPE,
+@@ -41,9 +43,11 @@
+     STREAM = UV_STREAM,
+     TCP = UV_TCP,
+     TIMER = UV_TIMER,
++#ifndef __CloudABI__
+     TTY = UV_TTY,
+     UDP = UV_UDP,
+     SIGNAL = UV_SIGNAL,
++#endif
+     FILE = UV_FILE
+ };
+ 
+@@ -193,13 +197,16 @@
+ 
+ using TimeSpec = uv_timespec_t; /*!< Library equivalent for uv_timespec_t. */
+ using Stat = uv_stat_t; /*!< Library equivalent for uv_stat_t. */
++#ifndef __CloudABI__
+ using Uid = uv_uid_t; /*!< Library equivalent for uv_uid_t. */
+ using Gid = uv_gid_t; /*!< Library equivalent for uv_gid_t. */
++#endif
+ 
+ using TimeVal = uv_timeval_t; /*!< Library equivalent for uv_timeval_t. */
+ using RUsage = uv_rusage_t; /*!< Library equivalent for uv_rusage_t. */
+ 
+ 
++#ifndef __CloudABI__
+ /**
+  * @brief Utility class.
+  *
+@@ -262,6 +269,7 @@
+ private:
+     std::shared_ptr<uv_passwd_t> passwd;
+ };
++#endif
+ 
+ 
+ /**
+@@ -289,6 +297,7 @@
+ };
+ 
+ 
++#ifndef __CloudABI__
+ /**
+  * \brief CPU information.
+  */
+@@ -318,6 +327,7 @@
+     Addr address; /*!< The address of the given interface. */
+     Addr netmask; /*!< The netmask of the given interface. */
+ };
++#endif
+ 
+ 
+ namespace details {
+@@ -425,6 +435,7 @@
+      * @brief OS dedicated utilities.
+      */
+     struct OS {
++#ifndef __CloudABI__
+         /**
+          * @brief Gets the current user's home directory.
+          *
+@@ -451,6 +462,7 @@
+         static std::string tmpdir() noexcept {
+             return details::tryRead(&uv_os_tmpdir);
+         }
++#endif
+ 
+         /**
+          * @brief Retrieves an environment variable.
+@@ -462,6 +474,7 @@
+             return details::tryRead(&uv_os_getenv, name.c_str());
+         }
+ 
++#ifndef __CloudABI__
+         /**
+          * @brief Creates, updates or deletes an environment variable.
+          * @param name The name of the variable to be updated.
+@@ -503,6 +516,7 @@
+             uv_os_get_passwd(ptr.get());
+             return ptr;
+         }
++#endif
+     };
+ 
+     /**
+@@ -516,10 +530,12 @@
+             return HandleType::ASYNC;
+         case UV_CHECK:
+             return HandleType::CHECK;
++#ifndef __CloudABI__
+         case UV_FS_EVENT:
+             return HandleType::FS_EVENT;
+         case UV_FS_POLL:
+             return HandleType::FS_POLL;
++#endif
+         case UV_HANDLE:
+             return HandleType::HANDLE;
+         case UV_IDLE:
+@@ -538,12 +554,14 @@
+             return HandleType::TCP;
+         case UV_TIMER:
+             return HandleType::TIMER;
++#ifndef __CloudABI__
+         case UV_TTY:
+             return HandleType::TTY;
+         case UV_UDP:
+             return HandleType::UDP;
+         case UV_SIGNAL:
+             return HandleType::SIGNAL;
++#endif
+         case UV_FILE:
+             return HandleType::FILE;
+         default:
+@@ -575,6 +593,7 @@
+     }
+ 
+ 
++#ifndef __CloudABI__
+     /** @brief Gets information about the CPUs on the system.
+      *
+      * This function can be used to query the underlying system and get a set of
+@@ -638,8 +657,10 @@
+ 
+         return interfaces;
+     }
++#endif
+ 
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Override the use of some standard library’s functions.
+      *
+@@ -733,6 +754,7 @@
+ 
+         return ret;
+     }
++#endif
+ 
+     /**
+      * @brief Gets the resource usage measures for the current process.
+@@ -758,6 +780,7 @@
+         return uv_hrtime();
+     }
+ 
++#ifndef __CloudABI__
+     /**
+      * @brief Gets the executable path.
+      * @return The executable path, an empty string in case of errors.
+@@ -782,6 +805,7 @@
+     static bool chdir(const std::string &dir) noexcept {
+         return (0 == uv_chdir(dir.data()));
+     }
++#endif
+ };
+ 
+ 
+--- src/uvw.hpp
++++ src/uvw.hpp
+@@ -1,21 +1,14 @@
+ #include "uvw/async.hpp"
+ #include "uvw/check.hpp"
+ #include "uvw/dns.hpp"
+-#include "uvw/fs.hpp"
+-#include "uvw/fs_event.hpp"
+-#include "uvw/fs_poll.hpp"
+ #include "uvw/idle.hpp"
+-#include "uvw/lib.hpp"
+ #include "uvw/loop.hpp"
+ #include "uvw/pipe.hpp"
+ #include "uvw/poll.hpp"
+ #include "uvw/prepare.hpp"
+ #include "uvw/process.hpp"
+-#include "uvw/signal.hpp"
+ #include "uvw/tcp.hpp"
+ #include "uvw/thread.hpp"
+ #include "uvw/timer.hpp"
+-#include "uvw/tty.hpp"
+-#include "uvw/udp.hpp"
+ #include "uvw/util.hpp"
+ #include "uvw/work.hpp"
