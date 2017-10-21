@@ -22,18 +22,18 @@
  
 +#ifdef __CloudABI__
 +public:
++    using Handle::Handle;
++
++    bool init() {
++        return true;
++    }
++
 +    void spawn(int executable, const argdata_t &argdata) {
 +        uv_process_options_t po;
-+
 +        po.exit_cb = &exitCallback;
-+
 +        po.executable = executable;
 +        po.argdata = &argdata;
-+
-+        // fake initialization so as to have leak invoked
-+        // see init member function for more details
 +        initialize([](auto...){ return 0; });
-+
 +        invoke(&uv_spawn, parent(), get(), &po);
 +    }
 +#else
