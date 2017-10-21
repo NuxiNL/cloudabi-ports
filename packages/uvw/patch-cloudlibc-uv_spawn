@@ -16,7 +16,7 @@
  
  
  }
-@@ -67,6 +69,23 @@
+@@ -67,6 +69,27 @@
          process.publish(ExitEvent{exitStatus, termSignal});
      }
  
@@ -36,11 +36,15 @@
 +        initialize([](auto...){ return 0; });
 +        invoke(&uv_spawn, parent(), get(), &po);
 +    }
++
++    void kill(int signum) {
++        invoke(&uv_process_kill, get(), signum);
++    }
 +#else
  public:
      using Process = details::UVProcessFlags;
      using StdIO = details::UVStdIOFlags;
-@@ -323,6 +342,7 @@
+@@ -323,6 +346,7 @@
      std::vector<uv_stdio_container_t> poStreamStdio;
      Uid poUid;
      Gid poGid;
