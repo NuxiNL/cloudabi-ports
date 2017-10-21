@@ -324,18 +324,7 @@
      /** @brief Gets information about the CPUs on the system.
       *
       * This function can be used to query the underlying system and get a set of
-@@ -638,8 +657,10 @@
- 
-         return interfaces;
-     }
-+#endif
- 
- 
-+#ifndef __CloudABI__
-     /**
-      * @brief Override the use of some standard library’s functions.
-      *
-@@ -733,6 +754,7 @@
+@@ -733,6 +752,7 @@
  
          return ret;
      }
@@ -343,7 +332,7 @@
  
      /**
       * @brief Gets the resource usage measures for the current process.
-@@ -758,6 +780,7 @@
+@@ -758,6 +778,7 @@
          return uv_hrtime();
      }
  
@@ -351,7 +340,7 @@
      /**
       * @brief Gets the executable path.
       * @return The executable path, an empty string in case of errors.
-@@ -782,6 +805,7 @@
+@@ -782,6 +803,7 @@
      static bool chdir(const std::string &dir) noexcept {
          return (0 == uv_chdir(dir.data()));
      }
