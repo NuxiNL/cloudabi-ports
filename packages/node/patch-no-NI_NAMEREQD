@@ -16,3 +16,13 @@
  
  
  void GetServers(const FunctionCallbackInfo<Value>& args) {
+@@ -2140,7 +2142,9 @@
+   Environment* env = Environment::GetCurrent(context);
+ 
+   env->SetMethod(target, "getaddrinfo", GetAddrInfo);
++#ifdef NI_NAMEREQD
+   env->SetMethod(target, "getnameinfo", GetNameInfo);
++#endif
+   env->SetMethod(target, "isIP", IsIP);
+   env->SetMethod(target, "isIPv4", IsIPv4);
+   env->SetMethod(target, "isIPv6", IsIPv6);
