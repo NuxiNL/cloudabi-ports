@@ -12,3 +12,14 @@
  }
  
  
+--- src/env.cc
++++ src/env.cc
+@@ -4,6 +4,8 @@
+ 
+ #if defined(_MSC_VER)
+ #define getpid GetCurrentProcessId
++#elif defined(__CloudABI__)
++#define getpid() 0
+ #else
+ #include <unistd.h>
+ #endif
