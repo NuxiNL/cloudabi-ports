@@ -81,17 +81,7 @@
  
  #if defined(NODE_V8_OPTIONS)
    // Should come before the call to V8::SetFlagsFromCommandLine()
-@@ -4612,7 +4622,8 @@
-     char* cstr = strdup(node_options.c_str());
-     char* initptr = cstr;
-     char* token;
--    while ((token = strtok(initptr, " "))) {  // NOLINT(runtime/threadsafe_fn)
-+    char *last;
-+    while ((token = strtok_r(initptr, " ", &last))) {
-       initptr = nullptr;
-       argv_from_env[argc_from_env++] = token;
-     }
-@@ -4864,14 +4875,18 @@
+@@ -4864,14 +4874,18 @@
  }
  
  int Start(int argc, char** argv) {

@@ -1,0 +1,17 @@
+--- src/cares_wrap.cc
++++ src/cares_wrap.cc
+@@ -2153,10 +2153,14 @@
+               Integer::New(env->isolate(), AF_INET6));
+   target->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "AF_UNSPEC"),
+               Integer::New(env->isolate(), AF_UNSPEC));
++#ifdef AI_ADDRCONFIG
+   target->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "AI_ADDRCONFIG"),
+               Integer::New(env->isolate(), AI_ADDRCONFIG));
++#endif
++#ifdef AI_V4MAPPED
+   target->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "AI_V4MAPPED"),
+               Integer::New(env->isolate(), AI_V4MAPPED));
++#endif
+ 
+   auto is_construct_call_callback =
+       [](const FunctionCallbackInfo<Value>& args) {

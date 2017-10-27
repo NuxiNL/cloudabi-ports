@@ -1,0 +1,18 @@
+--- src/cares_wrap.cc
++++ src/cares_wrap.cc
+@@ -1984,6 +1984,7 @@
+ }
+ 
+ 
++#ifdef NI_NAMEREQD
+ void GetNameInfo(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+ 
+@@ -2011,6 +2012,7 @@
+ 
+   args.GetReturnValue().Set(err);
+ }
++#endif
+ 
+ 
+ void GetServers(const FunctionCallbackInfo<Value>& args) {

@@ -1,0 +1,12 @@
+--- src/node.cc
++++ src/node.cc
+@@ -4612,7 +4612,8 @@
+     char* cstr = strdup(node_options.c_str());
+     char* initptr = cstr;
+     char* token;
+-    while ((token = strtok(initptr, " "))) {  // NOLINT(runtime/threadsafe_fn)
++    char *last;
++    while ((token = strtok_r(initptr, " ", &last))) {
+       initptr = nullptr;
+       argv_from_env[argc_from_env++] = token;
+     }

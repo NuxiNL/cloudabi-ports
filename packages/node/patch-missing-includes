@@ -1,0 +1,10 @@
+--- src/cares_wrap.cc
++++ src/cares_wrap.cc
+@@ -33,6 +33,7 @@
+ #include "uv.h"
+ 
+ #include <errno.h>
++#include <netdb.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <vector>
