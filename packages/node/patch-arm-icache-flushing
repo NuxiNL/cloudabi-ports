@@ -1,0 +1,20 @@
+--- deps/v8/src/arm/cpu-arm.cc
++++ deps/v8/src/arm/cpu-arm.cc
+@@ -7,7 +7,7 @@
+ #ifdef __QNXNTO__
+ #include <sys/mman.h>  // for cache flushing.
+ #undef MAP_TYPE
+-#else
++#elif !defined(__CloudABI__)
+ #include <sys/syscall.h>  // for cache flushing.
+ #endif
+ #endif
+@@ -24,7 +24,7 @@
+ #if !defined(USE_SIMULATOR)
+ #if V8_OS_QNX
+   msync(start, size, MS_SYNC | MS_INVALIDATE_ICACHE);
+-#else
++#elif !V8_OS_CLOUDABI
+   register uint32_t beg asm("r0") = reinterpret_cast<uint32_t>(start);
+   register uint32_t end asm("r1") = beg + size;
+   register uint32_t flg asm("r2") = 0;

@@ -1,0 +1,11 @@
+--- deps/v8/src/arm64/macro-assembler-arm64.cc
++++ deps/v8/src/arm64/macro-assembler-arm64.cc
+@@ -4061,7 +4061,7 @@
+     }
+     dc32(arg_pattern_list);   // kPrintfArgPatternListOffset
+   }
+-#else
++#elif !V8_OS_CLOUDABI
+   Call(FUNCTION_ADDR(printf), RelocInfo::EXTERNAL_REFERENCE);
+ #endif
+ }

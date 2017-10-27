@@ -39,14 +39,20 @@ for i in ['/usr/bin/clang++', '/usr/bin/clang++-3.7']:
         HOST_CXX = i
         break
 
+# Name of the diff executable.
+for i in ['/usr/local/bin/gdiff', '/usr/bin/diff']:
+    if os.path.exists(i):
+        DIFF = i
+        break
+
 # Name of the Perl executable.
 for i in ['/usr/bin/perl', '/usr/local/bin/perl']:
     if os.path.exists(i):
         PERL = i
         break
 
-# Name of the diff executable.
-for i in ['/usr/local/bin/gdiff', '/usr/bin/diff']:
+# Name of the Python 2 executable.
+for i in ['/usr/bin/python2', '/usr/local/bin/python2']:
     if os.path.exists(i):
-        DIFF = i
+        PYTHON2 = i
         break

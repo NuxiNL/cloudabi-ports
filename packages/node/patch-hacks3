@@ -1,0 +1,154 @@
+--- src/module_wrap.cc
++++ src/module_wrap.cc
+@@ -333,8 +333,14 @@
+   if (path.empty()) {
+     return ret;
+   }
++#ifdef __CloudABI__
++  // TODO(ed): Implement this using openat(), so that module loading may
++  // be restricted to certain directories.
++  int fd = -1;
++#else
+   uv_fs_open(nullptr, &fs_req, path.c_str(), O_RDONLY, 0, nullptr);
+   auto fd = fs_req.result;
++#endif
+   if (fd < 0) {
+     return ret;
+   }
+--- src/node.cc
++++ src/node.cc
+@@ -3680,7 +3680,9 @@
+ 
+   env->SetMethod(process, "_kill", Kill);
+ 
++#ifndef __CloudABI__
+   env->SetMethod(process, "_debugProcess", DebugProcess);
++#endif
+   env->SetMethod(process, "_debugPause", DebugPause);
+   env->SetMethod(process, "_debugEnd", DebugEnd);
+ 
+@@ -3714,7 +3716,9 @@
+ 
+ 
+ void SignalExit(int signo) {
++#ifndef __CloudABI__
+   uv_tty_reset_mode();
++#endif
+   if (trace_enabled) {
+     v8_platform.StopTracingAgent();
+   }
+@@ -4274,8 +4278,12 @@
+ #endif  // HAVE_INSPECTOR
+ }
+ 
+-
+-#ifdef __POSIX__
++#ifdef __CloudABI__
++void RegisterSignalHandler(int signal,
++                           void (*handler)(int signal),
++                           bool reset_handler) {
++}
++#elif defined(__POSIX__)
+ void RegisterSignalHandler(int signal,
+                            void (*handler)(int signal),
+                            bool reset_handler) {
+@@ -4450,7 +4458,7 @@
+   CHECK_EQ(err, 0);
+ #endif  // HAVE_INSPECTOR
+ 
+-#ifndef NODE_SHARED_MODE
++#if !defined(NODE_SHARED_MODE) && !defined(__CloudABI__)
+   // Restore signal dispositions, the parent process may have changed them.
+   struct sigaction act;
+   memset(&act, 0, sizeof(act));
+@@ -4527,7 +4535,7 @@
+     }
+   }
+ 
+-#ifdef __POSIX__
++#if defined(__POSIX__) && !defined(__CloudABI__)
+   // Block SIGPROF signals when sleeping in epoll_wait/kevent/etc.  Avoids the
+   // performance penalty of frequent EINTR wakeups when the profiler is running.
+   // Only do this for v8.log profiling, as it breaks v8::CpuProfiler users.
+@@ -4561,8 +4569,10 @@
+   // Initialize prog_start_time to get relative uptime.
+   prog_start_time = static_cast<double>(uv_now(uv_default_loop()));
+ 
++#ifndef __CloudABI__
+   // Make inherited handles noninheritable.
+   uv_disable_stdio_inheritance();
++#endif
+ 
+ #if defined(NODE_V8_OPTIONS)
+   // Should come before the call to V8::SetFlagsFromCommandLine()
+@@ -4612,7 +4622,8 @@
+     char* cstr = strdup(node_options.c_str());
+     char* initptr = cstr;
+     char* token;
+-    while ((token = strtok(initptr, " "))) {  // NOLINT(runtime/threadsafe_fn)
++    char *last;
++    while ((token = strtok_r(initptr, " ", &last))) {
+       initptr = nullptr;
+       argv_from_env[argc_from_env++] = token;
+     }
+@@ -4864,14 +4875,18 @@
+ }
+ 
+ int Start(int argc, char** argv) {
++#ifndef __CloudABI__
+   atexit([] () { uv_tty_reset_mode(); });
++#endif
+   PlatformInit();
+   node::performance::performance_node_start = PERFORMANCE_NOW();
+ 
+   CHECK_GT(argc, 0);
+ 
++#ifndef __CloudABI__
+   // Hack around with the argv pointer. Used for process.title = "blah".
+   argv = uv_setup_args(argc, argv);
++#endif
+ 
+   // This needs to run *before* V8::Initialize().  The const_cast is not
+   // optional, in case you're wondering.
+--- src/node.h
++++ src/node.h
+@@ -22,6 +22,8 @@
+ #ifndef SRC_NODE_H_
+ #define SRC_NODE_H_
+ 
++#define uv_default_loop() NULL
++
+ #ifdef _WIN32
+ # ifndef BUILDING_NODE_EXTENSION
+ #   define NODE_EXTERN __declspec(dllexport)
+--- src/node_watchdog.cc
++++ src/node_watchdog.cc
+@@ -179,7 +179,9 @@
+     return 0;
+   }
+ 
+-#ifdef __POSIX__
++#ifdef __CloudABI__
++  // TODO(ed): Implement!
++#elif defined(__POSIX__)
+   CHECK_EQ(has_running_thread_, false);
+   has_pending_signal_ = false;
+   stopping_ = false;
+--- src/tracing/node_trace_writer.cc
++++ src/tracing/node_trace_writer.cc
+@@ -57,10 +57,15 @@
+ void NodeTraceWriter::OpenNewFileForStreaming() {
+   ++file_num_;
+   uv_fs_t req;
++#ifdef __CloudABI__
++  // TODO(ed): Implement!
++  fd_ = -1;
++#else
+   std::ostringstream log_file;
+   log_file << "node_trace." << file_num_ << ".log";
+   fd_ = uv_fs_open(tracing_loop_, &req, log_file.str().c_str(),
+       O_CREAT | O_WRONLY | O_TRUNC, 0644, NULL);
++#endif
+   CHECK_NE(fd_, -1);
+   uv_fs_req_cleanup(&req);
+ }

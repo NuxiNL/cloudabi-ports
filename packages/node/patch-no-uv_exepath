@@ -1,0 +1,22 @@
+--- src/node.cc
++++ src/node.cc
+@@ -2031,6 +2031,11 @@
+   auto message = (*args)[2];
+   auto function = (*args)[3];
+ 
++#ifdef __CloudABI__
++  fprintf(stderr, "%s:%s:%s%s Assertion `%s' failed.\n",
++          filename, linenum,
++          function, *function ? ":" : "", message);
++#else
+   char exepath[256];
+   size_t exepath_size = sizeof(exepath);
+   if (uv_exepath(exepath, &exepath_size))
+@@ -2044,6 +2049,7 @@
+   fprintf(stderr, "%s%s: %s:%s:%s%s Assertion `%s' failed.\n",
+           exepath, pid, filename, linenum,
+           function, *function ? ":" : "", message);
++#endif
+   fflush(stderr);
+ 
+   Abort();

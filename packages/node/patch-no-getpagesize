@@ -1,0 +1,14 @@
+--- deps/v8/src/base/platform/platform-posix.cc
++++ deps/v8/src/base/platform/platform-posix.cc
+@@ -97,7 +97,11 @@
+ 
+ 
+ intptr_t OS::CommitPageSize() {
++#if V8_OS_CLOUDABI
++  static intptr_t page_size = sysconf(_SC_PAGESIZE);
++#else
+   static intptr_t page_size = getpagesize();
++#endif
+   return page_size;
+ }
+ 

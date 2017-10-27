@@ -1,0 +1,189 @@
+--- src/connection_wrap.cc
++++ src/connection_wrap.cc
+@@ -1,6 +1,8 @@
+ #include "connection_wrap.h"
+ 
++#ifndef __CloudABI__
+ #include "connect_wrap.h"
++#endif
+ #include "env-inl.h"
+ #include "env.h"
+ #include "pipe_wrap.h"
+@@ -73,6 +75,7 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ template <typename WrapType, typename UVType>
+ void ConnectionWrap<WrapType, UVType>::AfterConnect(uv_connect_t* req,
+                                                     int status) {
+@@ -110,6 +113,7 @@
+ 
+   delete req_wrap;
+ }
++#endif
+ 
+ template ConnectionWrap<PipeWrap, uv_pipe_t>::ConnectionWrap(
+     Environment* env,
+@@ -127,11 +131,13 @@
+ template void ConnectionWrap<TCPWrap, uv_tcp_t>::OnConnection(
+     uv_stream_t* handle, int status);
+ 
++#ifndef __CloudABI__
+ template void ConnectionWrap<PipeWrap, uv_pipe_t>::AfterConnect(
+     uv_connect_t* handle, int status);
+ 
+ template void ConnectionWrap<TCPWrap, uv_tcp_t>::AfterConnect(
+     uv_connect_t* handle, int status);
++#endif
+ 
+ 
+ }  // namespace node
+--- src/connection_wrap.h
++++ src/connection_wrap.h
+@@ -17,7 +17,9 @@
+   }
+ 
+   static void OnConnection(uv_stream_t* handle, int status);
++#ifndef __CloudABI__
+   static void AfterConnect(uv_connect_t* req, int status);
++#endif
+ 
+  protected:
+   ConnectionWrap(Environment* env,
+--- src/env.cc
++++ src/env.cc
+@@ -4,6 +4,8 @@
+ 
+ #if defined(_MSC_VER)
+ #define getpid GetCurrentProcessId
++#elif defined(__CloudABI__)
++#define getpid() 0
+ #else
+ #include <unistd.h>
+ #endif
+--- src/module_wrap.cc
++++ src/module_wrap.cc
+@@ -262,6 +262,7 @@
+ 
+ namespace {
+ 
++#ifndef __CloudABI__
+ URL __init_cwd() {
+   std::string specifier = "file://";
+ #ifdef _WIN32
+@@ -281,6 +282,8 @@
+   return URL(specifier);
+ }
+ static URL INITIAL_CWD(__init_cwd());
++#endif
++
+ inline bool is_relative_or_absolute_path(std::string specifier) {
+   auto len = specifier.length();
+   if (len <= 0) {
+--- src/node.cc
++++ src/node.cc
+@@ -111,7 +111,7 @@
+ #include <unistd.h>  // setuid, getuid
+ #endif
+ 
+-#if defined(__POSIX__) && !defined(__ANDROID__)
++#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
+ #include <pwd.h>  // getpwnam()
+ #include <grp.h>  // getgrnam()
+ #endif
+@@ -1004,7 +1004,7 @@
+ 
+ // Look up environment variable unless running as setuid root.
+ bool SafeGetenv(const char* key, std::string* text) {
+-#ifndef _WIN32
++#if !defined(_WIN32) && !defined(__CloudABI__)
+   if (linux_at_secure || getuid() != geteuid() || getgid() != getegid())
+     goto fail;
+ #endif
+@@ -2055,6 +2055,7 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ static void Chdir(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+ 
+@@ -2125,9 +2126,10 @@
+ 
+   args.GetReturnValue().Set(old);
+ }
++#endif
+ 
+ 
+-#if defined(__POSIX__) && !defined(__ANDROID__)
++#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
+ 
+ static const uid_t uid_not_found = static_cast<uid_t>(-1);
+ static const gid_t gid_not_found = static_cast<gid_t>(-1);
+@@ -3513,7 +3515,9 @@
+       process_env_template->NewInstance(env->context()).ToLocalChecked();
+   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
+ 
++#ifndef __CloudABI__
+   READONLY_PROPERTY(process, "pid", Integer::New(env->isolate(), getpid()));
++#endif
+   READONLY_PROPERTY(process, "features", GetFeatures(env));
+ 
+   auto need_immediate_callback_string =
+@@ -3657,12 +3661,14 @@
+   env->SetMethod(process, "_getActiveHandles", GetActiveHandles);
+   env->SetMethod(process, "reallyExit", Exit);
+   env->SetMethod(process, "abort", Abort);
++#ifndef __CloudABI__
+   env->SetMethod(process, "chdir", Chdir);
+   env->SetMethod(process, "cwd", Cwd);
+ 
+   env->SetMethod(process, "umask", Umask);
++#endif
+ 
+-#if defined(__POSIX__) && !defined(__ANDROID__)
++#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
+   env->SetMethod(process, "getuid", GetUid);
+   env->SetMethod(process, "geteuid", GetEUid);
+   env->SetMethod(process, "setuid", SetUid);
+--- src/node_constants.cc
++++ src/node_constants.cc
+@@ -1295,8 +1295,12 @@
+   DefineZlibConstants(zlib_constants);
+ 
+   // Define libuv constants.
++#ifdef UV_UDP_REUSEADDR
+   NODE_DEFINE_CONSTANT(os_constants, UV_UDP_REUSEADDR);
++#endif
++#ifdef UV_FS_COPYFILE_EXCL
+   NODE_DEFINE_CONSTANT(fs_constants, UV_FS_COPYFILE_EXCL);
++#endif
+ 
+   os_constants->Set(OneByteString(isolate, "errno"), err_constants);
+   os_constants->Set(OneByteString(isolate, "signals"), sig_constants);
+--- src/node_wrap.h
++++ src/node_wrap.h
+@@ -27,7 +27,9 @@
+ #include "env.h"
+ #include "pipe_wrap.h"
+ #include "tcp_wrap.h"
++#ifndef __CloudABI__
+ #include "tty_wrap.h"
++#endif
+ #include "uv.h"
+ #include "v8.h"
+ 
+@@ -39,10 +41,10 @@
+           env->tcp_constructor_template()->HasInstance(obj)) {                \
+         TCPWrap* const wrap = Unwrap<TCPWrap>(obj);                           \
+         BODY                                                                  \
+-      } else if (env->tty_constructor_template().IsEmpty() == false &&        \
++      /*} else if (env->tty_constructor_template().IsEmpty() == false &&        \
+                  env->tty_constructor_template()->HasInstance(obj)) {         \
+         TTYWrap* const wrap = Unwrap<TTYWrap>(obj);                           \
+-        BODY                                                                  \
++        BODY*/                                                                  \
+       } else if (env->pipe_constructor_template().IsEmpty() == false &&       \
+                  env->pipe_constructor_template()->HasInstance(obj)) {        \
+         PipeWrap* const wrap = Unwrap<PipeWrap>(obj);                         \

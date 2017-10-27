@@ -1,0 +1,32 @@
+--- node.gyp
++++ node.gyp
+@@ -161,7 +161,6 @@
+ 
+       'dependencies': [
+         'node_js2c#host',
+-        'deps/nghttp2/nghttp2.gyp:nghttp2'
+       ],
+ 
+       'includes': [
+@@ -173,7 +172,6 @@
+         'tools/msvs/genfiles',
+         'deps/uv/src/ares',
+         '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
+-        'deps/nghttp2/lib/includes'
+       ],
+ 
+       'sources': [
+--- node.gypi
++++ node.gypi
+@@ -291,6 +291,11 @@
+         'NODE_PLATFORM="darwin"',
+       ],
+     }],
++    [ 'OS=="cloudabi"', {
++      'libraries': [
++        '-lnghttp2',
++      ],
++    }],
+     [ 'OS=="freebsd"', {
+       'libraries': [
+         '-lutil',

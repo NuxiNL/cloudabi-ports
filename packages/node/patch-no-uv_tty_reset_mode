@@ -1,0 +1,12 @@
+--- src/node.cc
++++ src/node.cc
+@@ -1836,7 +1836,9 @@
+       return;
+     env->set_printed_error(true);
+ 
++#ifndef __CloudABI__
+     uv_tty_reset_mode();
++#endif
+     PrintErrorString("\n%s", arrow);
+     return;
+   }

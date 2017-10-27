@@ -213,6 +213,8 @@ class TargetPackage:
 
         # Also allow us to call into Python from within the buildroot.
         # TODO(ed): Should we add Python as a host package as well?
+        os.symlink(config.PYTHON2,
+                   os.path.join(config.DIR_BUILDROOT, 'bin/python2'))
         os.symlink(sys.executable,
                    os.path.join(config.DIR_BUILDROOT, 'bin/python'))
         os.symlink(sys.executable,

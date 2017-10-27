@@ -1,0 +1,14 @@
+--- deps/v8/src/base/platform/platform-posix.cc
++++ deps/v8/src/base/platform/platform-posix.cc
+@@ -336,7 +336,11 @@
+ 
+ 
+ int OS::GetCurrentProcessId() {
++#if V8_OS_CLOUDABI
++  return 0;
++#else
+   return static_cast<int>(getpid());
++#endif
+ }
+ 
+ 

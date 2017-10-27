@@ -1,0 +1,274 @@
+--- deps/v8/src/arm64/instrument-arm64.cc
++++ deps/v8/src/arm64/instrument-arm64.cc
+@@ -100,11 +100,15 @@
+   // Set up the output stream. If datafile is non-NULL, use that file. If it
+   // can't be opened, or datafile is NULL, use stderr.
+   if (datafile != NULL) {
++#if V8_OS_CLOUDABI
++    output_stream_ = stderr;
++#else
+     output_stream_ = fopen(datafile, "w");
+     if (output_stream_ == NULL) {
+       fprintf(stderr, "Can't open output file %s. Using stderr.\n", datafile);
+       output_stream_ = stderr;
+     }
++#endif
+   }
+ 
+   static const int num_counters = arraysize(kCounterList);
+--- deps/v8/src/base/platform/platform-posix.cc
++++ deps/v8/src/base/platform/platform-posix.cc
+@@ -291,6 +291,7 @@
+ };
+ 
+ 
++#if !V8_OS_CLOUDABI
+ // static
+ OS::MemoryMappedFile* OS::MemoryMappedFile::open(const char* name) {
+   if (FILE* file = fopen(name, "r+")) {
+@@ -327,6 +328,7 @@
+   }
+   return nullptr;
+ }
++#endif
+ 
+ 
+ PosixMemoryMappedFile::~PosixMemoryMappedFile() {
+@@ -397,6 +399,7 @@
+ //
+ 
+ FILE* OS::FOpen(const char* path, const char* mode) {
++#if !V8_OS_CLOUDABI
+   FILE* file = fopen(path, mode);
+   if (file == NULL) return NULL;
+   struct stat file_stat;
+@@ -404,13 +407,16 @@
+   bool is_regular_file = ((file_stat.st_mode & S_IFREG) != 0);
+   if (is_regular_file) return file;
+   fclose(file);
++#endif
+   return NULL;
+ }
+ 
+ 
++#if !V8_OS_CLOUDABI
+ bool OS::Remove(const char* path) {
+   return (remove(path) == 0);
+ }
++#endif
+ 
+ char OS::DirectorySeparator() { return '/'; }
+ 
+--- deps/v8/src/compiler/pipeline.cc
++++ deps/v8/src/compiler/pipeline.cc
+@@ -467,6 +467,7 @@
+ 
+ namespace {
+ 
++#if !V8_OS_CLOUDABI
+ struct TurboCfgFile : public std::ofstream {
+   explicit TurboCfgFile(Isolate* isolate)
+       : std::ofstream(isolate->GetTurboCfgFileName().c_str(),
+@@ -478,8 +479,10 @@
+       : std::ofstream(GetVisualizerLogFileName(info, nullptr, "json").get(),
+                       mode) {}
+ };
++#endif
+ 
+ void TraceSchedule(CompilationInfo* info, Schedule* schedule) {
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     AllowHandleDereference allow_deref;
+     TurboJsonFile json_of(info, std::ios_base::app);
+@@ -498,6 +501,7 @@
+     OFStream os(tracing_scope.file());
+     os << "-- Schedule --------------------------------------\n" << *schedule;
+   }
++#endif
+ }
+ 
+ 
+@@ -570,6 +574,7 @@
+     pipeline_statistics->BeginPhaseKind("initializing");
+   }
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     TurboJsonFile json_of(info, std::ios_base::trunc);
+     std::unique_ptr<char[]> function_name = info->GetDebugName();
+@@ -590,6 +595,7 @@
+     }
+     json_of << "\",\n\"phases\":[";
+   }
++#endif
+ 
+   return pipeline_statistics;
+ }
+@@ -801,11 +807,13 @@
+ 
+ PipelineWasmCompilationJob::Status
+ PipelineWasmCompilationJob::ExecuteJobImpl() {
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     TurboJsonFile json_of(info(), std::ios_base::trunc);
+     json_of << "{\"function\":\"" << info()->GetDebugName().get()
+             << "\", \"source\":\"\",\n\"phases\":[";
+   }
++#endif
+ 
+   pipeline_.RunPrintAndVerify("Machine", true);
+   if (FLAG_wasm_opt || wasm_origin_ == wasm::ModuleOrigin::kAsmJsOrigin) {
+@@ -1599,6 +1607,7 @@
+ };
+ 
+ 
++#if !V8_OS_CLOUDABI
+ struct PrintGraphPhase {
+   static const char* phase_name() { return nullptr; }
+ 
+@@ -1622,6 +1631,7 @@
+     }
+   }
+ };
++#endif
+ 
+ 
+ struct VerifyGraphPhase {
+@@ -1635,9 +1645,11 @@
+ };
+ 
+ void PipelineImpl::RunPrintAndVerify(const char* phase, bool untyped) {
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     Run<PrintGraphPhase>(phase);
+   }
++#endif
+   if (FLAG_turbo_verify) {
+     Run<VerifyGraphPhase>(untyped);
+   }
+@@ -1648,6 +1660,7 @@
+ 
+   data->BeginPhaseKind("graph creation");
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     CodeTracer::Scope tracing_scope(isolate()->GetCodeTracer());
+     OFStream os(tracing_scope.file());
+@@ -1657,6 +1670,7 @@
+     TurboCfgFile tcf(isolate());
+     tcf << AsC1VCompilation(info());
+   }
++#endif
+ 
+   data->source_positions()->AddDecorator();
+ 
+@@ -1832,6 +1846,7 @@
+   PipelineImpl pipeline(&data);
+   DCHECK_NOT_NULL(data.schedule());
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     {
+       CodeTracer::Scope tracing_scope(isolate->GetCodeTracer());
+@@ -1846,6 +1861,7 @@
+     }
+     pipeline.Run<PrintGraphPhase>("Machine");
+   }
++#endif
+ 
+   pipeline.Run<VerifyGraphPhase>(false, true);
+   return pipeline.ScheduleAndGenerateCode(call_descriptor);
+@@ -1895,11 +1911,13 @@
+ 
+   PipelineImpl pipeline(&data);
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     TurboJsonFile json_of(info, std::ios_base::trunc);
+     json_of << "{\"function\":\"" << info->GetDebugName().get()
+             << "\", \"source\":\"\",\n\"phases\":[";
+   }
++#endif
+   // TODO(rossberg): Should this really be untyped?
+   pipeline.RunPrintAndVerify("Machine", true);
+ 
+@@ -1997,12 +2015,14 @@
+     return false;
+   }
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo && !data->MayHaveUnverifiableGraph()) {
+     AllowHandleDereference allow_deref;
+     TurboCfgFile tcf(isolate());
+     tcf << AsC1V("CodeGen", data->schedule(), data->source_positions(),
+                  data->sequence());
+   }
++#endif
+ 
+   if (FLAG_trace_turbo) {
+     std::ostringstream source_position_output;
+@@ -2064,6 +2084,7 @@
+   info()->SetCode(code);
+   v8::internal::CodeGenerator::PrintCode(code, info());
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     TurboJsonFile json_of(info(), std::ios_base::app);
+     json_of << "{\"name\":\"disassembly\",\"type\":\"disassembly\",\"data\":\"";
+@@ -2086,6 +2107,7 @@
+        << "Finished compiling method " << info()->GetDebugName().get()
+        << " using Turbofan" << std::endl;
+   }
++#endif
+ 
+   return code;
+ }
+@@ -2184,11 +2206,13 @@
+     verifier->VerifyGapMoves();
+   }
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo && !data->MayHaveUnverifiableGraph()) {
+     TurboCfgFile tcf(data->isolate());
+     tcf << AsC1VRegisterAllocationData("CodeGen",
+                                        data->register_allocation_data());
+   }
++#endif
+ 
+   data->DeleteRegisterAllocationZone();
+ }
+--- deps/v8/src/isolate.cc
++++ deps/v8/src/isolate.cc
+@@ -2827,10 +2827,12 @@
+   // Quiet the heap NaN if needed on target platform.
+   if (!create_heap_objects) Assembler::QuietNaN(heap_.nan_value());
+ 
++#if !V8_OS_CLOUDABI
+   if (FLAG_trace_turbo) {
+     // Create an empty file.
+     std::ofstream(GetTurboCfgFileName().c_str(), std::ios_base::trunc);
+   }
++#endif
+ 
+   CHECK_EQ(static_cast<int>(OFFSET_OF(Isolate, embedder_data_)),
+            Internals::kIsolateEmbedderDataOffset);
+--- deps/v8/src/runtime/runtime-internal.cc
++++ deps/v8/src/runtime/runtime-internal.cc
+@@ -529,6 +529,9 @@
+   } else {
+     DCHECK_LE(args.length(), 2);
+     std::FILE* f;
++#if V8_OS_CLOUDABI
++    f = stderr;
++#else
+     if (args[0]->IsString()) {
+       // With a string argument, the results are appended to that file.
+       CONVERT_ARG_HANDLE_CHECKED(String, arg0, 0);
+@@ -543,6 +546,7 @@
+       DCHECK(fd == 1 || fd == 2);
+       f = fd == 1 ? stdout : stderr;
+     }
++#endif
+     // The second argument (if any) is a message header to be printed.
+     if (args.length() >= 2) {
+       CONVERT_ARG_HANDLE_CHECKED(String, arg1, 1);

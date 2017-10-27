@@ -1,0 +1,11 @@
+--- deps/v8/src/base/cpu.cc
++++ deps/v8/src/base/cpu.cc
+@@ -605,7 +605,7 @@
+   architecture_ = __detect_mips_arch_revision();
+ #endif
+ 
+-#elif V8_HOST_ARCH_ARM64
++#elif V8_HOST_ARCH_ARM64 && V8_OS_LINUX
+ 
+   CPUInfo cpu_info;
+ 

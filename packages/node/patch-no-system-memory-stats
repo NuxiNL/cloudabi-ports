@@ -1,0 +1,20 @@
+--- deps/v8/src/base/sys-info.cc
++++ deps/v8/src/base/sys-info.cc
+@@ -70,6 +70,8 @@
+     return 0;
+   }
+   return static_cast<int64_t>(pages) * page_size;
++#elif V8_OS_CLOUDABI
++  return 0;
+ #elif V8_OS_CYGWIN || V8_OS_WIN
+   MEMORYSTATUSEX memory_info;
+   memory_info.dwLength = sizeof(memory_info);
+@@ -101,7 +103,7 @@
+ 
+ // static
+ int64_t SysInfo::AmountOfVirtualMemory() {
+-#if V8_OS_WIN
++#if V8_OS_CLOUDABI || V8_OS_WIN
+   return 0;
+ #elif V8_OS_POSIX
+   struct rlimit rlim;
