@@ -71,17 +71,6 @@
  
    // This needs to run *before* V8::Initialize().  The const_cast is not
    // optional, in case you're wondering.
---- src/node.h
-+++ src/node.h
-@@ -22,6 +22,8 @@
- #ifndef SRC_NODE_H_
- #define SRC_NODE_H_
- 
-+#define uv_default_loop() NULL
-+
- #ifdef _WIN32
- # ifndef BUILDING_NODE_EXTENSION
- #   define NODE_EXTERN __declspec(dllexport)
 --- src/node_watchdog.cc
 +++ src/node_watchdog.cc
 @@ -179,7 +179,9 @@
