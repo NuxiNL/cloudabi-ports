@@ -60,18 +60,7 @@
    // Block SIGPROF signals when sleeping in epoll_wait/kevent/etc.  Avoids the
    // performance penalty of frequent EINTR wakeups when the profiler is running.
    // Only do this for v8.log profiling, as it breaks v8::CpuProfiler users.
-@@ -4561,8 +4567,10 @@
-   // Initialize prog_start_time to get relative uptime.
-   prog_start_time = static_cast<double>(uv_now(uv_default_loop()));
- 
-+#ifndef __CloudABI__
-   // Make inherited handles noninheritable.
-   uv_disable_stdio_inheritance();
-+#endif
- 
- #if defined(NODE_V8_OPTIONS)
-   // Should come before the call to V8::SetFlagsFromCommandLine()
-@@ -4870,8 +4878,10 @@
+@@ -4870,8 +4876,10 @@
  
    CHECK_GT(argc, 0);
  
