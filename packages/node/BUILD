@@ -6,23 +6,9 @@
 
 def build(ctx):
     srcdir = ctx.extract('%(name)s/v%(version)s')
-    for wrap in {
-            'connect_wrap',
-            'fs_event_wrap',
-            'node_file',
-            'node_os',
-            'node_stat_watcher',
-            'process_wrap',
-            'signal_wrap',
-            'spawn_sync',
-            'tty_wrap',
-            'udp_wrap',
-    }:
-        srcdir.path('src/%s.cc' % wrap).remove()
-        srcdir.path('src/%s.h' % wrap).remove()
     srcdir.run([
-        '/usr/local/bin/python2',
-        'configure',
+        'python2',
+        './configure',
         '--dest-os=cloudabi',
         '--shared-cares',
         '--shared-http-parser',
