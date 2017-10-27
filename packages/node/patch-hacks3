@@ -27,17 +27,7 @@
    env->SetMethod(process, "_debugPause", DebugPause);
    env->SetMethod(process, "_debugEnd", DebugEnd);
  
-@@ -3714,7 +3716,9 @@
- 
- 
- void SignalExit(int signo) {
-+#ifndef __CloudABI__
-   uv_tty_reset_mode();
-+#endif
-   if (trace_enabled) {
-     v8_platform.StopTracingAgent();
-   }
-@@ -4274,8 +4278,12 @@
+@@ -4274,8 +4276,12 @@
  #endif  // HAVE_INSPECTOR
  }
  
@@ -52,7 +42,7 @@
  void RegisterSignalHandler(int signal,
                             void (*handler)(int signal),
                             bool reset_handler) {
-@@ -4450,7 +4458,7 @@
+@@ -4450,7 +4456,7 @@
    CHECK_EQ(err, 0);
  #endif  // HAVE_INSPECTOR
  
@@ -61,7 +51,7 @@
    // Restore signal dispositions, the parent process may have changed them.
    struct sigaction act;
    memset(&act, 0, sizeof(act));
-@@ -4527,7 +4535,7 @@
+@@ -4527,7 +4533,7 @@
      }
    }
  
@@ -70,7 +60,7 @@
    // Block SIGPROF signals when sleeping in epoll_wait/kevent/etc.  Avoids the
    // performance penalty of frequent EINTR wakeups when the profiler is running.
    // Only do this for v8.log profiling, as it breaks v8::CpuProfiler users.
-@@ -4561,8 +4569,10 @@
+@@ -4561,8 +4567,10 @@
    // Initialize prog_start_time to get relative uptime.
    prog_start_time = static_cast<double>(uv_now(uv_default_loop()));
  
@@ -81,15 +71,7 @@
  
  #if defined(NODE_V8_OPTIONS)
    // Should come before the call to V8::SetFlagsFromCommandLine()
-@@ -4864,14 +4874,18 @@
- }
- 
- int Start(int argc, char** argv) {
-+#ifndef __CloudABI__
-   atexit([] () { uv_tty_reset_mode(); });
-+#endif
-   PlatformInit();
-   node::performance::performance_node_start = PERFORMANCE_NOW();
+@@ -4870,8 +4878,10 @@
  
    CHECK_GT(argc, 0);
  
