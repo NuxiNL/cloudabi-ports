@@ -110,17 +110,7 @@
  
  static const uid_t uid_not_found = static_cast<uid_t>(-1);
  static const gid_t gid_not_found = static_cast<gid_t>(-1);
-@@ -3513,7 +3515,9 @@
-       process_env_template->NewInstance(env->context()).ToLocalChecked();
-   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
- 
-+#ifndef __CloudABI__
-   READONLY_PROPERTY(process, "pid", Integer::New(env->isolate(), getpid()));
-+#endif
-   READONLY_PROPERTY(process, "features", GetFeatures(env));
- 
-   auto need_immediate_callback_string =
-@@ -3657,12 +3661,14 @@
+@@ -3657,12 +3659,14 @@
    env->SetMethod(process, "_getActiveHandles", GetActiveHandles);
    env->SetMethod(process, "reallyExit", Exit);
    env->SetMethod(process, "abort", Abort);
