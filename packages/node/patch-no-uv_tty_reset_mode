@@ -10,8 +10,6 @@
      PrintErrorString("\n%s", arrow);
      return;
    }
---- src/node.cc
-+++ src/node.cc
 @@ -3714,7 +3716,9 @@
  
  
@@ -22,7 +20,7 @@
    if (trace_enabled) {
      v8_platform.StopTracingAgent();
    }
-@@ -4864,14 +4874,16 @@
+@@ -4864,7 +4868,9 @@
  }
  
  int Start(int argc, char** argv) {
@@ -32,10 +30,3 @@
    PlatformInit();
    node::performance::performance_node_start = PERFORMANCE_NOW();
  
-   CHECK_GT(argc, 0);
- 
-   // Hack around with the argv pointer. Used for process.title = "blah".
-   argv = uv_setup_args(argc, argv);
- 
-   // This needs to run *before* V8::Initialize().  The const_cast is not
-   // optional, in case you're wondering.
