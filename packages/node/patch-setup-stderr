@@ -1,0 +1,15 @@
+--- src/node_main.cc
++++ src/node_main.cc
+@@ -99,6 +99,12 @@
+     }
+   }
+ #endif
++
++  // Make logging work by assuming stderr is file descriptor 2.
++  FILE *fp = fdopen(2, "w");
++  if (fp != NULL)
++    fswap(fp, stderr);
++
+   // Disable stdio buffering, it interacts poorly with printf()
+   // calls elsewhere in the program (e.g., any logging from V8.)
+   setvbuf(stdout, nullptr, _IONBF, 0);
