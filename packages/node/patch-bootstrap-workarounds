@@ -1,0 +1,126 @@
+--- lib/internal/bootstrap_node.js
++++ lib/internal/bootstrap_node.js
+@@ -194,7 +194,7 @@
+         perf.markMilestone(
+           NODE_PERFORMANCE_MILESTONE_PRELOAD_MODULE_LOAD_END);
+         // If -i or --interactive were passed, or stdin is a TTY.
+-        if (process._forceRepl || NativeModule.require('tty').isatty(0)) {
++        if (process._forceRepl) {
+           // REPL
+           const cliRepl = NativeModule.require('internal/repl');
+           cliRepl.createInternalRepl(process.env, function(err, repl) {
+@@ -431,7 +431,11 @@
+       // getcwd(3) can fail if the current working directory has been deleted.
+       // Fall back to the directory name of the (absolute) executable path.
+       // It's not really correct but what are the alternatives?
+-      return path.dirname(process.execPath);
++      try {
++        return path.dirname(process.execPath);
++      } catch (ex) {
++        return '/unknown';
++      }
+     }
+   }
+ 
+--- lib/internal/loader/ModuleRequest.js
++++ lib/internal/loader/ModuleRequest.js
+@@ -1,13 +1,10 @@
+ 'use strict';
+ 
+-const fs = require('fs');
+ const internalCJSModule = require('internal/module');
+ const internalURLModule = require('internal/url');
+-const internalFS = require('internal/fs');
+ const NativeModule = require('native_module');
+ const { extname, _makeLong } = require('path');
+ const { URL } = require('url');
+-const { realpathSync } = require('fs');
+ const preserveSymlinks = !!process.binding('config').preserveSymlinks;
+ const {
+   ModuleWrap,
+@@ -16,7 +13,6 @@
+ const errors = require('internal/errors');
+ 
+ const search = require('internal/loader/search');
+-const asyncReadFile = require('util').promisify(require('fs').readFile);
+ const debug = require('util').debuglog('esm');
+ 
+ const realpathCache = new Map();
+--- lib/internal/process/stdio.js
++++ lib/internal/process/stdio.js
+@@ -141,7 +141,7 @@
+ 
+ function createWritableStdioStream(fd) {
+   var stream;
+-  const tty_wrap = process.binding('tty_wrap');
++  /*const tty_wrap = process.binding('tty_wrap');
+ 
+   // Note stream._type is used for test-module-load-list.js
+ 
+@@ -159,7 +159,7 @@
+       break;
+ 
+     case 'PIPE':
+-    case 'TCP':
++    case 'TCP':*/
+       var net = require('net');
+       stream = new net.Socket({
+         fd: fd,
+@@ -167,12 +167,12 @@
+         writable: true
+       });
+       stream._type = 'pipe';
+-      break;
++      /*break;
+ 
+     default:
+       // Probably an error on in uv_guess_handle()
+       throw new errors.Error('ERR_UNKNOWN_STREAM_TYPE');
+-  }
++  }*/
+ 
+   // For supporting legacy API we put the FD here.
+   stream.fd = fd;
+--- lib/module.js
++++ lib/module.js
+@@ -27,11 +27,7 @@
+ const { getURLFromFilePath } = require('internal/url');
+ const vm = require('vm');
+ const assert = require('assert').ok;
+-const fs = require('fs');
+-const internalFS = require('internal/fs');
+ const path = require('path');
+-const internalModuleReadFile = process.binding('fs').internalModuleReadFile;
+-const internalModuleStat = process.binding('fs').internalModuleStat;
+ const preserveSymlinks = !!process.binding('config').preserveSymlinks;
+ const experimentalModules = !!process.binding('config').experimentalModules;
+ 
+@@ -713,7 +709,6 @@
+     parent.require(requests[n]);
+ };
+ 
+-Module._initPaths();
+ 
+ // backwards compatibility
+ Module.Module = Module;
+--- lib/net.js
++++ lib/net.js
+@@ -32,7 +32,6 @@
+ const uv = process.binding('uv');
+ 
+ const Buffer = require('buffer').Buffer;
+-const TTYWrap = process.binding('tty_wrap');
+ const TCP = process.binding('tcp_wrap').TCP;
+ const Pipe = process.binding('pipe_wrap').Pipe;
+ const TCPConnectWrap = process.binding('tcp_wrap').TCPConnectWrap;
+@@ -57,8 +56,8 @@
+ function noop() {}
+ 
+ function createHandle(fd) {
+-  var type = TTYWrap.guessHandleType(fd);
+-  if (type === 'PIPE') return new Pipe();
++  /*var type = TTYWrap.guessHandleType(fd);
++  if (type === 'PIPE')*/ return new Pipe();
+   if (type === 'TCP') return new TCP();
+   throw new TypeError('Unsupported fd type: ' + type);
+ }
