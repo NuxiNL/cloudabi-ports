@@ -1,0 +1,34 @@
+--- src/node.cc
++++ src/node.cc
+@@ -3053,6 +3053,7 @@
+ static void EnvSetter(Local<Name> property,
+                       Local<Value> value,
+                       const PropertyCallbackInfo<Value>& info) {
++#ifndef __CloudABI__
+ #ifdef __POSIX__
+   node::Utf8Value key(info.GetIsolate(), property);
+   node::Utf8Value val(info.GetIsolate(), value);
+@@ -3066,6 +3067,7 @@
+     SetEnvironmentVariableW(key_ptr, reinterpret_cast<WCHAR*>(*val));
+   }
+ #endif
++#endif
+   // Whether it worked or not, always return value.
+   info.GetReturnValue().Set(value);
+ }
+@@ -3102,6 +3104,7 @@
+ static void EnvDeleter(Local<Name> property,
+                        const PropertyCallbackInfo<Boolean>& info) {
+   if (property->IsString()) {
++#ifndef __CloudABI__
+ #ifdef __POSIX__
+     node::Utf8Value key(info.GetIsolate(), property);
+     unsetenv(*key);
+@@ -3110,6 +3113,7 @@
+     WCHAR* key_ptr = reinterpret_cast<WCHAR*>(*key);
+     SetEnvironmentVariableW(key_ptr, nullptr);
+ #endif
++#endif
+   }
+ 
+   // process.env never has non-configurable properties, so always

@@ -40,14 +40,14 @@
  static void ProcessTitleGetter(Local<Name> property,
                                 const PropertyCallbackInfo<Value>& info) {
    char buffer[512];
-@@ -3187,6 +3192,7 @@
- 
-   info.GetReturnValue().Set(envarr);
+@@ -3017,6 +3022,7 @@
+   // TODO(piscisaureus): protect with a lock
+   uv_set_process_title(*title);
  }
 +#endif
  
  
- static Local<Object> GetFeatures(Environment* env) {
+ static void EnvGetter(Local<Name> property,
 @@ -3344,12 +3350,14 @@
  
    Local<Object> process = env->process_object();
@@ -63,23 +63,7 @@
  
    // process.version
    READONLY_PROPERTY(process,
-@@ -3498,6 +3506,7 @@
-   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "execArgv"),
-                exec_arguments);
- 
-+#ifndef __CloudABI__
-   // create process.env
-   Local<ObjectTemplate> process_env_template =
-       ObjectTemplate::New(env->isolate());
-@@ -3512,6 +3521,7 @@
-   Local<Object> process_env =
-       process_env_template->NewInstance(env->context()).ToLocalChecked();
-   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
-+#endif
- 
-   READONLY_PROPERTY(process, "pid", Integer::New(env->isolate(), getpid()));
-   READONLY_PROPERTY(process, "features", GetFeatures(env));
-@@ -3624,6 +3634,7 @@
+@@ -3624,6 +3632,7 @@
    SECURITY_REVERSIONS(V)
  #undef V
  
@@ -87,7 +71,7 @@
    size_t exec_path_len = 2 * PATH_MAX;
    char* exec_path = new char[exec_path_len];
    Local<String> exec_path_value;
-@@ -3638,6 +3649,7 @@
+@@ -3638,6 +3647,7 @@
    process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "execPath"),
                 exec_path_value);
    delete[] exec_path;
@@ -95,7 +79,7 @@
  
    auto debug_port_string = FIXED_ONE_BYTE_STRING(env->isolate(), "debugPort");
    CHECK(process->SetAccessor(env->context(),
-@@ -3678,7 +3690,9 @@
+@@ -3678,7 +3688,9 @@
    env->SetMethod(process, "initgroups", InitGroups);
  #endif  // __POSIX__ && !defined(__ANDROID__)
  
@@ -105,7 +89,7 @@
  
    env->SetMethod(process, "_debugProcess", DebugProcess);
    env->SetMethod(process, "_debugPause", DebugPause);
-@@ -3688,10 +3702,14 @@
+@@ -3688,10 +3700,14 @@
  
    env->SetMethod(process, "cpuUsage", CPUUsage);
  
@@ -120,7 +104,7 @@
  
    env->SetMethod(process, "binding", Binding);
    env->SetMethod(process, "_linkedBinding", LinkedBinding);
-@@ -4433,6 +4451,7 @@
+@@ -4433,6 +4449,7 @@
    const int err = pthread_sigmask(SIG_SETMASK, &sigmask, nullptr);
  #endif  // HAVE_INSPECTOR
  
@@ -128,7 +112,7 @@
    // Make sure file descriptors 0-2 are valid before we start logging anything.
    for (int fd = STDIN_FILENO; fd <= STDERR_FILENO; fd += 1) {
      struct stat ignored;
-@@ -4445,6 +4464,7 @@
+@@ -4445,6 +4462,7 @@
      if (fd != open("/dev/null", O_RDWR))
        ABORT();
    }
@@ -136,7 +120,7 @@
  
  #if HAVE_INSPECTOR
    CHECK_EQ(err, 0);
-@@ -4469,6 +4489,7 @@
+@@ -4469,6 +4487,7 @@
    RegisterSignalHandler(SIGINT, SignalExit, true);
    RegisterSignalHandler(SIGTERM, SignalExit, true);
  
@@ -144,7 +128,7 @@
    // Raise the open file descriptor limit.
    struct rlimit lim;
    if (getrlimit(RLIMIT_NOFILE, &lim) == 0 && lim.rlim_cur != lim.rlim_max) {
-@@ -4489,6 +4510,7 @@
+@@ -4489,6 +4508,7 @@
        }
      } while (min + 1 < max);
    }
