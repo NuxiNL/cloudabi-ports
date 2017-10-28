@@ -22,45 +22,9 @@
      }
    }
  
---- lib/internal/loader/ModuleRequest.js
-+++ lib/internal/loader/ModuleRequest.js
-@@ -1,13 +1,10 @@
- 'use strict';
- 
--const fs = require('fs');
- const internalCJSModule = require('internal/module');
- const internalURLModule = require('internal/url');
--const internalFS = require('internal/fs');
- const NativeModule = require('native_module');
- const { extname, _makeLong } = require('path');
- const { URL } = require('url');
--const { realpathSync } = require('fs');
- const preserveSymlinks = !!process.binding('config').preserveSymlinks;
- const {
-   ModuleWrap,
-@@ -16,7 +13,6 @@
- const errors = require('internal/errors');
- 
- const search = require('internal/loader/search');
--const asyncReadFile = require('util').promisify(require('fs').readFile);
- const debug = require('util').debuglog('esm');
- 
- const realpathCache = new Map();
 --- lib/module.js
 +++ lib/module.js
-@@ -27,11 +27,7 @@
- const { getURLFromFilePath } = require('internal/url');
- const vm = require('vm');
- const assert = require('assert').ok;
--const fs = require('fs');
--const internalFS = require('internal/fs');
- const path = require('path');
--const internalModuleReadFile = process.binding('fs').internalModuleReadFile;
--const internalModuleStat = process.binding('fs').internalModuleStat;
- const preserveSymlinks = !!process.binding('config').preserveSymlinks;
- const experimentalModules = !!process.binding('config').experimentalModules;
- 
-@@ -713,7 +709,6 @@
+@@ -713,7 +713,6 @@
      parent.require(requests[n]);
  };
  
@@ -68,3 +32,20 @@
  
  // backwards compatibility
  Module.Module = Module;
+--- lib/repl.js
++++ lib/repl.js
+@@ -81,8 +81,12 @@
+   // path.resolve('repl') fails when the current working directory has been
+   // deleted.  Fall back to the directory name of the (absolute) executable
+   // path.  It's not really correct but what are the alternatives?
+-  const dirname = path.dirname(process.execPath);
+-  module.filename = path.resolve(dirname, 'repl');
++  try {
++    const dirname = path.dirname(process.execPath);
++    module.filename = path.resolve(dirname, 'repl');
++  } catch (e) {
++    module.filename = '/';
++  }
+ }
+ 
+ // hack for repl require to work properly with node_modules folders

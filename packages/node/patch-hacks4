@@ -10,11 +10,7 @@
          'src/handle_wrap.cc',
          'src/js_stream.cc',
          'src/module_wrap.cc',
-@@ -195,25 +193,19 @@
-         'src/node_constants.cc',
-         'src/node_contextify.cc',
-         'src/node_debug_options.cc',
--        'src/node_file.cc',
+@@ -199,21 +197,16 @@
          'src/node_http2.cc',
          'src/node_http_parser.cc',
          'src/node_main.cc',
@@ -36,7 +32,7 @@
          'src/string_bytes.cc',
          'src/string_search.cc',
          'src/stream_base.cc',
-@@ -225,7 +217,6 @@
+@@ -225,7 +218,6 @@
          'src/tracing/node_trace_writer.cc',
          'src/tracing/trace_event.cc',
          'src/tty_wrap.cc',
