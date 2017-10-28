@@ -1,0 +1,11 @@
+--- common.gypi
++++ common.gypi
+@@ -301,7 +301,7 @@
+         ],
+         'conditions': [
+           [ 'target_arch=="ia32"', {
+-            'cflags': [ '-m32' ],
++            'cflags': [ '-m32', '-fno-sanitize=safe-stack' ],
+             'ldflags': [ '-m32' ],
+           }],
+           [ 'target_arch=="x32"', {
