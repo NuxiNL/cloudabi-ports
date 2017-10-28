@@ -36,11 +36,10 @@
          'src/string_bytes.cc',
          'src/string_search.cc',
          'src/stream_base.cc',
-@@ -224,8 +216,6 @@
-         'src/tracing/node_trace_buffer.cc',
+@@ -225,7 +217,6 @@
          'src/tracing/node_trace_writer.cc',
          'src/tracing/trace_event.cc',
--        'src/tty_wrap.cc',
+         'src/tty_wrap.cc',
 -        'src/udp_wrap.cc',
          'src/util.cc',
          'src/uv.cc',

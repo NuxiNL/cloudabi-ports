@@ -46,41 +46,6 @@
  const debug = require('util').debuglog('esm');
  
  const realpathCache = new Map();
---- lib/internal/process/stdio.js
-+++ lib/internal/process/stdio.js
-@@ -141,7 +141,7 @@
- 
- function createWritableStdioStream(fd) {
-   var stream;
--  const tty_wrap = process.binding('tty_wrap');
-+  /*const tty_wrap = process.binding('tty_wrap');
- 
-   // Note stream._type is used for test-module-load-list.js
- 
-@@ -159,7 +159,7 @@
-       break;
- 
-     case 'PIPE':
--    case 'TCP':
-+    case 'TCP':*/
-       var net = require('net');
-       stream = new net.Socket({
-         fd: fd,
-@@ -167,12 +167,12 @@
-         writable: true
-       });
-       stream._type = 'pipe';
--      break;
-+      /*break;
- 
-     default:
-       // Probably an error on in uv_guess_handle()
-       throw new errors.Error('ERR_UNKNOWN_STREAM_TYPE');
--  }
-+  }*/
- 
-   // For supporting legacy API we put the FD here.
-   stream.fd = fd;
 --- lib/module.js
 +++ lib/module.js
 @@ -27,11 +27,7 @@
@@ -103,24 +68,3 @@
  
  // backwards compatibility
  Module.Module = Module;
---- lib/net.js
-+++ lib/net.js
-@@ -32,7 +32,6 @@
- const uv = process.binding('uv');
- 
- const Buffer = require('buffer').Buffer;
--const TTYWrap = process.binding('tty_wrap');
- const TCP = process.binding('tcp_wrap').TCP;
- const Pipe = process.binding('pipe_wrap').Pipe;
- const TCPConnectWrap = process.binding('tcp_wrap').TCPConnectWrap;
-@@ -57,8 +56,8 @@
- function noop() {}
- 
- function createHandle(fd) {
--  var type = TTYWrap.guessHandleType(fd);
--  if (type === 'PIPE') return new Pipe();
-+  /*var type = TTYWrap.guessHandleType(fd);
-+  if (type === 'PIPE')*/ return new Pipe();
-   if (type === 'TCP') return new TCP();
-   throw new TypeError('Unsupported fd type: ' + type);
- }

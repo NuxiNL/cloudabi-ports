@@ -141,28 +141,3 @@
  
    os_constants->Set(OneByteString(isolate, "errno"), err_constants);
    os_constants->Set(OneByteString(isolate, "signals"), sig_constants);
---- src/node_wrap.h
-+++ src/node_wrap.h
-@@ -27,7 +27,9 @@
- #include "env.h"
- #include "pipe_wrap.h"
- #include "tcp_wrap.h"
-+#ifndef __CloudABI__
- #include "tty_wrap.h"
-+#endif
- #include "uv.h"
- #include "v8.h"
- 
-@@ -39,10 +41,10 @@
-           env->tcp_constructor_template()->HasInstance(obj)) {                \
-         TCPWrap* const wrap = Unwrap<TCPWrap>(obj);                           \
-         BODY                                                                  \
--      } else if (env->tty_constructor_template().IsEmpty() == false &&        \
-+      /*} else if (env->tty_constructor_template().IsEmpty() == false &&        \
-                  env->tty_constructor_template()->HasInstance(obj)) {         \
-         TTYWrap* const wrap = Unwrap<TTYWrap>(obj);                           \
--        BODY                                                                  \
-+        BODY*/                                                                  \
-       } else if (env->pipe_constructor_template().IsEmpty() == false &&       \
-                  env->pipe_constructor_template()->HasInstance(obj)) {        \
-         PipeWrap* const wrap = Unwrap<PipeWrap>(obj);                         \
