@@ -1,3 +1,13 @@
+--- lib/fs.js
++++ lib/fs.js
+@@ -38,7 +38,6 @@
+ const Stream = require('stream').Stream;
+ const EventEmitter = require('events');
+ const FSReqWrap = binding.FSReqWrap;
+-const FSEvent = process.binding('fs_event_wrap').FSEvent;
+ const internalFS = require('internal/fs');
+ const internalURL = require('internal/url');
+ const internalUtil = require('internal/util');
 --- lib/internal/bootstrap_node.js
 +++ lib/internal/bootstrap_node.js
 @@ -194,7 +194,7 @@
@@ -32,6 +42,32 @@
  
  // backwards compatibility
  Module.Module = Module;
+--- lib/os.js
++++ lib/os.js
+@@ -42,13 +42,7 @@
+   isBigEndian
+ } = process.binding('os');
+ 
+-getFreeMem[Symbol.toPrimitive] = () => getFreeMem();
+-getHostname[Symbol.toPrimitive] = () => getHostname();
+-getHomeDirectory[Symbol.toPrimitive] = () => getHomeDirectory();
+-getOSRelease[Symbol.toPrimitive] = () => getOSRelease();
+ getOSType[Symbol.toPrimitive] = () => getOSType();
+-getTotalMem[Symbol.toPrimitive] = () => getTotalMem();
+-getUptime[Symbol.toPrimitive] = () => getUptime();
+ 
+ const kEndianness = isBigEndian ? 'BE' : 'LE';
+ 
+@@ -156,9 +150,6 @@
+   uptime: getUptime,
+ 
+   // Deprecated APIs
+-  getNetworkInterfaces: deprecate(getInterfaceAddresses,
+-                                  getNetworkInterfacesDepMsg,
+-                                  'DEP0023'),
+   tmpDir: deprecate(tmpdir, tmpDirDeprecationMsg, 'DEP0022')
+ };
+ 
 --- lib/repl.js
 +++ lib/repl.js
 @@ -81,8 +81,12 @@
