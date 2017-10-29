@@ -4,7 +4,7 @@
  
  
  intptr_t OS::CommitPageSize() {
-+#if V8_OS_CLOUDABI
++#ifdef _SC_PAGESIZE
 +  static intptr_t page_size = sysconf(_SC_PAGESIZE);
 +#else
    static intptr_t page_size = getpagesize();
