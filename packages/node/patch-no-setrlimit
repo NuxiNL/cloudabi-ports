@@ -1,0 +1,18 @@
+--- src/node.cc
++++ src/node.cc
+@@ -4469,6 +4469,7 @@
+   RegisterSignalHandler(SIGINT, SignalExit, true);
+   RegisterSignalHandler(SIGTERM, SignalExit, true);
+ 
++#ifndef __CloudABI__
+   // Raise the open file descriptor limit.
+   struct rlimit lim;
+   if (getrlimit(RLIMIT_NOFILE, &lim) == 0 && lim.rlim_cur != lim.rlim_max) {
+@@ -4489,6 +4490,7 @@
+       }
+     } while (min + 1 < max);
+   }
++#endif
+ #endif  // __POSIX__
+ #ifdef _WIN32
+   for (int fd = 0; fd <= 2; ++fd) {

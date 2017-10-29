@@ -16,23 +16,7 @@
  
  // used in Hrtime() below
  #define NANOS_PER_SEC 1000000000
-@@ -2632,6 +2634,7 @@
- // FIXME(bnoordhuis) Not multi-context ready. TBD how to resolve the conflict
- // when two contexts try to load the same shared object. Maybe have a shadow
- // cache that's a plain C list or hash table that's shared across contexts?
-+#ifndef __CloudABI__
- static void DLOpen(const FunctionCallbackInfo<Value>& args) {
-   Environment* env = Environment::GetCurrent(args);
-   uv_lib_t lib;
-@@ -2718,6 +2721,7 @@
-   // Tell coverity that 'handle' should not be freed when we return.
-   // coverity[leaked_storage]
- }
-+#endif
- 
- 
- static void OnFatalError(const char* location, const char* message) {
-@@ -3002,6 +3006,7 @@
+@@ -3002,6 +3004,7 @@
    args.GetReturnValue().Set(effective_exports);
  }
  
@@ -40,7 +24,7 @@
  static void ProcessTitleGetter(Local<Name> property,
                                 const PropertyCallbackInfo<Value>& info) {
    char buffer[512];
-@@ -3017,6 +3022,7 @@
+@@ -3017,6 +3020,7 @@
    // TODO(piscisaureus): protect with a lock
    uv_set_process_title(*title);
  }
@@ -48,7 +32,7 @@
  
  
  static void EnvGetter(Local<Name> property,
-@@ -3344,12 +3350,14 @@
+@@ -3344,12 +3348,14 @@
  
    Local<Object> process = env->process_object();
  
@@ -63,7 +47,7 @@
  
    // process.version
    READONLY_PROPERTY(process,
-@@ -3624,6 +3632,7 @@
+@@ -3624,6 +3630,7 @@
    SECURITY_REVERSIONS(V)
  #undef V
  
@@ -71,7 +55,7 @@
    size_t exec_path_len = 2 * PATH_MAX;
    char* exec_path = new char[exec_path_len];
    Local<String> exec_path_value;
-@@ -3638,6 +3647,7 @@
+@@ -3638,6 +3645,7 @@
    process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "execPath"),
                 exec_path_value);
    delete[] exec_path;
@@ -79,7 +63,7 @@
  
    auto debug_port_string = FIXED_ONE_BYTE_STRING(env->isolate(), "debugPort");
    CHECK(process->SetAccessor(env->context(),
-@@ -3678,7 +3688,9 @@
+@@ -3678,7 +3686,9 @@
    env->SetMethod(process, "initgroups", InitGroups);
  #endif  // __POSIX__ && !defined(__ANDROID__)
  
@@ -89,13 +73,8 @@
  
    env->SetMethod(process, "_debugProcess", DebugProcess);
    env->SetMethod(process, "_debugPause", DebugPause);
-@@ -3688,10 +3700,14 @@
- 
-   env->SetMethod(process, "cpuUsage", CPUUsage);
- 
-+#ifndef __CloudABI__
+@@ -3691,7 +3701,9 @@
    env->SetMethod(process, "dlopen", DLOpen);
-+#endif
  
    env->SetMethod(process, "uptime", Uptime);
 +#ifndef __CloudABI__
@@ -104,7 +83,7 @@
  
    env->SetMethod(process, "binding", Binding);
    env->SetMethod(process, "_linkedBinding", LinkedBinding);
-@@ -4433,6 +4449,7 @@
+@@ -4433,6 +4445,7 @@
    const int err = pthread_sigmask(SIG_SETMASK, &sigmask, nullptr);
  #endif  // HAVE_INSPECTOR
  
@@ -112,7 +91,7 @@
    // Make sure file descriptors 0-2 are valid before we start logging anything.
    for (int fd = STDIN_FILENO; fd <= STDERR_FILENO; fd += 1) {
      struct stat ignored;
-@@ -4445,6 +4462,7 @@
+@@ -4445,6 +4458,7 @@
      if (fd != open("/dev/null", O_RDWR))
        ABORT();
    }
@@ -120,19 +99,3 @@
  
  #if HAVE_INSPECTOR
    CHECK_EQ(err, 0);
-@@ -4469,6 +4487,7 @@
-   RegisterSignalHandler(SIGINT, SignalExit, true);
-   RegisterSignalHandler(SIGTERM, SignalExit, true);
- 
-+#ifndef __CloudABI__
-   // Raise the open file descriptor limit.
-   struct rlimit lim;
-   if (getrlimit(RLIMIT_NOFILE, &lim) == 0 && lim.rlim_cur != lim.rlim_max) {
-@@ -4489,6 +4508,7 @@
-       }
-     } while (min + 1 < max);
-   }
-+#endif
- #endif  // __POSIX__
- #ifdef _WIN32
-   for (int fd = 0; fd <= 2; ++fd) {

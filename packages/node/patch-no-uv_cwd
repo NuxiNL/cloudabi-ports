@@ -1,0 +1,19 @@
+--- src/module_wrap.cc
++++ src/module_wrap.cc
+@@ -262,6 +262,7 @@
+ 
+ namespace {
+ 
++#ifndef __CloudABI__
+ URL __init_cwd() {
+   std::string specifier = "file://";
+ #ifdef _WIN32
+@@ -281,6 +282,8 @@
+   return URL(specifier);
+ }
+ static URL INITIAL_CWD(__init_cwd());
++#endif
++
+ inline bool is_relative_or_absolute_path(std::string specifier) {
+   auto len = specifier.length();
+   if (len <= 0) {
