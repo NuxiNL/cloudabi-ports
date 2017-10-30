@@ -1,23 +1,5 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -111,7 +111,7 @@
- #include <unistd.h>  // setuid, getuid
- #endif
- 
--#if defined(__POSIX__) && !defined(__ANDROID__)
-+#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
- #include <pwd.h>  // getpwnam()
- #include <grp.h>  // getgrnam()
- #endif
-@@ -1004,7 +1004,7 @@
- 
- // Look up environment variable unless running as setuid root.
- bool SafeGetenv(const char* key, std::string* text) {
--#ifndef _WIN32
-+#if !defined(_WIN32) && !defined(__CloudABI__)
-   if (linux_at_secure || getuid() != geteuid() || getgid() != getegid())
-     goto fail;
- #endif
 @@ -2055,6 +2055,7 @@
  }
  
@@ -26,19 +8,15 @@
  static void Chdir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -2125,9 +2126,10 @@
+@@ -2125,6 +2126,7 @@
  
    args.GetReturnValue().Set(old);
  }
 +#endif
  
  
--#if defined(__POSIX__) && !defined(__ANDROID__)
-+#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
- 
- static const uid_t uid_not_found = static_cast<uid_t>(-1);
- static const gid_t gid_not_found = static_cast<gid_t>(-1);
-@@ -3657,12 +3659,14 @@
+ #if defined(__POSIX__) && !defined(__ANDROID__)
+@@ -3657,10 +3659,12 @@
    env->SetMethod(process, "_getActiveHandles", GetActiveHandles);
    env->SetMethod(process, "reallyExit", Exit);
    env->SetMethod(process, "abort", Abort);
@@ -49,11 +27,8 @@
    env->SetMethod(process, "umask", Umask);
 +#endif
  
--#if defined(__POSIX__) && !defined(__ANDROID__)
-+#if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
+ #if defined(__POSIX__) && !defined(__ANDROID__)
    env->SetMethod(process, "getuid", GetUid);
-   env->SetMethod(process, "geteuid", GetEUid);
-   env->SetMethod(process, "setuid", SetUid);
 --- src/node_constants.cc
 +++ src/node_constants.cc
 @@ -1295,8 +1295,12 @@
