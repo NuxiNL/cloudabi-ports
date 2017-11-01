@@ -10,15 +10,6 @@
  const internalUtil = require('internal/util');
 --- lib/internal/bootstrap_node.js
 +++ lib/internal/bootstrap_node.js
-@@ -194,7 +194,7 @@
-         perf.markMilestone(
-           NODE_PERFORMANCE_MILESTONE_PRELOAD_MODULE_LOAD_END);
-         // If -i or --interactive were passed, or stdin is a TTY.
--        if (process._forceRepl || NativeModule.require('tty').isatty(0)) {
-+        if (process._forceRepl) {
-           // REPL
-           const cliRepl = NativeModule.require('internal/repl');
-           cliRepl.createInternalRepl(process.env, function(err, repl) {
 @@ -431,7 +431,11 @@
        // getcwd(3) can fail if the current working directory has been deleted.
        // Fall back to the directory name of the (absolute) executable path.
@@ -44,21 +35,21 @@
  Module.Module = Module;
 --- lib/os.js
 +++ lib/os.js
-@@ -42,13 +42,7 @@
+@@ -42,13 +42,8 @@
    isBigEndian
  } = process.binding('os');
  
 -getFreeMem[Symbol.toPrimitive] = () => getFreeMem();
 -getHostname[Symbol.toPrimitive] = () => getHostname();
 -getHomeDirectory[Symbol.toPrimitive] = () => getHomeDirectory();
--getOSRelease[Symbol.toPrimitive] = () => getOSRelease();
+ getOSRelease[Symbol.toPrimitive] = () => getOSRelease();
  getOSType[Symbol.toPrimitive] = () => getOSType();
 -getTotalMem[Symbol.toPrimitive] = () => getTotalMem();
 -getUptime[Symbol.toPrimitive] = () => getUptime();
  
  const kEndianness = isBigEndian ? 'BE' : 'LE';
  
-@@ -156,9 +150,6 @@
+@@ -156,9 +151,6 @@
    uptime: getUptime,
  
    // Deprecated APIs

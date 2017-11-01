@@ -1,0 +1,15 @@
+--- src/node_constants.cc
++++ src/node_constants.cc
+@@ -1295,8 +1295,12 @@
+   DefineZlibConstants(zlib_constants);
+ 
+   // Define libuv constants.
++#ifdef UV_UDP_REUSEADDR
+   NODE_DEFINE_CONSTANT(os_constants, UV_UDP_REUSEADDR);
++#endif
++#ifdef UV_FS_COPYFILE_EXCL
+   NODE_DEFINE_CONSTANT(fs_constants, UV_FS_COPYFILE_EXCL);
++#endif
+ 
+   os_constants->Set(OneByteString(isolate, "errno"), err_constants);
+   os_constants->Set(OneByteString(isolate, "signals"), sig_constants);

@@ -1,0 +1,35 @@
+--- src/stream_wrap.cc
++++ src/stream_wrap.cc
+@@ -32,7 +32,9 @@
+ #include "req-wrap.h"
+ #include "req-wrap-inl.h"
+ #include "tcp_wrap.h"
++#ifndef __CloudABI__
+ #include "udp_wrap.h"
++#endif
+ #include "util.h"
+ #include "util-inl.h"
+ 
+@@ -237,8 +239,10 @@
+     pending_obj = AcceptHandle<TCPWrap, uv_tcp_t>(env, wrap);
+   } else if (pending == UV_NAMED_PIPE) {
+     pending_obj = AcceptHandle<PipeWrap, uv_pipe_t>(env, wrap);
++#ifdef UV_UDP
+   } else if (pending == UV_UDP) {
+     pending_obj = AcceptHandle<UDPWrap, uv_udp_t>(env, wrap);
++#endif
+   } else {
+     CHECK_EQ(pending, UV_UNKNOWN_HANDLE);
+   }
+--- src/tty_wrap.cc
++++ src/tty_wrap.cc
+@@ -92,7 +92,9 @@
+   switch (t) {
+   case UV_TCP: type = "TCP"; break;
+   case UV_TTY: type = "TTY"; break;
++#ifdef UV_UDP
+   case UV_UDP: type = "UDP"; break;
++#endif
+   case UV_FILE: type = "FILE"; break;
+   case UV_NAMED_PIPE: type = "PIPE"; break;
+   case UV_UNKNOWN_HANDLE: type = "UNKNOWN"; break;

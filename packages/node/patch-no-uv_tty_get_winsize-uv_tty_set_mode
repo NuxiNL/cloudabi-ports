@@ -1,0 +1,29 @@
+--- src/tty_wrap.cc
++++ src/tty_wrap.cc
+@@ -65,8 +65,10 @@
+ 
+   LibuvStreamWrap::AddMethods(env, t, StreamBase::kFlagNoShutdown);
+ 
++#ifndef __CloudABI__
+   env->SetProtoMethod(t, "getWindowSize", TTYWrap::GetWindowSize);
+   env->SetProtoMethod(t, "setRawMode", SetRawMode);
++#endif
+ 
+   env->SetMethod(target, "isTTY", IsTTY);
+   env->SetMethod(target, "guessHandleType", GuessHandleType);
+@@ -112,6 +114,7 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ void TTYWrap::GetWindowSize(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+ 
+@@ -142,6 +145,7 @@
+   int err = uv_tty_set_mode(&wrap->handle_, args[0]->IsTrue());
+   args.GetReturnValue().Set(err);
+ }
++#endif
+ 
+ 
+ void TTYWrap::New(const FunctionCallbackInfo<Value>& args) {

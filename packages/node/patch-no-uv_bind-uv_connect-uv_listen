@@ -137,29 +137,6 @@
    static void Open(const v8::FunctionCallbackInfo<v8::Value>& args);
  
  #ifdef _WIN32
---- src/stream_wrap.cc
-+++ src/stream_wrap.cc
-@@ -32,7 +32,9 @@
- #include "req-wrap.h"
- #include "req-wrap-inl.h"
- #include "tcp_wrap.h"
-+#ifndef __CloudABI__
- #include "udp_wrap.h"
-+#endif
- #include "util.h"
- #include "util-inl.h"
- 
-@@ -237,8 +239,10 @@
-     pending_obj = AcceptHandle<TCPWrap, uv_tcp_t>(env, wrap);
-   } else if (pending == UV_NAMED_PIPE) {
-     pending_obj = AcceptHandle<PipeWrap, uv_pipe_t>(env, wrap);
-+#ifndef __CloudABI__
-   } else if (pending == UV_UDP) {
-     pending_obj = AcceptHandle<UDPWrap, uv_udp_t>(env, wrap);
-+#endif
-   } else {
-     CHECK_EQ(pending, UV_UNKNOWN_HANDLE);
-   }
 --- src/tcp_wrap.cc
 +++ src/tcp_wrap.cc
 @@ -27,7 +27,9 @@

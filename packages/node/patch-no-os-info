@@ -1,21 +1,15 @@
 --- src/node_os.cc
 +++ src/node_os.cc
-@@ -29,6 +29,7 @@
- # include <io.h>
- #endif  // __MINGW32__
- 
-+#ifndef __CloudABI__
- #ifdef __POSIX__
+@@ -33,7 +33,9 @@
  # include <limits.h>        // PATH_MAX on Solaris.
  # include <netdb.h>         // MAXHOSTNAMELEN on Solaris.
-@@ -36,6 +37,7 @@
+ # include <unistd.h>        // gethostname, sysconf
++#ifndef __CloudABI__
  # include <sys/param.h>     // MAXHOSTNAMELEN on Linux and the BSDs.
++#endif
  # include <sys/utsname.h>
  #endif  // __POSIX__
-+#endif
  
- // Add Windows fallback.
- #ifndef MAXHOSTNAMELEN
 @@ -62,6 +64,7 @@
  using v8::Value;
  
@@ -24,7 +18,7 @@
  static void GetHostname(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
    char buf[MAXHOSTNAMELEN + 1];
-@@ -78,13 +81,16 @@
+@@ -78,6 +81,7 @@
  
    args.GetReturnValue().Set(OneByteString(env->isolate(), buf));
  }
@@ -32,25 +26,15 @@
  
  
  static void GetOSType(const FunctionCallbackInfo<Value>& args) {
-   Environment* env = Environment::GetCurrent(args);
-   const char* rval;
- 
--#ifdef __POSIX__
-+#ifdef __CloudABI__
-+  rval = "CloudABI";
-+#elif defined(__POSIX__)
-   struct utsname info;
-   if (uname(&info) < 0) {
-     return env->ThrowErrnoException(errno, "uname");
-@@ -98,6 +104,7 @@
+@@ -139,6 +143,7 @@
  }
  
  
 +#ifndef __CloudABI__
- static void GetOSRelease(const FunctionCallbackInfo<Value>& args) {
+ static void GetCPUInfo(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-   const char* rval;
-@@ -406,23 +413,28 @@
+   uv_cpu_info_t* cpu_infos;
+@@ -406,23 +411,28 @@
  
    args.GetReturnValue().Set(entry);
  }
@@ -70,8 +54,8 @@
    env->SetMethod(target, "getCPUs", GetCPUInfo);
 +#endif
    env->SetMethod(target, "getOSType", GetOSType);
-+#ifndef __CloudABI__
    env->SetMethod(target, "getOSRelease", GetOSRelease);
++#ifndef __CloudABI__
    env->SetMethod(target, "getInterfaceAddresses", GetInterfaceAddresses);
    env->SetMethod(target, "getHomeDirectory", GetHomeDirectory);
    env->SetMethod(target, "getUserInfo", GetUserInfo);
