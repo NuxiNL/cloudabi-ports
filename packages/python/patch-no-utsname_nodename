@@ -1,0 +1,14 @@
+--- Modules/posixmodule.c
++++ Modules/posixmodule.c
+@@ -4330,7 +4330,11 @@
+     } \
+ 
+     SET(0, u.sysname);
++#ifdef __CloudABI__
++    SET(1, "unknown");
++#else
+     SET(1, u.nodename);
++#endif
+     SET(2, u.release);
+     SET(3, u.version);
+     SET(4, u.machine);
