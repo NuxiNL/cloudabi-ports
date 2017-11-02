@@ -1,0 +1,139 @@
+--- src/udp_wrap.cc
++++ src/udp_wrap.cc
+@@ -53,6 +53,7 @@
+ using AsyncHooks = Environment::AsyncHooks;
+ 
+ 
++#ifndef __CloudABI__
+ class SendWrap : public ReqWrap<uv_udp_send_t> {
+  public:
+   SendWrap(Environment* env, Local<Object> req_wrap_obj, bool have_callback);
+@@ -88,6 +89,7 @@
+   CHECK(args.IsConstructCall());
+   ClearWrap(args.This());
+ }
++#endif
+ 
+ 
+ UDPWrap::UDPWrap(Environment* env, Local<Object> object)
+@@ -120,13 +122,16 @@
+                                      v8::DEFAULT,
+                                      attributes);
+ 
++#ifndef __CloudABI__
+   env->SetProtoMethod(t, "bind", Bind);
+   env->SetProtoMethod(t, "send", Send);
+   env->SetProtoMethod(t, "bind6", Bind6);
+   env->SetProtoMethod(t, "send6", Send6);
++#endif
+   env->SetProtoMethod(t, "close", Close);
+   env->SetProtoMethod(t, "recvStart", RecvStart);
+   env->SetProtoMethod(t, "recvStop", RecvStop);
++#ifndef __CloudABI__
+   env->SetProtoMethod(t, "getsockname",
+                       GetSockOrPeerName<UDPWrap, uv_udp_getsockname>);
+   env->SetProtoMethod(t, "addMembership", AddMembership);
+@@ -137,6 +142,7 @@
+   env->SetProtoMethod(t, "setBroadcast", SetBroadcast);
+   env->SetProtoMethod(t, "setTTL", SetTTL);
+   env->SetProtoMethod(t, "bufferSize", BufferSize);
++#endif
+ 
+   env->SetProtoMethod(t, "ref", HandleWrap::Ref);
+   env->SetProtoMethod(t, "unref", HandleWrap::Unref);
+@@ -147,6 +153,7 @@
+   target->Set(udpString, t->GetFunction());
+   env->set_udp_constructor_function(t->GetFunction());
+ 
++#ifndef __CloudABI__
+   // Create FunctionTemplate for SendWrap
+   Local<FunctionTemplate> swt =
+       FunctionTemplate::New(env->isolate(), NewSendWrap);
+@@ -156,6 +163,7 @@
+       FIXED_ONE_BYTE_STRING(env->isolate(), "SendWrap");
+   swt->SetClassName(sendWrapString);
+   target->Set(sendWrapString, swt->GetFunction());
++#endif
+ }
+ 
+ 
+@@ -178,6 +186,7 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ void UDPWrap::DoBind(const FunctionCallbackInfo<Value>& args, int family) {
+   UDPWrap* wrap;
+   ASSIGN_OR_RETURN_UNWRAP(&wrap,
+@@ -408,6 +417,7 @@
+ void UDPWrap::Send6(const FunctionCallbackInfo<Value>& args) {
+   DoSend(args, AF_INET6);
+ }
++#endif
+ 
+ 
+ void UDPWrap::RecvStart(const FunctionCallbackInfo<Value>& args) {
+@@ -433,6 +443,7 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ void UDPWrap::OnSend(uv_udp_send_t* req, int status) {
+   SendWrap* req_wrap = static_cast<SendWrap*>(req->data);
+   if (req_wrap->have_callback()) {
+@@ -447,6 +458,7 @@
+   }
+   delete req_wrap;
+ }
++#endif
+ 
+ 
+ void UDPWrap::OnAlloc(uv_handle_t* handle,
+--- src/udp_wrap.h
++++ src/udp_wrap.h
+@@ -42,12 +42,15 @@
+   static void GetFD(v8::Local<v8::String>,
+                     const v8::PropertyCallbackInfo<v8::Value>&);
+   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
++#ifndef __CloudABI__
+   static void Bind(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void Send(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void Bind6(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void Send6(const v8::FunctionCallbackInfo<v8::Value>& args);
++#endif
+   static void RecvStart(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void RecvStop(const v8::FunctionCallbackInfo<v8::Value>& args);
++#ifndef __CloudABI__
+   static void AddMembership(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void DropMembership(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void SetMulticastInterface(
+@@ -58,6 +61,7 @@
+   static void SetBroadcast(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void SetTTL(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void BufferSize(const v8::FunctionCallbackInfo<v8::Value>& args);
++#endif
+ 
+   static v8::Local<v8::Object> Instantiate(Environment* env, AsyncWrap* parent);
+   uv_udp_t* UVHandle();
+@@ -73,17 +77,21 @@
+ 
+   UDPWrap(Environment* env, v8::Local<v8::Object> object);
+ 
++#ifndef __CloudABI__
+   static void DoBind(const v8::FunctionCallbackInfo<v8::Value>& args,
+                      int family);
+   static void DoSend(const v8::FunctionCallbackInfo<v8::Value>& args,
+                      int family);
+   static void SetMembership(const v8::FunctionCallbackInfo<v8::Value>& args,
+                             uv_membership membership);
++#endif
+ 
+   static void OnAlloc(uv_handle_t* handle,
+                       size_t suggested_size,
+                       uv_buf_t* buf);
++#ifndef __CloudABI__
+   static void OnSend(uv_udp_send_t* req, int status);
++#endif
+   static void OnRecv(uv_udp_t* handle,
+                      ssize_t nread,
+                      const uv_buf_t* buf,
