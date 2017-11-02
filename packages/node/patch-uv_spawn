@@ -1,0 +1,28 @@
+--- src/process_wrap.cc
++++ src/process_wrap.cc
+@@ -61,7 +61,9 @@
+ 
+     env->SetProtoMethod(constructor, "close", HandleWrap::Close);
+ 
++#ifndef __CloudABI__
+     env->SetProtoMethod(constructor, "spawn", Spawn);
++#endif
+     env->SetProtoMethod(constructor, "kill", Kill);
+ 
+     env->SetProtoMethod(constructor, "ref", HandleWrap::Ref);
+@@ -90,6 +92,7 @@
+                    AsyncWrap::PROVIDER_PROCESSWRAP) {
+   }
+ 
++#ifndef __CloudABI__
+   static void ParseStdioOptions(Environment* env,
+                                 Local<Object> js_options,
+                                 uv_process_options_t* options) {
+@@ -274,6 +277,7 @@
+ 
+     args.GetReturnValue().Set(err);
+   }
++#endif
+ 
+   static void Kill(const FunctionCallbackInfo<Value>& args) {
+     Environment* env = Environment::GetCurrent(args);

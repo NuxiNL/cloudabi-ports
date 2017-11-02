@@ -10,7 +10,7 @@
          'src/handle_wrap.cc',
          'src/js_stream.cc',
          'src/module_wrap.cc',
-@@ -206,14 +204,10 @@
+@@ -206,14 +204,11 @@
          'src/node_url.cc',
          'src/node_util.cc',
          'src/node_v8.cc',
@@ -19,7 +19,7 @@
          'src/node_zlib.cc',
          'src/node_i18n.cc',
          'src/pipe_wrap.cc',
--        'src/process_wrap.cc',
+         'src/process_wrap.cc',
 -        'src/signal_wrap.cc',
 -        'src/spawn_sync.cc',
          'src/string_bytes.cc',
