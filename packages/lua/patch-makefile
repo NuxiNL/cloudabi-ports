@@ -58,7 +58,7 @@
  
  $(LUA_A): $(BASE_O)
 -	$(AR) $@ $(BASE_O)
-+	$(AR) rcu $@ $(BASE_O)
++	$(AR) -rcu $@ $(BASE_O)
  	$(RANLIB) $@
  
  $(LUA_T): $(LUA_O) $(LUA_A)

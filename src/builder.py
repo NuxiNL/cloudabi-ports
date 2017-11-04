@@ -378,7 +378,7 @@ class TargetBuilder:
         objs = sorted(object_files)
         output = self._build_directory.get_new_archive()
         log.info('AR %s', output)
-        subprocess.check_call([self._tool('ar'), 'rcs', output] + objs)
+        subprocess.check_call([self._tool('ar'), '-rcs', output] + objs)
         return output
 
     def gnu_configure(self, builddir, script, args):
