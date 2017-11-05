@@ -6,7 +6,7 @@
 
 def build(ctx):
     # The Linux configuration works all right in our case.
-    srcdir = ctx.extract('%(name)s-58_2-src').path('source')
+    srcdir = ctx.extract('%(name)s-60_1-src').path('source')
     srcdir.path('config/mh-unknown').symlink('mh-linux')
 
     # Build a copy of ICU for the host system.
@@ -34,20 +34,20 @@ def build(ctx):
 
 package(
     name='icu4c',
-    version='58.2',
+    version='60.1',
     homepage='http://site.icu-project.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='icu4c-58_2-src.tgz',
-    checksum='2b0a4410153a9b20de0e20c7d8b66049a72aef244b53683d0d7521371683da0c',
-    master_sites={'http://download.icu-project.org/files/icu4c/58.2/'},
+    name='icu4c-60_1-src.tgz',
+    checksum='f8f5a6c8fbf32c015a467972bdb1477dc5f5d5dfea908b6ed218715eeb5ee225',
+    master_sites={'http://download.icu-project.org/files/icu4c/60.1/'},
     unsafe_string_sources={
         'source/common/cstring.h',
         'source/common/uloc.cpp',
         'source/i18n/choicfmt.cpp',
-        'source/i18n/decNumber.c',
+        'source/i18n/decNumber.cpp',
         'source/i18n/digitlst.cpp',
         'source/i18n/plurrule.cpp',
     })

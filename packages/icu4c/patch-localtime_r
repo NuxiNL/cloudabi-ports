@@ -1,6 +1,6 @@
 --- source/common/putil.cpp
 +++ source/common/putil.cpp
-@@ -182,7 +182,7 @@
+@@ -199,7 +199,7 @@
    functions).
    ---------------------------------------------------------------------------*/
  
@@ -9,7 +9,7 @@
  #   undef U_POSIX_LOCALE
  #else
  #   define U_POSIX_LOCALE    1
-@@ -623,12 +623,12 @@
+@@ -640,12 +640,12 @@
      int32_t tdiff = 0;
  
      time(&t);

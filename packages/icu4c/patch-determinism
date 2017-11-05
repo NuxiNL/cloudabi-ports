@@ -11,7 +11,7 @@
  U_IS_BIG_ENDIAN = @U_IS_BIG_ENDIAN@
 --- source/configure
 +++ source/configure
-@@ -2611,15 +2611,6 @@
+@@ -2623,15 +2623,6 @@
  # for icu-config
  # This may be removed later - mow (June 17, 2010)
  ICU_ECHO_C= ICU_ECHO_N= ICU_ECHO_T=
