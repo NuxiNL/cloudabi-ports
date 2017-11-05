@@ -1,25 +1,3 @@
---- common.gypi
-+++ common.gypi
-@@ -286,7 +286,7 @@
-         'cflags': [ '-pthread', ],
-         'ldflags': [ '-pthread' ],
-       }],
--      [ 'OS in "linux freebsd openbsd solaris android aix"', {
-+      [ 'OS in "linux freebsd openbsd solaris android aix cloudabi"', {
-         'cflags': [ '-Wall', '-Wextra', '-Wno-unused-parameter', ],
-         'cflags_cc': [ '-fno-rtti', '-fno-exceptions', '-std=gnu++0x' ],
-         'ldflags': [ '-rdynamic' ],
---- configure
-+++ configure
-@@ -57,7 +57,7 @@
- parser = optparse.OptionParser()
- 
- valid_os = ('win', 'mac', 'solaris', 'freebsd', 'openbsd', 'linux',
--            'android', 'aix')
-+            'android', 'aix', 'cloudabi')
- valid_arch = ('arm', 'arm64', 'ia32', 'mips', 'mipsel', 'mips64el', 'ppc',
-               'ppc64', 'x32','x64', 'x86', 's390', 's390x')
- valid_arm_float_abi = ('soft', 'softfp', 'hard')
 --- deps/v8/include/v8config.h
 +++ deps/v8/include/v8config.h
 @@ -80,6 +80,12 @@
@@ -234,7 +212,7 @@
 +}  // namespace v8
 --- deps/v8/src/v8.gyp
 +++ deps/v8/src/v8.gyp
-@@ -2077,6 +2077,16 @@
+@@ -2075,6 +2075,16 @@
              'base/platform/platform-posix.cc'
            ]},
          ],

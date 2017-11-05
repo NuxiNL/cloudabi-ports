@@ -18,7 +18,7 @@
  char* ReadCharsFromFile(FILE* file,
 --- deps/v8/src/utils.h
 +++ deps/v8/src/utils.h
-@@ -981,7 +981,9 @@
+@@ -987,7 +987,9 @@
  
  // Read a line of characters after printing the prompt to stdout. The resulting
  // char* needs to be disposed off with DeleteArray by the caller.

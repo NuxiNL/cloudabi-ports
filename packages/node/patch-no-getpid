@@ -14,7 +14,7 @@
  
 --- src/env.cc
 +++ src/env.cc
-@@ -4,6 +4,8 @@
+@@ -5,6 +5,8 @@
  
  #if defined(_MSC_VER)
  #define getpid GetCurrentProcessId
@@ -25,7 +25,7 @@
  #endif
 --- src/node.cc
 +++ src/node.cc
-@@ -3513,7 +3513,9 @@
+@@ -3235,7 +3235,9 @@
        process_env_template->NewInstance(env->context()).ToLocalChecked();
    process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
  

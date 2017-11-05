@@ -1,6 +1,6 @@
 --- deps/v8/src/base/platform/platform.h
 +++ deps/v8/src/base/platform/platform.h
-@@ -432,7 +432,11 @@
+@@ -431,7 +431,11 @@
  class V8_BASE_EXPORT Thread {
   public:
    // Opaque data type for thread-local storage keys.

@@ -1,6 +1,6 @@
 --- node.gyp
 +++ node.gyp
-@@ -180,9 +180,7 @@
+@@ -190,9 +190,7 @@
          'src/async-wrap.cc',
          'src/cares_wrap.cc',
          'src/connection_wrap.cc',
@@ -10,7 +10,7 @@
          'src/handle_wrap.cc',
          'src/js_stream.cc',
          'src/module_wrap.cc',
-@@ -206,14 +204,11 @@
+@@ -216,14 +214,11 @@
          'src/node_url.cc',
          'src/node_util.cc',
          'src/node_v8.cc',

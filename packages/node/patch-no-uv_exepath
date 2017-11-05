@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -2031,6 +2031,11 @@
+@@ -1699,6 +1699,11 @@
    auto message = (*args)[2];
    auto function = (*args)[3];
  
@@ -12,7 +12,7 @@
    char exepath[256];
    size_t exepath_size = sizeof(exepath);
    if (uv_exepath(exepath, &exepath_size))
-@@ -2044,6 +2049,7 @@
+@@ -1712,6 +1717,7 @@
    fprintf(stderr, "%s%s: %s:%s:%s%s Assertion `%s' failed.\n",
            exepath, pid, filename, linenum,
            function, *function ? ":" : "", message);

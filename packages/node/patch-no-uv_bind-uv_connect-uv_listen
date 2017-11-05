@@ -7,9 +7,9 @@
  #include "connect_wrap.h"
 +#endif
  #include "env-inl.h"
- #include "env.h"
  #include "pipe_wrap.h"
-@@ -73,6 +75,7 @@
+ #include "stream_wrap.h"
+@@ -71,6 +73,7 @@
  }
  
  
@@ -17,7 +17,7 @@
  template <typename WrapType, typename UVType>
  void ConnectionWrap<WrapType, UVType>::AfterConnect(uv_connect_t* req,
                                                      int status) {
-@@ -110,6 +113,7 @@
+@@ -108,6 +111,7 @@
  
    delete req_wrap;
  }
@@ -25,7 +25,7 @@
  
  template ConnectionWrap<PipeWrap, uv_pipe_t>::ConnectionWrap(
      Environment* env,
-@@ -127,11 +131,13 @@
+@@ -125,11 +129,13 @@
  template void ConnectionWrap<TCPWrap, uv_tcp_t>::OnConnection(
      uv_stream_t* handle, int status);
  
@@ -53,7 +53,7 @@
    ConnectionWrap(Environment* env,
 --- src/pipe_wrap.cc
 +++ src/pipe_wrap.cc
-@@ -29,7 +29,9 @@
+@@ -28,7 +28,9 @@
  #include "node.h"
  #include "node_buffer.h"
  #include "node_wrap.h"
@@ -62,8 +62,8 @@
 +#endif
  #include "stream_wrap.h"
  #include "util-inl.h"
- #include "util.h"
-@@ -85,9 +87,11 @@
+ 
+@@ -83,9 +85,11 @@
    LibuvStreamWrap::AddMethods(env, t, StreamBase::kFlagHasWritev);
  #endif
  
@@ -75,7 +75,7 @@
    env->SetProtoMethod(t, "open", Open);
  
  #ifdef _WIN32
-@@ -135,6 +139,7 @@
+@@ -133,6 +137,7 @@
  }
  
  
@@ -83,7 +83,7 @@
  void PipeWrap::Bind(const FunctionCallbackInfo<Value>& args) {
    PipeWrap* wrap;
    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
-@@ -142,6 +147,7 @@
+@@ -140,6 +145,7 @@
    int err = uv_pipe_bind(&wrap->handle_, *name);
    args.GetReturnValue().Set(err);
  }
@@ -91,7 +91,7 @@
  
  
  #ifdef _WIN32
-@@ -154,6 +160,7 @@
+@@ -152,6 +158,7 @@
  #endif
  
  
@@ -99,7 +99,7 @@
  void PipeWrap::Listen(const FunctionCallbackInfo<Value>& args) {
    PipeWrap* wrap;
    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
-@@ -163,6 +170,7 @@
+@@ -161,6 +168,7 @@
                        OnConnection);
    args.GetReturnValue().Set(err);
  }
@@ -107,7 +107,7 @@
  
  
  void PipeWrap::Open(const FunctionCallbackInfo<Value>& args) {
-@@ -180,6 +188,7 @@
+@@ -178,6 +186,7 @@
  }
  
  
@@ -115,7 +115,7 @@
  void PipeWrap::Connect(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -202,6 +211,7 @@
+@@ -200,6 +209,7 @@
  
    args.GetReturnValue().Set(0);  // uv_pipe_connect() doesn't return errors.
  }
@@ -139,7 +139,7 @@
  #ifdef _WIN32
 --- src/tcp_wrap.cc
 +++ src/tcp_wrap.cc
-@@ -27,7 +27,9 @@
+@@ -26,7 +26,9 @@
  #include "handle_wrap.h"
  #include "node_buffer.h"
  #include "node_wrap.h"
@@ -147,9 +147,9 @@
  #include "connect_wrap.h"
 +#endif
  #include "stream_wrap.h"
- #include "util.h"
  #include "util-inl.h"
-@@ -93,6 +95,7 @@
+ 
+@@ -91,6 +93,7 @@
    LibuvStreamWrap::AddMethods(env, t, StreamBase::kFlagHasWritev);
  
    env->SetProtoMethod(t, "open", Open);
@@ -157,7 +157,7 @@
    env->SetProtoMethod(t, "bind", Bind);
    env->SetProtoMethod(t, "listen", Listen);
    env->SetProtoMethod(t, "connect", Connect);
-@@ -104,6 +107,7 @@
+@@ -102,6 +105,7 @@
                        GetSockOrPeerName<TCPWrap, uv_tcp_getpeername>);
    env->SetProtoMethod(t, "setNoDelay", SetNoDelay);
    env->SetProtoMethod(t, "setKeepAlive", SetKeepAlive);
@@ -165,7 +165,7 @@
  
  #ifdef _WIN32
    env->SetProtoMethod(t, "setSimultaneousAccepts", SetSimultaneousAccepts);
-@@ -153,6 +157,7 @@
+@@ -151,6 +155,7 @@
  }
  
  
@@ -173,7 +173,7 @@
  void TCPWrap::SetNoDelay(const FunctionCallbackInfo<Value>& args) {
    TCPWrap* wrap;
    ASSIGN_OR_RETURN_UNWRAP(&wrap,
-@@ -174,6 +179,7 @@
+@@ -172,6 +177,7 @@
    int err = uv_tcp_keepalive(&wrap->handle_, enable, delay);
    args.GetReturnValue().Set(err);
  }
@@ -181,7 +181,7 @@
  
  
  #ifdef _WIN32
-@@ -199,6 +205,7 @@
+@@ -197,6 +203,7 @@
  }
  
  
@@ -189,7 +189,7 @@
  void TCPWrap::Bind(const FunctionCallbackInfo<Value>& args) {
    TCPWrap* wrap;
    ASSIGN_OR_RETURN_UNWRAP(&wrap,
-@@ -318,6 +325,7 @@
+@@ -316,6 +323,7 @@
  
    args.GetReturnValue().Set(err);
  }

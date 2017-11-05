@@ -1,6 +1,6 @@
 --- node.gyp
 +++ node.gyp
-@@ -161,7 +161,6 @@
+@@ -172,7 +172,6 @@
  
        'dependencies': [
          'node_js2c#host',
@@ -8,9 +8,9 @@
        ],
  
        'includes': [
-@@ -173,7 +172,6 @@
+@@ -183,7 +182,6 @@
+         'src',
          'tools/msvs/genfiles',
-         'deps/uv/src/ares',
          '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
 -        'deps/nghttp2/lib/includes'
        ],

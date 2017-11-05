@@ -8,9 +8,9 @@
  #include "node_stat_watcher.h"
 +#endif
  
- #include "req-wrap.h"
  #include "req-wrap-inl.h"
-@@ -182,7 +184,11 @@
+ #include "string_bytes.h"
+@@ -181,7 +183,11 @@
                            req->result,
                            req_wrap->syscall(),
                            nullptr,
@@ -22,7 +22,7 @@
                            req_wrap->data());
    } else {
      // error value is empty or null for non-error.
-@@ -193,47 +199,80 @@
+@@ -192,47 +198,80 @@
  
      switch (req->fs_type) {
        // These all have no data to pass.
@@ -104,7 +104,7 @@
        case UV_FS_MKDTEMP:
        {
          link = StringBytes::Encode(env->isolate(),
-@@ -253,7 +292,9 @@
+@@ -246,7 +285,9 @@
          }
          break;
        }
@@ -114,7 +114,7 @@
        case UV_FS_READLINK:
          link = StringBytes::Encode(env->isolate(),
                                     static_cast<const char*>(req->ptr),
-@@ -271,7 +312,9 @@
+@@ -258,7 +299,9 @@
            argv[1] = link.ToLocalChecked();
          }
          break;
@@ -124,7 +124,7 @@
        case UV_FS_REALPATH:
          link = StringBytes::Encode(env->isolate(),
                                     static_cast<const char*>(req->ptr),
-@@ -289,12 +332,14 @@
+@@ -270,12 +313,14 @@
            argv[1] = link.ToLocalChecked();
          }
          break;
@@ -139,7 +139,7 @@
        case UV_FS_SCANDIR:
          {
            int r;
-@@ -349,6 +394,7 @@
+@@ -324,6 +369,7 @@
            argv[1] = names;
          }
          break;
@@ -147,7 +147,7 @@
  
        default:
          CHECK(0 && "Unhandled eio response");
-@@ -387,7 +433,6 @@
+@@ -362,7 +408,6 @@
    if (err < 0) {                                                              \
      uv_fs_t* uv_req = req_wrap->req();                                        \
      uv_req->result = err;                                                     \
@@ -155,7 +155,7 @@
      After(uv_req);                                                            \
      req_wrap = nullptr;                                                       \
    } else {                                                                    \
-@@ -415,6 +460,7 @@
+@@ -390,6 +435,7 @@
  
  #define SYNC_RESULT err
  
@@ -163,7 +163,7 @@
  void Access(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args.GetIsolate());
    HandleScope scope(env->isolate());
-@@ -435,6 +481,7 @@
+@@ -410,6 +456,7 @@
      SYNC_CALL(access, *path, *path, mode);
    }
  }
@@ -171,7 +171,7 @@
  
  
  void Close(const FunctionCallbackInfo<Value>& args) {
-@@ -460,17 +507,26 @@
+@@ -435,17 +482,26 @@
    fields[0] = s->st_dev;
    fields[1] = s->st_mode;
    fields[2] = s->st_nlink;
@@ -200,7 +200,7 @@
    fields[9] = s->st_blocks;
  #else
    fields[9] = -1;
-@@ -486,10 +542,15 @@
+@@ -461,10 +517,15 @@
    X(10, atim)
    X(11, mtim)
    X(12, ctim)
@@ -216,7 +216,7 @@
  // Used to speed up module loading.  Returns the contents of the file as
  // a string or undefined when the file cannot be opened.  The speedup
  // comes from not creating Error objects on failure.
-@@ -547,7 +608,9 @@
+@@ -522,7 +583,9 @@
                            offset - start);
    args.GetReturnValue().Set(chars_string);
  }
@@ -226,7 +226,7 @@
  // Used to speed up module loading.  Returns 0 if the path refers to
  // a file, 1 when it's a directory or < 0 on error (usually -ENOENT.)
  // The speedup comes from not creating thousands of Stat and Error objects.
-@@ -585,7 +648,9 @@
+@@ -560,7 +623,9 @@
                     static_cast<const uv_stat_t*>(SYNC_REQ.ptr));
    }
  }
@@ -236,7 +236,7 @@
  static void LStat(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -603,6 +668,7 @@
+@@ -578,6 +643,7 @@
                     static_cast<const uv_stat_t*>(SYNC_REQ.ptr));
    }
  }
@@ -244,7 +244,7 @@
  
  static void FStat(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-@@ -619,10 +685,11 @@
+@@ -594,10 +660,11 @@
    } else {
      SYNC_CALL(fstat, nullptr, fd)
      FillStatsArray(env->fs_stats_field_array(),
@@ -257,7 +257,7 @@
  static void Symlink(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -656,7 +723,9 @@
+@@ -631,7 +698,9 @@
      SYNC_DEST_CALL(symlink, *target, *path, *target, *path, flags)
    }
  }
@@ -267,7 +267,7 @@
  static void Link(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -678,7 +747,9 @@
+@@ -653,7 +722,9 @@
      SYNC_DEST_CALL(link, *src, *dest, *src, *dest)
    }
  }
@@ -277,7 +277,7 @@
  static void ReadLink(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -717,7 +788,9 @@
+@@ -689,7 +760,9 @@
      args.GetReturnValue().Set(rc.ToLocalChecked());
    }
  }
@@ -287,7 +287,7 @@
  static void Rename(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -738,6 +811,7 @@
+@@ -710,6 +783,7 @@
      SYNC_DEST_CALL(rename, *old_path, *new_path, *old_path, *new_path)
    }
  }
@@ -295,7 +295,7 @@
  
  static void FTruncate(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-@@ -802,6 +876,7 @@
+@@ -774,6 +848,7 @@
    }
  }
  
@@ -303,7 +303,7 @@
  static void Unlink(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -817,7 +892,9 @@
+@@ -789,7 +864,9 @@
      SYNC_CALL(unlink, *path, *path)
    }
  }
@@ -313,7 +313,7 @@
  static void RMDir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -833,7 +910,9 @@
+@@ -805,7 +882,9 @@
      SYNC_CALL(rmdir, *path, *path)
    }
  }
@@ -323,7 +323,7 @@
  static void MKDir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -853,7 +932,9 @@
+@@ -825,7 +904,9 @@
      SYNC_CALL(mkdir, *path, *path, mode)
    }
  }
@@ -333,7 +333,7 @@
  static void RealPath(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -892,7 +973,9 @@
+@@ -861,7 +942,9 @@
      args.GetReturnValue().Set(rc.ToLocalChecked());
    }
  }
@@ -343,7 +343,7 @@
  static void ReadDir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -960,7 +1043,9 @@
+@@ -926,7 +1009,9 @@
      args.GetReturnValue().Set(names);
    }
  }
@@ -353,7 +353,7 @@
  static void Open(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -989,8 +1074,10 @@
+@@ -955,8 +1040,10 @@
      args.GetReturnValue().Set(SYNC_RESULT);
    }
  }
@@ -364,7 +364,7 @@
  static void CopyFile(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -1013,6 +1100,7 @@
+@@ -979,6 +1066,7 @@
      SYNC_DEST_CALL(copyfile, *src, *dest, *src, *dest, flags)
    }
  }
@@ -372,7 +372,7 @@
  
  
  // Wrapper for write(2).
-@@ -1167,7 +1255,9 @@
+@@ -1133,7 +1221,9 @@
    if (err < 0) {
      uv_fs_t* uv_req = req_wrap->req();
      uv_req->result = err;
@@ -382,7 +382,7 @@
      After(uv_req);
      return;
    }
-@@ -1237,6 +1327,7 @@
+@@ -1203,6 +1293,7 @@
  }
  
  
@@ -390,7 +390,7 @@
  /* fs.chmod(path, mode);
   * Wrapper for chmod(1) / EIO_CHMOD
   */
-@@ -1259,8 +1350,10 @@
+@@ -1225,8 +1316,10 @@
      SYNC_CALL(chmod, *path, *path, mode);
    }
  }
@@ -401,7 +401,7 @@
  /* fs.fchmod(fd, mode);
   * Wrapper for fchmod(1) / EIO_FCHMOD
   */
-@@ -1283,8 +1376,10 @@
+@@ -1249,8 +1342,10 @@
      SYNC_CALL(fchmod, 0, fd, mode);
    }
  }
@@ -412,7 +412,7 @@
  /* fs.chown(path, uid, gid);
   * Wrapper for chown(1) / EIO_CHOWN
   */
-@@ -1315,8 +1410,10 @@
+@@ -1281,8 +1376,10 @@
      SYNC_CALL(chown, *path, *path, uid, gid);
    }
  }
@@ -423,7 +423,7 @@
  /* fs.fchown(fd, uid, gid);
   * Wrapper for fchown(1) / EIO_FCHOWN
   */
-@@ -1347,8 +1444,10 @@
+@@ -1313,8 +1410,10 @@
      SYNC_CALL(fchown, 0, fd, uid, gid);
    }
  }
@@ -434,7 +434,7 @@
  static void UTimes(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -1376,6 +1475,7 @@
+@@ -1342,6 +1441,7 @@
      SYNC_CALL(utime, *path, *path, atime, mtime);
    }
  }
@@ -442,7 +442,7 @@
  
  static void FUTimes(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-@@ -1405,6 +1505,7 @@
+@@ -1371,6 +1471,7 @@
    }
  }
  
@@ -450,7 +450,7 @@
  static void Mkdtemp(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -1435,6 +1536,7 @@
+@@ -1398,6 +1499,7 @@
      args.GetReturnValue().Set(rc.ToLocalChecked());
    }
  }
@@ -458,7 +458,7 @@
  
  void GetStatValues(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-@@ -1458,48 +1560,92 @@
+@@ -1421,48 +1523,92 @@
              void* priv) {
    Environment* env = Environment::GetCurrent(context);
  

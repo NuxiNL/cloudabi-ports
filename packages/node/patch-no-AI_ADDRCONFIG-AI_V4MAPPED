@@ -1,6 +1,6 @@
 --- src/cares_wrap.cc
 +++ src/cares_wrap.cc
-@@ -2153,10 +2153,14 @@
+@@ -2196,10 +2196,14 @@
                Integer::New(env->isolate(), AF_INET6));
    target->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "AF_UNSPEC"),
                Integer::New(env->isolate(), AF_UNSPEC));

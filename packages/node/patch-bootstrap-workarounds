@@ -1,16 +1,16 @@
 --- lib/fs.js
 +++ lib/fs.js
 @@ -38,7 +38,6 @@
- const Stream = require('stream').Stream;
+ const { Readable, Writable } = require('stream');
  const EventEmitter = require('events');
- const FSReqWrap = binding.FSReqWrap;
--const FSEvent = process.binding('fs_event_wrap').FSEvent;
+ const { FSReqWrap } = binding;
+-const { FSEvent } = process.binding('fs_event_wrap');
  const internalFS = require('internal/fs');
- const internalURL = require('internal/url');
+ const { getPathFromURL } = require('internal/url');
  const internalUtil = require('internal/util');
 --- lib/internal/bootstrap_node.js
 +++ lib/internal/bootstrap_node.js
-@@ -431,7 +431,11 @@
+@@ -439,7 +439,11 @@
        // getcwd(3) can fail if the current working directory has been deleted.
        // Fall back to the directory name of the (absolute) executable path.
        // It's not really correct but what are the alternatives?
@@ -25,7 +25,7 @@
  
 --- lib/module.js
 +++ lib/module.js
-@@ -713,7 +713,6 @@
+@@ -742,7 +742,6 @@
      parent.require(requests[n]);
  };
  
@@ -35,9 +35,9 @@
  Module.Module = Module;
 --- lib/os.js
 +++ lib/os.js
-@@ -42,13 +42,8 @@
-   isBigEndian
- } = process.binding('os');
+@@ -64,13 +64,8 @@
+ const getOSType = getCheckedFunction(_getOSType);
+ const getUserInfo = getCheckedFunction(_getUserInfo);
  
 -getFreeMem[Symbol.toPrimitive] = () => getFreeMem();
 -getHostname[Symbol.toPrimitive] = () => getHostname();
@@ -49,7 +49,7 @@
  
  const kEndianness = isBigEndian ? 'BE' : 'LE';
  
-@@ -156,9 +151,6 @@
+@@ -177,9 +172,6 @@
    uptime: getUptime,
  
    // Deprecated APIs
@@ -61,7 +61,7 @@
  
 --- lib/repl.js
 +++ lib/repl.js
-@@ -81,8 +81,12 @@
+@@ -83,8 +83,12 @@
    // path.resolve('repl') fails when the current working directory has been
    // deleted.  Fall back to the directory name of the (absolute) executable
    // path.  It's not really correct but what are the alternatives?

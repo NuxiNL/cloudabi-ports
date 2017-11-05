@@ -1,6 +1,6 @@
 --- src/process_wrap.cc
 +++ src/process_wrap.cc
-@@ -61,7 +61,9 @@
+@@ -59,7 +59,9 @@
  
      env->SetProtoMethod(constructor, "close", HandleWrap::Close);
  
@@ -10,7 +10,7 @@
      env->SetProtoMethod(constructor, "kill", Kill);
  
      env->SetProtoMethod(constructor, "ref", HandleWrap::Ref);
-@@ -90,6 +92,7 @@
+@@ -88,6 +90,7 @@
                     AsyncWrap::PROVIDER_PROCESSWRAP) {
    }
  
@@ -18,7 +18,7 @@
    static void ParseStdioOptions(Environment* env,
                                  Local<Object> js_options,
                                  uv_process_options_t* options) {
-@@ -274,6 +277,7 @@
+@@ -272,6 +275,7 @@
  
      args.GetReturnValue().Set(err);
    }

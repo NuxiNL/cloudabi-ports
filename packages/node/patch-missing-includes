@@ -1,6 +1,6 @@
 --- src/cares_wrap.cc
 +++ src/cares_wrap.cc
-@@ -33,6 +33,7 @@
+@@ -29,6 +29,7 @@
  #include "uv.h"
  
  #include <errno.h>

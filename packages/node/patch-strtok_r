@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -4612,7 +4612,8 @@
+@@ -4328,7 +4328,8 @@
      char* cstr = strdup(node_options.c_str());
      char* initptr = cstr;
      char* token;

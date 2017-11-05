@@ -1,25 +1,6 @@
---- src/module_wrap.cc
-+++ src/module_wrap.cc
-@@ -262,6 +262,7 @@
- 
- namespace {
- 
-+#ifndef __CloudABI__
- URL __init_cwd() {
-   std::string specifier = "file://";
- #ifdef _WIN32
-@@ -281,6 +282,8 @@
-   return URL(specifier);
- }
- static URL INITIAL_CWD(__init_cwd());
-+#endif
-+
- inline bool is_relative_or_absolute_path(std::string specifier) {
-   auto len = specifier.length();
-   if (len <= 0) {
 --- src/node.cc
 +++ src/node.cc
-@@ -2055,6 +2055,7 @@
+@@ -1723,6 +1723,7 @@
  }
  
  
@@ -27,15 +8,15 @@
  static void Chdir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -2125,6 +2126,7 @@
+@@ -1793,6 +1794,7 @@
  
    args.GetReturnValue().Set(old);
  }
 +#endif
  
  
- #if defined(__POSIX__) && !defined(__ANDROID__)
-@@ -3657,10 +3659,12 @@
+ #if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
+@@ -3379,10 +3381,12 @@
    env->SetMethod(process, "_getActiveHandles", GetActiveHandles);
    env->SetMethod(process, "reallyExit", Exit);
    env->SetMethod(process, "abort", Abort);
@@ -46,5 +27,5 @@
    env->SetMethod(process, "umask", Umask);
 +#endif
  
- #if defined(__POSIX__) && !defined(__ANDROID__)
+ #if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
    env->SetMethod(process, "getuid", GetUid);
