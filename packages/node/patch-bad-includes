@@ -1,0 +1,11 @@
+--- node.gyp
++++ node.gyp
+@@ -651,8 +651,6 @@
+         'src',
+         'tools/msvs/genfiles',
+         'deps/v8/include',
+-        'deps/cares/include',
+-        'deps/uv/include',
+         '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
+       ],
+ 
