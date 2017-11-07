@@ -17,6 +17,7 @@ def build(ctx):
         '--shared-zlib',
         '--with-intl=system-icu',
         '--without-inspector',
+        '--without-node-options',
         '--without-snapshot',
         '--without-ssl',
     ])
