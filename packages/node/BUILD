@@ -13,6 +13,7 @@ def build(ctx):
         '--shared-cares',
         '--shared-http-parser',
         '--shared-libuv',
+        '--shared-nghttp2',
         '--shared-zlib',
         '--with-intl=system-icu',
         '--without-inspector',
