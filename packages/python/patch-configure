@@ -557,7 +557,7 @@
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H
  
-@@ -1099,6 +1207,9 @@
+@@ -1099,6 +1204,9 @@
  /* Define to 1 if you have the <term.h> header file. */
  #undef HAVE_TERM_H
  
@@ -567,7 +567,7 @@
  /* Define to 1 if you have the `tgamma' function. */
  #undef HAVE_TGAMMA
  
-@@ -1124,6 +1235,9 @@
+@@ -1124,6 +1232,9 @@
  /* Define to 1 if you have the `truncate' function. */
  #undef HAVE_TRUNCATE
  
@@ -577,7 +577,7 @@
  /* Define to 1 if you don't have `tm_zone' but do have the external array
     `tzname'. */
  #undef HAVE_TZNAME
-@@ -1131,12 +1245,18 @@
+@@ -1131,12 +1242,18 @@
  /* Define this if you have tcl and TCL_UTF_MAX==6 */
  #undef HAVE_UCS4_TCL
  
@@ -596,7 +596,7 @@
  /* Define to 1 if you have the `unlinkat' function. */
  #undef HAVE_UNLINKAT
  
-@@ -1160,6 +1280,9 @@
+@@ -1160,6 +1277,9 @@
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
  
