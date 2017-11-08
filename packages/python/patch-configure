@@ -101,7 +101,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+sys/procdesc.h sys/program.h sys/argdata.h \
++program.h argdata.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -151,7 +151,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf socket stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ pdwait program_exec program_spawn \
++ program_wait_deprecated program_exec program_spawn_deprecated \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty
  do :
    as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -191,7 +191,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+sys/procdesc.h sys/program.h sys/argdata.h \
++program.h argdata.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -241,7 +241,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ pdwait program_exec program_spawn \
++ program_wait_deprecated program_exec program_spawn_deprecated \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty)
  
  AC_CHECK_DECL(dirfd,
@@ -326,14 +326,14 @@
  /* Define to 1 if you have the `fork' function. */
  #undef HAVE_FORK
  
-+/* Define to 1 if you have the `pdwait' function. */
-+#undef HAVE_PDWAIT
++/* Define to 1 if you have the `program_wait_deprecated' function. */
++#undef HAVE_PROGRAM_WAIT_DEPRECATED
 +
 +/* Define to 1 if you have the `program_exec' function. */
 +#undef HAVE_PROGRAM_EXEC
 +
-+/* Define to 1 if you have the `program_spawn' function. */
-+#undef HAVE_PROGRAM_SPAWN
++/* Define to 1 if you have the `program_spawn_deprecated' function. */
++#undef HAVE_PROGRAM_SPAWN_DEPRECATED
 +
  /* Define to 1 if you have the `forkpty' function. */
  #undef HAVE_FORKPTY
@@ -547,15 +547,12 @@
  /* Define to 1 if you have the <sys/audioio.h> header file. */
  #undef HAVE_SYS_AUDIOIO_H
  
-@@ -1045,6 +1147,12 @@
+@@ -1045,6 +1147,9 @@
  /* Define to 1 if you have the <sys/socket.h> header file. */
  #undef HAVE_SYS_SOCKET_H
  
 +/* Define to 1 if you have the <sys/soundcard.h> header file. */
 +#undef HAVE_SYS_SOUNDCARD_H
-+
-+/* Define to 1 if you have the <sys/procdesc.h> header file. */
-+#undef HAVE_SYS_PROCDESC_H
 +
  /* Define to 1 if you have the <sys/statvfs.h> header file. */
  #undef HAVE_SYS_STATVFS_H

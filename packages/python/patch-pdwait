@@ -4,7 +4,7 @@
  
  #endif /* (defined(HAVE_WAITID) && !defined(__APPLE__)) */
  
-+#if defined(HAVE_PDWAIT)
++#if defined(HAVE_PROGRAM_WAIT_DEPRECATED)
 +
 +PyDoc_STRVAR(os_pdwait__doc__,
 +"pdwait($module, fd, options, /)\n"
@@ -43,7 +43,7 @@
 +    return return_value;
 +}
 +
-+#endif /* defined(HAVE_PDWAIT) */
++#endif /* defined(HAVE_PROGRAM_WAIT_DEPRECATED) */
 +
  #if defined(HAVE_WAITPID)
  
@@ -76,7 +76,7 @@
  static PyTypeObject WaitidResultType;
  #endif
  
-+#if defined(HAVE_PDWAIT)
++#if defined(HAVE_PROGRAM_WAIT_DEPRECATED)
 +PyDoc_STRVAR(pdwait_result__doc__,
 +"pdwait_result: Result from pdwait.\n\n\
 +This object may be accessed either as a tuple of\n\
@@ -108,7 +108,7 @@
  }
  #endif /* defined(HAVE_WAITID) && !defined(__APPLE__) */
  
-+#if defined(HAVE_PDWAIT)
++#if defined(HAVE_PROGRAM_WAIT_DEPRECATED)
 +/*[clinic input]
 +os.pdwait
 +
@@ -135,7 +135,7 @@
 +
 +    do {
 +        Py_BEGIN_ALLOW_THREADS
-+        res = pdwait(fd, &si, options);
++        res = program_wait_deprecated(fd, &si, options);
 +        Py_END_ALLOW_THREADS
 +    } while (res < 0 && errno == EINTR && !(async_err = PyErr_CheckSignals()));
 +    if (res < 0)
@@ -158,7 +158,7 @@
 +
 +    return result;
 +}
-+#endif /* defined(HAVE_PDWAIT) */
++#endif /* defined(HAVE_PROGRAM_WAIT_DEPRECATED) */
  
  #if defined(HAVE_WAITPID)
  /*[clinic input]
@@ -174,7 +174,7 @@
          if (PyStructSequence_InitType2(&WaitidResultType, &waitid_result_desc) < 0)
              return NULL;
  #endif
-+#if defined(HAVE_PDWAIT)
++#if defined(HAVE_PROGRAM_WAIT_DEPRECATED)
 +        pdwait_result_desc.name = MODNAME ".pdwait_result";
 +        if (PyStructSequence_InitType2(&PdwaitResultType, &pdwait_result_desc) < 0)
 +            return NULL;
@@ -186,7 +186,7 @@
      Py_INCREF((PyObject*) &WaitidResultType);
      PyModule_AddObject(m, "waitid_result", (PyObject*) &WaitidResultType);
  #endif
-+#if defined(HAVE_PDWAIT)
++#if defined(HAVE_PROGRAM_WAIT_DEPRECATED)
 +    Py_INCREF((PyObject*) &PdwaitResultType);
 +    PyModule_AddObject(m, "pdwait_result", (PyObject*) &PdwaitResultType);
 +#endif

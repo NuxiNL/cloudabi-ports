@@ -47,7 +47,7 @@
 +
 +#endif /* defined(HAVE_PROGRAM_EXEC) */
 +
-+#if defined(HAVE_PROGRAM_SPAWN)
++#if defined(HAVE_PROGRAM_SPAWN_DEPRECATED)
 +
 +PyDoc_STRVAR(os_program_spawn__doc__,
 +"program_spawn($module, /, fd, argdata)\n"
@@ -89,7 +89,7 @@
 +    return return_value;
 +}
 +
-+#endif /* defined(HAVE_PROGRAM_SPAWN) */
++#endif /* defined(HAVE_PROGRAM_SPAWN_DEPRECATED) */
 +
  #ifndef OS_TTYNAME_METHODDEF
      #define OS_TTYNAME_METHODDEF
@@ -129,7 +129,7 @@
  }
  #endif   /* HAVE_GETRANDOM_SYSCALL */
  
-+#if defined(HAVE_PROGRAM_EXEC) || defined(HAVE_PROGRAM_SPAWN)
++#if defined(HAVE_PROGRAM_EXEC) || defined(HAVE_PROGRAM_SPAWN_DEPRECATED)
 +struct argdata_list {
 +    argdata_t *argdata;
 +    void *pymem;
@@ -380,7 +380,7 @@
 +}
 +#endif
 +
-+#ifdef HAVE_PROGRAM_SPAWN
++#ifdef HAVE_PROGRAM_SPAWN_DEPRECATED
 +/*[clinic input]
 +os.program_spawn
 +
@@ -400,7 +400,7 @@
 +os_program_spawn_impl(PyObject *module, int fd, PyObject *argdata)
 +/*[clinic end generated code: output=ac72314dc7fa73c0 input=4ffcf387e04cc9e9]*/
 +{
-+    int result = argdata_call(program_spawn, fd, argdata);
++    int result = argdata_call(program_spawn_deprecated, fd, argdata);
 +    if (PyErr_Occurred()) {
 +        return NULL;
 +    }
