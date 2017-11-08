@@ -350,7 +350,7 @@
  
 --- src/uvw.hpp
 +++ src/uvw.hpp
-@@ -1,21 +1,14 @@
+@@ -1,21 +1,13 @@
  #include "uvw/async.hpp"
  #include "uvw/check.hpp"
  #include "uvw/dns.hpp"
@@ -363,7 +363,7 @@
  #include "uvw/pipe.hpp"
  #include "uvw/poll.hpp"
  #include "uvw/prepare.hpp"
- #include "uvw/process.hpp"
+-#include "uvw/process.hpp"
 -#include "uvw/signal.hpp"
  #include "uvw/tcp.hpp"
  #include "uvw/thread.hpp"
