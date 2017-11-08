@@ -104,7 +104,7 @@ class FileHandle:
             subprocess.check_call([self._builder.get_cc()
                                    ] + self._builder.get_cflags() + args +
                                   ['-c', '-o', output, self._path])
-        elif ext == '.cpp':
+        elif ext in {'.cc', '.cpp'}:
             log.info('CXX %s', self._path)
             subprocess.check_call([self._builder.get_cxx()
                                    ] + self._builder.get_cxxflags() + args +
