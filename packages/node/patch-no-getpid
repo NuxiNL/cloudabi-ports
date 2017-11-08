@@ -12,26 +12,3 @@
  }
  
  
---- src/env.cc
-+++ src/env.cc
-@@ -5,6 +5,8 @@
- 
- #if defined(_MSC_VER)
- #define getpid GetCurrentProcessId
-+#elif defined(__CloudABI__)
-+#define getpid() 0
- #else
- #include <unistd.h>
- #endif
---- src/node.cc
-+++ src/node.cc
-@@ -3235,7 +3235,9 @@
-       process_env_template->NewInstance(env->context()).ToLocalChecked();
-   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
- 
-+#ifndef __CloudABI__
-   READONLY_PROPERTY(process, "pid", Integer::New(env->isolate(), getpid()));
-+#endif
-   READONLY_PROPERTY(process, "features", GetFeatures(env));
- 
-   auto need_immediate_callback_string =
