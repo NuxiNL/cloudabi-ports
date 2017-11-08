@@ -8,6 +8,13 @@ def build(ctx):
     srcdir = ctx.extract('%(name)s/v%(version)s_libuv-v1.15').path('src')
     for i in {'fs', 'fs_event', 'fs_poll', 'lib', 'signal', 'tty', 'udp'}:
         srcdir.path('uvw').path(i + '.hpp').remove()
+
+    # Test whether this library can actually be included and used.
+    ctx.resource('compile-test.cc').compile([
+        '-I%s' % srcdir,
+        '-std=c++14',
+    ])
+
     srcdir.install('include')
 
 
