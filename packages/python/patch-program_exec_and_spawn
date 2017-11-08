@@ -114,12 +114,12 @@
  #endif
  #endif
  
-+#ifdef HAVE_PROGRAM_H
-+#include <sys/program.h>
++#ifdef HAVE_ARGDATA_H
++#include <argdata.h>
 +#endif
 +
-+#ifdef HAVE_ARGDATA_H
-+#include <sys/argdata.h>
++#ifdef HAVE_PROGRAM_H
++#include <program.h>
 +#endif
 +
  #ifdef HAVE_DLFCN_H
