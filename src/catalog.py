@@ -396,7 +396,7 @@ class FreeBSDCatalog(Catalog):
 
 class HomebrewCatalog(Catalog):
 
-    _OSX_VERSIONS = {'el_capitan', 'mavericks', 'sierra', 'yosemite'}
+    _OSX_VERSIONS = {'el_capitan', 'mavericks', 'sierra', 'yosemite', 'high_sierra'}
 
     def __init__(self, old_path, new_path, url):
         super(HomebrewCatalog, self).__init__(old_path, new_path)
