@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2015 Nuxi, https://nuxi.nl/
 #
-# This file is distributed under a 2-clause BSD license.
-# See the LICENSE file for details.
+# SPDX-License-Identifier: BSD-2-Clause
 
 import logging
 import os
