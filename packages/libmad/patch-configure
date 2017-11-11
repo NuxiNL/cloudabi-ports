@@ -1,5 +1,14 @@
 --- configure
 +++ configure
+@@ -2444,7 +2444,7 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+-    cross_compiling=no
++    cross_compiling=yes
+   else
+     if test "$cross_compiling" = maybe; then
+ 	cross_compiling=yes
 @@ -19032,123 +19032,6 @@
  optimize=""
  profile=""
