@@ -45,7 +45,7 @@ host_package(
     name='grpc',
     version='1.4.7',
     homepage='http://www.grpc.io/',
-    build_depends={'c-ares', 'cmake', 'protobuf-cpp'},
+    build_depends={'c-ares', 'cmake', 'ninja', 'protobuf-cpp'},
     build_cmd=host_build)
 
 distfile(
