@@ -6,6 +6,7 @@ host_package(
     name='sed',
     version='4.4',
     homepage='https://www.gnu.org/software/sed/',
+    build_depends={'texinfo'},
     build_cmd=build_autoconf_automake)
 
 distfile(
