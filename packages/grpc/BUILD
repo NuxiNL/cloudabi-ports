@@ -17,6 +17,7 @@ def build(ctx):
         '-DgRPC_ZLIB_PROVIDER=package',
         '-D_gRPC_PROTOBUF_PROTOC=%s/bin/protoc' % host_prefix,
         '-DgRPC_PROTOBUF_GRPC_CPP_PLUGIN=%s/bin/grpc_cpp_plugin' % host_prefix,
+        '-DPROTOBUF_WELLKNOWN_IMPORT_DIR=%s/include' % host_prefix,
     ])
     build.ninja()
     build.ninja_install().install()
@@ -36,6 +37,7 @@ def host_build(ctx):
         '-DgRPC_PROTOBUF_PROVIDER=package',
         '-DgRPC_SSL_PROVIDER=package',
         '-DgRPC_ZLIB_PROVIDER=package',
+        '-DPROTOBUF_WELLKNOWN_IMPORT_DIR=%s/include' % ctx.prefix(),
     ])
     build.ninja()
     build.ninja_install().install()
