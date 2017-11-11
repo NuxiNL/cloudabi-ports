@@ -26,13 +26,13 @@ def build(ctx):
 
 package(
     name='cloudabi-utils',
-    version='0.34',
+    version='0.35',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     lib_depends={'c-runtime'},
     build_cmd=build,
     replaces={'cloudabi-reexec'})
 
 distfile(
-    name='cloudabi-utils/v0.34.tar.gz',
-    checksum='de924fed3d2e64bd59f21bb1c949774b2fdc7882d81d75787e7d75f5c81ee1fb',
+    name='cloudabi-utils/v0.35.tar.gz',
+    checksum='ab67e06e7c38a03bcc589c0c12e48eb4e3945c8ab369bf46002959b0036178d6',
     master_sites={'https://github.com/NuxiNL/cloudabi-utils/archive/'})
