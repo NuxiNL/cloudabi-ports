@@ -65,10 +65,7 @@ def build(ctx):
             'lib/python3.6/config-3.6dm/python-config.py'
     }:
         stage.path(f).unhardcode_paths()
-
-    # TODO(ed): Figure out what to do with this!
-    stage.path(
-        'lib/python3.6/lib-dynload/_sysconfigdata_m_freebsd10_.py').remove()
+    stage.path('lib/python3.6/lib-dynload').remove()
     stage.install()
 
 
