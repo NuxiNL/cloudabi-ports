@@ -325,11 +325,11 @@ class HostBuilder:
             # As these are bootstrapping tools, there is no need to
             # preserve any documentation and locales.
             path = os.path.relpath(target_file, target)
-            if (path != 'lib/charset.alias' and
-                    not path.startswith('share/doc/') and
-                    not path.startswith('share/info/') and
-                    not path.startswith('share/locale/') and
-                    not path.startswith('share/man/')):
+            if (path != 'lib/charset.alias'
+                    and not path.startswith('share/doc/')
+                    and not path.startswith('share/info/')
+                    and not path.startswith('share/locale/')
+                    and not path.startswith('share/man/')):
                 util.make_parent_dir(target_file)
                 util.copy_file(source_file, target_file, False)
 
@@ -383,8 +383,8 @@ class TargetBuilder:
     def gnu_configure(self, builddir, script, args):
         self.run(
             builddir,
-            [script, '--host=' + self._arch, '--prefix=' + self.get_prefix()
-             ] + args)
+            [script, '--host=' + self._arch, '--prefix=' + self.get_prefix()] +
+            args)
 
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [

@@ -54,8 +54,8 @@ class FullVersion:
             # revision number.
             self._epoch += 1
             self._revision = 1
-        elif (self._version == other._version and
-              self._revision < other._revision):
+        elif (self._version == other._version
+              and self._revision < other._revision):
             # Package of the same version already exists. Ensure that we
             # don't decrement the revision number.
             self._revision = other._revision

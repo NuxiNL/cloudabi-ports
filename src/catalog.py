@@ -244,9 +244,8 @@ class DebianCatalog(Catalog):
         with open(os.path.join(controldir, 'control'), 'w') as f:
             f.write(self._get_control_snippet(package, version, datadir_size))
         with open(os.path.join(controldir, 'md5sums'), 'w') as f:
-            f.writelines('%s  %s\n' % (util.md5(fpath).hexdigest(),
-                                       os.path.relpath(fpath, datadir))
-                         for fpath in datadir_files)
+            f.writelines('%s  %s\n' % (util.md5(fpath).hexdigest(
+            ), os.path.relpath(fpath, datadir)) for fpath in datadir_files)
         self._sanitize_permissions(controldir)
         self._run_tar([
             '-czf',
@@ -396,7 +395,7 @@ class FreeBSDCatalog(Catalog):
 class HomebrewCatalog(Catalog):
 
     _OSX_VERSIONS = {
-        'el_capitan', 'high_sierra', 'mavericks', 'sierra', 'yosemite',
+        'el_capitan', 'high_sierra', 'mavericks', 'sierra', 'yosemite'
     }
 
     def __init__(self, old_path, new_path, url):
@@ -1004,8 +1003,8 @@ class RedHatCatalog(Catalog):
         # http://www.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
         # http://refspecs.linux-foundation.org/LSB_5.0.0/LSB-Core-generic/LSB-Core-generic/pkgformat.html
         name = package.get_redhat_name()
-        lib_depends = sorted(dep.get_redhat_name()
-                             for dep in package.get_lib_depends())
+        lib_depends = sorted(
+            dep.get_redhat_name() for dep in package.get_lib_depends())
         dirs = sorted({os.path.dirname(f) for f in files})
         header = bytes(
             rpm.Header({
