@@ -6,6 +6,7 @@ host_package(
     name='diffutils',
     version='3.5',
     homepage='https://www.gnu.org/software/diffutils/',
+    build_depends={'texinfo'},
     build_cmd=build_autoconf_automake)
 
 distfile(
