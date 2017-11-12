@@ -35,7 +35,7 @@ DIR_REDHAT_CATALOG = '/usr/local/www/nuxi.nl/public/distfiles/cloudabi-ports/red
 ARCHLINUX_PRIVATE_KEY = '31344B15'
 CYGWIN_PRIVATE_KEY = 'A4836F43'
 DEBIAN_PRIVATE_KEY = '31344B15'
-FREEBSD_PRIVATE_KEY = '/home/edje/.cloudabi-ports-freebsd.key'
+FREEBSD_PRIVATE_KEY = '/home/ed/.cloudabi-ports-freebsd.key'
 REDHAT_PRIVATE_KEY = '31344B15'
 
 # The Homebrew repository needs to know its own URL.
