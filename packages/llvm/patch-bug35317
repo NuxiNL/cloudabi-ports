@@ -1,0 +1,54 @@
+--- lib/Target/AArch64/AArch64ExpandPseudoInsts.cpp
++++ lib/Target/AArch64/AArch64ExpandPseudoInsts.cpp
+@@ -17,7 +17,6 @@
+ #include "AArch64InstrInfo.h"
+ #include "AArch64Subtarget.h"
+ #include "MCTargetDesc/AArch64AddressingModes.h"
+-#include "Utils/AArch64BaseInfo.h"
+ #include "llvm/CodeGen/LivePhysRegs.h"
+ #include "llvm/CodeGen/MachineFunctionPass.h"
+ #include "llvm/CodeGen/MachineInstrBuilder.h"
+@@ -893,18 +892,6 @@
+     MI.eraseFromParent();
+     return true;
+   }
+-  case AArch64::MOVbaseTLS: {
+-    unsigned DstReg = MI.getOperand(0).getReg();
+-    auto SysReg = AArch64SysReg::TPIDR_EL0;
+-    MachineFunction *MF = MBB.getParent();
+-    if (MF->getTarget().getTargetTriple().isOSFuchsia() &&
+-        MF->getTarget().getCodeModel() == CodeModel::Kernel)
+-      SysReg = AArch64SysReg::TPIDR_EL1;
+-    BuildMI(MBB, MBBI, MI.getDebugLoc(), TII->get(AArch64::MRS), DstReg)
+-        .addImm(SysReg);
+-    MI.eraseFromParent();
+-    return true;
+-  }
+ 
+   case AArch64::MOVi32imm:
+     return expandMOVImm(MBB, MBBI, 32);
+--- lib/Target/AArch64/AArch64InstrInfo.td
++++ lib/Target/AArch64/AArch64InstrInfo.td
+@@ -441,10 +441,8 @@
+ def MSRpstateImm4 : MSRpstateImm0_15;
+ 
+ // The thread pointer (on Linux, at least, where this has been implemented) is
+-// TPIDR_EL0.  Add pseudo op so we can mark it as not having any side effects.
+-let hasSideEffects = 0 in
+-def MOVbaseTLS : Pseudo<(outs GPR64:$dst), (ins),
+-                       [(set GPR64:$dst, AArch64threadpointer)]>, Sched<[WriteSys]>;
++// TPIDR_EL0.
++def : Pat<(AArch64threadpointer), (MRS 0xde82)>;
+ 
+ // The cycle counter PMC register is PMCCNTR_EL0.
+ let Predicates = [HasPerfMon] in
+--- lib/Target/AArch64/AArch64SchedFalkorDetails.td
++++ lib/Target/AArch64/AArch64SchedFalkorDetails.td
+@@ -1247,7 +1247,6 @@
+                                       (instregex "^(LDAR(B|H|W|X)|LDAXR(B|H|W|X)|LDXR(B|H|W|X))$")>;
+ def : InstRW<[FalkorWr_1LD_3cyc, FalkorWr_none_3cyc, FalkorReadIncLd],
+                                       (instregex "^(LDAXP(W|X)|LDXP(W|X))$")>;
+-def : InstRW<[FalkorWr_1LD_3cyc],     (instrs MRS, MOVbaseTLS)>;
+ 
+ def : InstRW<[FalkorWr_1LD_1Z_3cyc],  (instrs DRPS)>;
+ 

@@ -54,4 +54,4 @@ distfile(
     name='llvm-5.0.0.src.tar.xz',
     checksum='e35dcbae6084adcf4abb32514127c5eabd7d63b733852ccdb31e06f1373136da',
     master_sites={'http://releases.llvm.org/5.0.0/'},
-    patches={'r317358'})
+    patches={'bug35317', 'r317358'})
