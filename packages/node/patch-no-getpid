@@ -12,3 +12,56 @@
  }
  
  
+--- src/node.cc
++++ src/node.cc
+@@ -2850,10 +2850,12 @@
+ }
+ 
+ 
++#ifndef __CloudABI__
+ static void GetParentProcessId(Local<Name> property,
+                                const PropertyCallbackInfo<Value>& info) {
+   info.GetReturnValue().Set(Integer::New(info.GetIsolate(), uv_os_getppid()));
+ }
++#endif
+ 
+ 
+ static Local<Object> GetFeatures(Environment* env) {
+@@ -3158,9 +3160,11 @@
+                     Integer::New(env->isolate(), GetProcessId()));
+   READONLY_PROPERTY(process, "features", GetFeatures(env));
+ 
++#ifndef __CloudABI__
+   CHECK(process->SetAccessor(env->context(),
+                              FIXED_ONE_BYTE_STRING(env->isolate(), "ppid"),
+                              GetParentProcessId).FromJust());
++#endif
+ 
+   auto scheduled_immediate_count =
+       FIXED_ONE_BYTE_STRING(env->isolate(), "_scheduledImmediateCount");
+--- src/util.cc
++++ src/util.cc
+@@ -120,11 +120,16 @@
+ }
+ 
+ void GetHumanReadableProcessName(char (*name)[1024]) {
++#ifdef __CloudABI__
++  snprintf(*name, sizeof(*name), "Node.js");
++#else
+   char title[1024] = "Node.js";
+   uv_get_process_title(title, sizeof(title));
+   snprintf(*name, sizeof(*name), "%s[%u]", title, GetProcessId());
++#endif
+ }
+ 
++#ifndef __CloudABI__
+ uint32_t GetProcessId() {
+ #ifdef _WIN32
+   return GetCurrentProcessId();
+@@ -132,5 +137,6 @@
+   return getpid();
+ #endif
+ }
++#endif
+ 
+ }  // namespace node

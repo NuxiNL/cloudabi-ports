@@ -4,7 +4,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract('%(name)s/9f3d59eabb6564ad337a762d61ac767f9130e8a5')
+    srcdir = ctx.extract('%(name)s/f722d3122cd0c3d4a03bb2fb73998d6087e8318a')
     srcdir.run([
         'python2',
         './configure',
@@ -26,7 +26,7 @@ def build(ctx):
 
 package(
     name='node',
-    version='9.20171105',
+    version='9.20171122',
     homepage='http://nodejs.org/',
     lib_depends={
         'c-ares',
@@ -39,7 +39,7 @@ package(
     build_cmd=build)
 
 distfile(
-    name='node/9f3d59eabb6564ad337a762d61ac767f9130e8a5.tar.gz',
-    checksum='23eada3a34fd52af435c23d6c8db9e014eb034bfdda9fb9f3d208465c31047c0',
+    name='node/f722d3122cd0c3d4a03bb2fb73998d6087e8318a.tar.gz',
+    checksum='f9539ef716e44ba2a81f2420b8d0e50ee8b2e5e97bf7ac03275986413f880bf8',
     master_sites={'https://github.com/nodejs/node/archive/'},
     unsafe_string_sources={'deps/v8/src/base/file-utils.cc'})

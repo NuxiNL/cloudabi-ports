@@ -1,6 +1,6 @@
 --- node.gyp
 +++ node.gyp
-@@ -651,8 +651,6 @@
+@@ -813,8 +813,6 @@
          'src',
          'tools/msvs/genfiles',
          'deps/v8/include',

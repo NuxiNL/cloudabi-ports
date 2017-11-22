@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -2770,6 +2770,7 @@
+@@ -2714,6 +2714,7 @@
  static void EnvSetter(Local<Name> property,
                        Local<Value> value,
                        const PropertyCallbackInfo<Value>& info) {
@@ -8,7 +8,7 @@
  #ifdef __POSIX__
    node::Utf8Value key(info.GetIsolate(), property);
    node::Utf8Value val(info.GetIsolate(), value);
-@@ -2783,6 +2784,7 @@
+@@ -2727,6 +2728,7 @@
      SetEnvironmentVariableW(key_ptr, reinterpret_cast<WCHAR*>(*val));
    }
  #endif
@@ -16,7 +16,7 @@
    // Whether it worked or not, always return value.
    info.GetReturnValue().Set(value);
  }
-@@ -2819,6 +2821,7 @@
+@@ -2763,6 +2765,7 @@
  static void EnvDeleter(Local<Name> property,
                         const PropertyCallbackInfo<Boolean>& info) {
    if (property->IsString()) {
@@ -24,7 +24,7 @@
  #ifdef __POSIX__
      node::Utf8Value key(info.GetIsolate(), property);
      unsetenv(*key);
-@@ -2827,6 +2830,7 @@
+@@ -2771,6 +2774,7 @@
      WCHAR* key_ptr = reinterpret_cast<WCHAR*>(*key);
      SetEnvironmentVariableW(key_ptr, nullptr);
  #endif

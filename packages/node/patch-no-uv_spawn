@@ -18,7 +18,7 @@
    static void ParseStdioOptions(Environment* env,
                                  Local<Object> js_options,
                                  uv_process_options_t* options) {
-@@ -272,6 +275,7 @@
+@@ -275,6 +278,7 @@
  
      args.GetReturnValue().Set(err);
    }

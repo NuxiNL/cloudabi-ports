@@ -1,33 +1,36 @@
 --- src/module_wrap.cc
 +++ src/module_wrap.cc
-@@ -337,8 +337,14 @@
-   if (path.empty()) {
-     return Nothing<uv_file>();
-   }
+@@ -336,6 +336,9 @@
+ 
+ Maybe<uv_file> CheckFile(const URL& search,
+                          CheckFileOptions opt = CLOSE_AFTER_CHECK) {
 +#ifdef __CloudABI__
-+  // TODO(ed): Implement this using openat(), so that module loading may
-+  // be restricted to certain directories.
-+  int fd = -1;
++  return Nothing<uv_file>();
 +#else
-   uv_fs_open(nullptr, &fs_req, path.c_str(), O_RDONLY, 0, nullptr);
-   uv_file fd = fs_req.result;
-+#endif
-   if (fd < 0) {
-     return Nothing<uv_file>();
+   uv_fs_t fs_req;
+   std::string path = search.ToFilePath();
+   if (path.empty()) {
+@@ -365,6 +368,7 @@
    }
+ 
+   return Just(fd);
++#endif
+ }
+ 
+ enum ResolveExtensionsOptions {
 --- src/node.cc
 +++ src/node.cc
-@@ -3402,7 +3402,9 @@
+@@ -3328,7 +3328,9 @@
  
    env->SetMethod(process, "_kill", Kill);
  
 +#ifndef __CloudABI__
    env->SetMethod(process, "_debugProcess", DebugProcess);
 +#endif
-   env->SetMethod(process, "_debugPause", DebugPause);
    env->SetMethod(process, "_debugEnd", DebugEnd);
  
-@@ -3996,8 +3998,12 @@
+   env->SetMethod(process, "hrtime", Hrtime);
+@@ -3921,8 +3923,12 @@
  #endif  // HAVE_INSPECTOR
  }
  
@@ -42,7 +45,7 @@
  void RegisterSignalHandler(int signal,
                             void (*handler)(int signal),
                             bool reset_handler) {
-@@ -4172,7 +4178,7 @@
+@@ -4092,7 +4098,7 @@
    CHECK_EQ(err, 0);
  #endif  // HAVE_INSPECTOR
  
@@ -51,7 +54,7 @@
    // Restore signal dispositions, the parent process may have changed them.
    struct sigaction act;
    memset(&act, 0, sizeof(act));
-@@ -4249,7 +4255,7 @@
+@@ -4169,7 +4175,7 @@
      }
    }
  
@@ -60,7 +63,7 @@
    // Block SIGPROF signals when sleeping in epoll_wait/kevent/etc.  Avoids the
    // performance penalty of frequent EINTR wakeups when the profiler is running.
    // Only do this for v8.log profiling, as it breaks v8::CpuProfiler users.
-@@ -4603,8 +4609,10 @@
+@@ -4547,8 +4553,10 @@
  
    CHECK_GT(argc, 0);
  

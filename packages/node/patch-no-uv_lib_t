@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -2294,6 +2294,7 @@
+@@ -2238,6 +2238,7 @@
    return FindModule(modlist_linked, name, NM_F_LINKED);
  }
  
@@ -8,7 +8,7 @@
  struct DLib {
    std::string filename_;
    std::string errmsg_;
-@@ -2435,6 +2436,7 @@
+@@ -2379,6 +2380,7 @@
    // Tell coverity that 'handle' should not be freed when we return.
    // coverity[leaked_storage]
  }
@@ -16,7 +16,7 @@
  
  
  static void OnFatalError(const char* location, const char* message) {
-@@ -3410,7 +3412,9 @@
+@@ -3335,7 +3337,9 @@
  
    env->SetMethod(process, "cpuUsage", CPUUsage);
  

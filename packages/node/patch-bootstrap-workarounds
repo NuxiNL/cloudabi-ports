@@ -10,7 +10,7 @@
  const internalUtil = require('internal/util');
 --- lib/internal/bootstrap_node.js
 +++ lib/internal/bootstrap_node.js
-@@ -439,7 +439,11 @@
+@@ -440,7 +440,11 @@
        // getcwd(3) can fail if the current working directory has been deleted.
        // Fall back to the directory name of the (absolute) executable path.
        // It's not really correct but what are the alternatives?
@@ -25,7 +25,7 @@
  
 --- lib/module.js
 +++ lib/module.js
-@@ -742,7 +742,6 @@
+@@ -748,7 +748,6 @@
      parent.require(requests[n]);
  };
  
@@ -61,7 +61,7 @@
  
 --- lib/repl.js
 +++ lib/repl.js
-@@ -83,8 +83,12 @@
+@@ -84,8 +84,12 @@
    // path.resolve('repl') fails when the current working directory has been
    // deleted.  Fall back to the directory name of the (absolute) executable
    // path.  It's not really correct but what are the alternatives?

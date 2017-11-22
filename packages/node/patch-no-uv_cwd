@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -1723,6 +1723,7 @@
+@@ -1667,6 +1667,7 @@
  }
  
  
@@ -8,7 +8,7 @@
  static void Chdir(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
  
-@@ -1793,6 +1794,7 @@
+@@ -1737,6 +1738,7 @@
  
    args.GetReturnValue().Set(old);
  }
@@ -16,7 +16,7 @@
  
  
  #if defined(__POSIX__) && !defined(__ANDROID__) && !defined(__CloudABI__)
-@@ -3379,10 +3381,12 @@
+@@ -3305,10 +3307,12 @@
    env->SetMethod(process, "_getActiveHandles", GetActiveHandles);
    env->SetMethod(process, "reallyExit", Exit);
    env->SetMethod(process, "abort", Abort);

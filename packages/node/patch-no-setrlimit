@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -4191,6 +4191,7 @@
+@@ -4111,6 +4111,7 @@
    RegisterSignalHandler(SIGINT, SignalExit, true);
    RegisterSignalHandler(SIGTERM, SignalExit, true);
  
@@ -8,7 +8,7 @@
    // Raise the open file descriptor limit.
    struct rlimit lim;
    if (getrlimit(RLIMIT_NOFILE, &lim) == 0 && lim.rlim_cur != lim.rlim_max) {
-@@ -4211,6 +4212,7 @@
+@@ -4131,6 +4132,7 @@
        }
      } while (min + 1 < max);
    }

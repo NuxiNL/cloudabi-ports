@@ -1,0 +1,22 @@
+--- node.gyp
++++ node.gyp
+@@ -178,7 +178,6 @@
+ 
+       'dependencies': [
+         'node_js2c#host',
+-        'deps/nghttp2/nghttp2.gyp:nghttp2'
+       ],
+ 
+       'includes': [
+@@ -463,6 +462,11 @@
+         }, {
+           'defines': [ 'HAVE_OPENSSL=0' ]
+         }],
++        [ 'node_shared_nghttp2=="false"', {
++          'dependencies': [
++            'deps/nghttp2/nghttp2.gyp:nghttp2'
++          ]
++        }],
+       ],
+     },
+     {

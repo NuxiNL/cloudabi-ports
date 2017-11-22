@@ -1,0 +1,11 @@
+--- node.gyp
++++ node.gyp
+@@ -914,7 +914,7 @@
+             'deps/zlib/zlib.gyp:zlib',
+            ]
+         }],
+-        [ 'node_shared_openssl=="false" and node_shared=="false"', {
++        [ 'node_shared_openssl=="false" and node_shared=="false" and node_use_openssl=="true"', {
+           'dependencies': [
+             'deps/openssl/openssl.gyp:openssl'
+           ]

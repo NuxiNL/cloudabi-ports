@@ -1,7 +1,7 @@
 --- node.gyp
 +++ node.gyp
-@@ -190,9 +190,7 @@
-         'src/async-wrap.cc',
+@@ -195,9 +195,7 @@
+         'src/async_wrap.cc',
          'src/cares_wrap.cc',
          'src/connection_wrap.cc',
 -        'src/connect_wrap.cc',
@@ -10,7 +10,7 @@
          'src/handle_wrap.cc',
          'src/js_stream.cc',
          'src/module_wrap.cc',
-@@ -216,14 +214,11 @@
+@@ -222,14 +220,11 @@
          'src/node_url.cc',
          'src/node_util.cc',
          'src/node_v8.cc',
@@ -25,3 +25,22 @@
          'src/string_bytes.cc',
          'src/string_search.cc',
          'src/stream_base.cc',
+--- src/node_internals.h
++++ src/node_internals.h
+@@ -105,7 +105,6 @@
+     V(config)                                                                 \
+     V(contextify)                                                             \
+     V(fs)                                                                     \
+-    V(fs_event_wrap)                                                          \
+     V(http2)                                                                  \
+     V(http_parser)                                                            \
+     V(inspector)                                                              \
+@@ -116,8 +115,6 @@
+     V(pipe_wrap)                                                              \
+     V(process_wrap)                                                           \
+     V(serdes)                                                                 \
+-    V(signal_wrap)                                                            \
+-    V(spawn_sync)                                                             \
+     V(stream_wrap)                                                            \
+     V(tcp_wrap)                                                               \
+     V(timer_wrap)                                                             \

@@ -1,6 +1,6 @@
 --- src/node.cc
 +++ src/node.cc
-@@ -4146,6 +4146,20 @@
+@@ -4066,6 +4066,20 @@
  }
  
  
@@ -23,7 +23,7 @@
  #if HAVE_INSPECTOR
 --- src/node.h
 +++ src/node.h
-@@ -96,6 +96,10 @@
+@@ -97,6 +97,10 @@
  // Forward-declare libuv loop
  struct uv_loop_s;
  
