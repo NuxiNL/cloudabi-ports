@@ -1,4 +1,3 @@
-Binary files /usr/obj/cloudabi-ports/build/2/src/.stream_engine.cpp.swp and /usr/obj/cloudabi-ports/build/0/zeromq-4.2.1/src/.stream_engine.cpp.swp differ
 --- src/reaper.cpp
 +++ src/reaper.cpp
 @@ -35,7 +35,7 @@
@@ -12,7 +11,7 @@ Binary files /usr/obj/cloudabi-ports/build/2/src/.stream_engine.cpp.swp and /usr
  {
 --- src/socket_base.cpp
 +++ src/socket_base.cpp
-@@ -186,7 +186,7 @@
+@@ -188,7 +188,7 @@
      ctx_terminated (false),
      destroyed (false),
      poller(NULL),
@@ -34,7 +33,7 @@ Binary files /usr/obj/cloudabi-ports/build/2/src/.stream_engine.cpp.swp and /usr
      decoder (NULL),
 --- src/tcp_listener.cpp
 +++ src/tcp_listener.cpp
-@@ -61,7 +61,7 @@
+@@ -62,7 +62,7 @@
      own_t (io_thread_, options_),
      io_object_t (io_thread_),
      s (retired_fd),

@@ -1,6 +1,6 @@
 --- pngwrite.c
 +++ pngwrite.c
-@@ -473,12 +473,12 @@
+@@ -484,12 +484,12 @@
  void PNGAPI
  png_convert_from_time_t(png_timep ptime, time_t ttime)
  {
