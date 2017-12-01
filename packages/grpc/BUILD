@@ -20,7 +20,10 @@ def build(ctx):
         '-DPROTOBUF_WELLKNOWN_IMPORT_DIR=%s/include' % host_prefix,
     ])
     build.ninja()
-    build.ninja_install().install()
+    stage = build.ninja_install()
+    stage.path('lib/cmake/grpc/gRPCTargets-release.cmake').unhardcode_paths()
+    stage.path('lib/cmake/grpc/gRPCTargets.cmake').unhardcode_paths()
+    stage.install()
 
 
 package(
