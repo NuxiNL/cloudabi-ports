@@ -20,9 +20,10 @@ DIR_TMP = os.path.join(DIR_ROOT, '_obj/fixup_patches')
 
 # Parse all of the BUILD rules.
 repo = Repository(None)
-for filename in util.walk_files(sys.argv[1]):
-    if os.path.basename(filename) == 'BUILD':
-        repo.add_build_file(filename, DIR_DISTFILES)
+for arg in sys.argv[1:]:
+    for filename in util.walk_files(arg):
+        if os.path.basename(filename) == 'BUILD':
+            repo.add_build_file(filename, DIR_DISTFILES)
 
 # Regenerate all the patches.
 for distfile in repo.get_distfiles():
