@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='libressl',
-    version='2.5.1',
-    homepage='http://www.libressl.org/',
+    version='2.6.3',
+    homepage='https://www.libressl.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='libressl-2.5.1.tar.gz',
-    checksum='f71ae0a824b78fb1a47ffa23c9c26e9d96c5c9b29234eacedce6b4c7740287cd',
-    master_sites={'http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'})
+    name='libressl-2.6.3.tar.gz',
+    checksum='aead6598263171b96970da0d881e616d0813b69b35ebdc5991f87ff2ea7f5c98',
+    master_sites={'https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/'})
