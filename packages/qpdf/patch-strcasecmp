@@ -1,0 +1,10 @@
+--- libqpdf/QUtil.cc
++++ libqpdf/QUtil.cc
+@@ -24,6 +24,7 @@
+ #include <direct.h>
+ #include <io.h>
+ #else
++#include <strings.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
+ #endif

@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -11,12 +11,12 @@ def build(ctx):
 
 package(
     name='qpdf',
-    version='6.0.0',
+    version='7.0.0',
     homepage='http://qpdf.sourceforge.net/',
-    lib_depends={'c-runtime', 'pcre', 'zlib'},
+    lib_depends={'c-runtime', 'jpeg', 'pcre', 'zlib'},
     build_cmd=build)
 
 distfile(
-    name='qpdf-6.0.0.tar.gz',
-    checksum='a9fdc7e94d38fcd3831f37b6e0fe36492bf79aa6d54f8f66062cf7f9c4155233',
-    master_sites=sites_sourceforge('qpdf/qpdf/6.0.0'))
+    name='qpdf-7.0.0.tar.gz',
+    checksum='fed08de14caad0fe5efd148d9eca886d812588b2cbb35d13e61993ee8eb8c65f',
+    master_sites=sites_sourceforge('qpdf/qpdf/7.0.0'))

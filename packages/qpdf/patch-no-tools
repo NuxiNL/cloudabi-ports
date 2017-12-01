@@ -1,6 +1,6 @@
 --- Makefile
 +++ Makefile
-@@ -30,7 +30,7 @@
+@@ -35,7 +35,7 @@
  # install to install in a separate location.  This is useful for
  # packagers.
  
@@ -11,7 +11,7 @@
  
 --- make/libtool.mk
 +++ make/libtool.mk
-@@ -116,17 +116,9 @@
+@@ -116,13 +116,6 @@
  		libqpdf/$(OUTPUT_DIR)/libqpdf.la \
  		$(DESTDIR)$(libdir)/libqpdf.la
  	$(LIBTOOL) --finish $(DESTDIR)$(libdir)
@@ -25,7 +25,8 @@
  	cp include/qpdf/*.h $(DESTDIR)$(includedir)/qpdf
  	cp include/qpdf/*.hh $(DESTDIR)$(includedir)/qpdf
  	cp doc/stylesheet.css $(DESTDIR)$(docdir)
- 	cp doc/qpdf-manual.html $(DESTDIR)$(docdir)
- 	cp doc/qpdf-manual.pdf $(DESTDIR)$(docdir)
+@@ -133,4 +126,3 @@
+ 	if [ -f doc/qpdf-manual.pdf ]; then \
+ 		cp doc/qpdf-manual.pdf $(DESTDIR)$(docdir); \
+ 	fi
 -	cp doc/*.1 $(DESTDIR)$(mandir)/man1
- 	cp libqpdf.pc $(DESTDIR)$(libdir)/pkgconfig

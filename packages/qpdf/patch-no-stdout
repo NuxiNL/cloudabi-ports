@@ -16,24 +16,9 @@
  
  std::string MD5::unparse()
  {
---- libqpdf/PCRE.cc
-+++ libqpdf/PCRE.cc
-@@ -208,6 +208,7 @@
-     return result;
- }
- 
-+#if 0
- void
- PCRE::test(int n)
- {
-@@ -352,3 +353,4 @@
- 	std::cout << "unexpected exception: " << e.what() << std::endl;
-     }
- }
-+#endif
 --- libqpdf/QPDF.cc
 +++ libqpdf/QPDF.cc
-@@ -80,7 +80,7 @@
+@@ -79,7 +79,7 @@
      encryption_initialized(false),
      ignore_xref_streams(false),
      suppress_warnings(false),
@@ -42,13 +27,13 @@
      err_stream(&std::cerr),
      attempt_recovery(true),
      encryption_V(0),
-@@ -177,7 +177,7 @@
+@@ -186,7 +186,7 @@
  void
  QPDF::setOutputStreams(std::ostream* out, std::ostream* err)
  {
--    this->out_stream = out ? out : &std::cout;
-+    this->out_stream = out;
-     this->err_stream = err ? err : &std::cerr;
+-    this->m->out_stream = out ? out : &std::cout;
++    this->m->out_stream = out;
+     this->m->err_stream = err ? err : &std::cerr;
  }
  
 --- libqpdf/qpdf/MD5.hh
@@ -62,14 +47,3 @@
  
      // returns the digest as a hexadecimal string
      QPDF_DLL
---- libqpdf/qpdf/PCRE.hh
-+++ libqpdf/qpdf/PCRE.hh
-@@ -102,8 +102,6 @@
-     Match match(char const* subject, int options = 0, int startoffset = 0,
- 		int size = -1);
- 
--    QPDF_DLL
--    static void test(int n = 0);
- 
-   private:
-     // prohibit copying and assignment
