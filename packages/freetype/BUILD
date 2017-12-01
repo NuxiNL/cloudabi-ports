@@ -14,13 +14,13 @@ def build(ctx):
 
 package(
     name='freetype',
-    version='2.7.1',
+    version='2.8.1',
     homepage='http://www.freetype.org/',
     lib_depends={'bzip2', 'c-runtime', 'libpng', 'zlib'},
     build_cmd=build)
 
 distfile(
-    name='freetype-2.7.1.tar.bz2',
-    checksum='3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88',
-    master_sites=sites_sourceforge('freetype/freetype2/2.7.1'),
+    name='freetype-2.8.1.tar.bz2',
+    checksum='e5435f02e02d2b87bb8e4efdcaa14b1f78c9cf3ab1ed80f94b6382fb6acc7d78',
+    master_sites=sites_sourceforge('freetype/freetype2/2.8.1'),
     unsafe_string_sources={'include/freetype/config/ftstdlib.h'})
