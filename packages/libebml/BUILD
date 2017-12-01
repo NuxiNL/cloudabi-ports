@@ -4,12 +4,12 @@
 
 package(
     name='libebml',
-    version='1.3.4',
+    version='1.3.5',
     homepage='http://www.matroska.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build_autoconf_automake)
 
 distfile(
-    name='libebml-1.3.4.tar.bz2',
-    checksum='c50d3ecf133742c6549c0669c3873f968e11a365a5ba17b2f4dc339bbe51f387',
+    name='libebml-1.3.5.tar.xz',
+    checksum='d818413f60742c2f036ba6f582c5e0320d12bffec1b0fc0fc17a398b6f04aa00',
     master_sites={'http://dl.matroska.org/downloads/libebml/'})
