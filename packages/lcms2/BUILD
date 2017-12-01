@@ -11,15 +11,15 @@ def build(ctx):
 
 package(
     name='lcms2',
-    version='2.8',
+    version='2.9',
     homepage='http://www.littlecms.com/',
     lib_depends={'c-runtime', 'jpeg', 'tiff', 'zlib'},
     build_cmd=build)
 
 distfile(
-    name='lcms2-2.8.tar.gz',
-    checksum='66d02b229d2ea9474e62c2b6cd6720fde946155cd1d0d2bffdab829790a0fb22',
-    master_sites=sites_sourceforge('lcms/lcms/2.8'),
+    name='lcms2-2.9.tar.gz',
+    checksum='48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20',
+    master_sites=sites_sourceforge('lcms/lcms/2.9'),
     unsafe_string_sources={
         'src/cmscgats.c',
         'src/cmsnamed.c',
