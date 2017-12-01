@@ -13,12 +13,12 @@ def build(ctx):
 
 package(
     name='libcroco',
-    version='0.6.11',
+    version='0.6.12',
     homepage='https://github.com/GNOME/libcroco',
     lib_depends={'c-runtime', 'glib', 'libxml2'},
     build_cmd=build)
 
 distfile(
-    name='libcroco-0.6.11.tar.xz',
-    checksum='132b528a948586b0dfa05d7e9e059901bca5a3be675b6071a90a90b81ae5a056',
+    name='libcroco-0.6.12.tar.xz',
+    checksum='ddc4b5546c9fb4280a5017e2707fbd4839034ed1aba5b7d4372212f34f84f860',
     master_sites={'http://ftp.gnome.org/pub/GNOME/sources/libcroco/0.6/'})
