@@ -44,7 +44,7 @@
  /*  Function: _asn1_yyerror                                  */
 --- lib/libtasn1.h
 +++ lib/libtasn1.h
-@@ -215,14 +215,6 @@
+@@ -218,14 +218,6 @@
    /*  Functions definitions          */
    /***********************************/
  

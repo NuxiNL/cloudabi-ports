@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -11,12 +11,12 @@ def build(ctx):
 
 package(
     name='nettle',
-    version='3.3',
+    version='3.4',
     homepage='http://www.lysator.liu.se/~nisse/nettle/',
     lib_depends={'c-runtime', 'gmp'},
     build_cmd=build)
 
 distfile(
-    name='nettle-3.3.tar.gz',
-    checksum='46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e',
+    name='nettle-3.4.tar.gz',
+    checksum='ae7a42df026550b85daca8389b6a60ba6313b0567f374392e54918588a411e94',
     master_sites=sites_gnu('nettle'))
