@@ -13,13 +13,13 @@ def build(ctx):
 
 package(
     name='jsoncpp',
-    version='1.8.0',
+    version='1.8.3',
     homepage='https://github.com/open-source-parsers/jsoncpp',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='jsoncpp/1.8.0.tar.gz',
-    checksum='5deb2462cbf0c0121c9d6c9823ec72fe71417e34242e3509bc7c003d526465bc',
+    name='jsoncpp/1.8.3.tar.gz',
+    checksum='3671ba6051e0f30849942cc66d1798fdf0362d089343a83f704c09ee7156604f',
     master_sites={'https://github.com/open-source-parsers/jsoncpp/archive/'},
     unsafe_string_sources={'src/lib_json/json_writer.cpp'})
