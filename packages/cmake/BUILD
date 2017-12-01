@@ -4,11 +4,11 @@
 
 host_package(
     name='cmake',
-    version='3.8.2',
+    version='3.10.0',
     homepage='http://www.cmake.org/',
     build_cmd=build_autoconf_automake)
 
 distfile(
-    name='cmake-3.8.2.tar.gz',
-    checksum='da3072794eb4c09f2d782fcee043847b99bb4cf8d4573978d9b2024214d6e92d',
-    master_sites={'http://www.cmake.org/files/v3.8/'})
+    name='cmake-3.10.0.tar.gz',
+    checksum='b3345c17609ea0f039960ef470aa099de9942135990930a57c14575aae884987',
+    master_sites={'https://cmake.org/files/v3.10/'})
