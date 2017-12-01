@@ -1,6 +1,6 @@
 --- CMakeLists.txt
 +++ CMakeLists.txt
-@@ -305,6 +305,11 @@
+@@ -314,6 +314,11 @@
      return()
    endif()
  
@@ -12,8 +12,8 @@
    set(_protobuf_include_path -I . -I ${PROTOBUF_WELLKNOWN_IMPORT_DIR})
    foreach(FIL ${ARGN})
      get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
-@@ -322,10 +327,10 @@
-       COMMAND ${_gRPC_PROTOBUF_PROTOC}
+@@ -331,10 +336,10 @@
+       COMMAND ${_gRPC_PROTOBUF_PROTOC_EXECUTABLE}
        ARGS --grpc_out=generate_mock_code=true:${_gRPC_PROTO_GENS_DIR}
             --cpp_out=${_gRPC_PROTO_GENS_DIR}
 -           --plugin=protoc-gen-grpc=$<TARGET_FILE:grpc_cpp_plugin>

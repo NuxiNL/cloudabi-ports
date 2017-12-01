@@ -1,6 +1,6 @@
 --- include/grpc/grpc.h
 +++ include/grpc/grpc.h
-@@ -283,8 +283,10 @@
+@@ -274,8 +274,10 @@
      clients will want to simply pass NULL. See grpc_channel_args definition for
      more on this. The data in 'args' need only live through the invocation of
      this function. */
@@ -13,7 +13,7 @@
  GRPCAPI grpc_channel *grpc_lame_client_channel_create(
 --- include/grpc/grpc_security.h
 +++ include/grpc/grpc_security.h
-@@ -127,7 +127,9 @@
+@@ -112,7 +112,9 @@
  /** Creates default credentials to connect to a google gRPC service.
     WARNING: Do NOT use this credentials to connect to a non-google service as
     this could result in an oauth2 token leak. */
@@ -23,7 +23,7 @@
  
  /** Callback for getting the SSL roots override from the application.
     In case of success, *pem_roots_certs must be set to a NULL terminated string
-@@ -197,8 +199,10 @@
+@@ -182,8 +184,10 @@
  /** Creates a compute engine credentials object for connecting to Google.
     WARNING: Do NOT use this credentials to connect to a non-google service as
     this could result in an oauth2 token leak. */
@@ -34,7 +34,7 @@
  
  GRPCAPI gpr_timespec grpc_max_auth_token_lifetime();
  
-@@ -218,8 +222,10 @@
+@@ -203,8 +207,10 @@
     this could result in an oauth2 token leak.
     - json_refresh_token is the JSON string containing the refresh token itself
       along with a client_id and client_secret. */
@@ -45,7 +45,7 @@
  
  /** Creates an Oauth2 Access Token credentials with an access token that was
     aquired by an out of band mechanism. */
-@@ -295,9 +301,11 @@
+@@ -301,9 +307,11 @@
  /** --- Secure channel creation. --- */
  
  /** Creates a secure channel using the passed-in credentials. */
@@ -59,7 +59,7 @@
  
 --- include/grpc++/create_channel.h
 +++ include/grpc++/create_channel.h
-@@ -43,6 +43,7 @@
+@@ -28,6 +28,7 @@
  
  namespace grpc {
  
@@ -67,7 +67,7 @@
  /// Create a new \a Channel pointing to \a target.
  ///
  /// \param target The URI of the endpoint to connect to.
-@@ -67,6 +68,7 @@
+@@ -52,6 +53,7 @@
      const grpc::string& target,
      const std::shared_ptr<ChannelCredentials>& creds,
      const ChannelArguments& args);
@@ -77,7 +77,7 @@
  
 --- include/grpc++/security/credentials.h
 +++ include/grpc++/security/credentials.h
-@@ -75,8 +75,10 @@
+@@ -60,8 +60,10 @@
        const std::shared_ptr<ChannelCredentials>& creds,
        const ChannelArguments& args);
  
@@ -88,7 +88,7 @@
  };
  
  /// A call credentials object encapsulates the state needed by a client to
-@@ -133,7 +135,9 @@
+@@ -118,7 +120,9 @@
  /// Using these credentials to connect to any other service may result in this
  /// service being able to impersonate your client for requests to Google
  /// services.
@@ -98,7 +98,7 @@
  
  /// Builds SSL Credentials given SSL specific options
  std::shared_ptr<ChannelCredentials> SslCredentials(
-@@ -145,7 +149,9 @@
+@@ -130,7 +134,9 @@
  /// Using these credentials to connect to any other service may result in this
  /// service being able to impersonate your client for requests to Google
  /// services.
@@ -106,9 +106,9 @@
  std::shared_ptr<CallCredentials> GoogleComputeEngineCredentials();
 +#endif
  
- /// Builds Service Account JWT Access credentials.
- /// json_key is the JSON key string containing the client's private key.
-@@ -163,8 +169,10 @@
+ /// Constant for maximum auth token lifetime.
+ constexpr long kMaxAuthTokenLifetimeSecs = 3600;
+@@ -152,8 +158,10 @@
  /// Using these credentials to connect to any other service may result in this
  /// service being able to impersonate your client for requests to Google
  /// services.
@@ -121,7 +121,7 @@
  /// access_token is an oauth2 access token that was fetched using an out of band
 --- src/core/ext/transport/chttp2/client/chttp2_connector.c
 +++ src/core/ext/transport/chttp2/client/chttp2_connector.c
-@@ -31,6 +31,7 @@
+@@ -16,6 +16,7 @@
   *
   */
  
@@ -129,14 +129,14 @@
  #include "src/core/ext/transport/chttp2/client/chttp2_connector.h"
  
  #include <grpc/grpc.h>
-@@ -219,3 +220,4 @@
+@@ -204,3 +205,4 @@
    gpr_ref_init(&c->refs, 1);
    return &c->base;
  }
 +#endif
 --- src/core/ext/transport/chttp2/client/chttp2_connector.h
 +++ src/core/ext/transport/chttp2/client/chttp2_connector.h
-@@ -36,6 +36,8 @@
+@@ -21,6 +21,8 @@
  
  #include "src/core/ext/filters/client_channel/connector.h"
  
@@ -147,7 +147,7 @@
  #endif /* GRPC_CORE_EXT_TRANSPORT_CHTTP2_CLIENT_CHTTP2_CONNECTOR_H */
 --- src/core/ext/transport/chttp2/client/insecure/channel_create.c
 +++ src/core/ext/transport/chttp2/client/insecure/channel_create.c
-@@ -31,6 +31,7 @@
+@@ -16,6 +16,7 @@
   *
   */
  
@@ -155,14 +155,14 @@
  #include <grpc/grpc.h>
  
  #include <string.h>
-@@ -119,3 +120,4 @@
+@@ -102,3 +103,4 @@
                                           target, GRPC_STATUS_INTERNAL,
                                           "Failed to create client channel");
  }
 +#endif
 --- src/core/ext/transport/chttp2/client/secure/secure_channel_create.c
 +++ src/core/ext/transport/chttp2/client/secure/secure_channel_create.c
-@@ -31,6 +31,7 @@
+@@ -16,6 +16,7 @@
   *
   */
  
@@ -170,14 +170,14 @@
  #include <grpc/grpc.h>
  
  #include <string.h>
-@@ -237,3 +238,4 @@
+@@ -220,3 +221,4 @@
                                 target, GRPC_STATUS_INTERNAL,
                                 "Failed to create secure client channel");
  }
 +#endif
 --- src/core/lib/http/httpcli.c
 +++ src/core/lib/http/httpcli.c
-@@ -74,8 +74,10 @@
+@@ -60,8 +60,10 @@
    grpc_resource_quota *resource_quota;
  } internal_request;
  
@@ -188,7 +188,7 @@
  
  static void plaintext_handshake(grpc_exec_ctx *exec_ctx, void *arg,
                                  grpc_endpoint *endpoint, const char *host,
-@@ -98,6 +100,7 @@
+@@ -84,6 +86,7 @@
    grpc_pollset_set_destroy(exec_ctx, context->pollset_set);
  }
  
@@ -196,14 +196,14 @@
  static void next_address(grpc_exec_ctx *exec_ctx, internal_request *req,
                           grpc_error *due_to_error);
  
-@@ -334,3 +337,4 @@
+@@ -319,3 +322,4 @@
    g_get_override = get;
    g_post_override = post;
  }
 +#endif
 --- src/core/lib/http/httpcli.h
 +++ src/core/lib/http/httpcli.h
-@@ -86,6 +86,7 @@
+@@ -71,6 +71,7 @@
  void grpc_httpcli_context_destroy(grpc_exec_ctx *exec_ctx,
                                    grpc_httpcli_context *context);
  
@@ -211,7 +211,7 @@
  /* Asynchronously perform a HTTP GET.
     'context' specifies the http context under which to do the get
     'pollset' indicates a grpc_pollset that is interested in the result
-@@ -137,5 +138,6 @@
+@@ -122,5 +123,6 @@
  
  void grpc_httpcli_set_override(grpc_httpcli_get_override get,
                                 grpc_httpcli_post_override post);
@@ -220,7 +220,7 @@
  #endif /* GRPC_CORE_LIB_HTTP_HTTPCLI_H */
 --- src/core/lib/iomgr/tcp_client.h
 +++ src/core/lib/iomgr/tcp_client.h
-@@ -45,11 +45,13 @@
+@@ -30,11 +30,13 @@
     NULL on failure).
     interested_parties points to a set of pollsets that would be interested
     in this connection being established (in order to continue their work) */
@@ -236,15 +236,15 @@
  #endif /* GRPC_CORE_LIB_IOMGR_TCP_CLIENT_H */
 --- src/core/lib/iomgr/tcp_client_posix.c
 +++ src/core/lib/iomgr/tcp_client_posix.c
-@@ -140,6 +140,7 @@
+@@ -126,6 +126,7 @@
    return grpc_tcp_create(exec_ctx, fd, channel_args, addr_str);
  }
  
 +#ifndef __CloudABI__
  static void on_writable(grpc_exec_ctx *exec_ctx, void *acp, grpc_error *error) {
-   async_connect *ac = acp;
+   async_connect *ac = (async_connect *)acp;
    int so_error = 0;
-@@ -364,5 +365,6 @@
+@@ -352,5 +353,6 @@
    grpc_tcp_client_connect_impl(exec_ctx, closure, ep, interested_parties,
                                 channel_args, addr, deadline);
  }
@@ -253,7 +253,7 @@
  #endif
 --- src/core/lib/security/credentials/google_default/google_default_credentials.c
 +++ src/core/lib/security/credentials/google_default/google_default_credentials.c
-@@ -57,6 +57,7 @@
+@@ -42,6 +42,7 @@
  
  /* -- Default credentials. -- */
  
@@ -261,7 +261,7 @@
  static grpc_channel_credentials *default_credentials = NULL;
  static int compute_engine_detection_done = 0;
  static gpr_mu g_state_mu;
-@@ -321,6 +322,7 @@
+@@ -307,6 +308,7 @@
    gpr_mu_unlock(&g_state_mu);
    grpc_exec_ctx_finish(&exec_ctx);
  }
@@ -271,7 +271,7 @@
  
 --- src/core/lib/security/credentials/google_default/google_default_credentials.h
 +++ src/core/lib/security/credentials/google_default/google_default_credentials.h
-@@ -54,7 +54,9 @@
+@@ -39,7 +39,9 @@
    "/" GRPC_GOOGLE_WELL_KNOWN_CREDENTIALS_FILE
  #endif
  
@@ -283,7 +283,7 @@
            */
 --- src/core/lib/security/credentials/jwt/jwt_verifier.c
 +++ src/core/lib/security/credentials/jwt/jwt_verifier.c
-@@ -643,6 +643,7 @@
+@@ -668,6 +668,7 @@
    verifier_cb_ctx_destroy(exec_ctx, ctx);
  }
  
@@ -291,7 +291,7 @@
  static void on_openid_config_retrieved(grpc_exec_ctx *exec_ctx, void *user_data,
                                         grpc_error *error) {
    const grpc_json *cur;
-@@ -696,6 +697,7 @@
+@@ -721,6 +722,7 @@
                 NULL);
    verifier_cb_ctx_destroy(exec_ctx, ctx);
  }
@@ -299,7 +299,7 @@
  
  static email_key_mapping *verifier_get_mapping(grpc_jwt_verifier *v,
                                                 const char *email_domain) {
-@@ -741,6 +743,7 @@
+@@ -766,6 +768,7 @@
  }
  
  /* Takes ownership of ctx. */
@@ -307,7 +307,7 @@
  static void retrieve_key_and_verify(grpc_exec_ctx *exec_ctx,
                                      verifier_cb_ctx *ctx) {
    const char *email_domain;
-@@ -872,6 +875,7 @@
+@@ -897,6 +900,7 @@
    if (claims != NULL) grpc_jwt_claims_destroy(exec_ctx, claims);
    cb(exec_ctx, user_data, GRPC_JWT_VERIFIER_BAD_FORMAT, NULL);
  }
@@ -317,7 +317,7 @@
      const grpc_jwt_verifier_email_domain_key_url_mapping *mappings,
 --- src/core/lib/security/credentials/jwt/jwt_verifier.h
 +++ src/core/lib/security/credentials/jwt/jwt_verifier.h
-@@ -122,12 +122,14 @@
+@@ -107,12 +107,14 @@
                                                grpc_jwt_claims *claims);
  
  /* Verifies for the JWT for the given expected audience. */
@@ -334,15 +334,15 @@
  
 --- src/core/lib/security/credentials/oauth2/oauth2_credentials.c
 +++ src/core/lib/security/credentials/oauth2/oauth2_credentials.c
-@@ -297,6 +297,7 @@
- static grpc_call_credentials_vtable compute_engine_vtable = {
-     oauth2_token_fetcher_destruct, oauth2_token_fetcher_get_request_metadata};
+@@ -355,6 +355,7 @@
+     oauth2_token_fetcher_destruct, oauth2_token_fetcher_get_request_metadata,
+     oauth2_token_fetcher_cancel_get_request_metadata};
  
 +#ifndef __CloudABI__
  static void compute_engine_fetch_oauth2(
      grpc_exec_ctx *exec_ctx, grpc_credentials_metadata_request *metadata_req,
      grpc_httpcli_context *httpcli_context, grpc_polling_entity *pollent,
-@@ -332,6 +333,7 @@
+@@ -389,6 +390,7 @@
    c->base.vtable = &compute_engine_vtable;
    return &c->base;
  }
@@ -350,15 +350,15 @@
  
  //
  // Google Refresh Token credentials.
-@@ -348,6 +350,7 @@
- static grpc_call_credentials_vtable refresh_token_vtable = {
-     refresh_token_destruct, oauth2_token_fetcher_get_request_metadata};
+@@ -406,6 +408,7 @@
+     refresh_token_destruct, oauth2_token_fetcher_get_request_metadata,
+     oauth2_token_fetcher_cancel_get_request_metadata};
  
 +#ifndef __CloudABI__
  static void refresh_token_fetch_oauth2(
      grpc_exec_ctx *exec_ctx, grpc_credentials_metadata_request *metadata_req,
      grpc_httpcli_context *httpcli_context, grpc_polling_entity *pollent,
-@@ -423,6 +426,7 @@
+@@ -481,6 +484,7 @@
    GPR_ASSERT(reserved == NULL);
    return grpc_refresh_token_credentials_create_from_auth_refresh_token(token);
  }
@@ -368,7 +368,7 @@
  // Oauth2 Access Token credentials.
 --- src/core/lib/security/credentials/oauth2/oauth2_credentials.h
 +++ src/core/lib/security/credentials/oauth2/oauth2_credentials.h
-@@ -96,9 +96,11 @@
+@@ -92,9 +92,11 @@
  
  // Private constructor for refresh token credentials from an already parsed
  // refresh token. Takes ownership of the refresh token.
@@ -382,7 +382,7 @@
  grpc_credentials_status
 --- src/cpp/client/create_channel.cc
 +++ src/cpp/client/create_channel.cc
-@@ -43,6 +43,7 @@
+@@ -28,6 +28,7 @@
  namespace grpc {
  class ChannelArguments;
  
@@ -390,7 +390,7 @@
  std::shared_ptr<Channel> CreateChannel(
      const grpc::string& target,
      const std::shared_ptr<ChannelCredentials>& creds) {
-@@ -61,5 +62,6 @@
+@@ -46,5 +47,6 @@
                                               NULL, GRPC_STATUS_INVALID_ARGUMENT,
                                               "Invalid credentials."));
  }
@@ -399,7 +399,7 @@
  }  // namespace grpc
 --- src/cpp/client/cronet_credentials.cc
 +++ src/cpp/client/cronet_credentials.cc
-@@ -44,6 +44,7 @@
+@@ -29,6 +29,7 @@
   public:
    CronetChannelCredentialsImpl(void* engine) : engine_(engine) {}
  
@@ -407,7 +407,7 @@
    std::shared_ptr<grpc::Channel> CreateChannel(
        const string& target, const grpc::ChannelArguments& args) override {
      grpc_channel_args channel_args;
-@@ -52,6 +53,7 @@
+@@ -37,6 +38,7 @@
          "", grpc_cronet_secure_channel_create(engine_, target.c_str(),
                                                &channel_args, nullptr));
    }
@@ -417,7 +417,7 @@
  
 --- src/cpp/client/insecure_credentials.cc
 +++ src/cpp/client/insecure_credentials.cc
-@@ -45,6 +45,7 @@
+@@ -30,6 +30,7 @@
  namespace {
  class InsecureChannelCredentialsImpl final : public ChannelCredentials {
   public:
@@ -425,7 +425,7 @@
    std::shared_ptr<grpc::Channel> CreateChannel(
        const string& target, const grpc::ChannelArguments& args) override {
      grpc_channel_args channel_args;
-@@ -53,6 +54,7 @@
+@@ -38,6 +39,7 @@
          "",
          grpc_insecure_channel_create(target.c_str(), &channel_args, nullptr));
    }
@@ -435,7 +435,7 @@
  };
 --- src/cpp/client/secure_credentials.cc
 +++ src/cpp/client/secure_credentials.cc
-@@ -48,6 +48,7 @@
+@@ -34,6 +34,7 @@
    g_gli_initializer.summon();
  }
  
@@ -443,7 +443,7 @@
  std::shared_ptr<grpc::Channel> SecureChannelCredentials::CreateChannel(
      const string& target, const grpc::ChannelArguments& args) {
    grpc_channel_args channel_args;
-@@ -57,6 +58,7 @@
+@@ -43,6 +44,7 @@
        grpc_secure_channel_create(c_creds_, target.c_str(), &channel_args,
                                   nullptr));
  }
@@ -451,7 +451,7 @@
  
  SecureCallCredentials::SecureCallCredentials(grpc_call_credentials* c_creds)
      : c_creds_(c_creds) {
-@@ -81,10 +83,12 @@
+@@ -67,10 +69,12 @@
  }
  }  // namespace
  
@@ -464,7 +464,7 @@
  
  // Builds SSL Credentials given SSL specific options
  std::shared_ptr<ChannelCredentials> SslCredentials(
-@@ -100,11 +104,13 @@
+@@ -86,11 +90,13 @@
  }
  
  // Builds credentials for use when running in GCE
@@ -478,7 +478,7 @@
  
  // Builds JWT credentials.
  std::shared_ptr<CallCredentials> ServiceAccountJWTAccessCredentials(
-@@ -122,12 +128,14 @@
+@@ -108,12 +114,14 @@
  }
  
  // Builds refresh token credentials.
@@ -495,7 +495,7 @@
  std::shared_ptr<CallCredentials> AccessTokenCredentials(
 --- src/cpp/client/secure_credentials.h
 +++ src/cpp/client/secure_credentials.h
-@@ -49,8 +49,10 @@
+@@ -34,8 +34,10 @@
    ~SecureChannelCredentials() { grpc_channel_credentials_release(c_creds_); }
    grpc_channel_credentials* GetRawCreds() { return c_creds_; }
  
@@ -508,7 +508,7 @@
   private:
 --- src/csharp/ext/grpc_csharp_ext.c
 +++ src/csharp/ext/grpc_csharp_ext.c
-@@ -391,12 +391,14 @@
+@@ -376,12 +376,14 @@
  
  /* Channel */
  
@@ -523,7 +523,7 @@
  
  GPR_EXPORT void GPR_CALLTYPE grpcsharp_channel_destroy(grpc_channel *channel) {
    grpc_channel_destroy(channel);
-@@ -961,11 +963,13 @@
+@@ -946,11 +948,13 @@
    grpc_call_credentials_release(creds);
  }
  

@@ -1,16 +1,16 @@
 --- src/core/lib/support/env.h
 +++ src/core/lib/support/env.h
-@@ -49,7 +49,6 @@
+@@ -34,7 +34,6 @@
  char *gpr_getenv(const char *name);
  
  /* Sets the the environment with the specified name to the specified value. */
 -void gpr_setenv(const char *name, const char *value);
  
- #ifdef __cplusplus
- }
+ /* This is a version of gpr_getenv that does not produce any output if it has to
+    use an insecure version of the function. It is ONLY to be used to solve the
 --- src/core/lib/support/env_posix.c
 +++ src/core/lib/support/env_posix.c
-@@ -49,9 +49,5 @@
+@@ -39,9 +39,5 @@
    return result == NULL ? result : gpr_strdup(result);
  }
  

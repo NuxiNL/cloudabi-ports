@@ -1,6 +1,6 @@
 --- src/core/lib/iomgr/tcp_posix.c
 +++ src/core/lib/iomgr/tcp_posix.c
-@@ -241,7 +241,7 @@
+@@ -377,7 +377,7 @@
  
  #define MAX_READ_IOVEC 4
  static void tcp_do_read(grpc_exec_ctx *exec_ctx, grpc_tcp *tcp) {
@@ -9,30 +9,30 @@
    struct iovec iov[MAX_READ_IOVEC];
    ssize_t read_bytes;
    size_t i;
-@@ -256,13 +256,8 @@
+@@ -391,13 +391,8 @@
      iov[i].iov_len = GRPC_SLICE_LENGTH(tcp->incoming_buffer->slices[i]);
    }
  
 -  msg.msg_name = NULL;
 -  msg.msg_namelen = 0;
    msg.msg_iov = iov;
-   msg.msg_iovlen = tcp->iov_size;
+   msg.msg_iovlen = (msg_iovlen_type)tcp->incoming_buffer->count;
 -  msg.msg_control = NULL;
 -  msg.msg_controllen = 0;
 -  msg.msg_flags = 0;
  
-   GPR_TIMER_BEGIN("recvmsg", 0);
-   do {
-@@ -370,7 +365,7 @@
- /* returns true if done, false if pending; if returning true, *error is set */
+   GRPC_STATS_INC_TCP_READ_OFFER(exec_ctx, tcp->incoming_buffer->length);
+   GRPC_STATS_INC_TCP_READ_OFFER_IOV_SIZE(exec_ctx, tcp->incoming_buffer->count);
+@@ -524,7 +519,7 @@
  #define MAX_WRITE_IOVEC 1000
- static bool tcp_flush(grpc_tcp *tcp, grpc_error **error) {
+ static bool tcp_flush(grpc_exec_ctx *exec_ctx, grpc_tcp *tcp,
+                       grpc_error **error) {
 -  struct msghdr msg;
 +  struct msghdr msg = {};
    struct iovec iov[MAX_WRITE_IOVEC];
    msg_iovlen_type iov_size;
    ssize_t sent_length;
-@@ -400,13 +395,8 @@
+@@ -554,13 +549,8 @@
      }
      GPR_ASSERT(iov_size > 0);
  
@@ -44,5 +44,5 @@
 -    msg.msg_controllen = 0;
 -    msg.msg_flags = 0;
  
-     GPR_TIMER_BEGIN("sendmsg", 1);
-     do {
+     GRPC_STATS_INC_TCP_WRITE_SIZE(exec_ctx, sending_length);
+     GRPC_STATS_INC_TCP_WRITE_IOV_SIZE(exec_ctx, iov_size);

@@ -1,6 +1,6 @@
 --- src/core/lib/iomgr/ev_poll_posix.c
 +++ src/core/lib/iomgr/ev_poll_posix.c
-@@ -970,6 +970,8 @@
+@@ -983,6 +983,8 @@
          grpc_fd *fd = watchers[i].fd;
          pfds[i].events = (short)fd_begin_poll(fd, pollset, &worker, POLLIN,
                                                POLLOUT, &watchers[i]);

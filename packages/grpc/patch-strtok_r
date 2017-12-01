@@ -1,6 +1,6 @@
 --- src/core/ext/filters/workarounds/workaround_cronet_compression_filter.c
 +++ src/core/ext/filters/workarounds/workaround_cronet_compression_filter.c
-@@ -156,7 +156,8 @@
+@@ -141,7 +141,8 @@
    char *major_version_str = user_agent_str, *minor_version_str;
    long major_version, minor_version;
  
@@ -10,7 +10,7 @@
    while (head != NULL) {
      if (!grpc_objc_specifier_seen &&
          0 == strncmp(head, grpc_objc_specifier, grpc_objc_specifier_len)) {
-@@ -168,11 +169,11 @@
+@@ -153,11 +154,11 @@
        break;
      }
  

@@ -1,6 +1,6 @@
 --- src/core/lib/iomgr/socket_utils_common_posix.c
 +++ src/core/lib/iomgr/socket_utils_common_posix.c
-@@ -119,17 +119,25 @@
+@@ -104,17 +104,25 @@
  }
  
  grpc_error *grpc_set_socket_sndbuf(int fd, int buffer_size_bytes) {
@@ -26,7 +26,7 @@
  }
  
  /* set a socket to close on exec */
-@@ -154,6 +162,7 @@
+@@ -139,6 +147,7 @@
  
  /* set a socket to reuse old addresses */
  grpc_error *grpc_set_socket_reuse_addr(int fd, int reuse) {
@@ -34,7 +34,7 @@
    int val = (reuse != 0);
    int newval;
    socklen_t intlen = sizeof(newval);
-@@ -166,6 +175,7 @@
+@@ -151,6 +160,7 @@
    if ((newval != 0) != val) {
      return GRPC_ERROR_CREATE_FROM_STATIC_STRING("Failed to set SO_REUSEADDR");
    }
@@ -42,7 +42,7 @@
  
    return GRPC_ERROR_NONE;
  }
-@@ -195,6 +205,7 @@
+@@ -180,6 +190,7 @@
  
  /* disable nagle */
  grpc_error *grpc_set_socket_low_latency(int fd, int low_latency) {
@@ -50,7 +50,7 @@
    int val = (low_latency != 0);
    int newval;
    socklen_t intlen = sizeof(newval);
-@@ -207,6 +218,7 @@
+@@ -192,6 +203,7 @@
    if ((newval != 0) != val) {
      return GRPC_ERROR_CREATE_FROM_STATIC_STRING("Failed to set TCP_NODELAY");
    }
@@ -58,7 +58,7 @@
    return GRPC_ERROR_NONE;
  }
  
-@@ -253,6 +265,7 @@
+@@ -238,6 +250,7 @@
  int grpc_forbid_dualstack_sockets_for_testing = 0;
  
  static int set_socket_dualstack(int fd) {
@@ -66,7 +66,7 @@
    if (!grpc_forbid_dualstack_sockets_for_testing) {
      const int off = 0;
      return 0 == setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &off, sizeof(off));
-@@ -262,6 +275,9 @@
+@@ -247,6 +260,9 @@
      setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on));
      return 0;
    }

@@ -1,6 +1,6 @@
 --- include/grpc/impl/codegen/port_platform.h
 +++ include/grpc/impl/codegen/port_platform.h
-@@ -285,6 +285,23 @@
+@@ -269,6 +269,23 @@
  #else /* _LP64 */
  #define GPR_ARCH_32 1
  #endif /* _LP64 */
@@ -26,7 +26,7 @@
  #endif
 --- src/core/lib/iomgr/port.h
 +++ src/core/lib/iomgr/port.h
-@@ -125,6 +125,13 @@
+@@ -121,6 +121,13 @@
  #define GRPC_POSIX_SOCKETUTILS 1
  #define GRPC_POSIX_WAKEUP_FD 1
  #define GRPC_TIMER_USE_GENERIC 1

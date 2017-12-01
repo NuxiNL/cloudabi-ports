@@ -1,14 +1,14 @@
 --- CMakeLists.txt
 +++ CMakeLists.txt
-@@ -46,6 +46,7 @@
- project(${PACKAGE_NAME} C CXX)
+@@ -36,6 +36,7 @@
+ set(gRPC_INSTALL_CMAKEDIR "${CMAKE_INSTALL_PREFIX}/lib/cmake/${PACKAGE_NAME}" CACHE PATH "Installation directory for cmake config files")
  
  # Options
 +option(gRPC_BUILD_TOOLS "Build tools" ON)
  option(gRPC_BUILD_TESTS "Build tests" OFF)
  
- if (NOT MSVC)
-@@ -3522,6 +3523,7 @@
+ set(gRPC_INSTALL_default ON)
+@@ -4150,6 +4151,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -16,7 +16,7 @@
  add_library(grpc_plugin_support
    src/compiler/cpp_generator.cc
    src/compiler/csharp_generator.cc
-@@ -3531,6 +3533,7 @@
+@@ -4159,6 +4161,7 @@
    src/compiler/python_generator.cc
    src/compiler/ruby_generator.cc
  )
@@ -24,15 +24,15 @@
  
  if(WIN32 AND MSVC)
    set_target_properties(grpc_plugin_support PROPERTIES COMPILE_PDB_NAME "grpc_plugin_support"
-@@ -3544,6 +3547,7 @@
+@@ -4172,6 +4175,7 @@
  endif()
  
  
 +if(gRPC_BUILD_TOOLS)
  target_include_directories(grpc_plugin_support
+   PUBLIC $<INSTALL_INTERFACE:${gRPC_INSTALL_INCLUDEDIR}> $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-@@ -3565,6 +3569,7 @@
+@@ -4191,6 +4195,7 @@
    ${_gRPC_PROTOBUF_LIBRARIES}
    ${_gRPC_ALLTARGETS_LIBRARIES}
  )
@@ -40,23 +40,23 @@
  
  foreach(_hdr
    include/grpc++/impl/codegen/config_protobuf.h
-@@ -3577,6 +3582,7 @@
+@@ -4203,6 +4208,7 @@
  endforeach()
  
  
 +if(gRPC_BUILD_TOOLS)
  if (gRPC_INSTALL)
    install(TARGETS grpc_plugin_support EXPORT gRPCTargets
-     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -3584,6 +3590,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     RUNTIME DESTINATION ${gRPC_INSTALL_BINDIR}
+@@ -4210,6 +4216,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  
-@@ -4897,6 +4904,7 @@
+@@ -5510,6 +5517,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -64,15 +64,15 @@
  add_executable(check_epollexclusive
    test/build/check_epollexclusive.c
  )
-@@ -4931,6 +4939,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -5542,6 +5550,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  
-@@ -5565,6 +5574,7 @@
+@@ -6167,6 +6176,7 @@
  endif()
  endif (gRPC_BUILD_TESTS)
  
@@ -80,26 +80,15 @@
  add_executable(gen_hpack_tables
    tools/codegen/core/gen_hpack_tables.c
  )
-@@ -5599,8 +5609,10 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-   )
- endif()
-+endif()
- 
- 
-+if(gRPC_BUILD_TOOLS)
- add_executable(gen_legal_metadata_characters
-   tools/codegen/core/gen_legal_metadata_characters.c
- )
-@@ -5667,6 +5679,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -6263,6 +6273,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  if(_gRPC_PLATFORM_LINUX OR _gRPC_PLATFORM_MAC OR _gRPC_PLATFORM_POSIX)
-@@ -6412,6 +6425,7 @@
+@@ -6987,6 +6998,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -107,15 +96,15 @@
  add_executable(grpc_create_jwt
    test/core/security/create_jwt.c
  )
-@@ -6447,6 +6461,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -7020,6 +7032,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  
-@@ -6606,6 +6621,7 @@
+@@ -7169,6 +7182,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -123,15 +112,15 @@
  add_executable(grpc_print_google_default_creds_token
    test/core/security/print_google_default_creds_token.c
  )
-@@ -6640,6 +6656,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -7201,6 +7215,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  
-@@ -6673,6 +6690,7 @@
+@@ -7232,6 +7247,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -139,15 +128,15 @@
  add_executable(grpc_verify_jwt
    test/core/security/verify_jwt.c
  )
-@@ -6707,6 +6725,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -7264,6 +7280,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
  
  if (gRPC_BUILD_TESTS)
  if(_gRPC_PLATFORM_LINUX)
-@@ -10271,6 +10290,7 @@
+@@ -10736,6 +10753,7 @@
  
  endif (gRPC_BUILD_TESTS)
  
@@ -155,8 +144,8 @@
  add_executable(grpc_cpp_plugin
    src/compiler/cpp_plugin.cc
  )
-@@ -10535,6 +10555,7 @@
-     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+@@ -10986,6 +11004,7 @@
+     ARCHIVE DESTINATION ${gRPC_INSTALL_LIBDIR}
    )
  endif()
 +endif()
