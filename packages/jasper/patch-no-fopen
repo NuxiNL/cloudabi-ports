@@ -1,6 +1,6 @@
 --- src/libjasper/base/jas_image.c
 +++ src/libjasper/base/jas_image.c
-@@ -100,8 +100,7 @@
+@@ -98,8 +98,7 @@
  static void jas_image_cmpt_destroy(jas_image_cmpt_t *cmpt);
  static jas_image_cmpt_t *jas_image_cmpt_create(int_fast32_t tlx,
    int_fast32_t tly, int_fast32_t hstep, int_fast32_t vstep,
@@ -10,7 +10,7 @@
  static void jas_image_setbbox(jas_image_t *image);
  static jas_image_cmpt_t *jas_image_cmpt_copy(jas_image_cmpt_t *cmpt);
  static int jas_image_growcmpts(jas_image_t *image, int maxcmpts);
-@@ -134,7 +133,6 @@
+@@ -132,7 +131,6 @@
  {
  	jas_image_t *image;
  	size_t rawsize;
@@ -18,7 +18,7 @@
  	int cmptno;
  	jas_image_cmptparm_t *cmptparm;
  
-@@ -182,11 +180,10 @@
+@@ -180,11 +178,10 @@
  			goto error;
  		}
  		rawsize /= 8;
@@ -31,7 +31,7 @@
  			goto error;
  		}
  		++image->numcmpts_;
-@@ -327,14 +324,13 @@
+@@ -325,14 +322,13 @@
  
  static jas_image_cmpt_t *jas_image_cmpt_create(int_fast32_t tlx,
    int_fast32_t tly, int_fast32_t hstep, int_fast32_t vstep,
@@ -48,7 +48,7 @@
  	  JAS_CAST(long, tlx),
  	  JAS_CAST(long, tly),
  	  JAS_CAST(long, hstep),
-@@ -342,8 +338,7 @@
+@@ -340,8 +336,7 @@
  	  JAS_CAST(long, width),
  	  JAS_CAST(long, height),
  	  JAS_CAST(int, depth),
@@ -58,7 +58,7 @@
  	  ));
  
  	cmpt = 0;
-@@ -380,8 +375,7 @@
+@@ -378,8 +373,7 @@
  	if (!jas_safe_size_mul3(cmpt->width_, cmpt->height_, cmpt->cps_, &size)) {
  		goto error;
  	}
@@ -68,7 +68,7 @@
  	if (!cmpt->stream_) {
  		goto error;
  	}
-@@ -783,7 +777,7 @@
+@@ -781,7 +775,7 @@
  	if (!(newcmpt = jas_image_cmpt_create(cmptparm->tlx,
  	  cmptparm->tly, cmptparm->hstep, cmptparm->vstep,
  	  cmptparm->width, cmptparm->height, cmptparm->prec,
@@ -119,9 +119,9 @@
  	stream->obj_ = (void *) obj;
  
  	/* Do not close the underlying file descriptor when the stream is
-@@ -1341,9 +1344,6 @@
+@@ -1359,9 +1362,6 @@
+ 	JAS_DBGLOG(100, ("file_close(%p)\n", obj));
  	fileobj = JAS_CAST(jas_stream_fileobj_t *, obj);
- 	int ret;
  	ret = close(fileobj->fd);
 -	if (fileobj->flags & JAS_STREAM_FILEOBJ_DELONCLOSE) {
 -		unlink(fileobj->pathname);
@@ -131,7 +131,7 @@
  }
 --- src/libjasper/include/jasper/jas_image.h
 +++ src/libjasper/include/jasper/jas_image.h
-@@ -221,6 +221,8 @@
+@@ -220,6 +220,8 @@
  
  //	bool inmem_;
  

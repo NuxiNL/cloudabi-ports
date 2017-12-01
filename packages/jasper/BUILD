@@ -4,21 +4,21 @@
 
 
 def build(ctx):
-    build = ctx.extract().cmake()
+    build = ctx.extract().cmake(['-DJAS_ENABLE_PROGRAMS=OFF'])
     build.ninja()
     build.ninja_install().install()
 
 
 package(
     name='jasper',
-    version='2.0.12',
+    version='2.0.14',
     homepage='http://www.ece.uvic.ca/~frodo/jasper/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='jasper-2.0.12.tar.gz',
-    checksum='5b24faf5ed38670d6286e45ab7516b26458d05e7929b435afe569176765f4dda',
+    name='jasper-2.0.14.tar.gz',
+    checksum='2a1f61e55afe8b4ce8115e1508c5d7cb314d56dfcc2dd323f90c072f88ccf57b',
     master_sites={'http://www.ece.uvic.ca/~frodo/jasper/software/'},
     unsafe_string_sources={
         'src/libjasper/base/jas_seq.c',
