@@ -1,6 +1,6 @@
 --- libarchive/archive_read_support_format_mtree.c
 +++ libarchive/archive_read_support_format_mtree.c
-@@ -1028,7 +1028,8 @@
+@@ -1026,7 +1026,8 @@
  				break;
  			r = process_global_unset(a, &global, p);
  		} else
