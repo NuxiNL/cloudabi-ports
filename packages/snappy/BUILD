@@ -4,20 +4,21 @@
 
 
 def build(ctx):
-    build = ctx.extract().gnu_configure()
-    build.make(['noinst_PROGRAMS='])
-    build.make_install(['noinst_PROGRAMS=', 'install']).install()
+    build = ctx.extract('%(name)s/%(version)s').cmake(
+        ['-DSNAPPY_BUILD_TESTS=OFF'])
+    build.ninja()
+    build.ninja_install().install()
 
 
 package(
     name='snappy',
-    version='1.1.4',
+    version='1.1.7',
     homepage='https://google.github.io/snappy/',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='snappy-1.1.4.tar.gz',
-    checksum='134bfe122fd25599bb807bb8130e7ba6d9bdb851e0b16efcb83ac4f5d0b70057',
-    master_sites={'https://github.com/google/snappy/releases/download/1.1.4/'},
+    name='snappy/1.1.7.tar.gz',
+    checksum='3dfa02e873ff51a11ee02b9ca391807f0c8ea0529a4924afa645fbf97163f9d4',
+    master_sites={'https://github.com/google/snappy/archive/'},
 )
