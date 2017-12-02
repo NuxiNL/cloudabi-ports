@@ -6,20 +6,23 @@
 def build(ctx):
     build = ctx.extract().gnu_configure()
     build.make(['bin_PROGRAMS=', 'noinst_PROGRAMS='])
-    build.make_install(['bin_PROGRAMS=', 'noinst_PROGRAMS=',
-                        'install']).install()
+    build.make_install([
+        'bin_PROGRAMS=',
+        'noinst_PROGRAMS=',
+        'install',
+    ]).install()
 
 
 package(
     name='tiff',
-    version='4.0.6',
-    homepage='http://www.remotesensing.org/libtiff/',
+    version='4.0.9',
+    homepage='http://www.libtiff.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='tiff-4.0.6.tar.gz',
-    checksum='4d57a50907b510e3049a4bba0d7888930fdfc16ce49f1bf693e5b6247370d68c',
+    name='tiff-4.0.9.tar.gz',
+    checksum='6e7bdeec2c310734e734d19aae3a71ebe37a4d842e0e23dbb1b8921c0026cfcd',
     master_sites={
         'ftp://ftp.remotesensing.org/pub/libtiff/',
         'http://download.osgeo.org/libtiff/',

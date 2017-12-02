@@ -18,7 +18,7 @@
  #include <windows.h>
 --- libtiff/tiffio.h
 +++ libtiff/tiffio.h
-@@ -434,7 +434,6 @@
+@@ -437,7 +437,6 @@
  extern int TIFFRGBAImageBegin(TIFFRGBAImage*, TIFF*, int, char [1024]);
  extern int TIFFRGBAImageGet(TIFFRGBAImage*, uint32*, uint32, uint32);
  extern void TIFFRGBAImageEnd(TIFFRGBAImage*);
