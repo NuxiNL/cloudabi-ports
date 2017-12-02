@@ -4,7 +4,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract()
+    srcdir = ctx.extract('%(name)s/v%(version)s')
     for i in {
             'ipc_connecter', 'socks_connecter', 'tcp_connecter', 'udp_address',
             'udp_engine'
@@ -18,17 +18,15 @@ def build(ctx):
 
 package(
     name='zeromq',
-    version='4.2.1',
+    version='4.2.2',
     homepage='http://zeromq.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='zeromq-4.2.1.tar.gz',
-    checksum='27d1e82a099228ee85a7ddb2260f40830212402c605a4a10b5e5498a7e0e9d03',
-    master_sites={
-        'https://github.com/zeromq/libzmq/releases/download/v4.2.1/'
-    },
+    name='zeromq/v4.2.2.tar.gz',
+    checksum='ea5eecbb9cc231a750535a7b74f887b18656014cc92601e8ab34734db799b796',
+    master_sites={'https://github.com/zeromq/libzmq/archive/'},
     unsafe_string_sources={
         'src/ipc_listener.cpp',
         'src/udp_engine.cpp',

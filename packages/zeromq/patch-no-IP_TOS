@@ -1,6 +1,6 @@
 --- src/ip.cpp
 +++ src/ip.cpp
-@@ -165,6 +165,7 @@
+@@ -172,6 +172,7 @@
  
  void zmq::set_ip_type_of_service (fd_t s_, int iptos)
  {
@@ -8,9 +8,11 @@
      int rc = setsockopt(s_, IPPROTO_IP, IP_TOS, reinterpret_cast<const char*>(&iptos), sizeof(iptos));
  
  #ifdef ZMQ_HAVE_WINDOWS
-@@ -189,4 +190,5 @@
+@@ -196,6 +197,7 @@
                        errno == EINVAL);
      }
  #endif
 +#endif
  }
+ 
+ int zmq::set_nosigpipe (fd_t s_)

@@ -24,7 +24,7 @@
  zmq::fd_t zmq::ipc_listener_t::accept ()
  {
      //  Accept one connection and deal with different failure modes.
-@@ -420,5 +423,6 @@
+@@ -431,5 +434,6 @@
  
      return sock;
  }
@@ -79,7 +79,7 @@
  zmq::fd_t zmq::tcp_listener_t::accept ()
  {
      //  The situation where connection cannot be accepted due to insufficient
-@@ -336,3 +339,4 @@
+@@ -347,3 +350,4 @@
  
      return sock;
  }

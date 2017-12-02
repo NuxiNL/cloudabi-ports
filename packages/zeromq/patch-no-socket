@@ -1,14 +1,14 @@
 --- src/ip.cpp
 +++ src/ip.cpp
-@@ -44,6 +44,7 @@
+@@ -45,6 +45,7 @@
  #include <ioctl.h>
  #endif
  
 +#ifndef __CloudABI__
  zmq::fd_t zmq::open_socket (int domain_, int type_, int protocol_)
  {
-     //  Setting this option result in sane behaviour when exec() functions
-@@ -77,6 +78,7 @@
+     int rc;
+@@ -84,6 +85,7 @@
  
      return s;
  }

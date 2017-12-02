@@ -1,6 +1,6 @@
 --- CMakeLists.txt
 +++ CMakeLists.txt
-@@ -486,7 +486,6 @@
+@@ -487,7 +487,6 @@
          io_thread.cpp
          ip.cpp
          ipc_address.cpp
@@ -114,7 +114,7 @@
  }
  
  int zmq::session_base_t::zap_connect ()
-@@ -429,9 +429,13 @@
+@@ -428,9 +428,13 @@
      switch (reason) {
          case stream_engine_t::timeout_error:
          case stream_engine_t::connection_error:
@@ -127,8 +127,8 @@
 +#endif
                  terminate ();
              break;
-         case stream_engine_t::encryption_error:
-@@ -499,6 +503,7 @@
+         case stream_engine_t::protocol_error:
+@@ -497,6 +501,7 @@
      pipe->terminate (false);
  }
  
@@ -136,7 +136,7 @@
  void zmq::session_base_t::reconnect ()
  {
      //  For delayed connect situations, terminate the pipe
-@@ -690,3 +695,4 @@
+@@ -688,3 +693,4 @@
  
      zmq_assert (false);
  }
