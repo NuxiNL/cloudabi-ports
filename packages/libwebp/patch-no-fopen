@@ -1,14 +1,14 @@
 --- imageio/image_enc.c
 +++ imageio/image_enc.c
-@@ -538,6 +538,7 @@
+@@ -541,6 +541,7 @@
  //------------------------------------------------------------------------------
  // Generic top-level call
  
 +#if 0
  int WebPSaveImage(const WebPDecBuffer* const buffer,
-                   WebPOutputFileFormat format, const char* const out_file) {
-   FILE* fout = NULL;
-@@ -589,3 +590,4 @@
+                   WebPOutputFileFormat format,
+                   const char* const out_file_name) {
+@@ -594,3 +595,4 @@
    }
    return ok;
  }
