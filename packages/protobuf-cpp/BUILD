@@ -17,7 +17,7 @@ def build(ctx):
 
 package(
     name='protobuf-cpp',
-    version='3.4.1',
+    version='3.5.0',
     homepage='https://developers.google.com/protocol-buffers/',
     lib_depends={'cxx-runtime', 'zlib'},
     build_cmd=build)
@@ -31,16 +31,16 @@ def host_build(ctx):
 
 host_package(
     name='protobuf-cpp',
-    version='3.4.1',
+    version='3.5.0',
     homepage='https://developers.google.com/protocol-buffers/',
     build_depends={'cmake', 'ninja'},
     build_cmd=host_build)
 
 distfile(
-    name='protobuf-cpp-3.4.1.tar.gz',
-    checksum='2bb34b4a8211a30d12ef29fd8660995023d119c99fbab2e5fe46f17528c9cc78',
+    name='protobuf-cpp-3.5.0.tar.gz',
+    checksum='8dd6b051c2b39ab95dfe1f53cc5e1662ceb852d856db57d85751696859698551',
     master_sites={
-        'https://github.com/google/protobuf/releases/download/v3.4.1/'
+        'https://github.com/google/protobuf/releases/download/v3.5.0/'
     },
     unsafe_string_sources={
         'src/google/protobuf/io/strtod.cc',

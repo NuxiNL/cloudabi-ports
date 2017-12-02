@@ -8,7 +8,7 @@
  option(protobuf_BUILD_TESTS "Build tests" ON)
  option(protobuf_BUILD_EXAMPLES "Build examples" OFF)
  if (BUILD_SHARED_LIBS)
-@@ -165,8 +166,10 @@
+@@ -184,8 +185,10 @@
  
  include(libprotobuf-lite.cmake)
  include(libprotobuf.cmake)
