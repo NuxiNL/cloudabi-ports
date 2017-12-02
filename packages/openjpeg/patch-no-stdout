@@ -1,18 +1,18 @@
 --- src/lib/openjp2/j2k.c
 +++ src/lib/openjp2/j2k.c
-@@ -9476,7 +9476,6 @@
-         char tab[2];
+@@ -10376,7 +10376,6 @@
+     char tab[2];
  
-         if (dev_dump_flag){
--                fprintf(stdout, "[DEV] Dump an image_header struct {\n");
-                 tab[0] = '\0';
-         }
-         else {
-@@ -9505,7 +9504,6 @@
-         char tab[3];
+     if (dev_dump_flag) {
+-        fprintf(stdout, "[DEV] Dump an image_header struct {\n");
+         tab[0] = '\0';
+     } else {
+         fprintf(out_stream, "Image info {\n");
+@@ -10408,7 +10407,6 @@
+     char tab[3];
  
-         if (dev_dump_flag){
--                fprintf(stdout, "[DEV] Dump an image_comp_header struct {\n");
-                 tab[0] = '\0';
-         }       else {
-                 tab[0] = '\t';tab[1] = '\t';tab[2] = '\0';
+     if (dev_dump_flag) {
+-        fprintf(stdout, "[DEV] Dump an image_comp_header struct {\n");
+         tab[0] = '\0';
+     }       else {
+         tab[0] = '\t';

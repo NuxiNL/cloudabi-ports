@@ -1,34 +1,39 @@
 --- src/lib/openjp2/openjpeg.c
 +++ src/lib/openjp2/openjpeg.c
-@@ -917,6 +917,7 @@
- 	}
+@@ -999,6 +999,7 @@
+     }
  }
  
 +#if 0
- opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream)
+ opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream(
+     const char *fname, OPJ_BOOL p_is_read_stream)
  {
-     return opj_stream_create_file_stream(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
-@@ -958,3 +959,4 @@
+@@ -1049,6 +1050,7 @@
  
      return l_stream;
  }
 +#endif
+ 
+ 
+ void* OPJ_CALLCONV opj_image_data_alloc(OPJ_SIZE_T size)
 --- src/lib/openjp2/openjpeg.h
 +++ src/lib/openjp2/openjpeg.h
-@@ -1170,16 +1170,12 @@
+@@ -1208,18 +1208,12 @@
   * @param fname             the filename of the file to stream
   * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
  */
--OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream);
-  
+-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream(
+-    const char *fname, OPJ_BOOL p_is_read_stream);
+ 
  /** Create a stream from a file identified with its filename with a specific buffer size
   * @param fname             the filename of the file to stream
   * @param p_buffer_size     size of the chunk used to stream
   * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
  */
--OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (const char *fname,
--                                                                     OPJ_SIZE_T p_buffer_size,
--                                                                     OPJ_BOOL p_is_read_stream);
-  
- /* 
+-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream(
+-    const char *fname,
+-    OPJ_SIZE_T p_buffer_size,
+-    OPJ_BOOL p_is_read_stream);
+ 
+ /*
  ==========================================================

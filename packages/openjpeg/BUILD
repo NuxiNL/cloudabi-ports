@@ -14,13 +14,13 @@ def build(ctx):
 
 package(
     name='openjpeg',
-    version='2.1.2',
+    version='2.3.0',
     homepage='http://www.openjpeg.org/',
-    lib_depends={'c-runtime'},
+    lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='openjpeg/v2.1.2.tar.gz',
-    checksum='4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7',
+    name='openjpeg/v2.3.0.tar.gz',
+    checksum='3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a',
     master_sites={'https://github.com/uclouvain/openjpeg/archive/'},
     unsafe_string_sources={'src/lib/openjp2/j2k.c'})
