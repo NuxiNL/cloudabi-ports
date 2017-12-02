@@ -11,18 +11,22 @@ def build(ctx):
     # directory. Autoconf is smart enough to automatically detect the
     # right copy, based on the host type.
     for arch in ARCHITECTURES:
-        prefix = os.path.join(ctx.prefix(), arch)
-        build = ctx.extract().gnu_configure(
-            [
-                '--with-pkg-config-dir=' +
-                os.path.join(prefix, 'lib/pkgconfig'),
-                '--with-system-libdir=' + os.path.join(prefix, 'lib'),
-                '--with-system-includedir=' + os.path.join(prefix, 'include'),
-            ],
-            inplace=True)
+        prefix = ctx.prefix()
+        arch_prefix = os.path.join(prefix, arch)
+        srcdir = ctx.extract()
+        srcdir.run(['./autogen.sh'])
+        build = srcdir.gnu_configure([
+            '--prefix=%s/pkgconf/%s' % (prefix, arch),
+            '--with-pkg-config-dir=' +
+            os.path.join(arch_prefix, 'lib/pkgconfig'),
+            '--with-system-libdir=' + os.path.join(arch_prefix, 'lib'),
+            '--with-system-includedir=' + os.path.join(arch_prefix, 'include'),
+        ])
         build.make()
         stage = build.make_install()
-        stage.path('bin/pkgconf').install('bin/%s-pkg-config' % arch)
+        stage.path('bin/%s-pkg-config' % arch).symlink(
+            '../pkgconf/%s/bin/pkgconf' % arch)
+        stage.install()
 
     # Install the shipped copy of pkg.m4, so that autoreconf for
     # packages using PKG_CHECK_MODULES() works.
@@ -31,11 +35,12 @@ def build(ctx):
 
 host_package(
     name='pkgconf',
-    version='0.9.12',
+    version='1.3.10',
     homepage='https://github.com/pkgconf/pkgconf',
+    build_depends={'autoconf', 'automake', 'libtool', 'm4'},
     build_cmd=build)
 
 distfile(
-    name='pkgconf-0.9.12.tar.bz2',
-    checksum='7ec8b516e655e247f4ba976837cee808134785819ab8f538f652fe919cc6c09f',
-    master_sites={'http://rabbit.dereferenced.org/~nenolod/distfiles/'})
+    name='pkgconf-1.3.10.tar.gz',
+    checksum='b5d3e81297ebb0e00e0cb1d74583531cf0b20ada37e58193a55cac07e5a92b93',
+    master_sites={'https://github.com/pkgconf/pkgconf/archive/'})
