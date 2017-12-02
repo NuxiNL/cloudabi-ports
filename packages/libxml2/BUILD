@@ -24,14 +24,14 @@ def build(ctx):
 
 package(
     name='libxml2',
-    version='2.9.4',
+    version='2.9.7',
     homepage='http://www.xmlsoft.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='libxml2-2.9.4.tar.gz',
-    checksum='ffb911191e509b966deb55de705387f14156e1a56b21824357cdf0053233633c',
+    name='libxml2-2.9.7.tar.gz',
+    checksum='f63c5e7d30362ed28b38bfa1ac6313f9a80230720b7fb6c80575eeab3ff5900c',
     master_sites={'ftp://xmlsoft.org/libxml2/'},
     unsafe_string_sources={
         'HTMLparser.c',

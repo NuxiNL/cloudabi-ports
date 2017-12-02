@@ -106,7 +106,7 @@
          return;
 --- tree.c
 +++ tree.c
-@@ -7324,8 +7324,6 @@
+@@ -7334,8 +7334,6 @@
  #endif
  	return(0);
      }
@@ -117,7 +117,7 @@
  }
 --- xmlIO.c
 +++ xmlIO.c
-@@ -1075,14 +1075,12 @@
+@@ -982,14 +982,12 @@
      if (context == NULL)
          return(-1);
      fil = (FILE *) context;
@@ -145,7 +145,7 @@
  		ret = xmlRelaxNGValidateFullElement(reader->rngValidCtxt,
 --- xmlregexp.c
 +++ xmlregexp.c
-@@ -3005,7 +3005,6 @@
+@@ -3010,7 +3010,6 @@
  	    return(accept);
  	}
          case XML_REGEXP_STRING:

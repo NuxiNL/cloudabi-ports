@@ -32,7 +32,7 @@
  static int
  xmlParseSGMLCatalog(xmlCatalogPtr catal, const xmlChar *value,
  	            const char *file, int super) {
-@@ -2525,6 +2527,7 @@
+@@ -2526,6 +2528,7 @@
  	return(-1);
      return(0);
  }
@@ -40,7 +40,7 @@
  
  /************************************************************************
   *									*
-@@ -2638,6 +2641,7 @@
+@@ -2639,6 +2642,7 @@
   *
   * Returns the catalog parsed or NULL in case of error
   */
@@ -48,7 +48,7 @@
  xmlCatalogPtr
  xmlLoadSGMLSuperCatalog(const char *filename)
  {
-@@ -2767,6 +2771,7 @@
+@@ -2768,6 +2772,7 @@
      }
      return (0);
  }
@@ -56,7 +56,7 @@
  
  /**
   * xmlACatalogResolveSystem:
-@@ -3193,6 +3198,7 @@
+@@ -3194,6 +3199,7 @@
   *
   * Returns 0 in case of success -1 in case of error
   */
@@ -64,7 +64,7 @@
  int
  xmlLoadCatalog(const char *filename)
  {
-@@ -3267,6 +3273,7 @@
+@@ -3268,6 +3274,7 @@
  	    cur++;
      }
  }
@@ -148,7 +148,7 @@
  					 char * buffer,
 --- xmlIO.c
 +++ xmlIO.c
-@@ -892,6 +892,7 @@
+@@ -794,6 +794,7 @@
   *
   * Returns an I/O context or NULL in case of error
   */
@@ -156,7 +156,7 @@
  static void *
  xmlFileOpen_real (const char *filename) {
      const char *path = filename;
-@@ -937,6 +938,7 @@
+@@ -842,6 +843,7 @@
      if (fd == NULL) xmlIOErr(0, path);
      return((void *) fd);
  }
@@ -164,7 +164,7 @@
  
  /**
   * xmlFileOpen:
-@@ -947,6 +949,7 @@
+@@ -852,6 +854,7 @@
   *
   * Returns a handler or NULL in case or failure
   */
@@ -172,7 +172,7 @@
  void *
  xmlFileOpen (const char *filename) {
      char *unescaped;
-@@ -963,8 +966,9 @@
+@@ -868,8 +871,9 @@
  
      return retval;
  }
@@ -183,25 +183,25 @@
  /**
   * xmlFileOpenW:
   * @filename:  the URI for matching
-@@ -2322,8 +2326,6 @@
-     xmlInitPlatformSpecificIo();
- #endif
+@@ -2225,8 +2229,6 @@
+     if (xmlInputCallbackInitialized)
+ 	return;
  
 -    xmlRegisterInputCallbacks(xmlFileMatch, xmlFileOpen,
 -	                      xmlFileRead, xmlFileClose);
  #ifdef HAVE_ZLIB_H
      xmlRegisterInputCallbacks(xmlGzfileMatch, xmlGzfileOpen,
  	                      xmlGzfileRead, xmlGzfileClose);
-@@ -2360,8 +2362,6 @@
-     xmlInitPlatformSpecificIo();
- #endif
+@@ -2259,8 +2261,6 @@
+     if (xmlOutputCallbackInitialized)
+ 	return;
  
 -    xmlRegisterOutputCallbacks(xmlFileMatch, xmlFileOpenW,
 -	                      xmlFileWrite, xmlFileClose);
  
  #ifdef LIBXML_HTTP_ENABLED
      xmlRegisterOutputCallbacks(xmlIOHTTPMatch, xmlIOHTTPDfltOpenW,
-@@ -3840,11 +3840,6 @@
+@@ -3739,11 +3739,6 @@
          if (cur == dir) dir[1] = 0;
  	else *cur = 0;
  	ret = xmlMemStrdup(dir);
@@ -215,7 +215,7 @@
  #undef IS_XMLPGD_SEP
 --- xmlmemory.c
 +++ xmlmemory.c
-@@ -673,12 +673,6 @@
+@@ -694,12 +694,6 @@
      if (nbBytes <= 0)
          return;
  
@@ -228,7 +228,7 @@
  #ifdef MEM_LIST
      fprintf(fp,"   Last %li MEMORY ALLOCATED : %lu, MAX was %lu\n",
              nbBytes, debugMemSize, debugMaxMemSize);
-@@ -746,12 +740,6 @@
+@@ -767,12 +761,6 @@
  #endif
      FILE *old_fp = fp;
  
