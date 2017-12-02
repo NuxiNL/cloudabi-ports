@@ -22,13 +22,13 @@ def build(ctx):
 
 package(
     name='pcre',
-    version='8.40',
+    version='8.41',
     homepage='http://www.pcre.org/',
     lib_depends={'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='pcre-8.40.tar.bz2',
-    checksum='00e27a29ead4267e3de8111fcaa59b132d0533cdfdbdddf4b0604279acbcf4f4',
+    name='pcre-8.41.tar.bz2',
+    checksum='e62c7eac5ae7c0e7286db61ff82912e1c0b7a0c13706616e94a7dd729321b530',
     master_sites={'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/'},
     unsafe_string_sources={'pcreposix.c'})

@@ -23,14 +23,14 @@ def build(ctx):
 
 package(
     name='pcre2',
-    version='10.23',
+    version='10.30',
     homepage='http://www.pcre.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='pcre2-10.23.tar.bz2',
-    checksum='dfc79b918771f02d33968bd34a749ad7487fa1014aeb787fad29dd392b78c56e',
+    name='pcre2-10.30.tar.bz2',
+    checksum='90bd41c605d30e3745771eb81928d779f158081a51b2f314bbcc1f73de5773db',
     master_sites={'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/'},
     unsafe_string_sources={
         'src/pcre2_error.c',
