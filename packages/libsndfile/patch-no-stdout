@@ -1,6 +1,6 @@
 --- src/ALAC/alac_encoder.c
 +++ src/ALAC/alac_encoder.c
-@@ -484,7 +484,6 @@
+@@ -478,7 +478,6 @@
  		{
  			*bitstream = startBits ;		// reset bitstream state
  			doEscape = true ;
@@ -8,7 +8,7 @@
  		}
  	}
  
-@@ -660,7 +659,6 @@
+@@ -654,7 +653,6 @@
  		if (minBits >= escapeBits)
  		{
  			doEscape = true ;
@@ -16,7 +16,7 @@
  		}
  
  	}
-@@ -909,7 +907,6 @@
+@@ -903,7 +901,6 @@
  		{
  			*bitstream = startBits ;		// reset bitstream state
  			doEscape = true ;
@@ -24,7 +24,7 @@
  		}
  	}
  
-@@ -1057,7 +1054,6 @@
+@@ -1051,7 +1048,6 @@
  					break ;
  
  				default:
@@ -34,7 +34,7 @@
  			}
 --- src/alac.c
 +++ src/alac.c
-@@ -290,7 +290,6 @@
+@@ -291,7 +291,6 @@
  			break ;
  
  		default :
@@ -42,7 +42,7 @@
  			return SFE_UNSUPPORTED_ENCODING ;
  		} ;
  
-@@ -851,7 +850,7 @@
+@@ -850,7 +849,7 @@
  
  			count ++ ;
  			if (count > 5 || bcount + count > pakt_size)
@@ -63,7 +63,7 @@
  	{	/* Almost certainly 32 bit floats. */
 --- src/common.c
 +++ src/common.c
-@@ -1114,6 +1114,7 @@
+@@ -1159,6 +1159,7 @@
  /*-----------------------------------------------------------------------------------------------
  */
  
@@ -71,7 +71,7 @@
  void
  psf_hexdump (const void *ptr, int len)
  {	const char *data ;
-@@ -1144,6 +1145,7 @@
+@@ -1189,6 +1190,7 @@
  
  	puts ("") ;
  } /* psf_hexdump */
@@ -81,7 +81,7 @@
  psf_log_SF_INFO (SF_PRIVATE *psf)
 --- src/common.h
 +++ src/common.h
-@@ -1004,7 +1004,6 @@
+@@ -1024,7 +1024,6 @@
  ** Helper/debug functions.
  */
  
@@ -91,7 +91,7 @@
  const char * str_of_minor_format (int format) ;
 --- src/flac.c
 +++ src/flac.c
-@@ -596,7 +596,7 @@
+@@ -629,7 +629,7 @@
  		} ;
  
  	if (! FLAC__stream_encoder_set_metadata (pflac->fse, &pflac->metadata, 1))
@@ -109,17 +109,6 @@
 -puts ("interleave_init") ;
  
  	psf->interleave = pdata ;
- 
---- src/rf64.c
-+++ src/rf64.c
-@@ -750,7 +750,7 @@
- 		return psf->error ;
- 
- 	if (has_data && psf->dataoffset != psf->headindex)
--	{	printf ("Oooops : has_data && psf->dataoffset != psf->headindex\n") ;
-+	{
- 		return psf->error = SFE_INTERNAL ;
- 		} ;
  
 --- src/sds.c
 +++ src/sds.c
@@ -170,7 +159,7 @@
  		checksum ^= psds->read_data [k] ;
 --- src/sndfile.c
 +++ src/sndfile.c
-@@ -451,7 +451,7 @@
+@@ -457,7 +457,7 @@
  
  	if (errnum < 0 || errnum > SFE_MAX_ERROR)
  	{	/* This really shouldn't happen in release versions. */

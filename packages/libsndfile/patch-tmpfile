@@ -7,8 +7,8 @@
 -	char enctmpname [512] ;
  	FILE *enctmp ;
  
- 	int	buffer	[] ;
-@@ -207,7 +206,6 @@
+ 	uint8_t	byte_buffer [ALAC_MAX_CHANNEL_COUNT * ALAC_BYTE_BUFFER_SIZE] ;
+@@ -209,7 +208,6 @@
  			while ((readcount = fread (ubuf.ucbuf, 1, sizeof (ubuf.ucbuf), plac->enctmp)) > 0)
  				psf_fwrite (ubuf.ucbuf, 1, readcount, psf) ;
  			fclose (plac->enctmp) ;
@@ -16,7 +16,7 @@
  			} ;
  		} ;
  
-@@ -351,8 +349,8 @@
+@@ -352,8 +350,8 @@
  
  	plac->pakt_info = alac_pakt_alloc (2000) ;
  
@@ -29,7 +29,7 @@
  
 --- src/common.c
 +++ src/common.c
-@@ -1672,6 +1672,7 @@
+@@ -1716,6 +1716,7 @@
  	return ;
  } /* psf_d2i_clip_array */
  
@@ -37,14 +37,14 @@
  FILE *
  psf_open_tmpfile (char * fname, size_t fnamelen)
  {	const char * tmpdir ;
-@@ -1697,3 +1698,4 @@
+@@ -1741,3 +1742,4 @@
  	memset (fname, 0, fnamelen) ;
  	return NULL ;
  } /* psf_open_tmpfile */
 +#endif
 --- src/common.h
 +++ src/common.h
-@@ -998,7 +998,6 @@
+@@ -1018,7 +1018,6 @@
  
  void	alac_get_desc_chunk_items (int subformat, uint32_t *fmt_flags, uint32_t *frames_per_packet) ;
  

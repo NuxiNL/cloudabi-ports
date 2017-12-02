@@ -10,7 +10,7 @@
  	{	SF_FORMAT_VOC,		"VOC (Creative Labs)",					"voc"	},
 --- src/common.c
 +++ src/common.c
-@@ -1459,7 +1459,6 @@
+@@ -1503,7 +1503,6 @@
  		CASE_NAME (SF_FORMAT_SDS) ;
  		CASE_NAME (SF_FORMAT_AVR) ;
  		CASE_NAME (SF_FORMAT_WAVEX) ;
@@ -20,7 +20,7 @@
  		CASE_NAME (SF_FORMAT_WVE) ;
 --- src/common.h
 +++ src/common.h
-@@ -806,14 +806,12 @@
+@@ -826,14 +826,12 @@
  /* Default seek function. Use for PCM and float encoded data. */
  sf_count_t	psf_default_seek (SF_PRIVATE *psf, int mode, sf_count_t samples_from_start) ;
  
@@ -35,7 +35,7 @@
  int psf_set_stdio (SF_PRIVATE *psf) ;
  int psf_file_valid (SF_PRIVATE *psf) ;
  void psf_set_file (SF_PRIVATE *psf, int fd) ;
-@@ -837,7 +835,6 @@
+@@ -857,7 +855,6 @@
  int psf_fclose (SF_PRIVATE *psf) ;
  
  /* Open and close the resource fork of a file. */
@@ -43,7 +43,7 @@
  int psf_close_rsrc (SF_PRIVATE *psf) ;
  
  /*
-@@ -860,7 +857,6 @@
+@@ -880,7 +877,6 @@
  int		paf_open	(SF_PRIVATE *psf) ;
  int		pvf_open	(SF_PRIVATE *psf) ;
  int		raw_open	(SF_PRIVATE *psf) ;
@@ -147,7 +147,7 @@
  
  /*------------------------------------------------------------------------------
  */
-@@ -427,6 +427,7 @@
+@@ -366,6 +366,7 @@
  	return ;
  } /* read_rsrc_str */
  
@@ -155,7 +155,7 @@
  static int
  sd2_parse_rsrc_fork (SF_PRIVATE *psf)
  {	SD2_RSRC rsrc ;
-@@ -664,4 +665,5 @@
+@@ -604,4 +605,5 @@
  
  	return 0 ;
  } /* parse_str_rsrc */
@@ -176,15 +176,16 @@
  */
  
 +#if 0
+ SNDFILE_API
  SNDFILE*
  sf_open	(const char *path, int mode, SF_INFO *sfinfo)
- {	SF_PRIVATE 	*psf ;
-@@ -348,15 +348,18 @@
+@@ -349,16 +349,19 @@
  
  	return psf_open_file (psf, sfinfo) ;
  } /* sf_open */
 +#endif
  
+ SNDFILE_API
  SNDFILE*
  sf_open_fd	(int fd, int mode, SF_INFO *sfinfo, int close_desc)
  {	SF_PRIVATE 	*psf ;
@@ -196,9 +197,9 @@
  		} ;
 +#endif
  
- 	if ((psf = calloc (1, sizeof (SF_PRIVATE))) == NULL)
+ 	if ((psf = psf_allocate ()) == NULL)
  	{	sf_errno = SFE_MALLOC_FAILED ;
-@@ -805,6 +808,7 @@
+@@ -816,6 +819,7 @@
  					return 1 ;
  				break ;
  
@@ -206,7 +207,7 @@
  		case SF_FORMAT_SD2 :
  				/* SD2 is strictly big endian. */
  				if (endian == SF_ENDIAN_LITTLE || endian == SF_ENDIAN_CPU)
-@@ -812,6 +816,7 @@
+@@ -823,6 +827,7 @@
  				if (subformat == SF_FORMAT_PCM_S8 || subformat == SF_FORMAT_PCM_16 || subformat == SF_FORMAT_PCM_24 || subformat == SF_FORMAT_PCM_32)
  					return 1 ;
  				break ;
@@ -214,7 +215,7 @@
  
  		case SF_FORMAT_WVE :
  				if (info->channels > 1)
-@@ -2396,6 +2401,7 @@
+@@ -2588,6 +2593,7 @@
  ** Private functions.
  */
  
@@ -222,7 +223,7 @@
  static int
  try_resource_fork (SF_PRIVATE * psf)
  {	int old_error = psf->error ;
-@@ -2412,6 +2418,7 @@
+@@ -2604,6 +2610,7 @@
  
  	return SF_FORMAT_SD2 ;
  } /* try_resource_fork */
@@ -230,7 +231,7 @@
  
  static int
  format_from_extension (SF_PRIVATE *psf)
-@@ -2590,9 +2597,6 @@
+@@ -2782,9 +2789,6 @@
  	if (buffer [0] == MAKE_MARKER ('a', 'j', 'k', 'g'))
  		return 0 /*-SF_FORMAT_SHN-*/ ;
  
@@ -240,7 +241,7 @@
  
  	return 0 ;
  } /* guess_file_type */
-@@ -2956,9 +2960,6 @@
+@@ -3149,9 +3153,6 @@
  				error = htk_open (psf) ;
  				break ;
  
