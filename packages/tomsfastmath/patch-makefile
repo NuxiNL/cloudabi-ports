@@ -13,7 +13,7 @@
  
  ifndef MAKE
     MAKE=make
-@@ -98,10 +92,10 @@
+@@ -115,10 +109,10 @@
  	$(RANLIB) $@
  
  install: $(LIBNAME)
@@ -26,5 +26,5 @@
 +	install $(LIBNAME) $(DESTDIR)$(LIBPATH)
 +	install $(HEADERS_PUB) $(DESTDIR)$(INCPATH)
  
- .PHONY: mtest
- mtest: $(LIBNAME)
+ HEADER_FILES=$(notdir $(HEADERS_PUB))
+ uninstall:
