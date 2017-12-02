@@ -11,7 +11,7 @@
  	if (ret < 0)
 --- libxslt/transform.c
 +++ libxslt/transform.c
-@@ -3824,6 +3824,9 @@
+@@ -3804,6 +3804,9 @@
       * if we do not specify append.
       * Note that append use will forbid use of remote URI target.
       */
@@ -21,7 +21,7 @@
      prop = xsltEvalAttrValueTemplate(ctxt, inst, (const xmlChar *)"append",
  				     NULL);
      if (prop != NULL) {
-@@ -3847,6 +3850,7 @@
+@@ -3827,6 +3830,7 @@
  	    fclose(f);
  	}
      } else {
