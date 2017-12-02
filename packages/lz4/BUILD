@@ -4,7 +4,7 @@
 
 
 def build(ctx):
-    srcdir = ctx.extract('%(name)s/r%(version)s').path('lib')
+    srcdir = ctx.extract('%(name)s/v%(version)s').path('lib')
     ctx.archive(
         srcdir.path(f).compile()
         for f in {
@@ -19,12 +19,12 @@ def build(ctx):
 
 package(
     name='lz4',
-    version='131',
+    version='1.8.0',
     homepage='https://lz4.github.io/lz4/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='lz4/r131.tar.gz',
-    checksum='9d4d00614d6b9dec3114b33d1224b6262b99ace24434c53487a0c8fd0b18cfed',
+    name='lz4/v1.8.0.tar.gz',
+    checksum='2ca482ea7a9bb103603108b5a7510b7592b90158c151ff50a28f1ca8389fccf6',
     master_sites={'https://github.com/lz4/lz4/archive/'})
