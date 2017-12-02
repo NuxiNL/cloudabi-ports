@@ -4,20 +4,19 @@
 
 
 def build(ctx):
-    build = ctx.extract('%(name)s-1.2rc2').gnu_configure(
-        ['--disable-binaries'])
+    build = ctx.extract().gnu_configure(['--disable-binaries'])
     build.make()
     build.make_install().install()
 
 
 package(
     name='speex',
-    version='1.1.92',
+    version='1.2.0',
     homepage='http://www.speex.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='speex-1.2rc2.tar.gz',
-    checksum='caa27c7247ff15c8521c2ae0ea21987c9e9710a8f2d3448e8b79da9806bce891',
+    name='speex-1.2.0.tar.gz',
+    checksum='eaae8af0ac742dc7d542c9439ac72f1f385ce838392dc849cae4536af9210094',
     master_sites={'http://downloads.xiph.org/releases/speex/'})
