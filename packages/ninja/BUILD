@@ -11,11 +11,11 @@ def build(ctx):
 
 host_package(
     name='ninja',
-    version='1.7.2',
+    version='1.8.2',
     homepage='https://ninja-build.org/',
     build_cmd=build)
 
 distfile(
-    name='ninja/v1.7.2.tar.gz',
-    checksum='2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9',
+    name='ninja/v1.8.2.tar.gz',
+    checksum='86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4',
     master_sites={'https://github.com/ninja-build/ninja/archive/'})
