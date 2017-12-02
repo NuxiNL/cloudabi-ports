@@ -172,6 +172,7 @@ class FileHandle:
 
     def symlink(self, contents):
         util.remove(self._path)
+        util.make_parent_dir(self._path)
         os.symlink(contents, self._path)
 
     def unhardcode_paths(self):
