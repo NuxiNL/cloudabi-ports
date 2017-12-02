@@ -1,95 +1,131 @@
---- makefile
-+++ makefile
-@@ -125,21 +125,21 @@
- src/encauth/ocb/ocb_encrypt_authenticate_memory.o src/encauth/ocb/ocb_encrypt.o \
- src/encauth/ocb/ocb_init.o src/encauth/ocb/ocb_ntz.o src/encauth/ocb/ocb_shift_xor.o \
- src/encauth/ocb/ocb_test.o src/encauth/ocb/s_ocb_done.o src/hashes/chc/chc.o \
--src/hashes/helper/hash_file.o src/hashes/helper/hash_filehandle.o src/hashes/helper/hash_memory.o \
-+src/hashes/helper/hash_filehandle.o src/hashes/helper/hash_memory.o \
+--- makefile_include.mk
++++ makefile_include.mk
+@@ -212,30 +212,30 @@
+ src/encauth/ocb3/ocb3_encrypt.o src/encauth/ocb3/ocb3_encrypt_authenticate_memory.o \
+ src/encauth/ocb3/ocb3_encrypt_last.o src/encauth/ocb3/ocb3_init.o src/encauth/ocb3/ocb3_int_ntz.o \
+ src/encauth/ocb3/ocb3_int_xor_blocks.o src/encauth/ocb3/ocb3_test.o src/hashes/blake2b.o \
+-src/hashes/blake2s.o src/hashes/chc/chc.o src/hashes/helper/hash_file.o \
++src/hashes/blake2s.o src/hashes/chc/chc.o \
+ src/hashes/helper/hash_filehandle.o src/hashes/helper/hash_memory.o \
  src/hashes/helper/hash_memory_multi.o src/hashes/md2.o src/hashes/md4.o src/hashes/md5.o \
  src/hashes/rmd128.o src/hashes/rmd160.o src/hashes/rmd256.o src/hashes/rmd320.o src/hashes/sha1.o \
- src/hashes/sha2/sha256.o src/hashes/sha2/sha512.o src/hashes/tiger.o src/hashes/whirl/whirl.o \
--src/mac/f9/f9_done.o src/mac/f9/f9_file.o src/mac/f9/f9_init.o src/mac/f9/f9_memory.o \
-+src/mac/f9/f9_done.o src/mac/f9/f9_init.o src/mac/f9/f9_memory.o \
- src/mac/f9/f9_memory_multi.o src/mac/f9/f9_process.o src/mac/f9/f9_test.o src/mac/hmac/hmac_done.o \
--src/mac/hmac/hmac_file.o src/mac/hmac/hmac_init.o src/mac/hmac/hmac_memory.o \
-+src/mac/hmac/hmac_init.o src/mac/hmac/hmac_memory.o \
- src/mac/hmac/hmac_memory_multi.o src/mac/hmac/hmac_process.o src/mac/hmac/hmac_test.o \
--src/mac/omac/omac_done.o src/mac/omac/omac_file.o src/mac/omac/omac_init.o src/mac/omac/omac_memory.o \
-+src/mac/omac/omac_done.o src/mac/omac/omac_init.o src/mac/omac/omac_memory.o \
- src/mac/omac/omac_memory_multi.o src/mac/omac/omac_process.o src/mac/omac/omac_test.o \
- src/mac/pelican/pelican.o src/mac/pelican/pelican_memory.o src/mac/pelican/pelican_test.o \
--src/mac/pmac/pmac_done.o src/mac/pmac/pmac_file.o src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
-+src/mac/pmac/pmac_done.o src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
+ src/hashes/sha2/sha224.o src/hashes/sha2/sha256.o src/hashes/sha2/sha384.o src/hashes/sha2/sha512.o \
+ src/hashes/sha2/sha512_224.o src/hashes/sha2/sha512_256.o src/hashes/sha3.o src/hashes/sha3_test.o \
+ src/hashes/tiger.o src/hashes/whirl/whirl.o src/mac/blake2/blake2bmac.o \
+-src/mac/blake2/blake2bmac_file.o src/mac/blake2/blake2bmac_memory.o \
++src/mac/blake2/blake2bmac_memory.o \
+ src/mac/blake2/blake2bmac_memory_multi.o src/mac/blake2/blake2bmac_test.o src/mac/blake2/blake2smac.o \
+-src/mac/blake2/blake2smac_file.o src/mac/blake2/blake2smac_memory.o \
++src/mac/blake2/blake2smac_memory.o \
+ src/mac/blake2/blake2smac_memory_multi.o src/mac/blake2/blake2smac_test.o src/mac/f9/f9_done.o \
+-src/mac/f9/f9_file.o src/mac/f9/f9_init.o src/mac/f9/f9_memory.o src/mac/f9/f9_memory_multi.o \
+-src/mac/f9/f9_process.o src/mac/f9/f9_test.o src/mac/hmac/hmac_done.o src/mac/hmac/hmac_file.o \
++src/mac/f9/f9_init.o src/mac/f9/f9_memory.o src/mac/f9/f9_memory_multi.o \
++src/mac/f9/f9_process.o src/mac/f9/f9_test.o src/mac/hmac/hmac_done.o \
+ src/mac/hmac/hmac_init.o src/mac/hmac/hmac_memory.o src/mac/hmac/hmac_memory_multi.o \
+-src/mac/hmac/hmac_process.o src/mac/hmac/hmac_test.o src/mac/omac/omac_done.o src/mac/omac/omac_file.o \
++src/mac/hmac/hmac_process.o src/mac/hmac/hmac_test.o src/mac/omac/omac_done.o \
+ src/mac/omac/omac_init.o src/mac/omac/omac_memory.o src/mac/omac/omac_memory_multi.o \
+ src/mac/omac/omac_process.o src/mac/omac/omac_test.o src/mac/pelican/pelican.o \
+ src/mac/pelican/pelican_memory.o src/mac/pelican/pelican_test.o src/mac/pmac/pmac_done.o \
+-src/mac/pmac/pmac_file.o src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
++src/mac/pmac/pmac_init.o src/mac/pmac/pmac_memory.o \
  src/mac/pmac/pmac_memory_multi.o src/mac/pmac/pmac_ntz.o src/mac/pmac/pmac_process.o \
- src/mac/pmac/pmac_shift_xor.o src/mac/pmac/pmac_test.o src/mac/xcbc/xcbc_done.o \
+ src/mac/pmac/pmac_shift_xor.o src/mac/pmac/pmac_test.o src/mac/poly1305/poly1305.o \
+-src/mac/poly1305/poly1305_file.o src/mac/poly1305/poly1305_memory.o \
++src/mac/poly1305/poly1305_memory.o \
+ src/mac/poly1305/poly1305_memory_multi.o src/mac/poly1305/poly1305_test.o src/mac/xcbc/xcbc_done.o \
 -src/mac/xcbc/xcbc_file.o src/mac/xcbc/xcbc_init.o src/mac/xcbc/xcbc_memory.o \
 +src/mac/xcbc/xcbc_init.o src/mac/xcbc/xcbc_memory.o \
  src/mac/xcbc/xcbc_memory_multi.o src/mac/xcbc/xcbc_process.o src/mac/xcbc/xcbc_test.o \
  src/math/fp/ltc_ecc_fp_mulmod.o src/math/gmp_desc.o src/math/ltm_desc.o src/math/multi.o \
- src/math/rand_prime.o src/math/tfm_desc.o src/misc/base64/base64_decode.o \
+ src/math/radix_to_bin.o src/math/rand_bn.o src/math/rand_prime.o src/math/tfm_desc.o src/misc/adler32.o \
 --- src/headers/tomcrypt_hash.h
 +++ src/headers/tomcrypt_hash.h
-@@ -335,7 +335,6 @@
- int hash_memory_multi(int hash, unsigned char *out, unsigned long *outlen,
-                       const unsigned char *in, unsigned long inlen, ...);
+@@ -483,7 +483,6 @@
+ 
+ #ifndef LTC_NO_FILE
  int hash_filehandle(int hash, FILE *in, unsigned char *out, unsigned long *outlen);
 -int hash_file(int hash, const char *fname, unsigned char *out, unsigned long *outlen);
+ #endif
  
  /* a simple macro for making hash "process" functions */
- #define HASH_PROCESS(func_name, compress_name, state_var, block_size)                       \
 --- src/headers/tomcrypt_mac.h
 +++ src/headers/tomcrypt_mac.h
-@@ -18,9 +18,6 @@
+@@ -27,9 +27,6 @@
                  const unsigned char *key,  unsigned long keylen,
                        unsigned char *out,  unsigned long *outlen,
                  const unsigned char *in,   unsigned long inlen, ...);
 -int hmac_file(int hash, const char *fname, const unsigned char *key,
--              unsigned long keylen, 
+-              unsigned long keylen,
 -              unsigned char *dst, unsigned long *dstlen);
  #endif
  
  #ifdef LTC_OMAC
-@@ -46,10 +43,6 @@
+@@ -55,10 +52,6 @@
                  const unsigned char *key, unsigned long keylen,
                        unsigned char *out, unsigned long *outlen,
                  const unsigned char *in,  unsigned long inlen, ...);
--int omac_file(int cipher, 
+-int omac_file(int cipher,
 -              const unsigned char *key, unsigned long keylen,
--              const          char *filename, 
+-              const          char *filename,
 -                    unsigned char *out, unsigned long *outlen);
  int omac_test(void);
  #endif /* LTC_OMAC */
  
-@@ -83,10 +76,6 @@
+@@ -92,10 +85,6 @@
                        unsigned char *out, unsigned long *outlen,
                  const unsigned char *in, unsigned long inlen, ...);
  
--int pmac_file(int cipher, 
+-int pmac_file(int cipher,
 -             const unsigned char *key, unsigned long keylen,
--             const          char *filename, 
+-             const          char *filename,
 -                   unsigned char *out, unsigned long *outlen);
  
  int pmac_test(void);
  
-@@ -336,10 +325,6 @@
+@@ -121,7 +110,6 @@
+ int poly1305_test(void);
+ int poly1305_memory(const unsigned char *key, unsigned long keylen, const unsigned char *in, unsigned long inlen, unsigned char *mac, unsigned long *maclen);
+ int poly1305_memory_multi(const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen, const unsigned char *in,  unsigned long inlen, ...);
+-int poly1305_file(const char *fname, const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen);
+ int poly1305_test(void);
+ #endif /* LTC_POLY1305 */
+ 
+@@ -133,7 +121,6 @@
+ int blake2smac_test(void);
+ int blake2smac_memory(const unsigned char *key, unsigned long keylen, const unsigned char *in, unsigned long inlen, unsigned char *mac, unsigned long *maclen);
+ int blake2smac_memory_multi(const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen, const unsigned char *in,  unsigned long inlen, ...);
+-int blake2smac_file(const char *fname, const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen);
+ int blake2smac_test(void);
+ #endif /* LTC_BLAKE2SMAC */
+ 
+@@ -145,7 +132,6 @@
+ int blake2bmac_test(void);
+ int blake2bmac_memory(const unsigned char *key, unsigned long keylen, const unsigned char *in, unsigned long inlen, unsigned char *mac, unsigned long *maclen);
+ int blake2bmac_memory_multi(const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen, const unsigned char *in,  unsigned long inlen, ...);
+-int blake2bmac_file(const char *fname, const unsigned char *key, unsigned long keylen, unsigned char *mac, unsigned long *maclen);
+ int blake2bmac_test(void);
+ #endif /* LTC_BLAKE2BMAC */
+ 
+@@ -490,10 +476,6 @@
                  const unsigned char *key, unsigned long keylen,
                        unsigned char *out, unsigned long *outlen,
                  const unsigned char *in,  unsigned long inlen, ...);
--int xcbc_file(int cipher, 
+-int xcbc_file(int cipher,
 -              const unsigned char *key, unsigned long keylen,
--              const          char *filename, 
+-              const          char *filename,
 -                    unsigned char *out, unsigned long *outlen);
  int xcbc_test(void);
  
  #endif
-@@ -370,10 +355,6 @@
+@@ -524,10 +506,6 @@
                  const unsigned char *key, unsigned long keylen,
                        unsigned char *out, unsigned long *outlen,
                  const unsigned char *in,  unsigned long inlen, ...);
--int f9_file(int cipher, 
+-int f9_file(int cipher,
 -              const unsigned char *key, unsigned long keylen,
--              const          char *filename, 
+-              const          char *filename,
 -                    unsigned char *out, unsigned long *outlen);
  int f9_test(void);
  

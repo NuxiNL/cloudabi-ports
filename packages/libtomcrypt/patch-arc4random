@@ -1,6 +1,6 @@
 --- src/prngs/rng_get_bytes.c
 +++ src/prngs/rng_get_bytes.c
-@@ -10,6 +10,14 @@
+@@ -8,6 +8,15 @@
   */
  #include "tomcrypt.h"
  
@@ -12,11 +12,12 @@
 +}
 +
 +#if 0
- /** 
++
+ #ifdef LTC_RNG_GET_BYTES
+ /**
     @file rng_get_bytes.c
-    portable way to get secure random bits to feed a PRNG (Tom St Denis)
-@@ -146,3 +154,4 @@
- /* $Source: /cvs/libtom/libtomcrypt/src/prngs/rng_get_bytes.c,v $ */
- /* $Revision: 1.7 $ */
- /* $Date: 2007/05/12 14:32:35 $ */
+@@ -157,3 +166,4 @@
+ /* ref:         HEAD -> master, tag: v1.18.0 */
+ /* git commit:  0676c9aec7299f5c398d96cbbb64f7e38f67d73f */
+ /* commit time: 2017-10-10 15:51:36 +0200 */
 +#endif

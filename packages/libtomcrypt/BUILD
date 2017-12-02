@@ -5,7 +5,10 @@
 
 def build(ctx):
     root = ctx.extract('libtom/crypt-%(version)s')
-    root.make(['IGNORE_SPEED=yes', 'default'])
+    root.make([
+        'CROSS_COMPILE=%s-' % ctx.gnu_triple(),
+        'IGNORE_SPEED=yes',
+    ])
     root.make_install([
         'INCPATH=%s/include' % ctx.prefix(),
         'LIBPATH=%s/lib' % ctx.prefix(),
@@ -16,14 +19,18 @@ def build(ctx):
 
 package(
     name='libtomcrypt',
-    version='1.17',
+    version='1.18.0',
     homepage='http://www.libtom.net/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='libtom/crypt-1.17.tar.bz2',
-    checksum='e33b47d77a495091c8703175a25c8228aff043140b2554c08a3c3cd71f79d116',
+    name='libtom/crypt-1.18.0.tar.xz',
+    checksum='da9df56a314afaab71963aa71bb6a075ea6bdee3d4db4af045f6bfe23e88b87a',
     master_sites={
-        'https://github.com/libtom/libtomcrypt/releases/download/1.17/'
+        'https://github.com/libtom/libtomcrypt/releases/download/v1.18.0/'
+    },
+    unsafe_string_sources={
+        'src/misc/crypt/crypt_constants.c',
+        'src/misc/crypt/crypt_sizes.c',
     })
