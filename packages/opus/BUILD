@@ -11,12 +11,12 @@ def build(ctx):
 
 package(
     name='opus',
-    version='1.1.4',
+    version='1.2.1',
     homepage='http://www.opus-codec.org/',
     lib_depends={'c-runtime'},
     build_cmd=build)
 
 distfile(
-    name='opus-1.1.4.tar.gz',
-    checksum='9122b6b380081dd2665189f97bfd777f04f92dc3ab6698eea1dbb27ad59d8692',
+    name='opus-1.2.1.tar.gz',
+    checksum='cfafd339ccd9c5ef8d6ab15d7e1a412c054bf4cb4ecbbbcc78c12ef2def70732',
     master_sites={'http://downloads.xiph.org/releases/opus/'})
