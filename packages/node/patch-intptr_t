@@ -1,0 +1,34 @@
+--- deps/v8/src/base/atomicops.h
++++ deps/v8/src/base/atomicops.h
+@@ -40,7 +40,11 @@
+ namespace base {
+ 
+ typedef char Atomic8;
++#if defined(__ILP32__)
++typedef intptr_t Atomic32;
++#else
+ typedef int32_t Atomic32;
++#endif
+ #if defined(V8_HOST_ARCH_64_BIT)
+ // We need to be able to go between Atomic64 and AtomicWord implicitly.  This
+ // means Atomic64 and AtomicWord should be the same type on 64-bit.
+--- deps/v8/src/inspector/v8-profiler-agent-impl.cc
++++ deps/v8/src/inspector/v8-profiler-agent-impl.cc
+@@ -139,7 +139,7 @@
+   return location;
+ }
+ 
+-volatile int s_lastProfileId = 0;
++volatile v8::base::Atomic32 s_lastProfileId = 0;
+ 
+ }  // namespace
+ 
+@@ -398,7 +398,7 @@
+ 
+ String16 V8ProfilerAgentImpl::nextProfileId() {
+   return String16::fromInteger(
+-      v8::base::Relaxed_AtomicIncrement(&s_lastProfileId, 1));
++      (int)v8::base::Relaxed_AtomicIncrement(&s_lastProfileId, 1));
+ }
+ 
+ void V8ProfilerAgentImpl::startProfiling(const String16& title) {
