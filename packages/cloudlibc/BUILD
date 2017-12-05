@@ -20,5 +20,5 @@ package(
 
 distfile(
     name='cloudlibc/v0.95.tar.gz',
-    checksum='1c72bc92fa1fe438b6dce22db3ce29b4e8f5ecfd33250489a2e3cf34648580cd',
+    checksum='9ec474c448f564709e30361077d6ebecb3b9218208f134b304fc4355e4f91ce6',
     master_sites={'https://github.com/NuxiNL/cloudlibc/archive/'})
