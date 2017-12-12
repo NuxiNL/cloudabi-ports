@@ -1,0 +1,13 @@
+--- lib/Basic/Targets.cpp
++++ lib/Basic/Targets.cpp
+@@ -6571,6 +6571,10 @@
+       return 1;
+     return -1;
+   }
++
++  bool hasSjLjLowering() const override {
++    return true;
++  }
+ };
+ 
+ const char *const AArch64TargetInfo::GCCRegNames[] = {
