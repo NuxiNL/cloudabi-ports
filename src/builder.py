@@ -291,8 +291,13 @@ class HostBuilder:
 
     def cmake(self, builddir, sourcedir, args):
         self.run(builddir, [
-            'cmake', sourcedir, '-G', 'Ninja', '-DCMAKE_BUILD_TYPE=Release',
-            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix()
+            'cmake',
+            sourcedir,
+            '-G',
+            'Ninja',
+            '-DCMAKE_BUILD_TYPE=Release',
+            '-DCMAKE_FIND_ROOT_PATH=' + self.get_prefix(),
+            '-DCMAKE_INSTALL_PREFIX=' + self.get_prefix(),
         ] + args)
 
     @staticmethod
