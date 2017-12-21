@@ -44,7 +44,7 @@ distfile(
     name='cfe-5.0.0.src.tar.xz',
     checksum='019f23c2192df793ac746595e94a403908749f8e0c484b403476d2611dd20970',
     master_sites={'http://releases.llvm.org/5.0.0/'},
-    patches={'aarch64-setjmp', 'clang-no-c-headers'})
+    patches={'clang-no-c-headers'})
 distfile(
     name='lld-5.0.0.src.tar.xz',
     checksum='399a7920a5278d42c46a7bf7e4191820ec2301457a7d0d4fcc9a4ac05dd53897',
