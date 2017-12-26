@@ -18,7 +18,7 @@ def build(ctx):
         srcdir.path(f).compile(['-I../include', '-fexceptions'])
         for f in c_sources
     } | {
-        srcdir.path(f).compile(['-I../include', '-std=c++11'])
+        srcdir.path(f).compile(['-I../include', '-std=c++11', '-fno-rtti'])
         for f in cxx_sources
     })
 
