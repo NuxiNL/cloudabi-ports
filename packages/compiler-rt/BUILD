@@ -5,7 +5,7 @@
 
 def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
-    headers = ctx.extract('cloudlibc/v0.97').path('src/include')
+    headers = ctx.extract('cloudlibc/v0.98').path('src/include')
 
     sources = {
         'absvdi2.c',
