@@ -12,10 +12,13 @@ import subprocess
 from . import config
 from . import util
 
+from src.distfile import Distfile
+from src.version import SimpleVersion
+from typing import Any, Dict, List
 log = logging.getLogger(__name__)
 
 
-def _chdir(path):
+def _chdir(path: str) -> None:
     util.make_dir(path)
     os.chdir(path)
 
@@ -41,7 +44,7 @@ class DiffCreator:
 
 
 class FileHandle:
-    def __init__(self, builder, path):
+    def __init__(self, builder: HostBuilder, path: str) -> None:
         self._builder = builder
         self._path = path
 
@@ -130,12 +133,12 @@ class FileHandle:
     def rename(self, dst):
         os.rename(self._path, dst._path)
 
-    def cmake(self, args=[]):
+    def cmake(self, args: List[Any] = []) -> FileHandle:
         builddir = self._builder._build_directory.get_new_directory()
         self._builder.cmake(builddir, self._path, args)
         return FileHandle(self._builder, builddir)
 
-    def install(self, path='.'):
+    def install(self, path: str = '.') -> None:
         self._builder.install(self._path, path)
 
     def make(self, args=['all']):
@@ -148,7 +151,7 @@ class FileHandle:
                           os.path.join(stagedir,
                                        self._builder.get_prefix()[1:]))
 
-    def ninja(self):
+    def ninja(self) -> None:
         self.run(['ninja'])
 
     def ninja_install(self):
@@ -161,13 +164,13 @@ class FileHandle:
     def open(self, mode):
         return open(self._path, mode)
 
-    def path(self, path):
+    def path(self, path: str) -> FileHandle:
         return FileHandle(self._builder, os.path.join(self._path, path))
 
     def remove(self):
         util.remove(self._path)
 
-    def run(self, command):
+    def run(self, command: List[str]) -> None:
         self._builder.run(self._path, command)
 
     def symlink(self, contents):
@@ -180,7 +183,7 @@ class FileHandle:
 
 
 class BuildHandle:
-    def __init__(self, builder, name, version, distfiles, resource_directory):
+    def __init__(self, builder: HostBuilder, name: str, version: SimpleVersion, distfiles: Dict[str, Distfile], resource_directory: str) -> None:
         self._builder = builder
         self._name = name
         self._version = version
@@ -218,7 +221,7 @@ class BuildHandle:
         subprocess.check_call([self._builder.get_cc(), '-o', output] + objs)
         return FileHandle(self._builder, output)
 
-    def extract(self, name='%(name)s-%(version)s'):
+    def extract(self, name: str = '%(name)s-%(version)s') -> FileHandle:
         return FileHandle(
             self._builder, self._distfiles[name % {
                 'name': self._name,
@@ -253,7 +256,7 @@ class BuildHandle:
 
 
 class BuildDirectory:
-    def __init__(self):
+    def __init__(self) -> None:
         self._sequence_number = 0
         self._builddir = os.path.join(config.DIR_BUILDROOT, 'build')
 
@@ -263,7 +266,7 @@ class BuildDirectory:
         self._sequence_number += 1
         return path
 
-    def get_new_directory(self):
+    def get_new_directory(self) -> str:
         path = os.path.join(self._builddir, str(self._sequence_number))
         util.make_dir(path)
         self._sequence_number += 1
@@ -277,7 +280,7 @@ class BuildDirectory:
 
 
 class HostBuilder:
-    def __init__(self, build_directory, install_directory):
+    def __init__(self, build_directory: BuildDirectory, install_directory: str) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory
 
@@ -289,7 +292,7 @@ class HostBuilder:
     def gnu_configure(self, builddir, script, args):
         self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
-    def cmake(self, builddir, sourcedir, args):
+    def cmake(self, builddir: str, sourcedir: str, args: List[Any]) -> None:
         self.run(builddir, [
             'cmake',
             sourcedir,
@@ -301,14 +304,14 @@ class HostBuilder:
         ] + args)
 
     @staticmethod
-    def get_cc():
+    def get_cc() -> str:
         return config.HOST_CC
 
     def get_cflags(self):
         return self._cflags
 
     @staticmethod
-    def get_cxx():
+    def get_cxx() -> str:
         return config.HOST_CXX
 
     @staticmethod
@@ -320,10 +323,10 @@ class HostBuilder:
         return str(triple, encoding='ASCII').strip()
 
     @staticmethod
-    def get_prefix():
+    def get_prefix() -> str:
         return config.DIR_BUILDROOT
 
-    def install(self, source, target):
+    def install(self, source: str, target: str) -> None:
         log.info('INSTALL %s->%s', source, target)
         target = os.path.join(self._install_directory, target)
         for source_file, target_file in util.walk_files_concurrently(
@@ -339,7 +342,7 @@ class HostBuilder:
                 util.make_parent_dir(target_file)
                 util.copy_file(source_file, target_file, False)
 
-    def run(self, cwd, command):
+    def run(self, cwd: str, command: List[str]) -> None:
         _chdir(cwd)
         subprocess.check_call([
             'env',
