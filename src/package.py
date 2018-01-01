@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 class HostPackage:
     def __init__(self, install_directory: str, name: str, version: SimpleVersion, homepage: str,
-                 build_depends: Set[HostPackage], lib_depends: Set[HostPackage], distfiles: Dict[str, Distfile], build_cmd: Callable,
+                 build_depends: Set['HostPackage'], lib_depends: Set['HostPackage'], distfiles: Dict[str, Distfile], build_cmd: Callable,
                  resource_directory: str) -> None:
         self._install_directory = install_directory
         self._name = name
@@ -81,7 +81,7 @@ class TargetPackage:
                  version: SimpleVersion,
                  homepage: str,
                  host_packages: Dict[str, HostPackage],
-                 lib_depends: Set[TargetPackage],
+                 lib_depends: Set['TargetPackage'],
                  build_cmd: Optional[Callable],
                  distfiles: Dict[str, Distfile],
                  resource_directory: Optional[str],
@@ -177,7 +177,7 @@ class TargetPackage:
     def get_homepage(self) -> str:
         return self._homepage
 
-    def get_lib_depends(self) -> Set[TargetPackage]:
+    def get_lib_depends(self) -> Set['TargetPackage']:
         return self._lib_depends
 
     def get_replaces(self) -> frozenset:
