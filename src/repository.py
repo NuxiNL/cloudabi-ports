@@ -12,8 +12,10 @@ from .package import HostPackage, TargetPackage
 from .version import SimpleVersion
 
 
+from src.package import TargetPackage
+from typing import Dict, Tuple
 class Repository:
-    def __init__(self, install_directory):
+    def __init__(self, install_directory: str) -> None:
         self._install_directory = install_directory
 
         self._distfiles = {}
@@ -23,7 +25,7 @@ class Repository:
         self._deferred_host_packages = {}
         self._deferred_target_packages = {}
 
-    def add_build_file(self, path, distdir):
+    def add_build_file(self, path: str, distdir: str) -> None:
         def op_build_autoconf_automake(ctx):
             build = ctx.extract().gnu_configure()
             build.make()
@@ -127,7 +129,7 @@ class Repository:
     def get_distfiles(self):
         return self._distfiles.values()
 
-    def get_target_packages(self):
+    def get_target_packages(self) -> Dict[Tuple[str, str], TargetPackage]:
         # Create host packages that haven't been instantiated yet.
         # This implicitly checks for dependency loops.
         def get_host_package(name):
