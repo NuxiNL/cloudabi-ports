@@ -5,13 +5,14 @@
 import struct
 
 
+from typing import Any, Dict, Iterator, List, Union
 class Header:
     """Class for generating binary RPM headers."""
 
-    def __init__(self, entries):
+    def __init__(self, entries: Dict[int, Any]) -> None:
         self._entries = entries
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         """Serializes a set of entries to a binary RPM header."""
         indices = b''
         values = b''
@@ -35,107 +36,107 @@ class Header:
 class Int16:
     """List of 16 bit signed integers."""
 
-    def __init__(self, values):
+    def __init__(self, values: Iterator[Any]) -> None:
         self._values = list(values)
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 2
 
-    def count(self):
+    def count(self) -> int:
         return len(self._values)
 
-    def encode(self):
+    def encode(self) -> bytes:
         return b''.join(struct.pack('>h', value) for value in self._values)
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 3
 
 
 class Int32:
     """List of 32 bit signed integers."""
 
-    def __init__(self, values):
+    def __init__(self, values: Union[range, List[int]]) -> None:
         self._values = list(values)
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 4
 
-    def count(self):
+    def count(self) -> int:
         return len(self._values)
 
-    def encode(self):
+    def encode(self) -> bytes:
         return b''.join(struct.pack('>i', value) for value in self._values)
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 4
 
 
 class String:
     """Single C string."""
 
-    def __init__(self, value):
+    def __init__(self, value: str) -> None:
         self._value = value
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 1
 
     @staticmethod
-    def count():
+    def count() -> int:
         return 1
 
-    def encode(self):
+    def encode(self) -> bytes:
         return bytes(self._value, encoding='ASCII') + b'\0'
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 6
 
 
 class Bin:
     """Binary blob."""
 
-    def __init__(self, value):
+    def __init__(self, value: bytes) -> None:
         self._value = value
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 1
 
-    def count(self):
+    def count(self) -> int:
         return len(self._value)
 
-    def encode(self):
+    def encode(self) -> bytes:
         return self._value
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 7
 
 
 class StringArray:
     """Sequence of C strings."""
 
-    def __init__(self, values):
+    def __init__(self, values: List[str]) -> None:
         self._values = list(values)
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 1
 
-    def count(self):
+    def count(self) -> int:
         return len(self._values)
 
-    def encode(self):
+    def encode(self) -> bytes:
         return b''.join(
             bytes(value, encoding='ASCII') + b'\0' for value in self._values)
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 8
 
 
@@ -144,20 +145,20 @@ class I18NString:
 
     This implementation only supports ASCII."""
 
-    def __init__(self, value):
+    def __init__(self, value: str) -> None:
         self._value = value
 
     @staticmethod
-    def alignment():
+    def alignment() -> int:
         return 1
 
     @staticmethod
-    def count():
+    def count() -> int:
         return 1
 
-    def encode(self):
+    def encode(self) -> bytes:
         return bytes(self._value, encoding='ASCII') + b'\0'
 
     @staticmethod
-    def type():
+    def type() -> int:
         return 9

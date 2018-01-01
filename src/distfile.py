@@ -12,12 +12,13 @@ import urllib
 from . import config
 from . import util
 
+from typing import Set, Union
 log = logging.getLogger(__name__)
 
 
 class Distfile:
-    def __init__(self, distdir, name, checksum, master_sites, patches,
-                 unsafe_string_sources):
+    def __init__(self, distdir: str, name: str, checksum: str, master_sites: Set[str], patches: Set[str],
+                 unsafe_string_sources: Union[frozenset, Set[str]]) -> None:
         for patch in patches:
             if not os.path.isfile(patch):
                 raise Exception('Patch %s does not exist' % patch)
@@ -38,7 +39,7 @@ class Distfile:
              for site in config.FALLBACK_MIRRORS}
 
     @staticmethod
-    def _apply_patch(patch, target):
+    def _apply_patch(patch: str, target: str) -> None:
         # Automatically determine the patchlevel by taking a look at the
         # first filename in the patch.
         patchlevel = 0
@@ -73,7 +74,7 @@ class Distfile:
             if path.endswith('.orig'):
                 os.unlink(path)
 
-    def _extract_unpatched(self, target):
+    def _extract_unpatched(self, target: str) -> str:
         # Fetch and extract tarball.
         self._fetch()
         tar = os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')
@@ -92,7 +93,7 @@ class Distfile:
                 return target
             target = subdir
 
-    def _fetch(self):
+    def _fetch(self) -> None:
         for i in range(10):
             log.info('CHECKSUM %s', self._pathname)
             # Validate the existing file on disk.
@@ -115,7 +116,7 @@ class Distfile:
                 log.warning(e)
         raise Exception('Failed to fetch %s' % self._name)
 
-    def extract(self, target):
+    def extract(self, target: str) -> str:
         target = self._extract_unpatched(target)
         # Apply patches.
         for patch in self._patches:

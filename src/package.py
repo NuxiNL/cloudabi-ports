@@ -11,13 +11,16 @@ from . import config
 from . import util
 from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 
+from src.distfile import Distfile
+from src.version import SimpleVersion
+from typing import Any, Callable, Dict, Optional, Set, Union
 log = logging.getLogger(__name__)
 
 
 class HostPackage:
-    def __init__(self, install_directory, name, version, homepage,
-                 build_depends, lib_depends, distfiles, build_cmd,
-                 resource_directory):
+    def __init__(self, install_directory: str, name: str, version: SimpleVersion, homepage: str,
+                 build_depends: Set[HostPackage], lib_depends: Set[HostPackage], distfiles: Dict[str, Distfile], build_cmd: Callable,
+                 resource_directory: str) -> None:
         self._install_directory = install_directory
         self._name = name
         self._version = version
@@ -37,7 +40,7 @@ class HostPackage:
             self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
-    def _initialize_buildroot(self):
+    def _initialize_buildroot(self) -> None:
         # Ensure that all dependencies have been built.
         deps = self._build_depends | self._lib_depends
         for dep in deps:
@@ -48,7 +51,7 @@ class HostPackage:
         for dep in deps:
             dep.extract()
 
-    def build(self):
+    def build(self) -> None:
         # Skip this package if it has been built already.
         if os.path.isdir(self._install_directory):
             return
@@ -62,7 +65,7 @@ class HostPackage:
                             self._install_directory), self._name,
                 self._version, self._distfiles, self._resource_directory))
 
-    def extract(self):
+    def extract(self) -> None:
         # Copy files literally.
         for source_file, target_file in util.walk_files_concurrently(
                 self._install_directory, config.DIR_BUILDROOT):
@@ -72,17 +75,17 @@ class HostPackage:
 
 class TargetPackage:
     def __init__(self,
-                 install_directory,
-                 arch,
-                 name,
-                 version,
-                 homepage,
-                 host_packages,
-                 lib_depends,
-                 build_cmd,
-                 distfiles,
-                 resource_directory,
-                 replaces=frozenset()):
+                 install_directory: str,
+                 arch: str,
+                 name: str,
+                 version: SimpleVersion,
+                 homepage: str,
+                 host_packages: Dict[str, HostPackage],
+                 lib_depends: Set[TargetPackage],
+                 build_cmd: Optional[Callable],
+                 distfiles: Dict[str, Distfile],
+                 resource_directory: Optional[str],
+                 replaces: Union[frozenset, Set[str]] = frozenset()) -> None:
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
@@ -104,7 +107,7 @@ class TargetPackage:
     def __str__(self):
         return '%s %s' % (self.get_freebsd_name(), self._version)
 
-    def build(self):
+    def build(self) -> None:
         # Skip this package if it has been built already.
         if not self._build_cmd or os.path.isdir(self._install_directory):
             return
@@ -127,7 +130,7 @@ class TargetPackage:
     def clean(self):
         util.remove(self._install_directory)
 
-    def extract(self, path, expandpath):
+    def extract(self, path: str, expandpath: str) -> None:
         for source_file, target_file in util.walk_files_concurrently(
                 self._install_directory, path):
             util.make_parent_dir(target_file)
@@ -144,52 +147,52 @@ class TargetPackage:
                 # Regular file. Copy it over literally.
                 util.copy_file(source_file, target_file, False)
 
-    def get_arch(self):
+    def get_arch(self) -> str:
         return self._arch
 
-    def get_archlinux_name(self):
+    def get_archlinux_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_cygwin_name(self):
+    def get_cygwin_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_debian_name(self):
+    def get_debian_name(self) -> str:
         return '%s-%s' % (self._arch.replace('_', '-'), self._name)
 
-    def get_freebsd_name(self):
+    def get_freebsd_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_homebrew_name(self):
+    def get_homebrew_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_netbsd_name(self):
+    def get_netbsd_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_openbsd_name(self):
+    def get_openbsd_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_redhat_name(self):
+    def get_redhat_name(self) -> str:
         return '%s-%s' % (self._arch, self._name)
 
-    def get_homepage(self):
+    def get_homepage(self) -> str:
         return self._homepage
 
-    def get_lib_depends(self):
+    def get_lib_depends(self) -> Set[TargetPackage]:
         return self._lib_depends
 
-    def get_replaces(self):
+    def get_replaces(self) -> frozenset:
         return self._replaces
 
-    def get_maintainer(self):
+    def get_maintainer(self) -> str:
         return 'info@nuxi.nl'
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self._name
 
-    def get_version(self):
+    def get_version(self) -> SimpleVersion:
         return self._version
 
-    def initialize_buildroot(self, host_depends, lib_depends=set()):
+    def initialize_buildroot(self, host_depends: Set[str], lib_depends: Set[Any] = set()) -> None:
         # Ensure that all dependencies have been built.
         host_deps = set()
         for dep in host_depends:

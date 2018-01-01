@@ -20,17 +20,20 @@ from . import rpm
 from . import util
 from .version import FullVersion, SimpleVersion
 
+from src.package import TargetPackage
+from src.version import FullVersion
+from typing import List
 log = logging.getLogger(__name__)
 
 
 class Catalog:
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         self._old_path = old_path
         self._new_path = new_path
         self._packages = set()
 
     @staticmethod
-    def _get_suggested_mode(path):
+    def _get_suggested_mode(path: str) -> int:
         mode = os.lstat(path).st_mode
         if stat.S_ISLNK(mode):
             # Symbolic links.
@@ -43,7 +46,7 @@ class Catalog:
             return 0o444
 
     @staticmethod
-    def _sanitize_permissions(directory, directory_mode=0o555):
+    def _sanitize_permissions(directory: str, directory_mode: int = 0o555) -> None:
         for root, dirs, files in os.walk(directory):
             util.lchmod(root, directory_mode)
             for filename in files:
@@ -51,11 +54,11 @@ class Catalog:
                 util.lchmod(path, Catalog._get_suggested_mode(path))
 
     @staticmethod
-    def _run_tar(args):
+    def _run_tar(args: List[str]) -> None:
         subprocess.check_call(
             [os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')] + args)
 
-    def insert(self, package, version, source):
+    def insert(self, package: TargetPackage, version: FullVersion, source: str) -> None:
         target = os.path.join(self._new_path,
                               self._get_filename(package, version))
         util.make_dir(self._new_path)
@@ -82,7 +85,7 @@ class DebianCatalog(Catalog):
         's390x', 'sparc'
     }
 
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(DebianCatalog, self).__init__(old_path, new_path)
 
         # Scan the existing directory hierarchy to find the latest
@@ -101,12 +104,12 @@ class DebianCatalog(Catalog):
                             self._existing[name] = version
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s_%s_all.deb' % (package.get_debian_name(),
                                   version.get_debian_version())
 
     @staticmethod
-    def _get_control_snippet(package, version, installed_size=None):
+    def _get_control_snippet(package: TargetPackage, version: FullVersion, installed_size: Optional[int] = None) -> str:
         """Returns a string suitable for writing to a .deb control file.
 
         For the fields refer to the Debian Policy Manual
@@ -207,7 +210,7 @@ class DebianCatalog(Catalog):
     def lookup_latest_version(self, package):
         return self._existing[package.get_debian_name()]
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive', 'llvm'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -270,7 +273,7 @@ class DebianCatalog(Catalog):
 
 
 class FreeBSDCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(FreeBSDCatalog, self).__init__(old_path, new_path)
 
         # Scan the existing directory hierarchy to find the latest
@@ -289,7 +292,7 @@ class FreeBSDCatalog(Catalog):
                             self._existing[name] = version
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.txz' % (package.get_freebsd_name(),
                               version.get_freebsd_version())
 
@@ -305,7 +308,7 @@ class FreeBSDCatalog(Catalog):
     def lookup_latest_version(self, package):
         return self._existing[package.get_freebsd_name()]
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -398,7 +401,7 @@ class HomebrewCatalog(Catalog):
         'el_capitan', 'high_sierra', 'mavericks', 'sierra', 'yosemite'
     }
 
-    def __init__(self, old_path, new_path, url):
+    def __init__(self, old_path: None, new_path: str, url: str) -> None:
         super(HomebrewCatalog, self).__init__(old_path, new_path)
         self._url = url
 
@@ -418,15 +421,15 @@ class HomebrewCatalog(Catalog):
                             self._existing[name] = version
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s|%s' % (package.get_homebrew_name(),
                           version.get_homebrew_version())
 
     @staticmethod
-    def _get_classname(name):
+    def _get_classname(name: str) -> str:
         return ''.join(part.capitalize() for part in re.split('[-_]', name))
 
-    def insert(self, package, version, source):
+    def insert(self, package: TargetPackage, version: FullVersion, source: str) -> None:
         super(HomebrewCatalog, self).insert(package, version, source)
 
         # Create symbolic to the tarball for every supported version of
@@ -491,7 +494,7 @@ class HomebrewCatalog(Catalog):
     def lookup_latest_version(self, package):
         return self._existing[package.get_homebrew_name()]
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -529,11 +532,11 @@ class HomebrewCatalog(Catalog):
 
 
 class NetBSDCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(NetBSDCatalog, self).__init__(old_path, new_path)
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_netbsd_name(),
                               version.get_netbsd_version())
 
@@ -541,7 +544,7 @@ class NetBSDCatalog(Catalog):
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -602,11 +605,11 @@ class NetBSDCatalog(Catalog):
 
 
 class OpenBSDCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(OpenBSDCatalog, self).__init__(old_path, new_path)
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_openbsd_name(),
                               version.get_openbsd_version())
 
@@ -614,7 +617,7 @@ class OpenBSDCatalog(Catalog):
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -709,7 +712,7 @@ class OpenBSDCatalog(Catalog):
 
 
 class ArchLinuxCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(ArchLinuxCatalog, self).__init__(old_path, new_path)
 
         self._existing = collections.defaultdict(FullVersion)
@@ -725,18 +728,18 @@ class ArchLinuxCatalog(Catalog):
                             self._existing[name] = version
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s-any.pkg.tar.xz' % (package.get_archlinux_name(),
                                          version.get_archlinux_version())
 
     @staticmethod
-    def _get_suggested_mode(path):
+    def _get_suggested_mode(path: str) -> int:
         return Catalog._get_suggested_mode(path) | 0o200
 
     def lookup_latest_version(self, package):
         return self._existing[package.get_archlinux_name()]
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -829,7 +832,7 @@ class ArchLinuxCatalog(Catalog):
 
 
 class CygwinCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(CygwinCatalog, self).__init__(old_path, new_path)
 
         self._existing = collections.defaultdict(FullVersion)
@@ -846,14 +849,14 @@ class CygwinCatalog(Catalog):
                                 self._existing[name] = version
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tar.xz' % (package.get_cygwin_name(),
                                  version.get_cygwin_version())
 
     def lookup_latest_version(self, package):
         return self._existing[package.get_cygwin_name()]
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))
@@ -915,30 +918,30 @@ class CygwinCatalog(Catalog):
 
 
 class RedHatCatalog(Catalog):
-    def __init__(self, old_path, new_path):
+    def __init__(self, old_path: None, new_path: str) -> None:
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
     @staticmethod
-    def _get_filename(package, version):
+    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.noarch.rpm' % (package.get_redhat_name(),
                                      version.get_redhat_version())
 
     @staticmethod
-    def _file_linkto(filename):
+    def _file_linkto(filename: str) -> str:
         try:
             return os.readlink(filename)
         except OSError:
             return ''
 
     @staticmethod
-    def _file_md5(filename):
+    def _file_md5(filename: str) -> str:
         if os.path.islink(filename):
             return ''
         else:
             return util.md5(filename).hexdigest()
 
     @staticmethod
-    def _file_mode(filename):
+    def _file_mode(filename: str) -> int:
         mode = os.lstat(filename).st_mode
         if stat.S_ISLNK(mode):
             # Symbolic links.
@@ -951,7 +954,7 @@ class RedHatCatalog(Catalog):
             return 0o100444 - 65536
 
     @staticmethod
-    def _file_size(filename):
+    def _file_size(filename: str) -> int:
         sb = os.lstat(filename)
         if stat.S_ISREG(sb.st_mode):
             return sb.st_size
@@ -961,7 +964,7 @@ class RedHatCatalog(Catalog):
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
-    def package(self, package, version):
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
         package.build()
         package.initialize_buildroot({'libarchive'})
         log.info('PKG %s', self._get_filename(package, version))

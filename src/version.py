@@ -4,7 +4,7 @@
 
 
 class SimpleVersion:
-    def __init__(self, version):
+    def __init__(self, version: str) -> None:
         # Turn the numbers into a list of integer values.
         self._numbers = [int(part) for part in version.split('.')]
 
@@ -18,7 +18,7 @@ class SimpleVersion:
     def __lt__(self, other):
         return self._numbers < other._numbers
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '.'.join(str(part) for part in self._numbers)
 
 
@@ -35,13 +35,13 @@ class FullVersion:
     def __str__(self):
         return self.get_debian_version()
 
-    def get_epoch(self):
+    def get_epoch(self) -> int:
         return self._epoch
 
-    def get_version(self):
+    def get_version(self) -> SimpleVersion:
         return self._version
 
-    def get_revision(self):
+    def get_revision(self) -> int:
         return self._revision
 
     def bump_epoch_revision(self, other):
@@ -63,47 +63,47 @@ class FullVersion:
     def bump_revision(self):
         return FullVersion(self._epoch, self._version, self._revision + 1)
 
-    def get_archlinux_version(self):
+    def get_archlinux_version(self) -> str:
         version = '%s-%d' % (self._version, self._revision)
         if self._epoch:
             version = '%d:' % self._epoch + version
         return version
 
-    def get_cygwin_version(self):
+    def get_cygwin_version(self) -> str:
         # TODO: Cygwin does not seem to support epoch numbers
         assert self._epoch == 0
         return '%s-%d' % (self._version, self._revision)
 
-    def get_debian_version(self):
+    def get_debian_version(self) -> str:
         version = str(self._version)
         if self._epoch:
             version = '%d:' % self._epoch + version
         version += '-%d' % self._revision
         return version
 
-    def get_freebsd_version(self):
+    def get_freebsd_version(self) -> str:
         version = '%s_%d' % (self._version, self._revision)
         if self._epoch:
             version += ',%d' % self._epoch
         return version
 
-    def get_homebrew_version(self):
+    def get_homebrew_version(self) -> str:
         # TODO(ed): Homebrew does not seem to support the Epoch numbers?
         assert self._epoch == 0
         return '%s_%d' % (self._version, self._revision)
 
-    def get_netbsd_version(self):
+    def get_netbsd_version(self) -> str:
         # TODO(ed): NetBSD does not seem to support the Epoch numbers?
         assert self._epoch == 0
         return '%snb%d' % (self._version, self._revision)
 
-    def get_openbsd_version(self):
+    def get_openbsd_version(self) -> str:
         version = '%sp%d' % (self._version, self._revision)
         if self._epoch:
             version += 'v%d' % self._epoch
         return version
 
-    def get_redhat_version(self):
+    def get_redhat_version(self) -> str:
         version = '%s-%d' % (self._version, self._revision)
         if self._epoch:
             version = '%d:' % self._epoch + version

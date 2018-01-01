@@ -13,7 +13,10 @@ import urllib.request
 from . import config
 
 
-def copy_file(source, target, preserve_attributes):
+from _hashlib import HASH
+from http.client import HTTPResponse
+from typing import Iterator, Tuple
+def copy_file(source: str, target: str, preserve_attributes: bool) -> None:
     if os.path.exists(target):
         raise Exception('About to overwrite %s with %s' % (source, target))
     if os.path.islink(source):
@@ -73,7 +76,7 @@ def gzip_file(source, target):
         shutil.copyfileobj(f1, f2)
 
 
-def unsafe_fetch(url):
+def unsafe_fetch(url: str) -> HTTPResponse:
     # Fetch a file over HTTP, HTTPS or FTP. For HTTPS, we don't do any
     # certificate checking. The caller should validate the authenticity
     # of the result.
@@ -88,7 +91,7 @@ def unsafe_fetch(url):
         return urllib.request.urlopen(url)
 
 
-def lchmod(path, mode):
+def lchmod(path: str, mode: int) -> None:
     try:
         os.lchmod(path, mode)
     except AttributeError:
@@ -96,18 +99,18 @@ def lchmod(path, mode):
             os.chmod(path, mode)
 
 
-def make_dir(path):
+def make_dir(path: str) -> None:
     try:
         os.makedirs(path)
     except FileExistsError:
         pass
 
 
-def make_parent_dir(path):
+def make_parent_dir(path: str) -> None:
     make_dir(os.path.dirname(path))
 
 
-def _remove(path):
+def _remove(path: str) -> None:
     try:
         shutil.rmtree(path)
     except FileNotFoundError:
@@ -116,7 +119,7 @@ def _remove(path):
         os.unlink(path)
 
 
-def remove(path):
+def remove(path: str) -> None:
     try:
         # First try to remove the file or directory directly.
         _remove(path)
@@ -128,7 +131,7 @@ def remove(path):
         _remove(path)
 
 
-def remove_and_make_dir(path):
+def remove_and_make_dir(path: str) -> None:
     try:
         remove(path)
     except FileNotFoundError:
@@ -136,7 +139,7 @@ def remove_and_make_dir(path):
     make_dir(path)
 
 
-def hash_file(path, checksum):
+def hash_file(path: str, checksum: HASH) -> None:
     if os.path.islink(path):
         checksum.update(bytes(os.readlink(path), encoding='ASCII'))
     else:
@@ -148,7 +151,7 @@ def hash_file(path, checksum):
                 checksum.update(data)
 
 
-def sha256(path):
+def sha256(path: str) -> HASH:
     checksum = hashlib.sha256()
     hash_file(path, checksum)
     return checksum
@@ -160,13 +163,13 @@ def sha512(path):
     return checksum
 
 
-def md5(path):
+def md5(path: str) -> HASH:
     checksum = hashlib.md5()
     hash_file(path, checksum)
     return checksum
 
 
-def walk_files(path):
+def walk_files(path: str) -> Iterator[str]:
     if os.path.isdir(path):
         for root, dirs, files in os.walk(path):
             # Return all files.
@@ -181,7 +184,7 @@ def walk_files(path):
         yield path
 
 
-def walk_files_concurrently(source, target):
+def walk_files_concurrently(source: str, target: str) -> Iterator[Tuple[str, str]]:
     for source_filename in walk_files(source):
         target_filename = os.path.normpath(
             os.path.join(target, os.path.relpath(source_filename, source)))
