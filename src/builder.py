@@ -133,7 +133,7 @@ class FileHandle:
     def rename(self, dst):
         os.rename(self._path, dst._path)
 
-    def cmake(self, args: List[Any] = []) -> FileHandle:
+    def cmake(self, args: List[Any] = []) -> 'FileHandle':
         builddir = self._builder._build_directory.get_new_directory()
         self._builder.cmake(builddir, self._path, args)
         return FileHandle(self._builder, builddir)
@@ -164,7 +164,7 @@ class FileHandle:
     def open(self, mode):
         return open(self._path, mode)
 
-    def path(self, path: str) -> FileHandle:
+    def path(self, path: str) -> 'FileHandle':
         return FileHandle(self._builder, os.path.join(self._path, path))
 
     def remove(self):
