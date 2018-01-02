@@ -14,7 +14,7 @@ from . import util
 
 from src.distfile import Distfile
 from src.version import SimpleVersion
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 log = logging.getLogger(__name__)
 
 
@@ -44,7 +44,7 @@ class DiffCreator:
 
 
 class FileHandle:
-    def __init__(self, builder: HostBuilder, path: str) -> None:
+    def __init__(self, builder: 'Builder', path: str) -> None:
         self._builder = builder
         self._path = path
 
@@ -183,7 +183,7 @@ class FileHandle:
 
 
 class BuildHandle:
-    def __init__(self, builder: HostBuilder, name: str, version: SimpleVersion, distfiles: Dict[str, Distfile], resource_directory: str) -> None:
+    def __init__(self, builder: 'Builder', name: str, version: SimpleVersion, distfiles: Dict[str, Distfile], resource_directory: str) -> None:
         self._builder = builder
         self._name = name
         self._version = version
@@ -279,7 +279,25 @@ class BuildDirectory:
         return path
 
 
-class HostBuilder:
+class Abstract(NotImplementedError):
+    pass  # TODO: use abc?
+
+
+class Builder:
+    def __init__(self, build_directory: BuildDirectory,
+                 install_directory: Optional[str]) -> None:
+        self._build_directory = build_directory
+        self._install_directory = install_directory
+
+    def cmake(self, builddir: str, srcdir: str,
+              args: List[str]) -> None: raise Abstract()
+
+    def install(self, source: str, target: str) -> None: raise Abstract()
+
+    def run(self, cwd: str, command: List[str]) -> None: raise Abstract()
+
+
+class HostBuilder(Builder):
     def __init__(self, build_directory: BuildDirectory, install_directory: str) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory
@@ -292,7 +310,7 @@ class HostBuilder:
     def gnu_configure(self, builddir, script, args):
         self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
-    def cmake(self, builddir: str, sourcedir: str, args: List[Any]) -> None:
+    def cmake(self, builddir: str, sourcedir: str, args: List[str]) -> None:
         self.run(builddir, [
             'cmake',
             sourcedir,
@@ -356,7 +374,7 @@ class HostBuilder:
         ] + command)
 
 
-class TargetBuilder:
+class TargetBuilder(Builder):
     def __init__(self, build_directory, install_directory, arch):
         self._build_directory = build_directory
         self._install_directory = install_directory

@@ -6,7 +6,7 @@ import base64
 import collections
 import hashlib
 import logging
-import lzma
+import lzma  # type: ignore  # https://github.com/python/typeshed/issues/1019
 import math
 import os
 import re
@@ -22,15 +22,15 @@ from .version import FullVersion, SimpleVersion
 
 from src.package import TargetPackage
 from src.version import FullVersion
-from typing import List
+from typing import AnyStr, Dict, IO, List, Optional, Set, Tuple, cast
 log = logging.getLogger(__name__)
 
 
 class Catalog:
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: str, new_path: str) -> None:
         self._old_path = old_path
         self._new_path = new_path
-        self._packages = set()
+        self._packages = set()  # type: Set[Tuple[TargetPackage, FullVersion]]
 
     @staticmethod
     def _get_suggested_mode(path: str) -> int:
@@ -74,6 +74,10 @@ class Catalog:
                 return path
         return None
 
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+        raise NotImplementedError('abstract')
+
 
 class DebianCatalog(Catalog):
 
@@ -92,7 +96,7 @@ class DebianCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)
+        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -103,8 +107,8 @@ class DebianCatalog(Catalog):
                         if self._existing[name] < version:
                             self._existing[name] = version
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s_%s_all.deb' % (package.get_debian_name(),
                                   version.get_debian_version())
 
@@ -280,7 +284,7 @@ class FreeBSDCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)
+        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -291,8 +295,8 @@ class FreeBSDCatalog(Catalog):
                         if self._existing[name] < version:
                             self._existing[name] = version
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.txz' % (package.get_freebsd_name(),
                               version.get_freebsd_version())
 
@@ -409,7 +413,7 @@ class HomebrewCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)
+        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -420,8 +424,8 @@ class HomebrewCatalog(Catalog):
                         if self._existing[name] < version:
                             self._existing[name] = version
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s|%s' % (package.get_homebrew_name(),
                           version.get_homebrew_version())
 
@@ -535,8 +539,8 @@ class NetBSDCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(NetBSDCatalog, self).__init__(old_path, new_path)
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_netbsd_name(),
                               version.get_netbsd_version())
 
@@ -608,8 +612,8 @@ class OpenBSDCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(OpenBSDCatalog, self).__init__(old_path, new_path)
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_openbsd_name(),
                               version.get_openbsd_version())
 
@@ -637,7 +641,7 @@ class OpenBSDCatalog(Catalog):
                     '@cwd %s\n' % (package.get_openbsd_name(),
                                    version.get_openbsd_version(), prefix))
             # TODO(ed): Encode dependencies.
-            written_dirs = set()
+            written_dirs = set()  # type: Set[str]
             for path in files:
                 # Write entry for parent directories.
                 relpath = os.path.relpath(path, installdir)
@@ -715,7 +719,7 @@ class ArchLinuxCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(ArchLinuxCatalog, self).__init__(old_path, new_path)
 
-        self._existing = collections.defaultdict(FullVersion)
+        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -727,8 +731,8 @@ class ArchLinuxCatalog(Catalog):
                         if self._existing[name] < version:
                             self._existing[name] = version
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s-any.pkg.tar.xz' % (package.get_archlinux_name(),
                                          version.get_archlinux_version())
 
@@ -835,7 +839,7 @@ class CygwinCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(CygwinCatalog, self).__init__(old_path, new_path)
 
-        self._existing = collections.defaultdict(FullVersion)
+        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -848,8 +852,8 @@ class CygwinCatalog(Catalog):
                             if self._existing[name] < version:
                                 self._existing[name] = version
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.tar.xz' % (package.get_cygwin_name(),
                                  version.get_cygwin_version())
 
@@ -921,8 +925,8 @@ class RedHatCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
-    @staticmethod
-    def _get_filename(package: TargetPackage, version: FullVersion) -> str:
+    @classmethod
+    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
         return '%s-%s.noarch.rpm' % (package.get_redhat_name(),
                                      version.get_redhat_version())
 
@@ -1101,24 +1105,24 @@ class RedHatCatalog(Catalog):
 
         # Create the RPM file.
         output = os.path.join(config.DIR_BUILDROOT, 'output.rpm')
-        with open(output, 'wb') as f:
+        with open(output, 'wb') as fb:
             # The lead.
-            f.write(b'\xed\xab\xee\xdb\x03\x00\x00\x00\x00\x00')
+            fb.write(b'\xed\xab\xee\xdb\x03\x00\x00\x00\x00\x00')
             fullname = '%s-%s' % (name, version.get_redhat_version())
-            f.write(bytes(fullname, encoding='ASCII')[:66].ljust(66, b'\0'))
-            f.write(b'\x00\x01\x00\x05')
-            f.write(b'\x00' * 16)
+            fb.write(bytes(fullname, encoding='ASCII')[:66].ljust(66, b'\0'))
+            fb.write(b'\x00\x01\x00\x05')
+            fb.write(b'\x00' * 16)
 
             # The signature, aligned up to eight bytes in size.
-            f.write(signature)
-            f.write(b'\0' * ((8 - len(signature) % 8) % 8))
+            fb.write(signature)
+            fb.write(b'\0' * ((8 - len(signature) % 8) % 8))
 
             # The header.
-            f.write(header)
+            fb.write(header)
 
             # The payload.
             with open(data, 'rb') as fin:
-                shutil.copyfileobj(fin, f)
+                shutil.copyfileobj(fin, fb)
         return output
 
     def finish(self, private_key):

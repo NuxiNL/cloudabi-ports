@@ -5,7 +5,7 @@
 import struct
 
 
-from typing import Any, Dict, Iterator, List, Union
+from typing import Any, Dict, Iterator, Iterable, List, Union
 class Header:
     """Class for generating binary RPM headers."""
 
@@ -57,7 +57,7 @@ class Int16:
 class Int32:
     """List of 32 bit signed integers."""
 
-    def __init__(self, values: Union[range, List[int]]) -> None:
+    def __init__(self, values: Iterable[int]) -> None:
         self._values = list(values)
 
     @staticmethod
@@ -121,7 +121,7 @@ class Bin:
 class StringArray:
     """Sequence of C strings."""
 
-    def __init__(self, values: List[str]) -> None:
+    def __init__(self, values: Iterable[str]) -> None:
         self._values = list(values)
 
     @staticmethod

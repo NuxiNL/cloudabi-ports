@@ -9,13 +9,13 @@ import shutil
 import subprocess
 import ssl
 import urllib.request
+from urllib.response import addinfourl
 
 from . import config
 
 
-from _hashlib import HASH
 from http.client import HTTPResponse
-from typing import Iterator, Tuple
+from typing import BinaryIO, Iterator, Tuple, Union, cast
 def copy_file(source: str, target: str, preserve_attributes: bool) -> None:
     if os.path.exists(target):
         raise Exception('About to overwrite %s with %s' % (source, target))
@@ -76,7 +76,7 @@ def gzip_file(source, target):
         shutil.copyfileobj(f1, f2)
 
 
-def unsafe_fetch(url: str) -> HTTPResponse:
+def unsafe_fetch(url: str) -> BinaryIO:
     # Fetch a file over HTTP, HTTPS or FTP. For HTTPS, we don't do any
     # certificate checking. The caller should validate the authenticity
     # of the result.
@@ -85,10 +85,10 @@ def unsafe_fetch(url: str) -> HTTPResponse:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
-        return urllib.request.urlopen(url, context=ctx)
+        return cast(BinaryIO, urllib.request.urlopen(url, context=ctx))
     except TypeError:
         # Python < 3.4.3.
-        return urllib.request.urlopen(url)
+        return cast(BinaryIO, urllib.request.urlopen(url))
 
 
 def lchmod(path: str, mode: int) -> None:
@@ -139,7 +139,7 @@ def remove_and_make_dir(path: str) -> None:
     make_dir(path)
 
 
-def hash_file(path: str, checksum: HASH) -> None:
+def hash_file(path: str, checksum: hashlib._Hash) -> None:
     if os.path.islink(path):
         checksum.update(bytes(os.readlink(path), encoding='ASCII'))
     else:
@@ -151,7 +151,7 @@ def hash_file(path: str, checksum: HASH) -> None:
                 checksum.update(data)
 
 
-def sha256(path: str) -> HASH:
+def sha256(path: str) -> hashlib._Hash:
     checksum = hashlib.sha256()
     hash_file(path, checksum)
     return checksum
@@ -163,7 +163,7 @@ def sha512(path):
     return checksum
 
 
-def md5(path: str) -> HASH:
+def md5(path: str) -> hashlib._Hash:
     checksum = hashlib.md5()
     hash_file(path, checksum)
     return checksum

@@ -13,7 +13,7 @@ from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 
 from src.distfile import Distfile
 from src.version import SimpleVersion
-from typing import Any, Callable, Dict, Optional, Set, Union
+from typing import AbstractSet, Any, Callable, Dict, Optional, Set, Union
 log = logging.getLogger(__name__)
 
 
@@ -29,13 +29,13 @@ class HostPackage:
         self._resource_directory = resource_directory
 
         # Compute the set of transitive build dependencies.
-        self._build_depends = set()
+        self._build_depends = set()  # type: Set['HostPackage']
         for dep in build_depends:
             self._build_depends.add(dep)
             self._build_depends |= dep._lib_depends
 
         # Compute the set of transitive library dependencies.
-        self._lib_depends = set()
+        self._lib_depends = set()  # type: Set['HostPackage']
         for dep in lib_depends:
             self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
@@ -85,7 +85,7 @@ class TargetPackage:
                  build_cmd: Optional[Callable],
                  distfiles: Dict[str, Distfile],
                  resource_directory: Optional[str],
-                 replaces: Union[frozenset, Set[str]] = frozenset()) -> None:
+                 replaces: AbstractSet[str] = frozenset()) -> None:
         self._install_directory = install_directory
         self._arch = arch
         self._name = name
@@ -98,7 +98,7 @@ class TargetPackage:
         self._replaces = replaces
 
         # Compute the set of transitive library dependencies.
-        self._lib_depends = set()
+        self._lib_depends = set()  # type: Set['TargetPackage']
         for dep in lib_depends:
             if dep._build_cmd:
                 self._lib_depends.add(dep)
@@ -180,7 +180,7 @@ class TargetPackage:
     def get_lib_depends(self) -> Set['TargetPackage']:
         return self._lib_depends
 
-    def get_replaces(self) -> frozenset:
+    def get_replaces(self) -> AbstractSet[str]:
         return self._replaces
 
     def get_maintainer(self) -> str:
@@ -192,26 +192,26 @@ class TargetPackage:
     def get_version(self) -> SimpleVersion:
         return self._version
 
-    def initialize_buildroot(self, host_depends: Set[str], lib_depends: Set[Any] = set()) -> None:
+    def initialize_buildroot(self, host_depends: Set[str], lib_depends: Set['TargetPackage'] = set()) -> None:
         # Ensure that all dependencies have been built.
-        host_deps = set()
-        for dep in host_depends:
-            package = self._host_packages[dep]
+        host_deps = set()  # type: Set[HostPackage]
+        for dep_name in host_depends:
+            package = self._host_packages[dep_name]
             host_deps.add(package)
             for depdep in package._lib_depends:
                 host_deps.add(depdep)
         for dep in host_deps:
             dep.build()
-        for dep in lib_depends:
-            dep.build()
+        for ldep in lib_depends:
+            ldep.build()
 
         # Install dependencies into an empty buildroot.
         util.remove_and_make_dir(config.DIR_BUILDROOT)
         for dep in host_deps:
             dep.extract()
         prefix = os.path.join(config.DIR_BUILDROOT, self._arch)
-        for dep in lib_depends:
-            dep.extract(prefix, prefix)
+        for ldep in lib_depends:
+            ldep.extract(prefix, prefix)
 
         # Also allow us to call into Python from within the buildroot.
         # TODO(ed): Should we add Python as a host package as well?

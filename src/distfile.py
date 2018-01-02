@@ -8,6 +8,7 @@ import random
 import shutil
 import subprocess
 import urllib
+import urllib.error
 
 from . import config
 from . import util
@@ -64,7 +65,7 @@ class Distfile:
                     break
 
         # Apply the patch.
-        with open(patch) as f:
+        with open(patch, 'rb') as f:
             subprocess.check_call(
                 ['patch', '-d', target,
                  '-tsp%d' % patchlevel], stdin=f)
@@ -101,7 +102,7 @@ class Distfile:
                 if util.sha256(self._pathname).hexdigest() == self._checksum:
                     return
             except FileNotFoundError as e:
-                log.warning(e)
+                log.warning('%s', e)
 
             url = random.sample(self._urls, 1)[0]
             log.info('FETCH %s', url)
@@ -111,9 +112,9 @@ class Distfile:
                                                          'wb') as fout:
                     shutil.copyfileobj(fin, fout)
             except ConnectionResetError as e:
-                log.warning(e)
+                log.warning('%s', e)
             except urllib.error.URLError as e:
-                log.warning(e)
+                log.warning('%s', e)
         raise Exception('Failed to fetch %s' % self._name)
 
     def extract(self, target: str) -> str:
