@@ -4,6 +4,7 @@
 
 import gzip
 import hashlib
+from _hashlib import HASH as _Hash
 import os
 import shutil
 import subprocess
@@ -139,7 +140,7 @@ def remove_and_make_dir(path: str) -> None:
     make_dir(path)
 
 
-def hash_file(path: str, checksum: hashlib._Hash) -> None:
+def hash_file(path: str, checksum: _Hash) -> None:
     if os.path.islink(path):
         checksum.update(bytes(os.readlink(path), encoding='ASCII'))
     else:
@@ -151,7 +152,7 @@ def hash_file(path: str, checksum: hashlib._Hash) -> None:
                 checksum.update(data)
 
 
-def sha256(path: str) -> hashlib._Hash:
+def sha256(path: str) -> _Hash:
     checksum = hashlib.sha256()
     hash_file(path, checksum)
     return checksum
@@ -163,7 +164,7 @@ def sha512(path):
     return checksum
 
 
-def md5(path: str) -> hashlib._Hash:
+def md5(path: str) -> _Hash:
     checksum = hashlib.md5()
     hash_file(path, checksum)
     return checksum
