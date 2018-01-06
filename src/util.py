@@ -4,13 +4,13 @@
 
 import gzip
 import hashlib
-from _hashlib import HASH as _Hash
 import os
 import shutil
 import subprocess
 import ssl
 import urllib.request
 from urllib.response import addinfourl
+from typing import Any
 
 from . import config
 
@@ -140,7 +140,7 @@ def remove_and_make_dir(path: str) -> None:
     make_dir(path)
 
 
-def hash_file(path: str, checksum: _Hash) -> None:
+def hash_file(path: str, checksum: Any) -> None:
     if os.path.islink(path):
         checksum.update(bytes(os.readlink(path), encoding='ASCII'))
     else:
@@ -152,7 +152,7 @@ def hash_file(path: str, checksum: _Hash) -> None:
                 checksum.update(data)
 
 
-def sha256(path: str) -> _Hash:
+def sha256(path: str) -> Any:
     checksum = hashlib.sha256()
     hash_file(path, checksum)
     return checksum
@@ -164,7 +164,7 @@ def sha512(path):
     return checksum
 
 
-def md5(path: str) -> _Hash:
+def md5(path: str) -> Any:
     checksum = hashlib.md5()
     hash_file(path, checksum)
     return checksum
