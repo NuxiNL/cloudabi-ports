@@ -13,7 +13,7 @@ from .builder import BuildDirectory, BuildHandle, HostBuilder, TargetBuilder
 
 from src.distfile import Distfile
 from src.version import SimpleVersion
-from typing import AbstractSet, Any, Callable, Dict, Optional, Set, Union
+from typing import AbstractSet, Callable, Dict, Optional, Set
 log = logging.getLogger(__name__)
 
 
@@ -22,7 +22,8 @@ class HostPackage:
             self, install_directory: str, name: str, version: SimpleVersion,
             homepage: str, build_depends: Set['HostPackage'],
             lib_depends: Set['HostPackage'], distfiles: Dict[str, Distfile],
-            build_cmd: Callable, resource_directory: str) -> None:
+            build_cmd: Callable[[BuildHandle], None],
+            resource_directory: str) -> None:
         self._install_directory = install_directory
         self._name = name
         self._version = version

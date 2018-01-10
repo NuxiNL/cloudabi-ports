@@ -4,13 +4,16 @@
 
 import struct
 
-from typing import Any, Dict, Iterator, Iterable, List, Union
+from typing import Any, Dict, Iterator, Iterable, Union
+
+IndexEntry = Union['Int16', 'Int32', 'String', 'Bin', 'StringArray',
+                   'I18NString']
 
 
 class Header:
     """Class for generating binary RPM headers."""
 
-    def __init__(self, entries: Dict[int, Any]) -> None:
+    def __init__(self, entries: Dict[int, IndexEntry]) -> None:
         self._entries = entries
 
     def __bytes__(self) -> bytes:

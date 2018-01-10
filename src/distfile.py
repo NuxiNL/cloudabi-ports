@@ -13,14 +13,14 @@ import urllib.error
 from . import config
 from . import util
 
-from typing import Set, Union
+from typing import AbstractSet, Set
 log = logging.getLogger(__name__)
 
 
 class Distfile:
     def __init__(self, distdir: str, name: str, checksum: str,
                  master_sites: Set[str], patches: Set[str],
-                 unsafe_string_sources: Union[frozenset, Set[str]]) -> None:
+                 unsafe_string_sources: AbstractSet[str]) -> None:
         for patch in patches:
             if not os.path.isfile(patch):
                 raise Exception('Patch %s does not exist' % patch)
