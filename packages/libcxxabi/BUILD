@@ -30,9 +30,9 @@ def build(ctx):
     }
     srcdir = root.path('src')
     libcxxabi = ctx.archive(
-        srcdir.path(f).compile([
-            '-I../include', '-I../libunwind/include', '-std=c++11'
-        ]) for f in sources)
+        srcdir.path(f).compile(
+            ['-I../include', '-I../libunwind/include', '-std=c++11'])
+        for f in sources)
 
     libcxxabi.install('lib/libc++abi.a')
     for f in {'include/cxxabi.h', 'include/__cxxabi_config.h'}:
