@@ -14,15 +14,15 @@ import shutil
 import stat
 import subprocess
 import time
+from typing import Dict, List, Optional, Set, Tuple
 
 from . import config
 from . import rpm
 from . import util
-from .version import FullVersion, SimpleVersion
+from .version import FullVersion
 
 from src.package import TargetPackage
-from src.version import FullVersion
-from typing import AnyStr, Dict, IO, List, Optional, Set, Tuple, cast
+
 log = logging.getLogger(__name__)
 
 
@@ -31,6 +31,7 @@ class Catalog:
         self._old_path = old_path
         self._new_path = new_path
         self._packages = set()  # type: Set[Tuple[TargetPackage, FullVersion]]
+        Set, Tuple  # for static anlyzers that don't see into comments
 
     @staticmethod
     def _get_suggested_mode(path: str) -> int:
@@ -101,6 +102,7 @@ class DebianCatalog(Catalog):
         # packages we're going to build.
         self._existing = collections.defaultdict(
             FullVersion)  # type: Dict[str, FullVersion]
+        Dict  # for static analyzers that don't see into comments
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:

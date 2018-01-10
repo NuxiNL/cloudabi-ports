@@ -14,7 +14,7 @@ from . import util
 
 from src.distfile import Distfile
 from src.version import SimpleVersion
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 log = logging.getLogger(__name__)
 
 
