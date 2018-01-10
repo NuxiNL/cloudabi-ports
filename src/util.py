@@ -14,9 +14,10 @@ from typing import Any
 
 from . import config
 
-
 from http.client import HTTPResponse
 from typing import BinaryIO, Iterator, Tuple, Union, cast
+
+
 def copy_file(source: str, target: str, preserve_attributes: bool) -> None:
     if os.path.exists(target):
         raise Exception('About to overwrite %s with %s' % (source, target))
@@ -185,7 +186,8 @@ def walk_files(path: str) -> Iterator[str]:
         yield path
 
 
-def walk_files_concurrently(source: str, target: str) -> Iterator[Tuple[str, str]]:
+def walk_files_concurrently(source: str,
+                            target: str) -> Iterator[Tuple[str, str]]:
     for source_filename in walk_files(source):
         target_filename = os.path.normpath(
             os.path.join(target, os.path.relpath(source_filename, source)))

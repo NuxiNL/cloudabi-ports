@@ -4,8 +4,9 @@
 
 import struct
 
-
 from typing import Any, Dict, Iterator, Iterable, List, Union
+
+
 class Header:
     """Class for generating binary RPM headers."""
 
@@ -23,14 +24,15 @@ class Header:
             align = value.alignment()
             values += b'\0' * (((align - len(values)) % align) % align)
             # Create index entry.
-            indices += struct.pack('>iiii', tag,
-                                   value.type(), len(values), value.count())
+            indices += struct.pack('>iiii', tag, value.type(), len(values),
+                                   value.count())
             # Append the entry's value.
             values += value.encode()
 
         # Return indices and values with a header record in front of it.
         return (b'\x8e\xad\xe8\x01\x00\x00\x00\x00' + struct.pack(
-            '>ii', len(indices) // 16, len(values)) + indices + values)
+            '>ii',
+            len(indices) // 16, len(values)) + indices + values)
 
 
 class Int16:

@@ -18,9 +18,11 @@ log = logging.getLogger(__name__)
 
 
 class HostPackage:
-    def __init__(self, install_directory: str, name: str, version: SimpleVersion, homepage: str,
-                 build_depends: Set['HostPackage'], lib_depends: Set['HostPackage'], distfiles: Dict[str, Distfile], build_cmd: Callable,
-                 resource_directory: str) -> None:
+    def __init__(
+            self, install_directory: str, name: str, version: SimpleVersion,
+            homepage: str, build_depends: Set['HostPackage'],
+            lib_depends: Set['HostPackage'], distfiles: Dict[str, Distfile],
+            build_cmd: Callable, resource_directory: str) -> None:
         self._install_directory = install_directory
         self._name = name
         self._version = version
@@ -192,7 +194,10 @@ class TargetPackage:
     def get_version(self) -> SimpleVersion:
         return self._version
 
-    def initialize_buildroot(self, host_depends: Set[str], lib_depends: Set['TargetPackage'] = set()) -> None:
+    def initialize_buildroot(
+            self,
+            host_depends: Set[str],
+            lib_depends: Set['TargetPackage'] = set()) -> None:
         # Ensure that all dependencies have been built.
         host_deps = set()  # type: Set[HostPackage]
         for dep_name in host_depends:

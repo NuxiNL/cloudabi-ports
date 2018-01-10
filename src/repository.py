@@ -14,26 +14,26 @@ from .version import SimpleVersion
 
 from typing import Callable, Dict, NamedTuple, Optional, Set, Tuple
 
-
-PackageInfo = NamedTuple('PackageInfo', [
-    ('name', str),
-    ('version', str),
-    ('build_cmd', Callable[[BuildHandle], None]),
-    ('build_depends', Optional[Set[str]]),
-    ('lib_depends', Optional[Set[str]]),
-    ('meta', Dict[str, str])])
+PackageInfo = NamedTuple(
+    'PackageInfo',
+    [('name', str), ('version', str),
+     ('build_cmd', Callable[[BuildHandle], None]),
+     ('build_depends', Optional[Set[str]]),
+     ('lib_depends', Optional[Set[str]]), ('meta', Dict[str, str])])
 
 
 class Repository:
     def __init__(self, install_directory: str) -> None:
         self._install_directory = install_directory
 
-        self._distfiles = {}        # type: Dict[str, Distfile]
-        self._host_packages = {}    # type: Dict[str, HostPackage]
-        self._target_packages = {}  # type: Dict[Tuple[str, str], TargetPackage]
+        self._distfiles = {}  # type: Dict[str, Distfile]
+        self._host_packages = {}  # type: Dict[str, HostPackage]
+        self._target_packages = {
+        }  # type: Dict[Tuple[str, str], TargetPackage]
 
-        self._deferred_host_packages = {}    # type: Dict[str, PackageInfo]
-        self._deferred_target_packages = {}  # type: Dict[Tuple[str, str], PackageInfo]
+        self._deferred_host_packages = {}  # type: Dict[str, PackageInfo]
+        self._deferred_target_packages = {
+        }  # type: Dict[Tuple[str, str], PackageInfo]
 
     def add_build_file(self, path: str, distdir: str) -> None:
         def op_build_autoconf_automake(ctx):

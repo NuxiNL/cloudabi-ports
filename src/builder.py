@@ -103,14 +103,14 @@ class FileHandle:
         ext = os.path.splitext(self._path)[1]
         if ext in {'.c', '.S'}:
             log.info('CC %s', self._path)
-            subprocess.check_call([self._builder.get_cc()
-                                   ] + self._builder.get_cflags() + args +
-                                  ['-c', '-o', output, self._path])
+            subprocess.check_call(
+                [self._builder.get_cc()] + self._builder.get_cflags() + args +
+                ['-c', '-o', output, self._path])
         elif ext in {'.cc', '.cpp'}:
             log.info('CXX %s', self._path)
-            subprocess.check_call([self._builder.get_cxx()
-                                   ] + self._builder.get_cxxflags() + args +
-                                  ['-c', '-o', output, self._path])
+            subprocess.check_call(
+                [self._builder.get_cxx()] + self._builder.get_cxxflags() +
+                args + ['-c', '-o', output, self._path])
         else:
             raise Exception('Unknown file extension: %s' % ext)
         return FileHandle(self._builder, output)
@@ -183,7 +183,9 @@ class FileHandle:
 
 
 class BuildHandle:
-    def __init__(self, builder: 'Builder', name: str, version: SimpleVersion, distfiles: Dict[str, Distfile], resource_directory: str) -> None:
+    def __init__(self, builder: 'Builder', name: str, version: SimpleVersion,
+                 distfiles: Dict[str, Distfile],
+                 resource_directory: str) -> None:
         self._builder = builder
         self._name = name
         self._version = version
@@ -289,16 +291,19 @@ class Builder:
         self._build_directory = build_directory
         self._install_directory = install_directory
 
-    def cmake(self, builddir: str, srcdir: str,
-              args: List[str]) -> None: raise Abstract()
+    def cmake(self, builddir: str, srcdir: str, args: List[str]) -> None:
+        raise Abstract()
 
-    def install(self, source: str, target: str) -> None: raise Abstract()
+    def install(self, source: str, target: str) -> None:
+        raise Abstract()
 
-    def run(self, cwd: str, command: List[str]) -> None: raise Abstract()
+    def run(self, cwd: str, command: List[str]) -> None:
+        raise Abstract()
 
 
 class HostBuilder(Builder):
-    def __init__(self, build_directory: BuildDirectory, install_directory: str) -> None:
+    def __init__(self, build_directory: BuildDirectory,
+                 install_directory: str) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory
 

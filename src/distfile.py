@@ -18,7 +18,8 @@ log = logging.getLogger(__name__)
 
 
 class Distfile:
-    def __init__(self, distdir: str, name: str, checksum: str, master_sites: Set[str], patches: Set[str],
+    def __init__(self, distdir: str, name: str, checksum: str,
+                 master_sites: Set[str], patches: Set[str],
                  unsafe_string_sources: Union[frozenset, Set[str]]) -> None:
         for patch in patches:
             if not os.path.isfile(patch):

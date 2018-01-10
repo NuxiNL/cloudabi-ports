@@ -46,7 +46,8 @@ class Catalog:
             return 0o444
 
     @staticmethod
-    def _sanitize_permissions(directory: str, directory_mode: int = 0o555) -> None:
+    def _sanitize_permissions(directory: str,
+                              directory_mode: int = 0o555) -> None:
         for root, dirs, files in os.walk(directory):
             util.lchmod(root, directory_mode)
             for filename in files:
@@ -58,7 +59,8 @@ class Catalog:
         subprocess.check_call(
             [os.path.join(config.DIR_BUILDROOT, 'bin/bsdtar')] + args)
 
-    def insert(self, package: TargetPackage, version: FullVersion, source: str) -> None:
+    def insert(self, package: TargetPackage, version: FullVersion,
+               source: str) -> None:
         target = os.path.join(self._new_path,
                               self._get_filename(package, version))
         util.make_dir(self._new_path)
@@ -75,7 +77,8 @@ class Catalog:
         return None
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         raise NotImplementedError('abstract')
 
 
@@ -96,7 +99,8 @@ class DebianCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
+        self._existing = collections.defaultdict(
+            FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -108,12 +112,15 @@ class DebianCatalog(Catalog):
                             self._existing[name] = version
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s_%s_all.deb' % (package.get_debian_name(),
                                   version.get_debian_version())
 
     @staticmethod
-    def _get_control_snippet(package: TargetPackage, version: FullVersion, installed_size: Optional[int] = None) -> str:
+    def _get_control_snippet(package: TargetPackage,
+                             version: FullVersion,
+                             installed_size: Optional[int] = None) -> str:
         """Returns a string suitable for writing to a .deb control file.
 
         For the fields refer to the Debian Policy Manual
@@ -251,8 +258,9 @@ class DebianCatalog(Catalog):
         with open(os.path.join(controldir, 'control'), 'w') as f:
             f.write(self._get_control_snippet(package, version, datadir_size))
         with open(os.path.join(controldir, 'md5sums'), 'w') as f:
-            f.writelines('%s  %s\n' % (util.md5(fpath).hexdigest(
-            ), os.path.relpath(fpath, datadir)) for fpath in datadir_files)
+            f.writelines('%s  %s\n' % (util.md5(fpath).hexdigest(),
+                                       os.path.relpath(fpath, datadir))
+                         for fpath in datadir_files)
         self._sanitize_permissions(controldir)
         self._run_tar([
             '-czf',
@@ -284,7 +292,8 @@ class FreeBSDCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
+        self._existing = collections.defaultdict(
+            FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -296,7 +305,8 @@ class FreeBSDCatalog(Catalog):
                             self._existing[name] = version
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s.txz' % (package.get_freebsd_name(),
                               version.get_freebsd_version())
 
@@ -363,9 +373,9 @@ class FreeBSDCatalog(Catalog):
             with open(manifest, 'w') as f:
                 f.write(base_manifest)
                 f.write(',"files":{')
-                f.write(','.join('"%s":"1$%s"' % (os.path.join(
-                    prefix, os.path.relpath(path, installdir)), util.sha256(
-                        path).hexdigest()) for path in files))
+                f.write(','.join('"%s":"1$%s"' % (
+                    os.path.join(prefix, os.path.relpath(path, installdir)),
+                    util.sha256(path).hexdigest()) for path in files))
                 f.write('}}')
         else:
             manifest = compact_manifest
@@ -413,7 +423,8 @@ class HomebrewCatalog(Catalog):
         # version of all of the packages. We need to know this in order
         # to determine the Epoch and revision number for any new
         # packages we're going to build.
-        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
+        self._existing = collections.defaultdict(
+            FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -425,7 +436,8 @@ class HomebrewCatalog(Catalog):
                             self._existing[name] = version
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s|%s' % (package.get_homebrew_name(),
                           version.get_homebrew_version())
 
@@ -433,7 +445,8 @@ class HomebrewCatalog(Catalog):
     def _get_classname(name: str) -> str:
         return ''.join(part.capitalize() for part in re.split('[-_]', name))
 
-    def insert(self, package: TargetPackage, version: FullVersion, source: str) -> None:
+    def insert(self, package: TargetPackage, version: FullVersion,
+               source: str) -> None:
         super(HomebrewCatalog, self).insert(package, version, source)
 
         # Create symbolic to the tarball for every supported version of
@@ -452,31 +465,32 @@ class HomebrewCatalog(Catalog):
         formulaedir = os.path.join(self._new_path, 'formulae')
         util.make_dir(formulaedir)
         with open(
-                os.path.join(formulaedir, package.get_homebrew_name() + '.rb'),
-                'w') as f:
+                os.path.join(formulaedir,
+                             package.get_homebrew_name() + '.rb'), 'w') as f:
             # Header.
-            f.write("""class %(homebrew_class)s < Formula
+            f.write(
+                """class %(homebrew_class)s < Formula
   desc "%(name)s for %(arch)s"
   homepage "%(homepage)s"
   url "http://this.package.cannot.be.built.from.source/"
   version "%(version)s"
   revision %(revision)d
 """ % {
-                'arch':
-                package.get_arch(),
-                'homebrew_class':
-                self._get_classname(package.get_homebrew_name()),
-                'homepage':
-                package.get_homepage(),
-                'name':
-                package.get_name(),
-                'revision':
-                version.get_revision(),
-                'url':
-                self._url,
-                'version':
-                version.get_version(),
-            })
+                    'arch':
+                    package.get_arch(),
+                    'homebrew_class':
+                    self._get_classname(package.get_homebrew_name()),
+                    'homepage':
+                    package.get_homepage(),
+                    'name':
+                    package.get_name(),
+                    'revision':
+                    version.get_revision(),
+                    'url':
+                    self._url,
+                    'version':
+                    version.get_version(),
+                })
 
             # Dependencies.
             for dep in sorted(pkg.get_homebrew_name()
@@ -507,8 +521,7 @@ class HomebrewCatalog(Catalog):
         # on the Mac OS X system. In the tarball, pathnames need to be
         # prefixed with <name>/<version>.
         installdir = os.path.join(config.DIR_BUILDROOT, 'install')
-        extractdir = os.path.join(installdir,
-                                  package.get_homebrew_name(),
+        extractdir = os.path.join(installdir, package.get_homebrew_name(),
                                   version.get_homebrew_version())
         util.make_dir(extractdir)
         package.extract(
@@ -540,7 +553,8 @@ class NetBSDCatalog(Catalog):
         super(NetBSDCatalog, self).__init__(old_path, new_path)
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_netbsd_name(),
                               version.get_netbsd_version())
 
@@ -577,14 +591,15 @@ class NetBSDCatalog(Catalog):
         with open(os.path.join(installdir, '+COMMENT'), 'w') as f:
             f.write('%s for %s\n' % (package.get_name(), package.get_arch()))
         with open(os.path.join(installdir, '+DESC'), 'w') as f:
-            f.write('%(name)s for %(arch)s\n'
-                    '\n'
-                    'Homepage:\n'
-                    '%(homepage)s\n' % {
-                        'arch': package.get_arch(),
-                        'name': package.get_name(),
-                        'homepage': package.get_homepage(),
-                    })
+            f.write(
+                '%(name)s for %(arch)s\n'
+                '\n'
+                'Homepage:\n'
+                '%(homepage)s\n' % {
+                    'arch': package.get_arch(),
+                    'name': package.get_name(),
+                    'homepage': package.get_homepage(),
+                })
 
         # Build information file.
         # TODO(ed): We MUST specify a machine architecture and operating
@@ -613,7 +628,8 @@ class OpenBSDCatalog(Catalog):
         super(OpenBSDCatalog, self).__init__(old_path, new_path)
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s.tgz' % (package.get_openbsd_name(),
                               version.get_openbsd_version())
 
@@ -668,17 +684,18 @@ class OpenBSDCatalog(Catalog):
         # Package description.
         desc = os.path.join(config.DIR_BUILDROOT, 'desc')
         with open(desc, 'w') as f:
-            f.write('%(name)s for %(arch)s\n'
-                    '\n'
-                    'Maintainer: %(maintainer)s\n'
-                    '\n'
-                    'WWW:\n'
-                    '%(homepage)s\n' % {
-                        'arch': package.get_arch(),
-                        'name': package.get_name(),
-                        'maintainer': package.get_maintainer(),
-                        'homepage': package.get_homepage(),
-                    })
+            f.write(
+                '%(name)s for %(arch)s\n'
+                '\n'
+                'Maintainer: %(maintainer)s\n'
+                '\n'
+                'WWW:\n'
+                '%(homepage)s\n' % {
+                    'arch': package.get_arch(),
+                    'name': package.get_name(),
+                    'maintainer': package.get_maintainer(),
+                    'homepage': package.get_homepage(),
+                })
 
         output = os.path.join(config.DIR_BUILDROOT, 'output.tar.gz')
         listing = os.path.join(config.DIR_BUILDROOT, 'listing')
@@ -719,7 +736,8 @@ class ArchLinuxCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(ArchLinuxCatalog, self).__init__(old_path, new_path)
 
-        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
+        self._existing = collections.defaultdict(
+            FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -732,7 +750,8 @@ class ArchLinuxCatalog(Catalog):
                             self._existing[name] = version
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s-any.pkg.tar.xz' % (package.get_archlinux_name(),
                                          version.get_archlinux_version())
 
@@ -831,15 +850,16 @@ class ArchLinuxCatalog(Catalog):
         ]
         # Ensure that repo-add as a valid working directory.
         os.chdir('/')
-        subprocess.check_call(['repo-add', '-s', '-k', private_key, db_file] +
-                              packages)
+        subprocess.check_call(
+            ['repo-add', '-s', '-k', private_key, db_file] + packages)
 
 
 class CygwinCatalog(Catalog):
     def __init__(self, old_path: None, new_path: str) -> None:
         super(CygwinCatalog, self).__init__(old_path, new_path)
 
-        self._existing = collections.defaultdict(FullVersion)  # type: Dict[str, FullVersion]
+        self._existing = collections.defaultdict(
+            FullVersion)  # type: Dict[str, FullVersion]
         if old_path:
             for root, dirs, files in os.walk(old_path):
                 for filename in files:
@@ -853,7 +873,8 @@ class CygwinCatalog(Catalog):
                                 self._existing[name] = version
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s.tar.xz' % (package.get_cygwin_name(),
                                  version.get_cygwin_version())
 
@@ -890,25 +911,27 @@ class CygwinCatalog(Catalog):
                     package_file_name = self._get_filename(package, version)
                     package_file = os.path.join(self._new_path,
                                                 package_file_name)
-                    f.write('\n'
-                            '@ %(cygwinname)s\n'
-                            'sdesc: "%(name)s for %(arch)s"\n'
-                            'version: %(version)s\n'
-                            'category: CloudABI\n' % {
-                                'cygwinname': package.get_cygwin_name(),
-                                'arch': package.get_arch(),
-                                'name': package.get_name(),
-                                'version': version.get_cygwin_version(),
-                            })
+                    f.write(
+                        '\n'
+                        '@ %(cygwinname)s\n'
+                        'sdesc: "%(name)s for %(arch)s"\n'
+                        'version: %(version)s\n'
+                        'category: CloudABI\n' % {
+                            'cygwinname': package.get_cygwin_name(),
+                            'arch': package.get_arch(),
+                            'name': package.get_name(),
+                            'version': version.get_cygwin_version(),
+                        })
                     if len(package.get_lib_depends()) > 0:
                         f.write('requires: %s\n' % ' '.join(
                             sorted(pkg.get_cygwin_name()
                                    for pkg in package.get_lib_depends())))
-                    f.write('install: %(filename)s %(size)s %(sha512)s\n' % {
-                        'size': os.lstat(package_file).st_size,
-                        'filename': package_file_name,
-                        'sha512': util.sha512(package_file).hexdigest(),
-                    })
+                    f.write(
+                        'install: %(filename)s %(size)s %(sha512)s\n' % {
+                            'size': os.lstat(package_file).st_size,
+                            'filename': package_file_name,
+                            'sha512': util.sha512(package_file).hexdigest(),
+                        })
             subprocess.check_call([
                 'gpg',
                 '--sign',
@@ -926,7 +949,8 @@ class RedHatCatalog(Catalog):
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
     @classmethod
-    def _get_filename(cls, package: TargetPackage, version: FullVersion) -> str:
+    def _get_filename(cls, package: TargetPackage,
+                      version: FullVersion) -> str:
         return '%s-%s.noarch.rpm' % (package.get_redhat_name(),
                                      version.get_redhat_version())
 
@@ -986,8 +1010,8 @@ class RedHatCatalog(Catalog):
         with open(listing, 'w') as f:
             f.write('#mtree\n')
             for path in files:
-                relpath = os.path.join(prefix,
-                                       os.path.relpath(path, installdir))
+                relpath = os.path.join(prefix, os.path.relpath(
+                    path, installdir))
                 if os.path.islink(path):
                     f.write(
                         '%s type=link mode=0777 uname=root gname=root time=0 link=%s\n'
@@ -1070,7 +1094,8 @@ class RedHatCatalog(Catalog):
                 1095:
                 rpm.Int32(1 for f in files),
                 1096:
-                rpm.Int32(range(1, len(files) + 1)),
+                rpm.Int32(range(1,
+                                len(files) + 1)),
                 1097:
                 rpm.StringArray('' for f in files),
                 1112:
