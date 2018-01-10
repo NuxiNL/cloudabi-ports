@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+from abc import abstractmethod
 import base64
 import collections
 import hashlib
@@ -78,9 +79,10 @@ class Catalog:
         return None
 
     @classmethod
+    @abstractmethod
     def _get_filename(cls, package: TargetPackage,
                       version: FullVersion) -> str:
-        raise NotImplementedError('abstract')
+        ...
 
 
 class DebianCatalog(Catalog):

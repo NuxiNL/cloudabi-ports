@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+from abc import ABC, abstractmethod
 import logging
 import os
 import random
@@ -281,24 +282,23 @@ class BuildDirectory:
         return path
 
 
-class Abstract(NotImplementedError):
-    pass  # TODO: use abc?
-
-
-class Builder:
+class Builder(ABC):
     def __init__(self, build_directory: BuildDirectory,
                  install_directory: Optional[str]) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory
 
+    @abstractmethod
     def cmake(self, builddir: str, srcdir: str, args: List[str]) -> None:
-        raise Abstract()
+        ...
 
+    @abstractmethod
     def install(self, source: str, target: str) -> None:
-        raise Abstract()
+        ...
 
+    @abstractmethod
     def run(self, cwd: str, command: List[str]) -> None:
-        raise Abstract()
+        ...
 
 
 class HostBuilder(Builder):
