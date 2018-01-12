@@ -38,7 +38,7 @@ def copy_file(source: str, target: str, preserve_attributes: bool) -> None:
         raise Exception(source + ' is of an unsupported type')
 
 
-def diff(orig_dir, patched_dir, patch):
+def diff(orig_dir: str, patched_dir: str, patch: str) -> None:
     proc = subprocess.Popen(
         [config.DIFF, '--no-dereference', '-urN', orig_dir, patched_dir],
         stdout=subprocess.PIPE)
@@ -61,7 +61,7 @@ def diff(orig_dir, patched_dir, patch):
                 f.write(l)
 
 
-def file_contents_equal(path1, path2):
+def file_contents_equal(path1: str, path2: str) -> bool:
     # Compare file contents.
     with open(path1, 'rb') as f1, open(path2, 'rb') as f2:
         while True:
@@ -73,9 +73,9 @@ def file_contents_equal(path1, path2):
                 return True
 
 
-def gzip_file(source, target):
+def gzip_file(source: str, target: str) -> None:
     with open(source, 'rb') as f1, gzip.GzipFile(target, 'wb', mtime=0) as f2:
-        shutil.copyfileobj(f1, f2)
+        shutil.copyfileobj(f1, cast(BinaryIO, f2))
 
 
 def unsafe_fetch(url: str) -> BinaryIO:
@@ -159,7 +159,7 @@ def sha256(path: str) -> Any:
     return checksum
 
 
-def sha512(path):
+def sha512(path: str) -> Any:
     checksum = hashlib.sha512()
     hash_file(path, checksum)
     return checksum

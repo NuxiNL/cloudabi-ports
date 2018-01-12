@@ -12,10 +12,10 @@ class SimpleVersion:
         if version != str(self):
             raise Exception('Version %s is not canonical', version)
 
-    def __eq__(self, other):
-        return self._numbers == other._numbers
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, SimpleVersion) and self._numbers == other._numbers
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'SimpleVersion') -> bool:
         return self._numbers < other._numbers
 
     def __str__(self) -> str:
@@ -23,16 +23,16 @@ class SimpleVersion:
 
 
 class FullVersion:
-    def __init__(self, epoch=0, version=SimpleVersion('0'), revision=1):
+    def __init__(self, epoch: int=0, version: SimpleVersion=SimpleVersion('0'), revision: int=1) -> None:
         self._epoch = epoch
         self._version = version
         self._revision = revision
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'FullVersion') -> bool:
         return ((self._epoch, self._version, self._revision) <
                 (other._epoch, other._version, other._revision))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.get_debian_version()
 
     def get_epoch(self) -> int:
@@ -44,7 +44,7 @@ class FullVersion:
     def get_revision(self) -> int:
         return self._revision
 
-    def bump_epoch_revision(self, other):
+    def bump_epoch_revision(self, other: 'FullVersion') -> None:
         if self._epoch > other._epoch:
             # Epoch counter is already larger. Skip.
             return
@@ -60,7 +60,7 @@ class FullVersion:
             # don't decrement the revision number.
             self._revision = other._revision
 
-    def bump_revision(self):
+    def bump_revision(self) -> 'FullVersion':
         return FullVersion(self._epoch, self._version, self._revision + 1)
 
     def get_archlinux_version(self) -> str:
@@ -110,7 +110,7 @@ class FullVersion:
         return version
 
     @staticmethod
-    def parse_archlinux(string):
+    def parse_archlinux(string: str) -> 'FullVersion':
         epoch = 0
         revision = 0
         # Parse leading Epoch number.
@@ -126,7 +126,7 @@ class FullVersion:
         return FullVersion(epoch, SimpleVersion(string), revision)
 
     @staticmethod
-    def parse_cygwin(string):
+    def parse_cygwin(string: str) -> 'FullVersion':
         revision = 0
         # Parse trailing revision number.
         s = string.rsplit('-', 1)
@@ -136,7 +136,7 @@ class FullVersion:
         return FullVersion(0, SimpleVersion(string), revision)
 
     @staticmethod
-    def parse_debian(string):
+    def parse_debian(string: str) -> 'FullVersion':
         epoch = 0
         revision = 0
         # Parse leading Epoch number.
@@ -152,7 +152,7 @@ class FullVersion:
         return FullVersion(epoch, SimpleVersion(string), revision)
 
     @staticmethod
-    def parse_freebsd(string):
+    def parse_freebsd(string: str) -> 'FullVersion':
         epoch = 0
         revision = 0
         # Parse trailing Epoch number.
@@ -168,6 +168,6 @@ class FullVersion:
         return FullVersion(epoch, SimpleVersion(string), revision)
 
     @staticmethod
-    def parse_homebrew(string):
+    def parse_homebrew(string: str) -> 'FullVersion':
         s = string.split('_', 1)
         return FullVersion(0, SimpleVersion(s[0]), int(s[1]))
