@@ -193,7 +193,7 @@ class FileHandle:
 class BuildHandle:
     def __init__(self, builder: 'Builder', name: str, version: SimpleVersion,
                  distfiles: Dict[str, Distfile],
-                 resource_directory: str) -> None:
+                 resource_directory: Optional[str]) -> None:
         self._builder = builder
         self._name = name
         self._version = version
@@ -261,6 +261,8 @@ class BuildHandle:
         return self._builder.get_prefix()
 
     def resource(self, name: str) -> FileHandle:
+        if self._resource_directory is None:
+            raise TypeError
         source = os.path.join(self._resource_directory, name)
         target = os.path.join(config.DIR_BUILDROOT, 'build', name)
         util.make_parent_dir(target)
@@ -420,7 +422,7 @@ class HostBuilder(Builder):
 
 
 class TargetBuilder(Builder):
-    def __init__(self, build_directory: BuildDirectory, install_directory: str, arch: str) -> None:
+    def __init__(self, build_directory: BuildDirectory, install_directory: Optional[str], arch: str) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory  # type: str  # override Builder
         self._arch = arch

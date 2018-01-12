@@ -135,7 +135,7 @@ class Distfile:
                 os.rename(path + '.new', path)
         return target
 
-    def fixup_patches(self, tmpdir):
+    def fixup_patches(self, tmpdir: str) -> None:
         if not self._patches:
             return
         # Extract one copy of the code to diff against.

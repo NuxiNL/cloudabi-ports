@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 class HostPackage:
     def __init__(
             self, install_directory: str, name: str, version: SimpleVersion,
-            homepage: str, build_depends: Set['HostPackage'],
+            homepage: Optional[str], build_depends: Set['HostPackage'],
             lib_depends: Set['HostPackage'], distfiles: Dict[str, Distfile],
             build_cmd: Callable[[BuildHandle], None],
             resource_directory: str) -> None:
@@ -107,7 +107,7 @@ class TargetPackage:
                 self._lib_depends.add(dep)
             self._lib_depends |= dep._lib_depends
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '%s %s' % (self.get_freebsd_name(), self._version)
 
     def build(self) -> None:
@@ -130,7 +130,7 @@ class TargetPackage:
                               self._arch), self._name, self._version,
                 self._distfiles, self._resource_directory))
 
-    def clean(self):
+    def clean(self) -> None:
         util.remove(self._install_directory)
 
     def extract(self, path: str, expandpath: str) -> None:

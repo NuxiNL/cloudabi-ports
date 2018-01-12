@@ -12,14 +12,16 @@ from .distfile import Distfile
 from .package import HostPackage, TargetPackage
 from .version import SimpleVersion
 
-from typing import Callable, Dict, NamedTuple, Optional, Set, Tuple
+from typing import AbstractSet, Callable, Dict, Iterable, NamedTuple, Optional, Set, Tuple
 
 PackageInfo = NamedTuple(
     'PackageInfo',
     [('name', str), ('version', str),
      ('build_cmd', Callable[[BuildHandle], None]),
      ('build_depends', Optional[Set[str]]),
-     ('lib_depends', Optional[Set[str]]), ('meta', Dict[str, str])])
+     ('lib_depends', Optional[Set[str]]),
+     ('resource_directory', str),
+     ('meta', Dict[str, str])])
 
 
 class Repository:
@@ -36,15 +38,17 @@ class Repository:
         }  # type: Dict[Tuple[str, str], PackageInfo]
 
     def add_build_file(self, path: str, distdir: str) -> None:
-        def op_build_autoconf_automake(ctx):
+        def op_build_autoconf_automake(ctx: BuildHandle) -> None:
             build = ctx.extract().gnu_configure()
             build.make()
             build.make_install().install()
 
-        def op_distfile(**kwargs):
+        def op_distfile(name: str,
+                        checksum: str,
+                        master_sites: Set[str],
+                        patches: Optional[AbstractSet[str]]=None,
+                        unsafe_string_sources: Optional[AbstractSet[str]]=None) -> None:
             # Determine canonical name by stripping the file extension.
-            distfile = kwargs
-            name = distfile['name']
             for ext in {
                     '.tar.bz2',
                     '.tar.gz',
@@ -53,47 +57,59 @@ class Repository:
                     '.tgz',
                     '.zip',
             }:
-                if distfile['name'].endswith(ext):
-                    name = distfile['name'][:-len(ext)]
+                if name.endswith(ext):
+                    name = name[:-len(ext)]
                     break
 
             # Automatically add patches if none are given.
             dirname = os.path.dirname(path)
-            if 'patches' not in distfile:
-                distfile['patches'] = (name[6:] for name in os.listdir(dirname)
-                                       if name.startswith('patch-'))
-            if 'unsafe_string_sources' not in distfile:
-                distfile['unsafe_string_sources'] = frozenset()
+            if patches is None:
+                patches = {pname[6:] for pname in os.listdir(dirname)
+                           if pname.startswith('patch-')}
+            if unsafe_string_sources is None:
+                unsafe_string_sources = frozenset()
 
             # Turn patch filenames into full paths.
-            distfile['patches'] = {
+            patch_paths = {
                 os.path.join(dirname, 'patch-' + patch)
-                for patch in distfile['patches']
+                for patch in patches
             }
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))
-            self._distfiles[name] = Distfile(distdir=distdir, **distfile)
+            self._distfiles[name] = Distfile(
+                distdir=distdir,
+                name=name, checksum=checksum, patches=patch_paths,
+                unsafe_string_sources=unsafe_string_sources,
+                master_sites=master_sites)
 
-        def op_host_package(**kwargs):
-            package = kwargs
-            package['resource_directory'] = os.path.dirname(path)
-            name = package['name']
+        def op_host_package(name: str,
+                            version: str,
+                            build_cmd: Callable[[BuildHandle], None],
+                            build_depends: Optional[Set[str]]=None,
+                            lib_depends: Optional[Set[str]]=None,
+                            **meta: str) -> None:
             if name in self._deferred_host_packages:
                 raise Exception('%s is redeclaring packages %s' % (path, name))
-            self._deferred_host_packages[name] = package
+            self._deferred_host_packages[name] = PackageInfo(
+                name, version, build_cmd, build_depends, lib_depends,
+                resource_directory=os.path.dirname(path), meta=meta)
 
-        def op_package(**kwargs):
-            package = kwargs
-            package['resource_directory'] = os.path.dirname(path)
-            name = package['name']
+        def op_package(name: str,
+                       version: str,
+                       build_cmd: Callable[[BuildHandle], None],
+                       build_depends: Optional[Set[str]]=None,
+                       lib_depends: Optional[Set[str]]=None,
+                       **meta: str) -> None:
             for arch in config.ARCHITECTURES:
                 if (name, arch) in self._deferred_target_packages:
                     raise Exception('%s is redeclaring package %s/%s' %
                                     (path, arch, name))
-                self._deferred_target_packages[(name, arch)] = package
+                self._deferred_target_packages[(name, arch)] = PackageInfo(
+                    name, version, build_cmd, build_depends, lib_depends,
+                    resource_directory=os.path.dirname(path), meta=meta)
 
-        def op_sites_gnu(suffix):
+        def op_sites_gnu(suffix: str) -> Set[str]:
             return {
                 fmt + suffix + '/'
                 for fmt in {
@@ -102,7 +118,7 @@ class Repository:
                 }
             }
 
-        def op_sites_sourceforge(suffix):
+        def op_sites_sourceforge(suffix: str) -> Set[str]:
             return {
                 fmt + suffix + '/'
                 for fmt in {
@@ -136,39 +152,42 @@ class Repository:
         with open(path, 'r') as f:
             exec(f.read(), identifiers, identifiers)
 
-    def get_distfiles(self):
+    def get_distfiles(self) -> Iterable[Distfile]:
         return self._distfiles.values()
 
     def get_target_packages(self) -> Dict[Tuple[str, str], TargetPackage]:
         # Create host packages that haven't been instantiated yet.
         # This implicitly checks for dependency loops.
-        def get_host_package(name):
+        def get_host_package(name: str) -> HostPackage:
             if name in self._deferred_host_packages:
-                package = dict(self._deferred_host_packages.pop(name))
+                package = self._deferred_host_packages.pop(name)
                 if name in self._host_packages:
                     raise Exception('%s is declared multiple times' % name)
-                build_depends = set()
-                if 'build_depends' in package:
+                if package.build_depends is not None:
                     build_depends = {
                         get_host_package(dep)
-                        for dep in package['build_depends']
+                        for dep in package.build_depends
                     }
-                    del package['build_depends']
-                lib_depends = set()
-                if 'lib_depends' in package:
+                else:
+                    build_depends = set()
+                if package.lib_depends is not None:
                     lib_depends = {
                         get_host_package(dep)
-                        for dep in package['lib_depends']
+                        for dep in package.lib_depends
                     }
-                    del package['lib_depends']
-                package['version'] = SimpleVersion(package['version'])
+                else:
+                    lib_depends = set()
+                version = SimpleVersion(package.version)
                 self._host_packages[name] = HostPackage(
                     install_directory=os.path.join(self._install_directory,
                                                    'host', name),
                     distfiles=self._distfiles,
                     build_depends=build_depends,
                     lib_depends=lib_depends,
-                    **package)
+                    name=package.name, version=version,
+                    build_cmd=package.build_cmd,
+                    resource_directory=package.resource_directory,
+                    homepage=package.meta['homepage'])
             return self._host_packages[name]
 
         while self._deferred_host_packages:
@@ -176,20 +195,19 @@ class Repository:
                 random.sample(self._deferred_host_packages.keys(), 1)[0])
 
         # Create target packages that haven't been instantiated yet.
-        def get_target_package(name, arch):
+        def get_target_package(name: str, arch: str) -> TargetPackage:
             if (name, arch) in self._deferred_target_packages:
-                package = dict(
-                    self._deferred_target_packages.pop((name, arch)))
+                package = self._deferred_target_packages.pop((name, arch))
                 if (name, arch) in self._target_packages:
                     raise Exception('%s is declared multiple times' % name)
-                lib_depends = set()
-                if 'lib_depends' in package:
+                if package.lib_depends is not None:
                     lib_depends = {
                         get_target_package(dep, arch)
-                        for dep in package['lib_depends']
+                        for dep in package.lib_depends
                     }
-                    del package['lib_depends']
-                package['version'] = SimpleVersion(package['version'])
+                else:
+                    lib_depends = set()
+                version = SimpleVersion(package.version)
                 self._target_packages[(name, arch)] = TargetPackage(
                     install_directory=os.path.join(self._install_directory,
                                                    arch, name),
@@ -197,7 +215,10 @@ class Repository:
                     distfiles=self._distfiles,
                     host_packages=self._host_packages,
                     lib_depends=lib_depends,
-                    **package)
+                    name=package.name, version=version,
+                    build_cmd=package.build_cmd,
+                    resource_directory=package.resource_directory,
+                    homepage=package.meta['homepage'])
             return self._target_packages[(name, arch)]
 
         while self._deferred_target_packages:

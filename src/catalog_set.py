@@ -3,16 +3,18 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 import os
+from typing import Set
 
 from . import util
 from .version import FullVersion
+from .catalog import Catalog
 
 
 class CatalogSet:
-    def __init__(self, catalogs):
+    def __init__(self, catalogs: Set[Catalog]) -> None:
         self._catalogs = catalogs
 
-    def _build_at_version(self, package, version, tmpdir):
+    def _build_at_version(self, package, version, tmpdir) -> bool:
         # Round 1: Build the packages.
         util.remove_and_make_dir(tmpdir)
         do_rebuild = []
