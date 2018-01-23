@@ -12,6 +12,7 @@ from src import util
 from src.catalog import (ArchLinuxCatalog, CygwinCatalog, DebianCatalog,
                          FreeBSDCatalog, HomebrewCatalog, NetBSDCatalog,
                          OpenBSDCatalog, RedHatCatalog)
+from src.package import TargetPackage
 from src.repository import Repository
 from src.version import FullVersion
 
@@ -52,7 +53,7 @@ catalogs = {
 }
 
 
-def build_package(package):
+def build_package(package: TargetPackage) -> None:
     version = FullVersion(version=package.get_version())
     for catalog in catalogs:
         catalog.insert(package, version, catalog.package(package, version))

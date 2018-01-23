@@ -21,8 +21,7 @@ from . import config
 from . import rpm
 from . import util
 from .version import FullVersion
-
-from src.package import TargetPackage
+from .package import TargetPackage
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +32,10 @@ class Catalog:
         self._new_path = new_path
         self._packages = set()  # type: Set[Tuple[TargetPackage, FullVersion]]
         Set, Tuple  # for static anlyzers that don't see into comments
+
+    @abstractmethod
+    def package(self, package: TargetPackage, version: FullVersion) -> str:
+        ...
 
     @staticmethod
     def _get_suggested_mode(path: str) -> int:
@@ -78,6 +81,10 @@ class Catalog:
             if os.path.exists(path):
                 return path
         return None
+
+    @abstractmethod
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
+        ...
 
     @classmethod
     @abstractmethod
@@ -972,7 +979,7 @@ class RedHatCatalog(Catalog):
         if os.path.islink(filename):
             return ''
         else:
-            return util.md5(filename).hexdigest()
+            return util.md5(filename).hexdigest()  # type: ignore
 
     @staticmethod
     def _file_mode(filename: str) -> int:

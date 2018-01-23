@@ -3,22 +3,25 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 import os
-from typing import Set
+from typing import List, Set, Tuple
 
 from . import util
 from .version import FullVersion
 from .catalog import Catalog
+from .package import TargetPackage
 
 
 class CatalogSet:
     def __init__(self, catalogs: Set[Catalog]) -> None:
         self._catalogs = catalogs
 
-    def _build_at_version(self, package, version, tmpdir) -> bool:
+    def _build_at_version(self, package: TargetPackage,
+                          version: FullVersion, tmpdir: str) -> bool:
         # Round 1: Build the packages.
         util.remove_and_make_dir(tmpdir)
-        do_rebuild = []
-        do_preserve = []
+        do_rebuild = []   # type: List[Catalog]
+        do_preserve = []  # type: List[Tuple[Catalog, str]]
+        List, Tuple       # for tools that don't see comments
         for catalog in self._catalogs:
             path = catalog.package(package, version)
             existing = catalog.lookup_at_version(package, version)
@@ -54,7 +57,7 @@ class CatalogSet:
             catalog.insert(package, version, path)
         return True
 
-    def package_and_insert(self, package, tmpdir):
+    def package_and_insert(self, package: TargetPackage, tmpdir: str) -> None:
         # Scan the existing catalogs to determine the Epoch and revision
         # numbers of the latest version of the package. At this version
         # we need to start building.

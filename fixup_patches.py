@@ -19,7 +19,7 @@ DIR_DISTFILES = os.path.join(DIR_ROOT, '_obj/distfiles')
 DIR_TMP = os.path.join(DIR_ROOT, '_obj/fixup_patches')
 
 # Parse all of the BUILD rules.
-repo = Repository(None)
+repo = Repository(None)  # type: ignore
 for arg in sys.argv[1:]:
     for filename in util.walk_files(arg):
         if os.path.basename(filename) == 'BUILD':
