@@ -13,7 +13,8 @@ class SimpleVersion:
             raise Exception('Version %s is not canonical', version)
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, SimpleVersion) and self._numbers == other._numbers
+        return isinstance(other,
+                          SimpleVersion) and self._numbers == other._numbers
 
     def __lt__(self, other: 'SimpleVersion') -> bool:
         return self._numbers < other._numbers
@@ -23,7 +24,10 @@ class SimpleVersion:
 
 
 class FullVersion:
-    def __init__(self, epoch: int=0, version: SimpleVersion=SimpleVersion('0'), revision: int=1) -> None:
+    def __init__(self,
+                 epoch: int = 0,
+                 version: SimpleVersion = SimpleVersion('0'),
+                 revision: int = 1) -> None:
         self._epoch = epoch
         self._version = version
         self._revision = revision

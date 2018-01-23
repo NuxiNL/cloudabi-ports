@@ -25,7 +25,8 @@ def _chdir(path: str) -> None:
 
 
 class DiffCreator:
-    def __init__(self, source_directory: str, build_directory: 'BuildDirectory', filename: str) -> None:
+    def __init__(self, source_directory: str,
+                 build_directory: 'BuildDirectory', filename: str) -> None:
         self._source_directory = source_directory
         self._build_directory = build_directory
         self._filename = filename
@@ -62,7 +63,8 @@ class FileHandle:
     def autoreconf(self) -> None:
         self.run(['autoreconf', '-i'])
 
-    def gnu_configure(self, args: List[str]=[], inplace: bool=False) -> 'FileHandle':
+    def gnu_configure(self, args: List[str] = [],
+                      inplace: bool = False) -> 'FileHandle':
         for path in util.walk_files(self._path):
             filename = os.path.basename(path)
             if filename in {'config.guess', 'config.sub'}:
@@ -105,7 +107,7 @@ class FileHandle:
                                     args)
         return FileHandle(self._builder, builddir)
 
-    def compile(self, args: List[str]=[]) -> 'FileHandle':
+    def compile(self, args: List[str] = []) -> 'FileHandle':
         output = self._path + '.o'
         os.chdir(os.path.dirname(self._path))
         ext = os.path.splitext(self._path)[1]
@@ -146,13 +148,13 @@ class FileHandle:
         self._builder.cmake(builddir, self._path, args)
         return FileHandle(self._builder, builddir)
 
-    def install(self, path: str='.') -> None:
+    def install(self, path: str = '.') -> None:
         self._builder.install(self._path, path)
 
-    def make(self, args: List[str]=['all']) -> None:
+    def make(self, args: List[str] = ['all']) -> None:
         self.run(['make', '-j6'] + args)
 
-    def make_install(self, args: List[str]=['install']) -> 'FileHandle':
+    def make_install(self, args: List[str] = ['install']) -> 'FileHandle':
         stagedir = self._builder._build_directory.get_new_directory()
         self.run(['make', 'DESTDIR=' + stagedir] + args)
         return FileHandle(self._builder,
@@ -306,7 +308,8 @@ class Builder(ABC):
         self._install_directory = install_directory
 
     @abstractmethod
-    def gnu_configure(self, builddir: str, script: str, args: List[str]) -> None:
+    def gnu_configure(self, builddir: str, script: str,
+                      args: List[str]) -> None:
         ...
 
     @abstractmethod
@@ -322,7 +325,8 @@ class Builder(ABC):
         ...
 
     @abstractmethod
-    def get_cc(self) -> str: pass
+    def get_cc(self) -> str:
+        pass
 
     @abstractmethod
     def get_cflags(self) -> List[str]:
@@ -352,7 +356,8 @@ class HostBuilder(Builder):
             '-I' + os.path.join(self.get_prefix(), 'include'),
         ]
 
-    def gnu_configure(self, builddir: str, script: str, args: List[str]) -> None:
+    def gnu_configure(self, builddir: str, script: str,
+                      args: List[str]) -> None:
         self.run(builddir, [script, '--prefix=' + self.get_prefix()] + args)
 
     def cmake(self, builddir: str, sourcedir: str, args: List[str]) -> None:
@@ -422,7 +427,8 @@ class HostBuilder(Builder):
 
 
 class TargetBuilder(Builder):
-    def __init__(self, build_directory: BuildDirectory, install_directory: Optional[str], arch: str) -> None:
+    def __init__(self, build_directory: BuildDirectory,
+                 install_directory: Optional[str], arch: str) -> None:
         self._build_directory = build_directory
         self._install_directory = install_directory  # type: str  # override Builder
         self._arch = arch
@@ -454,7 +460,8 @@ class TargetBuilder(Builder):
         subprocess.check_call([self._tool('ar'), '-rcs', output] + objs)
         return output
 
-    def gnu_configure(self, builddir: str, script: str, args: List[str]) -> None:
+    def gnu_configure(self, builddir: str, script: str,
+                      args: List[str]) -> None:
         self.run(
             builddir,
             [script, '--host=' + self._arch, '--prefix=' + self.get_prefix()] +

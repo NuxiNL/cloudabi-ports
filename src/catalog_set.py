@@ -15,13 +15,13 @@ class CatalogSet:
     def __init__(self, catalogs: Set[Catalog]) -> None:
         self._catalogs = catalogs
 
-    def _build_at_version(self, package: TargetPackage,
-                          version: FullVersion, tmpdir: str) -> bool:
+    def _build_at_version(self, package: TargetPackage, version: FullVersion,
+                          tmpdir: str) -> bool:
         # Round 1: Build the packages.
         util.remove_and_make_dir(tmpdir)
-        do_rebuild = []   # type: List[Catalog]
+        do_rebuild = []  # type: List[Catalog]
         do_preserve = []  # type: List[Tuple[Catalog, str]]
-        List, Tuple       # for tools that don't see comments
+        List, Tuple  # for tools that don't see comments
         for catalog in self._catalogs:
             path = catalog.package(package, version)
             existing = catalog.lookup_at_version(package, version)

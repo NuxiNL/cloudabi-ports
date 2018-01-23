@@ -15,13 +15,11 @@ from .version import SimpleVersion
 from typing import AbstractSet, Callable, Dict, Iterable, NamedTuple, Optional, Set, Tuple
 
 PackageInfo = NamedTuple(
-    'PackageInfo',
-    [('name', str), ('version', str),
-     ('build_cmd', Callable[[BuildHandle], None]),
-     ('build_depends', Optional[Set[str]]),
-     ('lib_depends', Optional[Set[str]]),
-     ('resource_directory', str),
-     ('meta', Dict[str, str])])
+    'PackageInfo', [('name', str), ('version', str),
+                    ('build_cmd', Callable[[BuildHandle], None]),
+                    ('build_depends', Optional[Set[str]]),
+                    ('lib_depends', Optional[Set[str]]),
+                    ('resource_directory', str), ('meta', Dict[str, str])])
 
 
 class Repository:
@@ -43,11 +41,13 @@ class Repository:
             build.make()
             build.make_install().install()
 
-        def op_distfile(name: str,
-                        checksum: str,
-                        master_sites: Set[str],
-                        patches: Optional[AbstractSet[str]]=None,
-                        unsafe_string_sources: Optional[AbstractSet[str]]=None) -> None:
+        def op_distfile(
+                name: str,
+                checksum: str,
+                master_sites: Set[str],
+                patches: Optional[AbstractSet[str]] = None,
+                unsafe_string_sources: Optional[AbstractSet[str]] = None
+        ) -> None:
             # Determine canonical name by stripping the file extension.
             for ext in {
                     '.tar.bz2',
@@ -64,8 +64,11 @@ class Repository:
             # Automatically add patches if none are given.
             dirname = os.path.dirname(path)
             if patches is None:
-                patches = {pname[6:] for pname in os.listdir(dirname)
-                           if pname.startswith('patch-')}
+                patches = {
+                    pname[6:]
+                    for pname in os.listdir(dirname)
+                    if pname.startswith('patch-')
+                }
             if unsafe_string_sources is None:
                 unsafe_string_sources = frozenset()
 
@@ -79,35 +82,47 @@ class Repository:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))
             self._distfiles[name] = Distfile(
                 distdir=distdir,
-                name=name, checksum=checksum, patches=patch_paths,
+                name=name,
+                checksum=checksum,
+                patches=patch_paths,
                 unsafe_string_sources=unsafe_string_sources,
                 master_sites=master_sites)
 
         def op_host_package(name: str,
                             version: str,
                             build_cmd: Callable[[BuildHandle], None],
-                            build_depends: Optional[Set[str]]=None,
-                            lib_depends: Optional[Set[str]]=None,
+                            build_depends: Optional[Set[str]] = None,
+                            lib_depends: Optional[Set[str]] = None,
                             **meta: str) -> None:
             if name in self._deferred_host_packages:
                 raise Exception('%s is redeclaring packages %s' % (path, name))
             self._deferred_host_packages[name] = PackageInfo(
-                name, version, build_cmd, build_depends, lib_depends,
-                resource_directory=os.path.dirname(path), meta=meta)
+                name,
+                version,
+                build_cmd,
+                build_depends,
+                lib_depends,
+                resource_directory=os.path.dirname(path),
+                meta=meta)
 
         def op_package(name: str,
                        version: str,
                        build_cmd: Callable[[BuildHandle], None],
-                       build_depends: Optional[Set[str]]=None,
-                       lib_depends: Optional[Set[str]]=None,
+                       build_depends: Optional[Set[str]] = None,
+                       lib_depends: Optional[Set[str]] = None,
                        **meta: str) -> None:
             for arch in config.ARCHITECTURES:
                 if (name, arch) in self._deferred_target_packages:
                     raise Exception('%s is redeclaring package %s/%s' %
                                     (path, arch, name))
                 self._deferred_target_packages[(name, arch)] = PackageInfo(
-                    name, version, build_cmd, build_depends, lib_depends,
-                    resource_directory=os.path.dirname(path), meta=meta)
+                    name,
+                    version,
+                    build_cmd,
+                    build_depends,
+                    lib_depends,
+                    resource_directory=os.path.dirname(path),
+                    meta=meta)
 
         def op_sites_gnu(suffix: str) -> Set[str]:
             return {
@@ -184,7 +199,8 @@ class Repository:
                     distfiles=self._distfiles,
                     build_depends=build_depends,
                     lib_depends=lib_depends,
-                    name=package.name, version=version,
+                    name=package.name,
+                    version=version,
                     build_cmd=package.build_cmd,
                     resource_directory=package.resource_directory,
                     homepage=package.meta['homepage'])
@@ -215,7 +231,8 @@ class Repository:
                     distfiles=self._distfiles,
                     host_packages=self._host_packages,
                     lib_depends=lib_depends,
-                    name=package.name, version=version,
+                    name=package.name,
+                    version=version,
                     build_cmd=package.build_cmd,
                     resource_directory=package.resource_directory,
                     homepage=package.meta['homepage'])

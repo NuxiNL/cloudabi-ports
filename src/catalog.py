@@ -428,7 +428,8 @@ class HomebrewCatalog(Catalog):
         'el_capitan', 'high_sierra', 'mavericks', 'sierra', 'yosemite'
     }
 
-    def __init__(self, old_path: Optional[str], new_path: str, url: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str,
+                 url: str) -> None:
         super(HomebrewCatalog, self).__init__(old_path, new_path)
         self._url = url
 
