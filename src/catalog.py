@@ -15,7 +15,7 @@ import shutil
 import stat
 import subprocess
 import time
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, TextIO, Tuple
 
 from . import config
 from . import rpm
@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 
 
 class Catalog:
-    def __init__(self, old_path: str, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         self._old_path = old_path
         self._new_path = new_path
         self._packages = set()  # type: Set[Tuple[TargetPackage, FullVersion]]
@@ -70,7 +70,8 @@ class Catalog:
         os.link(source, target)
         self._packages.add((package, version))
 
-    def lookup_at_version(self, package, version):
+    def lookup_at_version(self, package: TargetPackage,
+                          version: FullVersion) -> Optional[str]:
         if self._old_path:
             path = os.path.join(self._old_path,
                                 self._get_filename(package, version))
@@ -95,7 +96,7 @@ class DebianCatalog(Catalog):
         's390x', 'sparc'
     }
 
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(DebianCatalog, self).__init__(old_path, new_path)
 
         # Scan the existing directory hierarchy to find the latest
@@ -155,9 +156,10 @@ class DebianCatalog(Catalog):
                 sorted(dep.get_debian_name() for dep in lib_depends))
         return snippet
 
-    def finish(self, private_key):
+    def finish(self, private_key: str) -> None:
         # Create package index.
-        def write_entry(f, package, version):
+        def write_entry(f: TextIO, package: TargetPackage,
+                        version: FullVersion) -> None:
             f.write(self._get_control_snippet(package, version))
             filename = self._get_filename(package, version)
             path = os.path.join(self._new_path, filename)
@@ -206,7 +208,7 @@ class DebianCatalog(Catalog):
                     stdin=subprocess.PIPE,
                     stdout=f) as proc:
 
-            def append(text):
+            def append(text: str) -> None:
                 proc.stdin.write(bytes(text, encoding='ASCII'))
 
             append('Suite: cloudabi\n'
@@ -222,7 +224,7 @@ class DebianCatalog(Catalog):
                 append(' %s %d cloudabi/binary-%s/Packages.xz\n' %
                        (checksum_xz, size_xz, arch))
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         return self._existing[package.get_debian_name()]
 
     def package(self, package: TargetPackage, version: FullVersion) -> str:
@@ -289,7 +291,7 @@ class DebianCatalog(Catalog):
 
 
 class FreeBSDCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(FreeBSDCatalog, self).__init__(old_path, new_path)
 
         # Scan the existing directory hierarchy to find the latest
@@ -314,7 +316,7 @@ class FreeBSDCatalog(Catalog):
         return '%s-%s.txz' % (package.get_freebsd_name(),
                               version.get_freebsd_version())
 
-    def finish(self, private_key):
+    def finish(self, private_key: str) -> None:
         subprocess.check_call([
             'pkg',
             'repo',
@@ -323,7 +325,7 @@ class FreeBSDCatalog(Catalog):
         ])
         # TODO(ed): Copy in some of the old files to keep clients happy.
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         return self._existing[package.get_freebsd_name()]
 
     def package(self, package: TargetPackage, version: FullVersion) -> str:
@@ -419,7 +421,7 @@ class HomebrewCatalog(Catalog):
         'el_capitan', 'high_sierra', 'mavericks', 'sierra', 'yosemite'
     }
 
-    def __init__(self, old_path: None, new_path: str, url: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str, url: str) -> None:
         super(HomebrewCatalog, self).__init__(old_path, new_path)
         self._url = url
 
@@ -513,7 +515,7 @@ class HomebrewCatalog(Catalog):
                 f.write('    sha256 "%s" => :%s\n' % (sha256, osx_version))
             f.write('  end\nend\n')
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         return self._existing[package.get_homebrew_name()]
 
     def package(self, package: TargetPackage, version: FullVersion) -> str:
@@ -553,7 +555,7 @@ class HomebrewCatalog(Catalog):
 
 
 class NetBSDCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(NetBSDCatalog, self).__init__(old_path, new_path)
 
     @classmethod
@@ -562,7 +564,7 @@ class NetBSDCatalog(Catalog):
         return '%s-%s.tgz' % (package.get_netbsd_name(),
                               version.get_netbsd_version())
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
@@ -628,7 +630,7 @@ class NetBSDCatalog(Catalog):
 
 
 class OpenBSDCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(OpenBSDCatalog, self).__init__(old_path, new_path)
 
     @classmethod
@@ -637,7 +639,7 @@ class OpenBSDCatalog(Catalog):
         return '%s-%s.tgz' % (package.get_openbsd_name(),
                               version.get_openbsd_version())
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
@@ -737,7 +739,7 @@ class OpenBSDCatalog(Catalog):
 
 
 class ArchLinuxCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(ArchLinuxCatalog, self).__init__(old_path, new_path)
 
         self._existing = collections.defaultdict(
@@ -763,7 +765,7 @@ class ArchLinuxCatalog(Catalog):
     def _get_suggested_mode(path: str) -> int:
         return Catalog._get_suggested_mode(path) | 0o200
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         return self._existing[package.get_archlinux_name()]
 
     def package(self, package: TargetPackage, version: FullVersion) -> str:
@@ -839,7 +841,7 @@ class ArchLinuxCatalog(Catalog):
 
         return output
 
-    def finish(self, private_key):
+    def finish(self, private_key: str) -> None:
         for package, version in self._packages:
             package_file = self._get_filename(package, version)
             subprocess.check_call([
@@ -859,7 +861,7 @@ class ArchLinuxCatalog(Catalog):
 
 
 class CygwinCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(CygwinCatalog, self).__init__(old_path, new_path)
 
         self._existing = collections.defaultdict(
@@ -882,7 +884,7 @@ class CygwinCatalog(Catalog):
         return '%s-%s.tar.xz' % (package.get_cygwin_name(),
                                  version.get_cygwin_version())
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         return self._existing[package.get_cygwin_name()]
 
     def package(self, package: TargetPackage, version: FullVersion) -> str:
@@ -901,7 +903,7 @@ class CygwinCatalog(Catalog):
         self._run_tar(['-cJf', output, '-C', installdir, '.'])
         return output
 
-    def finish(self, private_key):
+    def finish(self, private_key: str) -> None:
         for cygwin_arch in ('x86', 'x86_64'):
             cygwin_arch_dir = os.path.join(self._new_path, cygwin_arch)
             util.make_dir(cygwin_arch_dir)
@@ -949,7 +951,7 @@ class CygwinCatalog(Catalog):
 
 
 class RedHatCatalog(Catalog):
-    def __init__(self, old_path: None, new_path: str) -> None:
+    def __init__(self, old_path: Optional[str], new_path: str) -> None:
         super(RedHatCatalog, self).__init__(old_path, new_path)
 
     @classmethod
@@ -992,7 +994,7 @@ class RedHatCatalog(Catalog):
             return sb.st_size
         return 0
 
-    def lookup_latest_version(self, package):
+    def lookup_latest_version(self, package: TargetPackage) -> FullVersion:
         # TODO(ed): Implement repository scanning.
         return FullVersion()
 
@@ -1154,7 +1156,7 @@ class RedHatCatalog(Catalog):
                 shutil.copyfileobj(fin, fb)
         return output
 
-    def finish(self, private_key):
+    def finish(self, private_key: str) -> None:
         subprocess.check_call(['createrepo', self._new_path])
         subprocess.check_call([
             'gpg',
