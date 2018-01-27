@@ -49,6 +49,7 @@ class Repository:
                 unsafe_string_sources: Optional[AbstractSet[str]] = None
         ) -> None:
             # Determine canonical name by stripping the file extension.
+            canonical_name = name
             for ext in {
                     '.tar.bz2',
                     '.tar.gz',
@@ -58,7 +59,7 @@ class Repository:
                     '.zip',
             }:
                 if name.endswith(ext):
-                    name = name[:-len(ext)]
+                    canonical_name = name[:-len(ext)]
                     break
 
             # Automatically add patches if none are given.
@@ -80,7 +81,7 @@ class Repository:
 
             if name in self._distfiles:
                 raise Exception('%s is redeclaring distfile %s' % (path, name))
-            self._distfiles[name] = Distfile(
+            self._distfiles[canonical_name] = Distfile(
                 distdir=distdir,
                 name=name,
                 checksum=checksum,
@@ -239,8 +240,8 @@ class Repository:
             return self._target_packages[(name, arch)]
 
         while self._deferred_target_packages:
-            get_target_package(*random.sample(
-                self._deferred_target_packages.keys(), 1)[0])
+            get_target_package(
+                *random.sample(self._deferred_target_packages.keys(), 1)[0])
 
         # Generate per-architecture 'everything' meta packages. These
         # packages depend on all of the packages for one architecture.
