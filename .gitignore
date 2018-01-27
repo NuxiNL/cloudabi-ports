@@ -1,2 +1,4 @@
+.*.swp
+.mypy_cache
 /_obj
 __pycache__
