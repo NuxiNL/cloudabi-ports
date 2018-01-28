@@ -5,19 +5,22 @@
 
 def build(ctx):
     srcdir = ctx.extract()
-    build = srcdir.cmake(['-DYAML_CPP_BUILD_TOOLS=OFF'])
+    build = srcdir.cmake([
+        '-DYAML_CPP_BUILD_TESTS=OFF',
+        '-DYAML_CPP_BUILD_TOOLS=OFF',
+    ])
     build.ninja()
     build.ninja_install().install()
 
 
 package(
     name='yaml-cpp',
-    version='0.5.3',
+    version='0.6.0',
     homepage='https://github.com/jbeder/yaml-cpp',
     lib_depends={'boost', 'cxx-runtime'},
     build_cmd=build)
 
 distfile(
-    name='yaml-cpp-0.5.3.tar.gz',
-    checksum='decc5beabb86e8ed9ebeb04358d5363a5c4f72d458b2c788cb2f3ac9c19467b2',
+    name='yaml-cpp-0.6.0.tar.gz',
+    checksum='e643119f1d629a77605f02096cc3ac211922d48e3db12249b06a3db810dd8756',
     master_sites={'https://github.com/jbeder/yaml-cpp/archive/'})
