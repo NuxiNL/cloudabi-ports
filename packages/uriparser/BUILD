@@ -19,4 +19,6 @@ package(
 distfile(
     name='uriparser-0.8.5.tar.bz2',
     checksum='58eacd5c03d9e341c04eb0b30831faec89f3b415949ff8d72254e63432352cdd',
-    master_sites={'https://github.com/uriparser/uriparser/releases/download/uriparser-0.8.5/'})
+    master_sites={
+        'https://github.com/uriparser/uriparser/releases/download/uriparser-0.8.5/'
+    })
