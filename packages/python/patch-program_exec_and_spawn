@@ -1,6 +1,6 @@
 --- Modules/clinic/posixmodule.c.h
 +++ Modules/clinic/posixmodule.c.h
-@@ -5666,6 +5666,93 @@
+@@ -5666,6 +5666,162 @@
  
  #endif /* defined(HAVE_GETRANDOM_SYSCALL) */
  
@@ -47,7 +47,7 @@
 +
 +#endif /* defined(HAVE_PROGRAM_EXEC) */
 +
-+#if defined(HAVE_PROGRAM_SPAWN_DEPRECATED)
++#if defined(HAVE_PROGRAM_SPAWN) && defined(HAVE_UV_H)
 +
 +PyDoc_STRVAR(os_program_spawn__doc__,
 +"program_spawn($module, /, fd, argdata)\n"
@@ -61,8 +61,8 @@
 +"    Object to convert to Argdata and pass as parameters.\n"
 +"\n"
 +"Execute the binary from the given file descriptor with the given\n"
-+"argdata as arguments, in a child process. Returns a child file\n"
-+"descriptor.");
++"argdata as arguments, in a child process. Returns a procdesc that\n"
++"you can give to program_kill or program_wait.");
 +
 +#define OS_PROGRAM_SPAWN_METHODDEF    \
 +    {"program_spawn", (PyCFunction)os_program_spawn, METH_FASTCALL, os_program_spawn__doc__},
@@ -89,12 +89,81 @@
 +    return return_value;
 +}
 +
-+#endif /* defined(HAVE_PROGRAM_SPAWN_DEPRECATED) */
++PyDoc_STRVAR(os_program_kill__doc__,
++"program_kill($module, /, procdesc)\n"
++"--\n"
++"\n"
++"Kill a process started earlier using program_spawn.\n"
++"\n"
++"  procdesc\n"
++"    Process descriptor to kill.\n");
++
++#define OS_PROGRAM_KILL_METHODDEF    \
++    {"program_kill", (PyCFunction)os_program_kill, METH_FASTCALL, os_program_kill__doc__},
++
++static PyObject *
++os_program_kill_impl(PyObject *module, PyObject *procdesc);
++
++static PyObject *
++os_program_kill(PyObject *module, PyObject **args, Py_ssize_t nargs, PyObject *kwnames)
++{
++    PyObject *return_value = NULL;
++    static const char * const _keywords[] = {"procdesc", NULL};
++    static _PyArg_Parser _parser = {"O:program_kill", _keywords, 0};
++    PyObject *procdesc;
++
++    if (!_PyArg_ParseStack(args, nargs, kwnames, &_parser,
++        &procdesc)) {
++        goto exit;
++    }
++    return_value = os_program_kill_impl(module, procdesc);
++
++exit:
++    return return_value;
++}
++
++PyDoc_STRVAR(os_program_wait__doc__,
++"program_wait($module, /, procdesc)\n"
++"--\n"
++"\n"
++"Wait for a process to exit.\n"
++"\n"
++"  procdesc\n"
++"    Process descriptor to wait for.\n"
++"\n"
++"Wait for the given process to exit. Returns a tuple of exit status\n"
++"and termination signal.\n");
++
++#define OS_PROGRAM_WAIT_METHODDEF    \
++    {"program_wait", (PyCFunction)os_program_wait, METH_FASTCALL, os_program_wait__doc__},
++
++static PyObject *
++os_program_wait_impl(PyObject *module, PyObject *procdesc);
++
++static PyObject *
++os_program_wait(PyObject *module, PyObject **args, Py_ssize_t nargs, PyObject *kwnames)
++{
++    PyObject *return_value = NULL;
++    static const char * const _keywords[] = {"procdesc", NULL};
++    static _PyArg_Parser _parser = {"O:program_wait", _keywords, 0};
++    PyObject *procdesc;
++
++    if (!_PyArg_ParseStack(args, nargs, kwnames, &_parser,
++        &procdesc)) {
++        goto exit;
++    }
++    return_value = os_program_wait_impl(module, procdesc);
++
++exit:
++    return return_value;
++}
++
++#endif /* defined(HAVE_PROGRAM_SPAWN) && defined(HAVE_UV_H) */
 +
  #ifndef OS_TTYNAME_METHODDEF
      #define OS_TTYNAME_METHODDEF
  #endif /* !defined(OS_TTYNAME_METHODDEF) */
-@@ -6149,4 +6236,12 @@
+@@ -6149,4 +6236,20 @@
  #ifndef OS_GETRANDOM_METHODDEF
      #define OS_GETRANDOM_METHODDEF
  #endif /* !defined(OS_GETRANDOM_METHODDEF) */
@@ -107,6 +176,14 @@
 +#ifndef OS_PROGRAM_SPAWN_METHODDEF
 +    #define OS_PROGRAM_SPAWN_METHODDEF
 +#endif /* !defined(OS_PROGRAM_SPAWN_METHODDEF) */
++
++#ifndef OS_PROGRAM_KILL_METHODDEF
++    #define OS_PROGRAM_KILL_METHODDEF
++#endif /* !defined(OS_PROGRAM_KILL_METHODDEF) */
++
++#ifndef OS_PROGRAM_WAIT_METHODDEF
++    #define OS_PROGRAM_WAIT_METHODDEF
++#endif /* !defined(OS_PROGRAM_WAIT_METHODDEF) */
 +/*[clinic end generated code: output=7c0b9fece967ff63 input=a9049054013a1b77]*/
 --- Modules/posixmodule.c
 +++ Modules/posixmodule.c
@@ -114,22 +191,22 @@
  #endif
  #endif
  
-+#ifdef HAVE_ARGDATA_H
-+#include <argdata.h>
-+#endif
-+
 +#ifdef HAVE_PROGRAM_H
 +#include <program.h>
++#endif
++
++#ifdef HAVE_UV_H
++#include <uv.h>
 +#endif
 +
  #ifdef HAVE_DLFCN_H
  #include <dlfcn.h>
  #endif
-@@ -12139,6 +12147,289 @@
+@@ -12139,6 +12147,437 @@
  }
  #endif   /* HAVE_GETRANDOM_SYSCALL */
  
-+#if defined(HAVE_PROGRAM_EXEC) || defined(HAVE_PROGRAM_SPAWN_DEPRECATED)
++#if defined(HAVE_PROGRAM_EXEC) || defined(HAVE_PROGRAM_SPAWN)
 +struct argdata_list {
 +    argdata_t *argdata;
 +    void *pymem;
@@ -327,14 +404,56 @@
 +    return &argdata_null;
 +}
 +
-+static int
-+argdata_call(int (*program_func)(int, const argdata_t*), int fd, PyObject *arguments)
++struct procdesc;
++
++#if defined(HAVE_UV_H)
++struct procdesc {
++    uv_loop_t *loop;
++    uv_process_t *handle;
++
++    bool terminated;
++    int64_t exit_status;
++    int term_signal;
++};
++
++static struct procdesc*
++alloc_procdesc()
++{
++    struct procdesc *pd = (struct procdesc*)malloc(sizeof(struct procdesc));
++    pd->loop = (uv_loop_t*)malloc(sizeof(uv_loop_t));
++    uv_loop_init(pd->loop);
++    pd->handle = (uv_process_t*)malloc(sizeof(uv_process_t));
++    pd->handle->data = pd;
++    return pd;
++}
++
++static void
++free_procdesc(struct procdesc *pd)
++{
++    free(pd->handle);
++    uv_loop_close(pd->loop);
++    free(pd->loop);
++    free(pd);
++}
++
++static void
++free_procdesc_capsule(PyObject *pdc)
++{
++     struct procdesc *pc = PyCapsule_GetPointer(pdc, "cloudabi.procdesc");
++     if(pc != NULL) {
++         free_procdesc(pc);
++     }
++}
++#endif
++
++static struct procdesc*
++argdata_call(struct procdesc* (*program_func)(int, const argdata_t*), int fd, PyObject *arguments)
 +{
 +    struct argdata_list *freelist = NULL;
 +    const argdata_t *argdata = convert_argdata(arguments, &freelist);
-+    int result = -1;
++    struct procdesc *pd = NULL;
 +    if (!PyErr_Occurred()) {
-+        result = program_func(fd, argdata);
++        pd = program_func(fd, argdata);
 +    }
 +
 +    while (freelist) {
@@ -349,8 +468,55 @@
 +      PyMem_Free(obj);
 +    }
 +
-+    return result;
++    return pd;
 +}
++
++static struct procdesc*
++program_exec_wrapper(int fd, const argdata_t *t)
++{
++    errno = program_exec(fd, t);
++    return NULL;
++}
++
++#if defined(HAVE_UV_H)
++static void
++terminated(uv_process_t *handle, int64_t exit_status, int term_signal)
++{
++    struct procdesc *pd = (struct procdesc*)handle->data;
++    pd->terminated = true;
++    pd->exit_status = exit_status;
++    pd->term_signal = term_signal;
++}
++
++static struct procdesc*
++program_spawn_uv(int fd, const argdata_t *t)
++{
++    struct procdesc *pd = alloc_procdesc();
++    pd->terminated = false;
++    int res = program_spawn(pd->loop, pd->handle, fd, t, terminated);
++    if (res != 0) {
++        free_procdesc(pd);
++        errno = res;
++        return NULL;
++    }
++    uv_run(pd->loop, UV_RUN_NOWAIT);
++    return pd;
++}
++
++static void
++program_wait(struct procdesc *pd, int64_t *exit_status, int *term_signal)
++{
++    if (!pd->terminated) {
++        uv_run(pd->loop, UV_RUN_DEFAULT);
++    }
++    assert(pd->terminated);
++    if (exit_status) *exit_status = pd->exit_status;
++    if (term_signal) *term_signal = pd->term_signal;
++
++    uv_close((uv_handle_t*)pd->handle, NULL);
++    pd->handle = NULL;
++}
++#endif
 +#endif
 +
 +#ifdef HAVE_PROGRAM_EXEC
@@ -372,7 +538,9 @@
 +os_program_exec_impl(PyObject *module, int fd, PyObject *argdata)
 +/*[clinic end generated code: output=b80b3a06df881875 input=6aa4feb87a3eea03]*/
 +{
-+    errno = argdata_call(program_exec, fd, argdata);
++    struct procdesc *pd = argdata_call(program_exec_wrapper, fd, argdata);
++    assert(pd == NULL);
++    // errno was set by program_exec_wrapper
 +    if (PyErr_Occurred()) {
 +        return NULL;
 +    }
@@ -380,7 +548,8 @@
 +}
 +#endif
 +
-+#ifdef HAVE_PROGRAM_SPAWN_DEPRECATED
++#if defined(HAVE_PROGRAM_SPAWN) && defined(HAVE_UV_H)
++
 +/*[clinic input]
 +os.program_spawn
 +
@@ -392,35 +561,93 @@
 +Start a binary as a new process.
 +
 +Execute the binary from the given file descriptor with the given
-+argdata as arguments, in a child process. Returns a child file
-+descriptor.
++argdata as arguments, in a child process. Returns a procdesc that
++you can give to program_kill or program_wait.
 +[clinic start generated code]*/
 +
 +static PyObject *
 +os_program_spawn_impl(PyObject *module, int fd, PyObject *argdata)
 +/*[clinic end generated code: output=ac72314dc7fa73c0 input=4ffcf387e04cc9e9]*/
 +{
-+    int result = argdata_call(program_spawn_deprecated, fd, argdata);
++    struct procdesc *pd = argdata_call(program_spawn_uv, fd, argdata);
++    // errno was set by program_spawn_uv
++    if (PyErr_Occurred()) {
++        if (pd) {
++            free_procdesc(pd);
++        }
++        return NULL;
++    }
++    if (pd == NULL) {
++      return posix_error();
++    } else {
++      return PyCapsule_New(pd, "cloudabi.procdesc", free_procdesc_capsule);
++    }
++}
++
++/*[clinic input]
++os.program_kill
++
++    procdesc: object
++      Process descriptor to kill.
++
++Kill a process started earlier using program_spawn.
++[clinic start generated code]*/
++
++static PyObject *
++os_program_kill_impl(PyObject *module, PyObject *procdesc)
++/*[clinic end generated code: output=ac72314dc7fa73c0 input=4ffcf387e04cc9e9]*/
++{
++    struct procdesc *pd = (struct procdesc*)PyCapsule_GetPointer(procdesc, "cloudabi.procdesc");
 +    if (PyErr_Occurred()) {
 +        return NULL;
 +    }
-+    if (result < 0) {
-+      return posix_error();
-+    } else {
-+      return PyLong_FromUnsignedLong(result);
-+    }
++    assert(pd != NULL);
++    uv_process_kill(pd->handle, SIGKILL);
++    program_wait(pd, NULL, NULL);
++    Py_INCREF(Py_None);
++    return Py_None;
 +}
++
++/*[clinic input]
++os.program_wait
++
++    procdesc: object
++      Process descriptor to wait for.
++
++Wait for a process to exit.
++
++Wait for the given process to exit. Returns a tuple of exit status
++and termination signal.
++[clinic start generated code]*/
++
++static PyObject *
++os_program_wait_impl(PyObject *module, PyObject *procdesc)
++/*[clinic end generated code: output=ac72314dc7fa73c0 input=4ffcf387e04cc9e9]*/
++{
++    struct procdesc *pd = (struct procdesc*)PyCapsule_GetPointer(procdesc, "cloudabi.procdesc");
++    if (PyErr_Occurred()) {
++        return NULL;
++    }
++    assert(pd != NULL);
++    int64_t exitstatus;
++    int termsignal;
++    program_wait(pd, &exitstatus, &termsignal);
++    return PyTuple_Pack(2, PyLong_FromLongLong(exitstatus), PyLong_FromLongLong(termsignal));
++}
++
 +#endif
 +
  #include "clinic/posixmodule.c.h"
  
  /*[clinic input]
-@@ -12340,6 +12631,8 @@
+@@ -12340,6 +12631,10 @@
                          posix_scandir__doc__},
      OS_FSPATH_METHODDEF
      OS_GETRANDOM_METHODDEF
 +    OS_PROGRAM_EXEC_METHODDEF
 +    OS_PROGRAM_SPAWN_METHODDEF
++    OS_PROGRAM_KILL_METHODDEF
++    OS_PROGRAM_WAIT_METHODDEF
      {NULL,              NULL}            /* Sentinel */
  };
  

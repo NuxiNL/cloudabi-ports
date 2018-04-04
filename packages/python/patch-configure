@@ -101,7 +101,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+program.h argdata.h \
++program.h argdata.h uv.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -151,7 +151,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf socket stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ program_wait_deprecated program_exec program_spawn_deprecated \
++ program_exec program_spawn \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty
  do :
    as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -191,7 +191,7 @@
  sys/kern_control.h sys/loadavg.h sys/lock.h sys/mkdev.h sys/modem.h \
 -sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/statvfs.h \
 +sys/param.h sys/select.h sys/sendfile.h sys/socket.h sys/soundcard.h sys/statvfs.h \
-+program.h argdata.h \
++program.h argdata.h uv.h \
  sys/stat.h sys/syscall.h sys/sys_domain.h sys/termio.h sys/time.h \
  sys/times.h sys/types.h sys/uio.h sys/un.h sys/utsname.h sys/wait.h pty.h \
  libutil.h sys/resource.h netpacket/packet.h sysexits.h bluetooth.h \
@@ -241,7 +241,7 @@
 + sigtimedwait sigwait sigwaitinfo snprintf stat strftime strlcpy symlinkat sync \
 + sysconf system tcgetpgrp tcsetpgrp tempnam textdomain timegm times tmpfile tmpnam tmpnam_r \
 + truncate ttyname umask uname unlink unlinkat unsetenv utimensat utimes wait waitid waitpid wait3 wait4 \
-+ program_wait_deprecated program_exec program_spawn_deprecated \
++ program_exec program_spawn \
   wcscoll wcsftime wcsxfrm wmemcmp writev _getpty)
  
  AC_CHECK_DECL(dirfd,
@@ -316,7 +316,7 @@
  /* Define to 1 if you have the `expm1' function. */
  #undef HAVE_EXPM1
  
-@@ -299,15 +323,30 @@
+@@ -299,15 +323,36 @@
  /* Define to 1 if you have the `flock' function. */
  #undef HAVE_FLOCK
  
@@ -326,14 +326,20 @@
  /* Define to 1 if you have the `fork' function. */
  #undef HAVE_FORK
  
-+/* Define to 1 if you have the `program_wait_deprecated' function. */
-+#undef HAVE_PROGRAM_WAIT_DEPRECATED
-+
 +/* Define to 1 if you have the `program_exec' function. */
 +#undef HAVE_PROGRAM_EXEC
 +
-+/* Define to 1 if you have the `program_spawn_deprecated' function. */
-+#undef HAVE_PROGRAM_SPAWN_DEPRECATED
++/* Define to 1 if you have the `program_spawn' function. */
++#undef HAVE_PROGRAM_SPAWN
++
++/* Define to 1 if you have the <argdata.h> header file. */
++#undef HAVE_ARGDATA_H
++
++/* Define to 1 if you have the <program.h> header file. */
++#undef HAVE_PROGRAM_H
++
++/* Define to 1 if you have the <uv.h> header file. */
++#undef HAVE_UV_H
 +
  /* Define to 1 if you have the `forkpty' function. */
  #undef HAVE_FORKPTY
