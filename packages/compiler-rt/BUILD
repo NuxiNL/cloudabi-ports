@@ -1,11 +1,11 @@
-# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2018 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
 
 def build(ctx):
     root = ctx.extract('%(name)s-%(version)s.src')
-    headers = ctx.extract('cloudlibc/v0.101').path('src/include')
+    headers = ctx.extract('cloudlibc/v0.102').path('src/include')
 
     sources = {
         'absvdi2.c',
