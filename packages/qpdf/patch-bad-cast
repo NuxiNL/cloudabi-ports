@@ -1,0 +1,11 @@
+--- libqpdf/QUtil.cc
++++ libqpdf/QUtil.cc
+@@ -310,7 +310,7 @@
+ QUtil::setLineBuf(FILE* f)
+ {
+ #ifndef _WIN32
+-    setvbuf(f, reinterpret_cast<char *>(NULL), _IOLBF, 0);
++    setvbuf(f, NULL, _IOLBF, 0);
+ #endif
+ }
+ 
