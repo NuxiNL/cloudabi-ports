@@ -1,0 +1,12 @@
+--- configure
++++ configure
+@@ -33507,9 +33507,6 @@
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ 
+-	if test "x$cairo_cc_stderr" != "x"; then
+-		cairo_cc_flag=no
+-	fi
+ 
+ 	if test "x$cairo_cc_flag" = "xyes"; then
+ 		real_pthread_CFLAGS="$PTHREAD_CFLAGS";

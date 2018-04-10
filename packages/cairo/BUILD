@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2017 Nuxi, https://nuxi.nl/
+# Copyright (c) 2015-2018 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -10,6 +10,7 @@ def build(ctx):
             'big': 'yes',
         }[ctx.endian()],
         'ac_cv_func_mmap=no',
+        '--enable-pthread=yes',
         '--enable-xlib=no',
     ])
     build.make(['noinst_LTLIBRARIES=', 'noinst_PROGRAMS='])
