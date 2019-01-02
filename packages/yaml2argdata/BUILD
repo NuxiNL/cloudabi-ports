@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Nuxi, https://nuxi.nl/
+# Copyright (c) 2017-2019 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -10,12 +10,12 @@ def build(ctx):
 
 package(
     name='yaml2argdata',
-    version='0.3',
+    version='0.4',
     homepage='https://github.com/NuxiNL/yaml2argdata',
     lib_depends={'argdata', 'yaml-cpp'},
     build_cmd=build)
 
 distfile(
-    name='yaml2argdata/v0.3.tar.gz',
-    checksum='8b4d3bba51d0c7944dfe4c7d8c9cc8e49cb99f5b538195cc53ef49fd95519909',
+    name='yaml2argdata/v0.4.tar.gz',
+    checksum='593dfcd923b4486e727fbb3442a1c4c5fa654eb259c9835e4f9f6c77cffe44d6',
     master_sites={'https://github.com/NuxiNL/yaml2argdata/archive/'})

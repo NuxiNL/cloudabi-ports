@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Nuxi, https://nuxi.nl/
+# Copyright (c) 2017-2019 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -12,12 +12,12 @@ def build(ctx):
 
 package(
     name='flower',
-    version='0.10',
+    version='0.11',
     homepage='https://github.com/NuxiNL/flower',
     lib_depends={'arpc', 'cxx-runtime', 'jsoncpp'},
     build_cmd=build)
 
 distfile(
-    name='flower/v0.10.tar.gz',
-    checksum='6af98bf7f598a41c40e4a9006b034943795f9bea453ea22b6c07aec57b851a30',
+    name='flower/v0.11.tar.gz',
+    checksum='e213fa48f0abfa3095e07c3d8b95902511a42eb0cef902645418aef60cb32b3e',
     master_sites={'https://github.com/NuxiNL/flower/archive/'})

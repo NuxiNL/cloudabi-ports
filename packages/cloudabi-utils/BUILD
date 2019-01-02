@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 Nuxi, https://nuxi.nl/
+# Copyright (c) 2016-2019 Nuxi, https://nuxi.nl/
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -26,13 +26,13 @@ def build(ctx):
 
 package(
     name='cloudabi-utils',
-    version='0.38',
+    version='0.39',
     homepage='https://github.com/NuxiNL/cloudabi-utils',
     lib_depends={'c-runtime'},
     build_cmd=build,
     replaces={'cloudabi-reexec'})
 
 distfile(
-    name='cloudabi-utils/v0.38.tar.gz',
-    checksum='331913d737605d43df62a0dfcf05dc13582d5d97b27d6d87f7c4daffd5cde8b0',
+    name='cloudabi-utils/v0.39.tar.gz',
+    checksum='e7e3cc8557814d5dd55bf76580d752d9913db9c662ac16256706ea9ddf520ada',
     master_sites={'https://github.com/NuxiNL/cloudabi-utils/archive/'})
