@@ -1,0 +1,22 @@
+--- Utilities/cmcurl/lib/vtls/openssl.c
++++ Utilities/cmcurl/lib/vtls/openssl.c
+@@ -122,7 +122,7 @@
+ #define X509_get0_notBefore(x) X509_get_notBefore(x)
+ #define X509_get0_notAfter(x) X509_get_notAfter(x)
+ #define CONST_EXTS /* nope */
+-#ifdef LIBRESSL_VERSION_NUMBER
++#if defined(LIBRESSL_VERSION_NUMBER) && !defined(__FreeBSD__)
+ static unsigned long OpenSSL_version_num(void)
+ {
+   return LIBRESSL_VERSION_NUMBER;
+--- Utilities/cmlibarchive/libarchive/archive_openssl_hmac_private.h
++++ Utilities/cmlibarchive/libarchive/archive_openssl_hmac_private.h
+@@ -28,7 +28,7 @@
+ #include <openssl/hmac.h>
+ #include <openssl/opensslv.h>
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
++#if (OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)) && !defined(__FreeBSD__)
+ #include <stdlib.h> /* malloc, free */
+ #include <string.h> /* memset */
+ static inline HMAC_CTX *HMAC_CTX_new(void)
